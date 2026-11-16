@@ -14,6 +14,7 @@ from job_rag import about, cross_search, guard, is_cross, detect_company, netinf
 from job_rag.selfdata import IV_ALL, IV_COMPANY
 from job_rag.owner import COOKIE as OWNER_COOKIE, TTL as OWNER_TTL, Owner
 from job_rag.about_page import render as render_about
+from job_rag import threshold_page
 from job_rag.chat_ui import CHAT_JS
 from job_rag.memory import HistoryError, clean_history, expand
 from job_rag.topics import topics
@@ -232,6 +233,11 @@ def about_page():
         return render_about(about.load(), "", sum(counts.values()), n_company, retrieval.public_segment_lengths())
     except about.AboutDataError as e:  # 輸出檔缺、壞、過期：顯示錯誤，不用舊數字
         return render_about(None, str(e), sum(counts.values()), n_company, retrieval.public_segment_lengths()), 500
+
+
+@app.get("/threshold")
+def threshold():  # 只讀輸出檔與常數，不用模型，預熱期間也能開；缺檔由頁面註明，不報 500
+    return threshold_page.render(threshold_page.load())
 
 
 def _ms(t0: float) -> float:

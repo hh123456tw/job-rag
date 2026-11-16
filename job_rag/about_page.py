@@ -32,13 +32,19 @@ def _gate_t(gt) -> str:
 GEN_NOTE = "量測時為 K=3 設定；之後 K 改成 5，生成層沒有重跑，數字照舊。"
 
 
+def _e2e(d) -> str:
+    """「擋住 a/b」旁的脈絡：檢索門檻單獨擋得少，加上答案層後端到端的拒答數。缺檔就不加。"""
+    x = d and d.get("e2e")
+    return f"（再加答案層，端到端 {x['refused']}/{x['n']} 拒答）" if x else ""
+
+
 def _real_line(d) -> str:
     x = d.get("real_eval")
     if not x:
         return ""
     return (f"<p><b>另外 {x['n']} 道真實問法</b>（公司頁內短問句、單一公司、跨公司、語料沒有答案；同一人出題，題少，只能當方向）："
             f"非跨公司的有答案題 Hit@1 {_f(x['hit1'])}、Hit@3 {_f(x['hit3'])}、Hit@5 {_f(x['hit5'])}、MRR {_f(x['mrr'])}；"
-            f"非跨公司的沒有答案題擋住 {x['blocked_u']}/{x['n_unanswerable']}，有答案題誤擋 {x['blocked_a']}/{x['n_answerable']}；"
+            f"非跨公司的沒有答案題擋住 {x['blocked_u']}/{x['n_unanswerable']}{_e2e(d)}，有答案題誤擋 {x['blocked_a']}/{x['n_answerable']}；"
             f"跨公司題 {x['cross_passed']}/{x['cross_n']} 結果正確。</p>")
 
 
@@ -55,7 +61,7 @@ def _details(d) -> str:
         f"把 {d['n_answerable']} 題重抽 {d['bootstrap']} 次，成績落在這個範圍。名次最多看到第 {d['depth']}。</p>"
         f"<table><tr><th>找法</th><th>Hit@1</th><th>Hit@3</th><th>MRR</th></tr>{rows}</table>")
     gate = (f"<p><b>查無門檻</b>（bge-m3 最高相似度 {_gate_t(gt)}，低於它就提示「可能沒有答案」）："
-            f"不可回答題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}，"
+            f"不可回答題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}{_e2e(d)}，"
             f"可回答題誤擋 {gt['answerable_blocked']}/{gt['n_answerable']}。</p>")
     if g is None:  # 公開版：沒有 DeepSeek 金鑰，沒有生成層輸出
         return intro + "<p><b>生成層（RAGAS）</b>：這份輸出沒有生成層評估（需要 DeepSeek 金鑰，見 README）。</p>" + gate + _real_line(d)
@@ -382,7 +388,7 @@ def _qa(d, n_segments: int) -> str:
            else "區間不含 0，兩者的差異可信。" if df else None)]),
         ("查無門檻是不是太樂觀？",
          ["是，偏樂觀。門檻是用同一批題目挑的，新題目不保證一樣。",
-          (f"不可回答題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}，可回答題誤擋 {gt['answerable_blocked']}/{gt['n_answerable']}。" if gt else None)]),
+          (f"不可回答題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}{_e2e(d)}，可回答題誤擋 {gt['answerable_blocked']}/{gt['n_answerable']}。" if gt else None)]),
         ("沒有向量資料庫，算向量檢索嗎？",
          ["算。我把問題和每一段都轉成向量，比相似度，這就是向量檢索。",
           "我用 FAISS 在記憶體裡比，不另外架資料庫服務。", f"資料只有 {n_segments} 段，這樣就夠。"]),
@@ -421,9 +427,9 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             f"所以另請 GPT 複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None,
             "這只量有沒有依據，不量對不對。" if g else None,
             f"沒把握時，系統不亂答。最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}），就說「可能沒有答案」。",
-            (f"故意問沒有答案的 {gt['n_unanswerable']} 題，擋住 {gt['unanswerable_blocked']} 題。"
+            (f"故意問沒有答案的 {gt['n_unanswerable']} 題，擋住 {gt['unanswerable_blocked']} 題{_e2e(d)}。"
              f"代價是有答案的 {gt['n_answerable']} 題，誤擋 {gt['answerable_blocked']} 題。" if gt else None),
-            "門檻用同一批題目挑，偏樂觀。"],
+            "門檻用同一批題目挑，偏樂觀。門檻高低怎麼影響結果，可以到「查無門檻」頁自己拖拖看。"],
         5: ["做的過程，我踩到幾個坑。",
             f"第一，換找法：BM25 的 MRR {_f(by['bm25']['mrr'])}，換成 bge-m3 是 {_f(m3['mrr'])}。" if m3 else None,
             "第二，混合檢索被否決。原本預期它會贏，數據沒有支持。" if df and df["lo"] <= 0 <= df["hi"] else None,
@@ -480,7 +486,7 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int, len
     counts = f"只有 {data['n_answerable']} 題有答案、{data['n_unanswerable']} 題沒答案，只能當方向。" if data else "題目很少，只能當方向。"
     say = _speech(data, n_companies, n_segments)
     gate = (f"<p><b>查無門檻</b>（最高相似度低於 {_gate_t(data['gate'])} 就提示「可能沒有答案」）："
-            f"不可回答題擋住 {data['gate']['unanswerable_blocked']}/{data['gate']['n_unanswerable']}，"
+            f"不可回答題擋住 {data['gate']['unanswerable_blocked']}/{data['gate']['n_unanswerable']}{_e2e(data)}，"
             f"可回答題誤擋 {data['gate']['answerable_blocked']}/{data['gate']['n_answerable']}。</p>") if data else ""
     s1 = _seg(1, "這是什麼", "點一家公司，直接問問題，答案附出處。",
               f"<p class=lead>答案先出現，附出處；原文收在下面，隨時可以核對。目前收 {n_companies} 家公司的公開資料。</p>"
@@ -494,7 +500,8 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int, len
     s4 = _seg(4, "怎麼確認答對", "答案要有依據；沒把握就說「可能沒有答案」。",
               _decisions(("答案優先，失敗時回到原文。", "先立刻顯示原文，再請 LLM 整理答案；失敗、逾時或達用量上限時，直接展開原文。"),
                          ("沒把握就說「可能沒有答案」。", "最高相似度低於門檻就提示，並且不呼叫 LLM，不亂答。"))
-              + ((gate + _ragas(data)) if data else err), say[4])
+              + ((gate + _ragas(data)) if data else err)
+              + "<p class=link><a href=/threshold>查無門檻：自己拖拖看</a></p>", say[4])
     s5 = _seg(5, "踩到的坑與三次修正", "我踩到幾個坑，每次都用數據修，不憑感覺。",
               ((_fixes(data) + "<h3>兩個失敗案例</h3>" + _cases(data)) if data else err), say[5])
     s6 = _seg(6, "限制與下一步", "這是小規模的驗證，數字只能當方向。",
