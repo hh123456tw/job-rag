@@ -63,3 +63,23 @@ def verdict(interval: tuple[float, float]) -> str:
     if lo > 0 or hi < 0:
         return "區間不含 0：差異可信（不是題目抽樣的運氣）"
     return "區間含 0：不能說兩者有差異（題少，可能只是運氣）"
+
+
+def _vals(ranks, kind):
+    """每題一個數：hit@1、hit@3 是 0 或 1，mrr 是倒數名次。"""
+    if kind == "mrr":
+        return _rr(ranks)
+    k = int(kind.split("@")[1])
+    return np.array([1.0 if r is not None and r <= k else 0.0 for r in ranks])
+
+
+def metric_interval(ranks, kind, B=BOOTSTRAP, seed=SEED) -> tuple[float, float]:
+    """hit@1、hit@3 或 mrr 的 95% 區間，做法同 mrr_interval。"""
+    idx = np.random.default_rng(seed).integers(0, len(ranks), size=(B, len(ranks)))
+    return _ci(_vals(ranks, kind)[idx].mean(axis=1))
+
+
+def paired_metric_interval(ranks_a, ranks_b, kind, B=BOOTSTRAP, seed=SEED) -> tuple[float, float]:
+    """指標(A) - 指標(B) 的 95% 區間，同一次重抽的題目。"""
+    idx = np.random.default_rng(seed).integers(0, len(ranks_a), size=(B, len(ranks_a)))
+    return _ci((_vals(ranks_a, kind)[idx] - _vals(ranks_b, kind)[idx]).mean(axis=1))

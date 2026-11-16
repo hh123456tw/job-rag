@@ -69,4 +69,9 @@ def answer(question: str, hits: list[dict], post=_post, env_file=".env") -> dict
         raise AnswerError("DeepSeek 回應格式不符") from e
     if not text or text == NOT_FOUND:
         return {"answer": NOT_FOUND, "sources": []}
-    return {"answer": text, "sources": [{k: h[k] for k in ("company", "file", "heading_path")} for h in used]}
+    sources = []
+    for h in used:  # 出處不重複：同一個位置的多個段落只列一次
+        src = {k: h[k] for k in ("company", "file", "heading_path")}
+        if src not in sources:
+            sources.append(src)
+    return {"answer": text, "sources": sources}

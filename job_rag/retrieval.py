@@ -2,6 +2,7 @@
 import hashlib
 import os
 import re
+import unicodedata
 from functools import lru_cache
 from pathlib import Path
 
@@ -271,13 +272,52 @@ def gate_score(question: str, method: str = "bge-m3", company: str | None = None
     return ranked[0][1] if ranked else None
 
 
+def _detect(root: str, question: str) -> str | None:
+    """問句整串含公司名或別名（公開段落的公司欄位＋ALIASES）才算；剛好一家才回傳。
+    長的詞先比對並從問句剔除，所以短詞不會從長詞裡誤抓。"""
+    names = {s["company"] for s in _public(root)} - {GENERAL}
+    terms = {n: n for n in names} | {a: n for a, n in ALIASES.items() if n in names}
+    found = set()
+    for term in sorted(terms, key=len, reverse=True):
+        if term in question:
+            found.add(terms[term])
+            question = question.replace(term, "\0")
+    return found.pop() if len(found) == 1 else None
+
+
+def detect_company(question: str, corpus=None) -> str | None:
+    """問句只提到一家公司時回該公司，否則（沒有、兩家以上）回 None。"""
+    return _detect(str(_corpus_dir(corpus).resolve()), question)
+
+
+def _same_text(s: str) -> str:
+    """去重用的正規化：全形轉半形、去掉所有空白。標點與大小寫不動（可能有意義）。"""
+    return re.sub(r"\s+", "", unicodedata.normalize("NFKC", s))
+
+
+def _dedupe(pool, ranked):
+    """同公司、正規化後文字相同的段落只留名次最前（分數最高）的，其餘位置記進 also_in。"""
+    kept, seen = [], {}
+    for i, sc in ranked:
+        key = (pool[i]["company"], _same_text(pool[i]["text"]))
+        if key in seen:
+            seen[key].append({"file": pool[i]["file"], "heading_path": pool[i]["heading_path"]})
+        else:
+            seen[key] = []
+            kept.append((i, sc, seen[key]))
+    return kept
+
+
 def search(question: str, method: str = "bge-m3", company: str | None = None,
-           k: int = 3, corpus=None, gate: bool = True) -> list[dict]:
+           k: int = 3, corpus=None, gate: bool = True, detect: bool = False, dedupe: bool = False) -> list[dict]:
     """排序後的公開事實段落。排除段落在載入時就丟了，候選池根本沒有它們。
-    查無（最高分低於 NOT_FOUND_THRESHOLD）回空串列；gate=False 不套門檻（評分用）。"""
+    查無（最高分低於 NOT_FOUND_THRESHOLD）回空串列；gate=False 不套門檻（評分用）。
+    detect：沒指定 company 時，問句只含一家公司名就只搜那家。dedupe：合併重複段落，結果多一個 also_in。"""
     if method not in METHODS:
         raise ValueError(f"未支援的檢索方式：{method}")
     root = str(_corpus_dir(corpus).resolve())
+    if detect and not company:
+        company = _detect(root, question)
     top = None  # 查無判斷用的分數（只有 GATED 方式有）
     if method == "bm25":
         pool, ranked = _rank_bm25(root, question, company)
@@ -290,8 +330,9 @@ def search(question: str, method: str = "bge-m3", company: str | None = None,
         top = ranked[0][1] if ranked and method in GATED else None
     if gate and method in GATED and (top is None or top < NOT_FOUND_THRESHOLD):
         return []
+    rows = _dedupe(pool, ranked) if dedupe else [(i, sc, None) for i, sc in ranked]
     return [{key: pool[i][key] for key in ("company", "file", "heading_path", "text")} | {"score": float(sc)}
-            for i, sc in ranked[:k]]
+            | ({} if also is None else {"also_in": also}) for i, sc, also in rows[:k]]
 
 
 def classification_table(corpus=None) -> list[dict]:

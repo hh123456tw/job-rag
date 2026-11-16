@@ -10,9 +10,10 @@ def hit_rank(results: list[dict], golds: list[dict]) -> int | None:
     「之下」＝標題路徑相同，或以「金標 > 」開頭。不用子字串。"""
     for i, r in enumerate(results, 1):
         for g in golds:
-            h = r["heading_path"]
-            if r["file"] == g["file"] and (h == g["heading"] or h.startswith(g["heading"] + " > ")):
-                return i
+            for loc in [r, *r.get("also_in", [])]:  # 去重時被合併的位置也算
+                h = loc["heading_path"]
+                if loc["file"] == g["file"] and (h == g["heading"] or h.startswith(g["heading"] + " > ")):
+                    return i
     return None
 
 
@@ -32,15 +33,17 @@ DEPTH = 10  # 名次最多看到第 10；更後面算未命中（MRR 也算 0）
 QUESTIONS = "eval/questions.json"
 
 
-def _group(questions, method, corpus):
-    from . import gate_score, retrieval, search
+def _group(questions, method, corpus, detect=False, dedupe=False):
+    from . import detect_company, gate_score, retrieval, search
     ranks, top, n_unans = {}, {}, 0
     for q in questions:
         if not q["answerable"]:
             n_unans += 1
         else:  # 排名不套門檻：量的是檢索本身
-            ranks[q["id"]] = hit_rank(search(q["question"], method=method, k=DEPTH, corpus=corpus, gate=False), q["gold"])
-        s = gate_score(q["question"], method, corpus=corpus)
+            ranks[q["id"]] = hit_rank(search(q["question"], method=method, k=DEPTH, corpus=corpus, gate=False,
+                                             detect=detect, dedupe=dedupe), q["gold"])
+        co = detect_company(q["question"], corpus) if detect else None
+        s = gate_score(q["question"], method, company=co, corpus=corpus)
         if s is not None:
             top[q["id"]] = s
     out = {"ranks": ranks, "metrics": metrics(list(ranks.values())) if ranks else None,
@@ -55,9 +58,9 @@ def _group(questions, method, corpus):
     return out
 
 
-def evaluate(questions: list[dict], method: str = "bge-m3", corpus=None) -> dict:
-    """全部題，只查公開事實段落（排除段落不在索引內）。"""
-    scores = _group(questions, method, corpus)
+def evaluate(questions: list[dict], method: str = "bge-m3", corpus=None, detect=False, dedupe=False) -> dict:
+    """全部題，只查公開事實段落（排除段落不在索引內）。detect／dedupe 是票 14 的兩個開關，預設關。"""
+    scores = _group(questions, method, corpus, detect, dedupe)
     types = {}
     for q in questions:
         if q["answerable"]:
@@ -213,6 +216,42 @@ def format_interview(drops: list[dict]) -> str:
     return "\n".join(out)
 
 
+TOGGLES_OUT = "eval/results_toggles.txt"
+CONFIGS = [("全關（基準）", False, False), ("只開公司名過濾", True, False), ("只開去重", False, True), ("兩個都開", True, True)]
+
+
+def toggle_runs(questions, method="bge-m3", corpus=None) -> dict:
+    return {name: evaluate(questions, method=method, corpus=corpus, detect=d, dedupe=u) for name, d, u in CONFIGS}
+
+
+def format_toggles(runs: dict) -> str:
+    """每種開關組合的 Hit@1、Hit@3、MRR（各附 95% 區間），以及和基準相比的差（同一批重抽題目）。"""
+    from .stats import metric_interval, paired_metric_interval
+    base = next(iter(runs.values()))
+    out = [f"開關比較　檢索方式：{base['method']}　可回答題 {base['scores']['metrics']['n']} 題　名次最多看到 {DEPTH}",
+           f"區間＝題目重抽 {BOOTSTRAP} 次（種子 {SEED}）的 95% 範圍；差＝該組合減基準，括號是差的 95% 區間。規則沒有為了成績調整，好壞照列。"]
+    for name, rep in runs.items():
+        m, r = rep["scores"]["metrics"], list(rep["scores"]["ranks"].values())
+        cells = "　".join(f"{label} {m[k]:.3f} [%.3f, %.3f]" % metric_interval(r, k)
+                          for k, label in (("hit@1", "Hit@1"), ("hit@3", "Hit@3"), ("mrr", "MRR")))
+        out.append(f"{name}：{cells}　查無：{_gate_cell(rep['scores'])}")
+    br = list(base["scores"]["ranks"].values())
+    out.append("\n和基準相比（差，95% 區間）：")
+    for name, rep in list(runs.items())[1:]:
+        r, m, bm = list(rep["scores"]["ranks"].values()), rep["scores"]["metrics"], base["scores"]["metrics"]
+        cells = []
+        for k, label in (("hit@1", "Hit@1"), ("hit@3", "Hit@3"), ("mrr", "MRR")):
+            lo, hi = paired_metric_interval(r, br, k)
+            cells.append(f"{label} {m[k] - bm[k]:+.3f} [{lo:+.3f}, {hi:+.3f}]")
+        out.append(f"  {name}：" + "　".join(cells))
+    out.append("\n名次有變的題（基準名次→新名次，無＝前 10 名沒有）：")
+    for name, rep in list(runs.items())[1:]:
+        ch = [f"{i}({base['scores']['ranks'][i] or '無'}→{x or '無'})" for i, x in rep["scores"]["ranks"].items()
+              if x != base["scores"]["ranks"][i]]
+        out.append(f"  {name}：{'、'.join(ch) or '無'}")
+    return "\n".join(out)
+
+
 def format_results(questions: list[dict], reps: dict, drops: list[dict]) -> str:
     return "\n\n".join([format_table(reps), format_interval_note(reps), format_gate(questions, reps), format_interview(drops)])
 
@@ -225,9 +264,16 @@ def main():
     ap.add_argument("--questions", default=QUESTIONS)
     ap.add_argument("--method", default="bge-m3", help="bm25、bge-small-zh、bge-m3、e5-large、hybrid，或 all")
     ap.add_argument("--out", help="all 時預設寫入 " + TABLE_OUT)
+    ap.add_argument("--detect", action="store_true", help="開公司名自動過濾")
+    ap.add_argument("--dedupe", action="store_true", help="開結果去重")
+    ap.add_argument("--toggles", action="store_true", help="四種開關組合並列，寫入 " + TOGGLES_OUT)
     a = ap.parse_args()
     qs = json.loads(Path(a.questions).read_text(encoding="utf-8"))["questions"]
-    if a.method == "all":
+    if a.toggles:
+        text = format_toggles(toggle_runs(qs, method=a.method))
+        Path(a.out or TOGGLES_OUT).write_text(text + "\n", encoding="utf-8")
+        print(text)
+    elif a.method == "all":
         from . import interview_drops
         text = format_results(qs, compare(qs), interview_drops())
         out = Path(a.out or TABLE_OUT)
@@ -235,7 +281,7 @@ def main():
         print(text)
         print(f"\n已寫入 {out}")
     else:
-        print(format_report(evaluate(qs, method=a.method)))
+        print(format_report(evaluate(qs, method=a.method, detect=a.detect, dedupe=a.dedupe)))
 
 
 if __name__ == "__main__":
