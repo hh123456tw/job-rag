@@ -164,11 +164,11 @@ def s_forest(d):
     n = len(rows)
     yb = y0 + n * pitch
     p = [_t(X(0) - 6, 12, "← 對方較好", "mu sm", "end"), _t(X(0) + 6, 12, "bge-m3 較好 →", "mu sm"),
-         f'<line class="zero" x1="{X(0):.1f}" x2="{X(0):.1f}" y1="18" y2="{yb}"/>']
+         ]
     for i, r in enumerate(rows):
         y = y0 + i * pitch
         inc = r["lo"] <= 0 <= r["hi"]
-        p.append(_t(0, y, f"bge-m3 − {SHORT[r['method']]}", "bd halo")
+        p.append(f'<line class="zero" x1="{X(0):.1f}" x2="{X(0):.1f}" y1="{y + 6}" y2="{y + 34}"/>' + _t(0, y, f"bge-m3 − {SHORT[r['method']]}", "bd halo")
                  + _t(W, y, f"{_sgn(r['diff'])}　[{_sgn(r['lo'])}, {_sgn(r['hi'])}]", "sm halo", "end")
                  + f'<g class="fr gx2"><line class="ci" x1="{X(r["lo"]):.1f}" x2="{X(r["hi"]):.1f}" y1="{y + 20}" y2="{y + 20}"/>'
                  f'<line class="ci" x1="{X(r["lo"]):.1f}" x2="{X(r["lo"]):.1f}" y1="{y + 14}" y2="{y + 26}"/>'
