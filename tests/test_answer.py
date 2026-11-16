@@ -66,7 +66,7 @@ def test_model_replying_not_found_has_no_sources():
 
 
 @pytest.mark.parametrize("exc", [
-    TimeoutError("t"), urllib.error.URLError("offline"),
+    TimeoutError("t"), urllib.error.URLError("offline"), ValueError("not json"),
     urllib.error.HTTPError("u", 401, "Unauthorized", {}, None),
     urllib.error.HTTPError("u", 402, "Insufficient Balance", {}, None),
 ])

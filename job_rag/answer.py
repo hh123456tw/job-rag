@@ -84,6 +84,8 @@ def answer(question: str, hits: list[dict], post=_post, env_file=".env", history
         raise AnswerError(f"DeepSeek 回報錯誤：{why}") from e
     except (urllib.error.URLError, TimeoutError, OSError) as e:
         raise AnswerError(f"無法連到 DeepSeek（逾時或無網路）：{e}") from e
+    except ValueError as e:  # 回 200 但不是 JSON（HTML、空白、截斷）
+        raise AnswerError("DeepSeek 回應格式不符") from e
     try:
         text = resp["choices"][0]["message"]["content"].strip()
     except (KeyError, IndexError, TypeError, AttributeError) as e:

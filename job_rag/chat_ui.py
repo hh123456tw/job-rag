@@ -47,8 +47,9 @@ function done(){dots.remove();busy=false;var mt=metaText(info);if(mt)steps.appen
 if(m.offsetHeight>T.clientHeight)T.scrollTop=m.offsetTop-T.offsetTop-8;else end();save()}
 function bad(t,box){dots.remove();body.appendChild(el('p','err',t));if(box)body.appendChild(box);done()}
 step('搜尋資料（範圍：'+LB+'）');
-api('/api/search',hp({q:q,company:scope||''})).then(function(j){
-if(stale(j))return;if(j.status!=='ok'&&j.status!=='low'){bad(j.message||'搜尋失敗',null);return}
+var sc=new AbortController(),sto=setTimeout(function(){sc.abort()},30000);
+api('/api/search',hp({q:q,company:scope||''}),sc.signal).then(function(j){
+clearTimeout(sto);if(stale(j))return;if(j.status!=='ok'&&j.status!=='low'){bad(j.message||'搜尋失敗',null);return}
 var hits=j.hits||[],thr=j.threshold;info.s=j.search_ms;if(j.expanded)step('問題很短，接上一題一起搜尋');if(j.detected)step('已偵測到公司：'+j.company+'，只搜這一家');
 step(hits.length?'找到 '+hits.length+' 段：'+hits.map(function(h){return sh(h.heading_path)}).join('、'):'沒有找到段落');
 if(j.status==='low'){dots.remove();body.appendChild(el('p',null,'我找不到很接近的內容，不確定有沒有答案。下面的原文僅供參考，請自己核對。'));
@@ -63,7 +64,7 @@ a.sources.forEach(function(s){var t=s.company+' · '+sh(s.heading_path),k=srcN(s
 if(a.status==='low'){body.appendChild(el('p',null,'我找不到很接近的內容，不確定有沒有答案。'));body.appendChild(rawBox(hits,true,true,thr));rec(q,'（沒有找到很接近的內容）');done();return}
 body.appendChild(el('p','err',a.message||'整理失敗。原文在下面。'));body.appendChild(rawBox(hits,false,true,thr));done()
 }).catch(function(){clearTimeout(to);dots.remove();body.appendChild(el('p','err','整理失敗：逾時或無法連線。原文在下面。'));body.appendChild(rawBox(hits,false,true,thr));done()})
-}).catch(function(){bad('搜尋失敗：無法連線。',null)})}
+}).catch(function(){clearTimeout(sto);bad('搜尋失敗：逾時或無法連線。',null)})}
 function ask(q,key){if(busy)return;lastKey=key||'';noChips();say(q).className='msg me';run(q)}
 T.addEventListener('click',function(e){var c=e.target.closest('.cite');if(c){jump(c);return}var b=e.target.closest('.chip');if(!b||busy)return;ask(b.dataset.q,b.dataset.k)});
 F.addEventListener('submit',function(e){e.preventDefault();var q=I.value.trim();if(!q||busy)return;I.value='';I.blur();ask(q,'')});
