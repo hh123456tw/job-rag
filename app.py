@@ -163,6 +163,8 @@ def _require_access_code():
     code = guard.access_code()
     if not code or request.path.startswith("/static/") or request.path == "/manifest.webmanifest":
         return None
+    if os.environ.get("JOB_RAG_LOCAL_OPEN") == "1" and request.remote_addr in ("127.0.0.1", "::1") and "X-Forwarded-For" not in request.headers:  # 公開模式下，本機直連免存取碼；經代理轉進來的請求一定帶 X-Forwarded-For
+        return None
     if guard.code_ok(request.args.get("k", ""), code):
         g.set_cookie = code  # 第一次帶對了：回應時存成 cookie
     elif not guard.code_ok(request.cookies.get(guard.COOKIE, ""), code):

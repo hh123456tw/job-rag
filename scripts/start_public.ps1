@@ -4,6 +4,7 @@ $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path -Parent $PSScriptRoot)
 $port = if ($env:JOB_RAG_PORT) { $env:JOB_RAG_PORT } else { '5000' }
 $env:JOB_RAG_PORT = $port
+$env:JOB_RAG_LOCAL_OPEN = '1'   # open from this laptop without the access code; tunnel traffic still needs it
 $env:JOB_RAG_HOST = '127.0.0.1'   # never the LAN: only ngrok reaches the app
 $api = 'http://127.0.0.1:4040/api/tunnels'
 
