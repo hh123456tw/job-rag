@@ -25,11 +25,11 @@ def eng(client) -> str:
     return m.group(1)
 
 
-def test_eng_details_is_collapsed_and_sits_inside_block_four(client):
+def test_eng_details_is_collapsed_and_sits_inside_block_six(client):
     html = client.get("/about").get_data(as_text=True)
     assert len(re.findall(r"<h2>", html)) == 6  # 仍只有 6 個編號區塊
-    block4 = html.split("<h2>4.")[1].split("<h2>5.")[0]
-    assert "<details class=eng><summary>給工程面試官：技術細節</summary>" in block4
+    block6 = html.split("<h2>6.")[1].split("<h2 class=qa>")[0]
+    assert "<details class=eng><summary>給工程面試官：技術細節</summary>" in block6
     assert "<details class=eng open" not in html  # 預設收合
 
 
