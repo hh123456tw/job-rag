@@ -51,7 +51,8 @@ var sc=new AbortController(),sto=setTimeout(function(){sc.abort()},30000);
 api('/api/search',hp({q:q,company:scope||''}),sc.signal).then(function(j){
 clearTimeout(sto);if(stale(j))return;if(j.status!=='ok'&&j.status!=='low'){bad(j.message||'搜尋失敗',null);return}
 var hits=j.hits||[],thr=j.threshold;info.s=j.search_ms;if(j.expanded)step('問題很短，接上一題一起搜尋');if(j.detected)step('已偵測到公司：'+j.company+'，只搜這一家');
-step(hits.length?'找到 '+hits.length+' 段：'+hits.map(function(h){return sh(h.heading_path)}).join('、'):'沒有找到段落');
+if(j.cross)step('跨公司比較：每家各找 '+(j.per||1)+' 段');
+step(hits.length?'找到 '+hits.length+' 段：'+hits.map(function(h){return (j.cross?h.company+' ':'')+sh(h.heading_path)}).join('、'):'沒有找到段落');
 if(j.status==='low'){dots.remove();body.appendChild(el('p',null,'我找不到很接近的內容，不確定有沒有答案。下面的原文僅供參考，請自己核對。'));
 if(hits.length)body.appendChild(rawBox(hits,true,true,thr));rec(q,'（沒有找到很接近的內容）');done();return}
 step('整理答案');

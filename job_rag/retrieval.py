@@ -439,6 +439,35 @@ def search(question: str, method: str = DEFAULT_METHOD, company: str | None = No
             for i, sc, also in rows[:k]]
 
 
+# 跨公司提問（票 31）。每家公司各取 PER_COMPANY 段；預設值由 eval/results_cross.txt 的 1／2／3 段比較決定。
+PER_COMPANY = 1
+CROSS_FLOOR = 0.0  # 跨公司的查無常數：全部段落的最高分低於它才回 low。值與挑法見 eval/results_cross.txt（同批題挑的，偏樂觀）
+_CROSS_WORDS = re.compile(
+    "哪一?[間家]|哪些公司|哪個公司|哪幾[間家]|各家|所有公司|全部公司|每[一]?家|優先投|推薦哪|"
+    "(?:比較|最)(?:好|高|低|多|少|大|適合|值得|推薦|優先)|哪.{0,3}比較")
+
+
+def is_cross(question: str, corpus=None, mode: str = "demo") -> bool:
+    """沒提到任何一家公司，且含跨公司詞。保守：寧可漏判。提到公司（一家或多家）都不算。"""
+    return bool(_CROSS_WORDS.search(question)) and not mentions_company(question, corpus, mode)
+
+
+def cross_search(question: str, per: int | None = None, corpus=None, mode: str = "demo") -> list[dict]:
+    """每家公司各取最像的 per 段（bge-m3），依分數由高到低。一次編碼問句；「綜合」不算公司。
+    展示模式只看公開索引；自用模式才含自用段落。"""
+    per = PER_COMPANY if per is None else per
+    pool, ranked = _rank_vector(_root(corpus, mode), "bge-m3", question, None)
+    taken: dict[str, int] = {}
+    rows = []
+    for i, sc in ranked:  # ranked 已由高到低
+        c = pool[i]["company"]
+        if c != GENERAL and taken.get(c, 0) < per:
+            taken[c] = taken.get(c, 0) + 1
+            rows.append((i, sc))
+    return [{key: pool[i][key] for key in ("company", "file", "heading_path", "text")} | {"score": float(sc)}
+            | ({"private": pool[i]["private"]} if mode == "self" else {}) for i, sc in rows]
+
+
 def classification_table(corpus=None) -> list[dict]:
     """標題 × 公開／排除 × 段落數，給人檢查分類。"""
     counts: dict[tuple[str, bool], int] = {}

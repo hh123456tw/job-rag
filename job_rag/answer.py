@@ -19,6 +19,13 @@ SYSTEM = (
     f"（整個問題都沒有答案時，才照前面說的只回「{NOT_FOUND}」）；「【推測】」寫成「（資料標註為推測）」，「【自述】」寫成「（公司自述）」。"
 )
 
+# 只在跨公司模式加（票 31）：段落來自不同公司，逐家整理，不下主觀結論
+CROSS_RULES = (
+    "跨公司規則：每個段落來自不同公司。逐家公司寫一行，格式「公司名：內容 [n]」，每行都附段落編號。"
+    "只寫該公司段落有寫的；段落沒寫到問題的公司，寫「公司名：資料沒寫」。"
+    "問「哪間比較好」「最…」時，只列各家的資料與依據，不下主觀結論，不排名，不說哪一間最好。"
+)
+
 
 class AnswerError(RuntimeError):
     """整理成答案失敗。訊息直接顯示給使用者。"""
@@ -63,7 +70,7 @@ def _usage(resp) -> dict:
     return {k: u[k] for k in ("prompt_tokens", "completion_tokens") if type(u.get(k)) is int and u[k] >= 0}
 
 
-def answer(question: str, hits: list[dict], post=_post, env_file=".env", history=None) -> dict:
+def answer(question: str, hits: list[dict], post=_post, env_file=".env", history=None, cross=False) -> dict:
     """hits 來自 search()，只可能是公開事實段落。history 是已驗證的最近幾輪 [{"q","a"}]。回 {"answer", "sources"}，DeepSeek 有給用量時多一個 "usage"；失敗丟 AnswerError。"""
     used = hits
     if not used:
@@ -72,7 +79,7 @@ def answer(question: str, hits: list[dict], post=_post, env_file=".env", history
     context = (chr(10) * 2).join(format_source(i, h) for i, h in enumerate(used, 1))
     body = {
         "model": os.environ.get("DEEPSEEK_MODEL") or DEFAULT_MODEL,
-        "messages": [{"role": "system", "content": SYSTEM},
+        "messages": [{"role": "system", "content": SYSTEM + (CROSS_RULES if cross else "")},
                      {"role": "user", "content": f"{history_block(history)}段落：\n{context}\n\n問題：{question}"}],
         "thinking": {"type": "disabled"},
         "stream": False,

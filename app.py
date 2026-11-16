@@ -10,7 +10,7 @@ from pathlib import Path
 from flask import Flask, g, request
 from markupsafe import escape
 
-from job_rag import about, guard, detect_company, netinfo, owner_ui, public_company_counts, retrieval, search
+from job_rag import about, cross_search, guard, is_cross, detect_company, netinfo, owner_ui, public_company_counts, retrieval, search
 from job_rag.selfdata import IV_ALL, IV_COMPANY
 from job_rag.owner import COOKIE as OWNER_COOKIE, TTL as OWNER_TTL, Owner
 from job_rag.about_page import render as render_about
@@ -236,6 +236,15 @@ def _ms(t0: float) -> float:
     return round((time.perf_counter() - t0) * 1000, 1)
 
 
+def _is_cross(rq, company, mode) -> bool:
+    """跨公司題：沒指定公司、問句沒提到公司、含跨公司詞（job_rag.retrieval.is_cross）。"""
+    return not company and is_cross(rq, mode=mode)
+
+
+def _low_cross(hits):
+    return not hits or max(h["score"] for h in hits) < retrieval.CROSS_FLOOR
+
+
 def _low(hits):
     return not hits or hits[0]["score"] < retrieval.NOT_FOUND_THRESHOLD
 
@@ -274,17 +283,19 @@ def answer_json():
     if msg := _self_wait(mode):
         return _tag({"status": "error", "message": msg}), 503
     try:
-        hits = search(expand(q, history, mode=mode), company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
+        rq = expand(q, history, mode=mode)
+        cross = _is_cross(rq, company, mode)
+        hits = cross_search(rq, mode=mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
         return _tag({"status": "error", "message": f"錯誤：{e}"}), 500
-    if _low(hits):
+    if _low_cross(hits) if cross else _low(hits):
         return _tag({"status": "low"})
     if wait := _limiter.try_acquire(guard.answer_limit()):
         return _tag({"status": "limit", "message": f"整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
                      f"請約 {-(-wait // 60)} 分鐘後再試。原文在下面，不受影響。"}), 429
     t0 = time.perf_counter()
     try:
-        r = answer(q, hits, post=_fake_post() or _post, history=history)
+        r = answer(q, hits, post=_fake_post() or _post, history=history, cross=cross)
     except AnswerError as e:
         return _tag({"status": "error", "message": f"整理失敗：{e}。原文在下面，不受影響。"}), 502
     return _tag({"status": "ok", "answer": r["answer"], "sources": r["sources"], "answer_ms": _ms(t0)}
@@ -311,14 +322,16 @@ def api_search():
         detected, rq = False, expand(q, history, mode=mode)  # 追問補全後的問句：公司偵測與檢索都用它
         if not company and _on("JOB_RAG_DETECT") and (d := detect_company(rq, mode=mode)):
             company, detected = d, True
-        hits = search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
+        cross = _is_cross(rq, company, mode)
+        hits = cross_search(rq, mode=mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
         return _tag({"status": "error", "message": f"搜尋失敗：{e}"}), 500
     search_ms = _ms(t0)
     keep = ("company", "file", "heading_path", "text", "also_in")
     scored = retrieval.DEFAULT_METHOD == "bge-m3"  # 只有 bge-m3 的相似度有「分數／門檻」可比；其他方式不帶，不編
-    return _tag({"status": "low" if _low(hits) else "ok", "company": company or "", "detected": detected, "expanded": rq != q.strip(),
-                 "threshold": retrieval.NOT_FOUND_THRESHOLD, "search_ms": search_ms,
+    low = _low_cross(hits) if cross else _low(hits)
+    return _tag({"status": "low" if low else "ok", "company": company or "", "detected": detected, "expanded": rq != q.strip(), "cross": cross, "per": retrieval.PER_COMPANY if cross else 0,
+                 "threshold": retrieval.CROSS_FLOOR if cross else retrieval.NOT_FOUND_THRESHOLD, "search_ms": search_ms,
                  "hits": [{k: h.get(k, []) for k in keep} | ({"private": h["private"]} if "private" in h else {})
                           | ({"score": h["score"]} if scored and "score" in h else {}) for h in hits]})
 
