@@ -87,10 +87,10 @@ def test_rate_limit_sliding_window_with_injected_clock():
 
 def test_limit_env_default_and_invalid(monkeypatch):
     monkeypatch.delenv("JOB_RAG_ANSWER_LIMIT", raising=False)
-    assert guard.answer_limit() == 30
+    assert guard.answer_limit() == 100
     for bad in ("abc", "0", "-3", ""):
         monkeypatch.setenv("JOB_RAG_ANSWER_LIMIT", bad)
-        assert guard.answer_limit() == 30
+        assert guard.answer_limit() == 100
     monkeypatch.setenv("JOB_RAG_ANSWER_LIMIT", "2")
     assert guard.answer_limit() == 2
 

@@ -130,7 +130,7 @@ python -X utf8 -m job_rag.generation
 
 **網址格式**：`https://<ngrok 網址>/?k=<存取碼>`。第一次帶對碼會存成 cookie（HttpOnly、SameSite=Lax；https 下加 Secure），之後同一支手機不用再帶。沒帶或錯誤回 403。`/static/` 圖示與 `/manifest.webmanifest` 不需要碼（加到主畫面要用）。碼就在網址裡，只傳給要看的人。沒設 `JOB_RAG_ACCESS_CODE` 時（例如一般的 `start.bat`）行為完全不變。
 
-**用量上限**：「整理成答案」全域每小時最多 30 次（`JOB_RAG_ANSWER_LIMIT` 可調；非正整數用預設）。超過時該次回 429，顯示上限與約幾分鐘後可再試；原文結果照常顯示，只看原文不計次。計數存在記憶體，重啟歸零。
+**用量上限**：「整理成答案」全域每小時最多 100 次（`JOB_RAG_ANSWER_LIMIT` 可調；非正整數用預設）。超過時該次回 429，顯示上限與約幾分鐘後可再試；原文結果照常顯示，只看原文不計次。計數存在記憶體，重啟歸零。
 
 **第一次開啟**：ngrok 免費版會先出現警告頁，手機點「Visit Site」。
 
