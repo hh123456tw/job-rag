@@ -83,7 +83,20 @@ def _company_of(path: list[str], stem: str, names: list[str]) -> str:
     return in_stem.pop() if len(in_stem) == 1 else GENERAL
 
 
-INTERVIEW = "面試"  # 含這兩字的內文行整行丟掉（面試資訊不是公開事實）；標題行不丟
+INTERVIEW = "面試"  # 含這兩字的內文行丟掉（面試資訊不是公開事實）；標題行不丟
+# 第三方面試網站的內容（含表格列）本來就不是公司公開事實：整行丟掉，不留網址
+THIRD_PARTY = re.compile("面試趣|面試心得|面試題|面試紀錄|面試區|GoodJob|goodjob")
+
+
+def _strip_interview(line: str) -> str:
+    """表格列（以 | 開頭）只清空含「面試」的欄位，其餘欄位保留；非表格行與第三方面試網站的列整行丟掉。
+    回傳空字串＝整行不留。"""
+    if INTERVIEW not in line:
+        return line
+    if not line.lstrip().startswith("|") or THIRD_PARTY.search(line):
+        return ""
+    cells = [("" if INTERVIEW in c else c) for c in line.split("|")]
+    return "|".join(cells) if any(c.strip() for c in cells) else ""
 
 
 @lru_cache(maxsize=4)
@@ -127,10 +140,12 @@ def _parse(root: str) -> tuple:
                 while stack and stack[-1][0] >= lv:
                     stack.pop()
                 stack.append((lv, m.group(2)))
-            elif INTERVIEW in line:
-                dropped.append(line.strip())
             else:
-                body.append(line)
+                kept = _strip_interview(line)
+                if INTERVIEW in line:
+                    dropped.append(line.strip())
+                if kept:
+                    body.append(kept)
         flush()
     return tuple(segs), tuple(drops)
 
