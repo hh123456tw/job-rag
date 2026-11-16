@@ -49,9 +49,9 @@ def _status_page():
 LIVE_COMPANIES = [("台灣大哥大", "台灣大哥大"), ("聯合報", "聯合報"), ("叡揚資訊", "叡揚資訊"), ("神通資訊", "神通資訊"),
                   ("藍新資訊", "藍新資訊"), ("凱基證券", "凱基證券"), ("華電聯網", "華電聯網"), ("奧衍", "奧衍"),
                   ("中華網龍", "中華網龍"), ("尼諾思", "尼諾思科技"), ("醫宇宙", "醫宇宙")]
-# 常用問題：鍵 -> (按鈕文字, 接在公司名後的句尾)。句型同評估題（「X是做什麼的」「X有哪些…」「X的營收…」）
+# 常用問題：鍵 -> (按鈕文字, 接在公司名後的句尾)。句型必須通順、對任何公司都適用；措辭挑選見 eval/button_check.md
 FAQ = {"what": ("這家做什麼", "是做什麼的？"), "jobs": ("有哪些職缺", "有哪些職缺？"),
-       "tech": ("用什麼技術", "用什麼技術？"), "fin": ("財務與新聞", "的營收和近期新聞是什麼？")}
+       "tech": ("用什麼技術", "的技術堆疊與開發工具有哪些？"), "fin": ("財務與新聞", "的營收和近期新聞是什麼？")}
 DEMOS = ["u07", "u06"]  # 查無示範：不可回答題的題號
 EVAL = {q["id"]: q for q in json.loads((Path(__file__).parent / "eval" / "questions.json").read_text(encoding="utf-8"))["questions"]}
 LOW = "<p class='warn'><b>可能沒有答案。</b>語料中找不到很接近的內容，也可能只是問法太籠統。下面的原文仍可參考，請自己核對。</p>"
@@ -139,7 +139,7 @@ def index():
     demo = "".join(f"<button name=demo value=\"{i}\" class=demo>{escape(EVAL[i]['question'])}</button>" for i in DEMOS)
     return page("求職情報問答", f"""<nav><b>問答</b><a href="/about">專案說明</a></nav>
 <h1>求職情報問答</h1>
-<form id=f><input type=hidden name=company value="{escape(company or '')}">
+<form id=f><button hidden>查</button><input type=hidden name=company value="{escape(company or '')}">
 <h3>1. 選一家公司（再按一次取消，不選就查全部）</h3><div class=grid>{pick}</div>
 <h3>2. 常用問題</h3><div class="grid faq">{faq}</div>
 <h3>或自己輸入問題</h3><div class=ask><input name=q value="{escape(q)}" placeholder="輸入問題" enterkeyhint=search><button class=go>查</button></div>

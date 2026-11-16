@@ -62,7 +62,7 @@ def test_clicking_selected_company_again_clears_it(client):
     assert 'name=pick value="台灣大哥大"' in html
 
 
-FAQ = {"what": "是做什麼的？", "jobs": "有哪些職缺？", "tech": "用什麼技術？", "fin": "的營收和近期新聞是什麼？"}
+FAQ = {"what": "是做什麼的？", "jobs": "有哪些職缺？", "tech": "的技術堆疊與開發工具有哪些？", "fin": "的營收和近期新聞是什麼？"}
 
 
 def test_four_faq_buttons_fill_the_selected_company_into_the_question(client):
@@ -81,12 +81,20 @@ def test_faq_without_company_says_so_not_silent(client):
     assert "請先選一家公司" in body and "class='hit" not in body
 
 
-def test_faq_question_shapes_exist_in_eval_questions():
-    texts = [q["question"] for q in EVAL]
-    assert any("是做什麼的" in t for t in texts)
-    assert any("有哪些" in t for t in texts)
-    assert any("營收" in t for t in texts)
-    assert any("哪些技術" in t for t in texts)
+def test_faq_tails_are_complete_questions_that_fit_any_company():
+    import app as appmod
+    assert {k: t for k, (_, t) in appmod.FAQ.items()} == FAQ
+    for tail in FAQ.values():
+        assert tail.endswith("？") and not any(l in tail for l, _ in appmod.LIVE_COMPANIES)  # 通順、不綁特定公司
+
+
+# ---- Enter（手機鍵盤「前往」）----
+def test_first_submit_button_in_form_is_search_so_enter_runs_it(client):
+    # 瀏覽器按 Enter 會「按」表單的第一顆提交按鈕；它必須是「查」（沒有 name，不帶 pick／faq／demo／answer）
+    _, c = client
+    form = re.search(r"<form id=f>(.*?)</form>", c.get("/").get_data(as_text=True), re.S).group(1)
+    first = re.search(r"<button(?=[\s>])([^>]*)>(.*?)</button>", form, re.S)
+    assert first.group(2) == "查" and "name=" not in first.group(1) and "type=button" not in first.group(1)
 
 
 # ---- 查無示範 ----
