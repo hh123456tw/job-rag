@@ -183,8 +183,9 @@ def s_forest(d):
     fig = _svg(yb + 66, "bge-m3 與其他找法的 MRR 差與 95% 區間（森林圖）", "".join(p))
     hy = next(r for r in rows if r["method"] == "hybrid")
     inc = hy["lo"] <= 0 <= hy["hi"]
-    notes = ("<p>原本以為混合（關鍵字加向量）會贏。</p><p>線碰到 0，代表這批題看不出差別，所以用較簡單的單一向量找法。</p>"
-             if inc else "<p>混合與 bge-m3 的差距，區間不含 0，差異可信。</p>")
+    what = "<p><b>混合是什麼：</b>BM25（比對關鍵字）與 bge-m3（比對語意）各排一次名次，再用 RRF 把兩個名次合併：兩邊都排前面的段落分數最高。</p>"
+    notes = (what + "<p>原本以為混合會贏；線碰到 0，代表這批題看不出差別，所以用較簡單的單一向量找法。</p>"
+             if inc else what + "<p>混合與 bge-m3 的差距，區間不含 0，差異可信。</p>")
     return ("看不出混合比較好" if inc else "混合與 bge-m3 有差距"), fig, notes, "forest", None
 
 
