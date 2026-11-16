@@ -83,19 +83,22 @@ def _bars(d) -> str:
         f"<b>{r['found']} / {n}</b></li>" for r in rows) + "</ul>"
 
 
-def _terms(d) -> str:
-    """兩個評估名詞（MRR、RAGAS）用條列白話說明，直接顯示在成績下面，不收合。數字取自輸出檔。"""
+def _mrr(d) -> str:
+    """MRR 用條列白話說明，直接顯示在成績下面，不收合。數字取自輸出檔。"""
     best = next(r for r in d["table"] if r["method"] == "bge-m3")
     lo, hi = best["ci"]["mrr"]
+    return ("<h3>MRR（平均倒數名次）</h3><ul class=plain>"
+            "<li><b>量什麼：</b>正確段落排得多前面。</li>"
+            f"<li><b>怎麼算：</b>每題取「1 ÷ 名次」（第 1 名 1 分、第 2 名 0.5 分、第 3 名約 0.33 分、前 {d['depth']} 名內沒有 0 分），再把所有題目平均。</li>"
+            "<li><b>怎麼看：</b>越接近 1 越好。</li>"
+            f"<li><b>我們的結果：</b>網站用的 bge-m3 是 {_f(best['mrr'])}（95% 區間 {_f(lo)}–{_f(hi)}）。</li></ul>")
+
+
+def _ragas(d) -> str:
     g = d["generation"]
-    mrr = ("<h3>MRR（平均倒數名次）</h3><ul class=plain>"
-           "<li><b>量什麼：</b>正確段落排得多前面。</li>"
-           f"<li><b>怎麼算：</b>每題取「1 ÷ 名次」（第 1 名 1 分、第 2 名 0.5 分、第 3 名約 0.33 分、前 {d['depth']} 名內沒有 0 分），再把所有題目平均。</li>"
-           "<li><b>怎麼看：</b>越接近 1 越好。</li>"
-           f"<li><b>我們的結果：</b>網站用的 bge-m3 是 {_f(best['mrr'])}（95% 區間 {_f(lo)}–{_f(hi)}）。</li></ul>")
     if g is None:
-        return mrr + "<h3>RAGAS</h3><ul class=plain><li>用另一個語言模型當評審、替答案打分的評估工具。這份輸出沒有生成層評估（需要 DeepSeek 金鑰，見 README）。</li></ul>"
-    return (mrr + "<h3>RAGAS</h3><ul class=plain>"
+        return "<h3>RAGAS</h3><ul class=plain><li>用另一個語言模型當評審、替答案打分的評估工具。這份輸出沒有生成層評估（需要 DeepSeek 金鑰，見 README）。</li></ul>"
+    return ("<h3>RAGAS</h3><ul class=plain>"
             "<li><b>量什麼：</b>答案好不好（不是段落找得準不準）。是用另一個語言模型當評審的開源評估工具。</li>"
             f"<li><b>忠實度 {_f(g['faithfulness'])}：</b>答案的每個說法，在給它的段落裡找得到依據。</li>"
             f"<li><b>答案相關性 {_f(g['answer_relevancy'])}：</b>答案有回答到問題。</li>"
@@ -262,9 +265,11 @@ def _fixes(d) -> str:
     return "<h3>三次用數據做的修正</h3><ul class=plain>" + "".join(f"<li>{x}</li>" for x in items) + "</ul>"
 
 
-def _scores(d) -> str:
+def _find(d) -> str:
+    """第 3 段的證據：找法成績。單公司與跨公司取幾段都讀程式常數。"""
     return (f"<p>用 {d['n_answerable']} 道有答案的題目，量五種找法：正確的段落有沒有排進前 3 名。條越長越好。</p>"
-            f"{_bars(d)}{_terms(d)}{_fixes(d)}<details class=more><summary>看詳細數字</summary>{_details(d)}</details>")
+            f"{_bars(d)}<p>問單一公司：取前 {retrieval.DEFAULT_K} 段。問「全部公司」：每家公司各取 {retrieval.PER_COMPANY} 段。</p>"
+            f"{_mrr(d)}<details class=more><summary>看詳細數字</summary>{_details(d)}</details>")
 
 
 def _case(c, depth) -> str:
@@ -313,31 +318,182 @@ def _memory(data) -> str:
             f"只量了檢索，沒有量多輪答案品質；題少，只能當方向。</p>")
 
 
+def _library(n_segments: int) -> str:
+    """放大 100 倍，用圖書館比喻。內容與 _scale 同一份設計說明，不是已實作。"""
+    items = [f"現在像一個小書架：{n_segments} 段，直接翻就找得到。",
+             "放大 100 倍像變成一棟圖書館：要換成更快的目錄（近似搜尋的索引），新書只登記新書，不重編全部。",
+             "書的格式變多（PDF、掃描檔）：要先把書轉成文字，再切段。",
+             "來借書的人變多：要有借書證與管理員（帳號與權限），還要有借書紀錄（記錄每次查詢）。",
+             "題目要更多，每次改完自動重考；成績掉了就擋下。"]
+    return ("<h3>放大 100 倍，像圖書館變大</h3><p class=note><b>設計說明，不是已實作。</b>下面每一項目前都沒有做。</p><ul class=plain>"
+            + "".join(f"<li>{escape(x)}</li>" for x in items) + "</ul>")
+
+
+def _decisions(*items) -> str:
+    return "<ul class=plain>" + "".join(f"<li><b>{escape(t)}</b>{escape(x)}</li>" for t, x in items) + "</ul>"
+
+
+def _say(lines) -> str:
+    """③ 講稿：口語、短句；預設收合，給人看畫面時不搶眼。None 的句子（缺資料）直接略過。"""
+    return ("<details class=say><summary>講稿：這樣說</summary><ul class=plain>"
+            + "".join(f"<li>{escape(x)}</li>" for x in lines if x) + "</ul></details>")
+
+
+def _seg(n, title, claim, evidence, say) -> str:
+    """一段固定三塊：① 一句話主張（大字）② 證據 ③ 講稿。"""
+    return (f"<section id=s{n} class=seg><h2>{n}. {escape(title)} <span class=t>約 30 秒</span></h2>"
+            f"<p class=claim>{escape(claim)}</p>{evidence}{_say(say)}</section>")
+
+
+def _qa(d, n_segments: int) -> str:
+    """問答備案：常被追問的 5 題。數字取自輸出檔與載入結果；缺資料的句子略過。"""
+    m3 = next((r for r in d["table"] if r["method"] == "bge-m3"), None) if d else None
+    df, gt = (d["mrr_diff"], d["gate"]) if d else (None, None)
+    rows = [
+        ("資料放大 100 倍怎麼辦？",
+         ["我沒做過大規模，不能說已經解決。", f"現在只有 {n_segments} 段，在記憶體裡找就夠。",
+          "變多了要換索引、做增量更新，再重新評估。"]),
+        ("為什麼不用重排序模型（reranker）？",
+         ["我沒有試過。", f"資料少，bge-m3 的 MRR 已有 {_f(m3['mrr'])}。" if m3 else None,
+          "加了會不會更好，我沒量過，所以不說它有用或沒用。"]),
+        ("為什麼混合檢索沒有贏？",
+         ["我原本以為混合會贏。",
+          f"bge-m3 減混合的 MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]。" if df else None,
+          ("區間含 0，看不出誰比較好。所以我用比較簡單的單一向量找法。" if df and df["lo"] <= 0 <= df["hi"]
+           else "區間不含 0，兩者的差異可信。" if df else None)]),
+        ("查無門檻是不是太樂觀？",
+         ["是，偏樂觀。門檻是用同一批題目挑的，新題目不保證一樣。",
+          (f"不可回答題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}，可回答題誤擋 {gt['answerable_blocked']}/{gt['n_answerable']}。" if gt else None)]),
+        ("沒有向量資料庫，算向量檢索嗎？",
+         ["算。我把問題和每一段都轉成向量，比相似度，這就是向量檢索。",
+          "我用 FAISS 在記憶體裡比，不另外架資料庫服務。", f"資料只有 {n_segments} 段，這樣就夠。"]),
+    ]
+    body = "".join(f"<details><summary>{escape(q)}</summary><p>{escape(''.join(x for x in a if x))}</p></details>" for q, a in rows)
+    return ("<section id=qa class=seg><h2 class=qa>問答備案 <span class=t>被追問時看</span></h2>"
+            f"<p class=claim>常被追問的 5 題，照實回答。</p><div class=qalist>{body}</div></section>")
+
+
+def _speech(d, n_companies: int, n_segments: int) -> dict:
+    """各段講稿。口語、白話、一句一個重點；有數字的句子取自輸出檔與程式常數，沒資料就略過。"""
+    r = retrieval
+    by = {t["method"]: t for t in d["table"]} if d else {}
+    m3 = by.get("bge-m3")
+    g, c, gt, df, x = (d["generation"], d["cross"], d["gate"], d["mrr_diff"], d.get("cross_eval")) if d else (None,) * 5
+    n = d["n_answerable"] if d else None
+    top_mrr = d and max(d["table"], key=lambda t: t["mrr"])["method"] == "bge-m3"
+    fix = d and d["ragas_fix"]
+    return {
+        1: ["這是我做的求職資料問答。", "現場有很多家公司，我想快速查它們做什麼、有什麼職缺。",
+            "點一家公司就能問，答案會附出處。", "它準不準，我用題目量過，後面會講。"],
+        2: ["資料來自我做的公司調查筆記。", "我只留公開查得到的事實，像公司做什麼、職缺、技術、財務。",
+            "個人意見與推測，載入時就丟掉。不進索引，也不會送給語言模型。",
+            f"一共 {n_companies} 家公司、{n_segments} 段。", "每段前面加公司名，問到公司時比較容易對上。"],
+        3: ["我先問：哪種找法最會找？",
+            f"我手寫了 {n} 道有答案的題目，比了 {len(METHODS)} 種找法。" if d else None,
+            "看正確的段落有沒有排進前 3 名。",
+            f"網站用的 {r.DEFAULT_METHOD}，{m3['found']} / {n} 題排進前 3 名。" if m3 else None,
+            "MRR 的意思是：正確段落排第 1 名得 1 分，第 2 名得 0.5 分，再全部平均。越接近 1 越好。" if d else None,
+            (f"bge-m3 的 MRR 是 {_f(m3['mrr'])}" + ("，是五種裡最高的。" if top_mrr else "。")) if m3 else None,
+            "我原本以為混合會更好。數據看不出來，所以選比較簡單的 bge-m3。" if df and df["lo"] <= 0 <= df["hi"] else None,
+            f"問單一公司取前 {r.DEFAULT_K} 段；問全部公司，每家取 {r.PER_COMPANY} 段。"],
+        4: ["找得到還不夠，答案也要有依據。",
+            f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。" if g else None,
+            "但評審和生成都是 DeepSeek，可能偏愛自己的答案。" if g else None,
+            f"所以另請 GPT 複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None,
+            "這只量有沒有依據，不量對不對。" if g else None,
+            f"沒把握時，系統不亂答。最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}，就說「可能沒有答案」。",
+            (f"故意問沒有答案的 {gt['n_unanswerable']} 題，擋住 {gt['unanswerable_blocked']} 題。"
+             f"代價是有答案的 {gt['n_answerable']} 題，誤擋 {gt['answerable_blocked']} 題。" if gt else None),
+            "門檻用同一批題目挑，偏樂觀。"],
+        5: ["做的過程，我踩到幾個坑。",
+            f"第一，換找法：BM25 的 MRR {_f(by['bm25']['mrr'])}，換成 bge-m3 是 {_f(m3['mrr'])}。" if m3 else None,
+            "第二，混合檢索被否決。原本預期它會贏，數據沒有支持。" if df and df["lo"] <= 0 <= df["hi"] else None,
+            (f"第三，評估程式自己有錯：評審沒看到公司名，第一次忠實度 {_f(fix['first'])}，修正後 {_f(fix['now'])}。題組不同，只能看方向。" if fix else None),
+            "連線實測還抓到：答案把「某某頁面」寫成公司採用。我改了提示詞，但仍抓到別的錯誤。" if d and d["live_test"] else None,
+            "下面兩個失敗案例，是程式從輸出檔自動挑的，不是我挑好看的。" if d else None],
+        6: ["最後講限制。我不想講得太滿。",
+            f"題目只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案，只能當方向。" if d else "題目很少，只能當方向。",
+            "題目和資料同源，沒有獨立測試題。",
+            f"跨公司題 {x['n']} 題中 {x['passed']} 題結果正確。但它的門檻也用同一批題挑，偏樂觀。" if x else None,
+            "我刻意沒做：重排序模型、向量資料庫、微調模型、線上監控。沒做就是沒做。",
+            "放大 100 倍會怎麼改，只是設計想法，我還沒有做。"],
+    }
+
+
+ABOUT_CSS = """.order{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 20px;color:var(--mute);font-size:.9375rem}
+.order ol{display:flex;flex-wrap:wrap;gap:4px;list-style:none;padding:0;margin:0}.order li{margin:0;display:flex;align-items:center}
+.order li:not(:last-child)::after{content:"\\2192";margin-left:4px;color:var(--mute)}
+.order a{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:48px;padding:0 8px;font-weight:650;text-decoration:none;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.order button{min-height:48px;padding:0 16px;color:var(--acc);border-color:var(--acc);font-weight:600}
+[hidden]{display:none!important}
+h2 .t{font-size:.8125rem;font-weight:400;color:var(--mute);white-space:nowrap;margin-left:6px}
+.claim{font-size:1.5rem;line-height:1.45;font-weight:650;margin:0 0 16px}
+.say{margin-top:20px;background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:0 14px;color:var(--mute)}
+.say .plain li{margin:8px 0}
+.qalist details{border-top:1px solid var(--line)}.qalist summary{min-height:56px}.qalist p{margin:0 0 12px}
+#pmbar{display:none}
+.pm .order,.pm h1,.pm nav,.pm footer,.pm .seg:not(.cur){display:none}
+.pm .seg{padding-bottom:96px}.pm h2{margin-top:12px}.pm .claim{font-size:1.75rem}
+.pm #pmbar{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;max-width:820px;margin:0 auto;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line)}
+#pmbar button{flex:1;min-height:56px;font-size:1.0625rem;padding:0 6px}#pmbar .pos{min-width:56px;display:flex;align-items:center;justify-content:center;color:var(--mute);font-variant-numeric:tabular-nums}
+#pmnext{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:600}
+button:disabled{opacity:.4;cursor:default}"""
+
+# 簡報模式：一次顯示一段。上一步／下一步與左右鍵；網址加 #pm 直接進入。沒有 JS 時按鈕不出現，整頁照常捲動。
+ABOUT_JS = """<script>(function(){var b=document.body,S=[].slice.call(document.querySelectorAll('.seg')),i=0,on=false,
+$=function(x){return document.getElementById(x)},pos=$('pmpos'),pv=$('pmprev'),nx=$('pmnext');
+function show(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach(function(s,k){s.classList.toggle('cur',k===i)});
+pos.textContent=(i+1)+' / '+S.length;pv.disabled=i===0;nx.disabled=i===S.length-1;window.scrollTo(0,0)}
+function go(o){on=o;b.classList.toggle('pm',o);if(o)show(0)}
+$('pmbtn').hidden=false;$('pmbtn').onclick=function(){go(true)};$('pmx').onclick=function(){go(false)};
+pv.onclick=function(){show(i-1)};nx.onclick=function(){show(i+1)};
+document.addEventListener('keydown',function(e){if(!on||e.altKey||e.ctrlKey||e.metaKey)return;
+if(e.key==='ArrowRight')show(i+1);else if(e.key==='ArrowLeft')show(i-1);else if(e.key==='Escape')go(false)});
+if(location.hash==='#pm')go(true)})();</script>"""
+
+
 def render(data: dict | None, error: str, n_segments: int, n_companies: int, lengths=None) -> str:
-    """data 為 None 時（輸出檔缺或過期），成績與失敗案例改顯示明確錯誤，不用舊數字。"""
+    """data 為 None 時（輸出檔缺或過期），成績與失敗案例改顯示明確錯誤，不用舊數字。
+    順序是現場講解的順序：這是什麼 → 資料 → 找法 → 怎麼確認 → 踩到的坑 → 限制，最後是問答備案。"""
     err = f"<p class=err>無法顯示：{escape(error)}</p>"
     gen_limit = ("<li>評審與生成同為 DeepSeek，可能偏愛自己的答案。已另用 GPT 複查，但兩者都只量「答案有沒有依據」，不量對不對。</li>"
                  if not data or data["generation"] else "")
     counts = f"只有 {data['n_answerable']} 題有答案、{data['n_unanswerable']} 題沒答案，只能當方向。" if data else "題目很少，只能當方向。"
+    say = _speech(data, n_companies, n_segments)
+    gate = (f"<p><b>查無門檻</b>（最高相似度低於 {data['gate']['threshold']:.3f} 就提示「可能沒有答案」）："
+            f"不可回答題擋住 {data['gate']['unanswerable_blocked']}/{data['gate']['n_unanswerable']}，"
+            f"可回答題誤擋 {data['gate']['answerable_blocked']}/{data['gate']['n_answerable']}。</p>") if data else ""
+    s1 = _seg(1, "這是什麼", "點一家公司，直接問問題，答案附出處。",
+              f"<p class=lead>答案先出現，附出處；原文收在下面，隨時可以核對。目前收 {n_companies} 家公司的公開資料。</p>"
+              f"{_stats(data)}<h3>它怎麼運作</h3>{_flow(n_segments, n_companies)}", say[1])
+    s2 = _seg(2, "資料與切段", "只收公開的事實，依標題切成段落。",
+              f"<p>{n_companies} 家公司，共 {n_segments} 段公開事實段落。太長的段落再切成約 {retrieval.CHUNK} 字、重疊 {retrieval.OVERLAP} 字。</p>"
+              + _decisions(("依標題切段，每段前面加公司名。", "這樣問句提到公司或主題時，比較容易對上。"),
+                           ("只用公開事實。", "個人意見與推測在載入時就丟掉：不進索引、不送 LLM，畫面給別人看也安全。")), say[2])
+    s3 = _seg(3, "怎麼找", f"我用同一批題目比了 {len(METHODS)} 種找法，網站用 {retrieval.DEFAULT_METHOD}。",
+              _decisions(("比較五種找法。", "不先假設哪種好，用同一批題目量。")) + (_find(data) if data else err), say[3])
+    s4 = _seg(4, "怎麼確認答對", "答案要有依據；沒把握就說「可能沒有答案」。",
+              _decisions(("答案優先，失敗時回到原文。", "先立刻顯示原文，再請 LLM 整理答案；失敗、逾時或達用量上限時，直接展開原文。"),
+                         ("沒把握就說「可能沒有答案」。", "最高相似度低於門檻就提示，並且不呼叫 LLM，不亂答。"))
+              + ((gate + _ragas(data)) if data else err), say[4])
+    s5 = _seg(5, "踩到的坑與三次修正", "我踩到幾個坑，每次都用數據修，不憑感覺。",
+              ((_fixes(data) + "<h3>兩個失敗案例</h3>" + _cases(data)) if data else err), say[5])
+    s6 = _seg(6, "限制與下一步", "這是小規模的驗證，數字只能當方向。",
+              f"<ul class=plain><li>{counts}</li>"
+              "<li>題目與語料同源，沒有獨立測試題。「可能沒有答案」的門檻用同一批題挑，分數可能偏樂觀。</li>"
+              f"{gen_limit}<li>資料只有 {n_segments} 段。</li></ul>{_memory(data)}{_level(data)}{_library(n_segments)}"
+              + (_eng(data, n_segments, n_companies, lengths) if data else ""), say[6])
+    order = ("<div class=order><b>講解順序</b><ol>"
+             + "".join(f"<li><a href=#s{i}>{i}</a></li>" for i in range(1, 7)) + "<li><a href=#qa>問答</a></li></ol>"
+             "<button id=pmbtn type=button hidden>簡報模式</button></div>")
+    bar = ("<div id=pmbar role=toolbar aria-label=簡報控制><button id=pmprev type=button>上一步</button><span class=pos id=pmpos aria-live=polite></span>"
+           "<button id=pmnext type=button>下一步</button><button id=pmx type=button>離開</button></div>")
     return page("專案說明｜求職情報問答", f"""<nav><a href="/">問答</a><b>專案說明</b></nav>
-<h1>求職情報問答</h1>
-<section><h2>1. 這是什麼</h2>
-<p class=lead>點一家公司，直接問問題。答案先出現，附出處；原文收在下面，隨時可以核對。目前收 {n_companies} 家公司的公開資料。</p>
-{_stats(data)}{_level(data)}</section>
-<section><h2>2. 流程</h2>
-{_flow(n_segments, n_companies)}</section>
-<section><h2>3. 五個設計決定</h2><ul class=plain>
-<li><b>依標題切段，每段前面加公司名。</b>這樣問句提到公司或主題時，比較容易對上。</li>
-<li><b>比較五種找法。</b>不先假設哪種好，用同一批題目量。</li>
-<li><b>只用公開事實。</b>個人意見與推測在載入時就丟掉：不進索引、不送 LLM，畫面給別人看也安全。</li>
-<li><b>答案優先，失敗時回到原文。</b>先立刻顯示原文，再請 LLM 整理答案；失敗、逾時或達用量上限時，直接展開原文。</li>
-<li><b>沒把握就說「可能沒有答案」。</b>最高相似度低於門檻就提示，並且不呼叫 LLM，不亂答。</li>
-</ul>{_memory(data)}</section>
-<section><h2>4. 我比較了 5 種找法</h2>{(_scores(data) + _eng(data, n_segments, n_companies, lengths)) if data else err}</section>
-<section><h2>5. 兩個失敗案例</h2>{_cases(data) if data else err}</section>
-<section><h2>6. 限制</h2><ul class=plain>
-<li>{counts}</li>
-<li>題目與語料同源，沒有獨立測試題。「可能沒有答案」的門檻用同一批題挑，分數可能偏樂觀。</li>
-{gen_limit}
-<li>資料只有 {n_segments} 段。</li>
-</ul></section>""")
+<h1>求職情報問答</h1>{order}
+{s1}
+{s2}
+{s3}
+{s4}
+{s5}
+{s6}
+{_qa(data, n_segments)}{bar}{ABOUT_JS}""", head=f"<style>{ABOUT_CSS}</style>")

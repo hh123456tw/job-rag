@@ -23,8 +23,8 @@ def with_followups(root, res=None):  # noqa: F811
     put(root, "eval/results_followups.json", res or result())
 
 
-def section3(html):
-    return html.split("<h2>3.")[1].split("<h2>4.")[0]
+def section3(html):  # 對話記憶那一小段現在在第 6 段（限制與下一步）
+    return html.split("<h2>6.")[1].split("<h2 class=qa>")[0]
 
 
 def test_paragraph_shows_numbers_from_the_output_file_and_the_limit(client, root):  # noqa: F811
@@ -33,7 +33,6 @@ def test_paragraph_shows_numbers_from_the_output_file_and_the_limit(client, root
     t = re.sub(r"<[^>]+>", "", section3(html))
     assert "最近 2 輪" in t and "只用 3 題量過" in t and "不補全 1/3" in t and "補全 3/3" in t
     assert "只量了檢索，沒有量多輪答案品質" in t
-    assert len(re.findall(r"<li><b>", section3(html))) == 5  # 五個設計決定不變
     assert not any(w in html for w in BAD)
 
 
