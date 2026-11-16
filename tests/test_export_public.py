@@ -84,7 +84,7 @@ def _scan(tmp_path, rel, text, **kw):
 @pytest.mark.parametrize("text", [
     "token = hf_AbCdEf123456", "key = sk-abc123def", "寄到 someone@example.com", "電話 0912-345-678", "電話 (02) 2345-6789 或 02-2345-6789",
     r"路徑 C:\claude\x", "使用者 cygnu", "帳號 hh123456", "帳號 henry6655", "我的履歷", "面試心得", "公司評價", "有風險", "我的判斷", "面談作戰卡",
-    "ngrok http 5000", "https://x.tracing-herbs.ngrok.app", "JOB_RAG_ACCESS_CODE=abc-123", "set JOB_RAG_ACCESS_CODE=abc", "owner_pin.txt",
+    "ngrok http 5000", "https://x.tracing-herbs.ngrok.app", "JOB_RAG_ACCESS_CODE=abc-123", "set JOB_RAG_ACCESS_CODE=abc", "owner_pin.txt", "def test_owner_pin_x():",
     "ACCESS_CODE: abc123", "AI 協作紀錄", "AI協作",
 ])
 def test_scan_catches_private_strings(tmp_path, text):

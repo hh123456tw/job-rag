@@ -34,6 +34,7 @@ PATTERNS = {
     "市話": re.compile(r"(?<![\w.-])\(?0\d{1,2}\)?[- ]?\d{3,4}[- ]?\d{4}(?!\d)"),
     "私人路徑或帳號": re.compile(r"C:\\claude|cygnu|hh123456|henry6655", re.I),
     "通道或密碼檔名稱": re.compile(r"ngrok|tracing-herbs|owner_pin\.txt", re.I),  # 任何檔案都不准提
+    "密碼檔名（小寫）": re.compile(r"owner_pin"),  # 環境變數 JOB_RAG_OWNER_PIN 是大寫，不受影響
     "存取碼被賦值": re.compile(r"ACCESS_CODE\s*[=:]\s*[^\s\"'#]"),  # 同上：只准寫變數名稱
     "本人密碼被賦值": re.compile(r"OWNER_PIN\s*[=:]\s*[^\s\"'#]"),  # 只准寫變數名稱，不准寫值（空值的範例可以）
 }
