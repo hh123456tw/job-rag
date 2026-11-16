@@ -95,3 +95,42 @@ python -X utf8 -m job_rag.generation
 
 ## 專案說明頁（票 05）
 `/about`（主頁頂端「專案說明」連結）：給面試官 1–2 分鐘看的 6 塊說明。成績與失敗案例只讀 `eval/results_methods.json`（`python -X utf8 -m job_rag.evaluate --method all` 與 `results_methods.txt` 同次產生）、`eval/results_generation.json`、`eval/crossjudge/judge_gpt.json`，不手寫數字。輸出檔缺、讀不了或和 `eval/questions.json` 的題組對不上（指紋不同），該兩塊顯示錯誤。失敗案例的挑法見 `job_rag/about.py` 的 `_cases`。
+
+## 手機現場展示（票 17）
+筆電當伺服器、手機當螢幕。語料、模型與金鑰都留在筆電，不上傳。預設只監聽本機（`127.0.0.1`）；只有手機模式才對區網開放，且不做任何通道或轉發，不會開到公開網路。
+
+**現場 5 步驟**
+1. 手機開「個人熱點」。
+2. 筆電連上這個熱點。
+3. 雙擊 `start_phone.bat`，或在命令列執行 `start.bat phone`。啟動視窗會印出「手機請開：http://<IP>:5000」。
+4. Windows 防火牆跳出視窗時，勾「私人網路」後按允許（只勾公用網路不夠）。
+5. 手機瀏覽器輸入視窗印出的網址。載入模型與索引約幾分鐘，這段時間畫面顯示「準備中」並自動重新整理；變成查詢頁再開始用。
+
+等同命令：`set JOB_RAG_HOST=0.0.0.0` 後執行 `python -X utf8 app.py`。筆電畫面上的主頁頁尾也會顯示一行手機網址（只在手機模式、且從筆電本機開的頁面才有；手機看不到）。
+
+**IP 偵測**：`job_rag/netinfo.py` 排除 `127.*`、`169.254.*` 與常見虛擬網卡（VMware、VirtualBox、Hyper-V、WSL、Docker、藍牙、VPN 等）。剩下多個時全部列出，最可能的標「最可能」：私有網段優先、名稱像 Wi-Fi 優先、結尾 `.1` 的排後面。未知的虛擬網卡會被列為候選，請挑連到手機熱點的那個。
+
+**常見問題**
+- 手機打不開：多半是防火牆。第一次啟動沒勾「私人網路」，到 Windows 安全性 > 防火牆 > 允許應用程式，勾 Python 的私人網路；也確認筆電和手機在同一個熱點。
+- IP 變動：每次重連熱點，筆電的 IP 可能不同。重連後關掉啟動視窗、重新雙擊啟動檔，用新印出的網址。
+- 熱點省電中斷：關掉手機熱點的自動關閉與省電模式，展示期間手機保持亮屏、插電。
+- 筆電睡眠：睡眠後連線會斷。電源選項設成接電時不睡眠，並關掉闔上螢幕就睡眠。
+- 筆電沒有外部網路（例如熱點沒有行動網路）：原文結果照常顯示；按「整理成答案」會顯示「整理失敗：無法連到 DeepSeek（逾時或無網路）…」，原文結果不受影響。
+
+**驗證紀錄**：用筆電自己的區網 IP 以 curl 測過：預熱期間回「準備中」且帶自動重新整理，載入完成後回查詢頁；從區網位址連來的頁面沒有手機網址那一行。斷網情境用測試替身驗證（`tests/test_phone.py`）。手機實機要自己測一次。
+
+## 公開版語料包（票 18 預備）
+
+只含公開事實段落（公司、檔名、標題路徑、文字）與 bge-m3 預先算好的向量，不含原始調查檔。
+
+- 匯出：`python -X utf8 -m job_rag.export_bundle`（需要 `JOB_RAG_CORPUS` 與本機模型），輸出到 `dist/public_bundle/`（不進 git）。
+- 使用：設 `JOB_RAG_BUNDLE=<資料夾>`，`search()` 改從語料包載入，不需要原始語料，也不重新編碼段落（查詢句仍用本機 bge-m3）。沒設時行為不變。
+- 段落雜湊與向量檔、筆數對不上時會報錯。語料包模式只支援 `bm25`、`bge-m3`、`hybrid`。
+- 免費雲端 CPU 的量測見 `eval/spaces_feasibility.md`（`python -X utf8 eval/measure_spaces.py`）。
+
+## 加到主畫面（票 16，輕量 PWA）
+`/manifest.webmanifest`、`static/icon-{180,192,512}.png`（`python scripts/make_icons.py` 重產，只用 Pillow）與三種畫面共用的 meta 標籤（`job_rag/ui.py` 的 `PWA_HEAD`）。加到主畫面後以 standalone 開啟。路徑都是根路徑，換網址不用改。
+**不做 service worker、不做離線快取**：查詢需要後端，離線快取只會讓畫面顯示舊內容。
+- http 區網 IP：iOS Safari 的「加到主畫面」可用，不需要 https；Android Chrome 的安裝提示（安裝為 App）需要 https，http 下最多是瀏覽器標示的主畫面捷徑，是否全螢幕未驗證。
+- https（通道或雲端）：兩者都可用，Android 才有安裝選項。
+- 依據：[Chrome 安裝條件](https://web.dev/articles/install-criteria)、[MDN](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable)（安裝不需要 service worker；localhost 例外）。

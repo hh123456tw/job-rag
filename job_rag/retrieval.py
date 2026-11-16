@@ -1,5 +1,6 @@
 """語料 -> 段落 -> 分類 -> 丟掉排除段落 -> 檢索。對外只有 search（與分類表）。索引裡只有公開事實段落。"""
 import hashlib
+import json
 import os
 import re
 import unicodedata
@@ -70,6 +71,42 @@ def _corpus_dir(corpus) -> Path:
     if not p.is_dir():
         raise RuntimeError(f"語料路徑不存在：{p}（JOB_RAG_CORPUS）")
     return p
+
+
+BUNDLE_PREFIX = "bundle:"
+
+
+def _root(corpus=None) -> str:
+    """索引的鍵。沒傳 corpus 且設了 JOB_RAG_BUNDLE 時用語料包，否則用原始語料。"""
+    b = None if corpus else os.environ.get("JOB_RAG_BUNDLE")
+    if not b:
+        return str(_corpus_dir(corpus).resolve())
+    if not Path(b).is_dir():
+        raise RuntimeError(f"語料包路徑不存在：{b}（JOB_RAG_BUNDLE）")
+    return BUNDLE_PREFIX + str(Path(b).resolve())
+
+
+def segments_hash(index_texts) -> str:
+    return hashlib.sha1("\x00".join(index_texts).encode("utf-8")).hexdigest()[:16]
+
+
+@lru_cache(maxsize=2)
+def _load_bundle(root: str) -> tuple:
+    """(段落, 向量)。段落雜湊或筆數對不上就報錯，不用來路不明的向量。"""
+    d = Path(root.removeprefix(BUNDLE_PREFIX))
+    try:
+        rows = [json.loads(l) for l in (d / "segments.jsonl").read_text(encoding="utf-8").splitlines()]
+        z = np.load(d / "vectors.npz")
+        vecs, want = z["vectors"], str(z["segments_sha1"])
+    except (OSError, KeyError, ValueError) as e:
+        raise RuntimeError(f"語料包讀不到或格式不對：{d}（{e}）") from e
+    segs = tuple(r | {"excluded": False, "_index": f"{r['company']} {r['heading_path']}\n{r['text']}"} for r in rows)
+    got = segments_hash(s["_index"] for s in segs)
+    if got != want:
+        raise RuntimeError(f"語料包段落雜湊對不上向量檔：段落 {got}，向量檔 {want}")
+    if vecs.shape[0] != len(segs):
+        raise RuntimeError(f"語料包向量筆數 {vecs.shape[0]} 與段落筆數 {len(segs)} 不同")
+    return segs, vecs
 
 
 def _company_of(path: list[str], stem: str, names: list[str]) -> str:
@@ -167,6 +204,8 @@ def _tok(s: str) -> list[str]:
 @lru_cache(maxsize=4)
 def _public(root: str) -> tuple:
     """載入時就丟掉排除段落：往後的索引、快取、檢索都只看這裡。"""
+    if root.startswith(BUNDLE_PREFIX):
+        return _load_bundle(root)[0]
     return tuple(s for s in _segments(root) if not s["excluded"])
 
 
@@ -216,8 +255,12 @@ def _encode(method: str, texts: list[str], is_query: bool) -> np.ndarray:
 def _passage_vectors(root: str, method: str) -> np.ndarray:
     """公開事實段落（依 _public 順序）的向量。磁碟快取；雜湊含公司與段落文字，
     分類規則或公司歸屬一改、段落清單變了就重算。"""
+    if root.startswith(BUNDLE_PREFIX):
+        if method != "bge-m3":
+            raise RuntimeError(f"語料包只含 bge-m3 的向量，不支援 {method}")
+        return _load_bundle(root)[1]
     segs = _public(root)
-    h = hashlib.sha1("\x00".join(s["_index"] for s in segs).encode("utf-8")).hexdigest()[:16]
+    h = segments_hash(s["_index"] for s in segs)
     f = Path(os.environ.get("JOB_RAG_CACHE", ".cache")) / f"{method}_{h}.npy"
     if f.is_file():
         return np.load(f)
@@ -268,7 +311,7 @@ def gate_score(question: str, method: str = "bge-m3", company: str | None = None
     """查無判斷用的最高分：bge-m3 與混合是 bge-m3 的最高相似度；其他方式沒做門檻回 None。"""
     if method not in GATED:
         return None
-    _, ranked = _rank_vector(str(_corpus_dir(corpus).resolve()), "bge-m3", question, company)
+    _, ranked = _rank_vector(_root(corpus), "bge-m3", question, company)
     return ranked[0][1] if ranked else None
 
 
@@ -287,7 +330,7 @@ def _detect(root: str, question: str) -> str | None:
 
 def detect_company(question: str, corpus=None) -> str | None:
     """問句只提到一家公司時回該公司，否則（沒有、兩家以上）回 None。"""
-    return _detect(str(_corpus_dir(corpus).resolve()), question)
+    return _detect(_root(corpus), question)
 
 
 def _same_text(s: str) -> str:
@@ -315,7 +358,7 @@ def search(question: str, method: str = "bge-m3", company: str | None = None,
     detect：沒指定 company 時，問句只含一家公司名就只搜那家。dedupe：合併重複段落，結果多一個 also_in。"""
     if method not in METHODS:
         raise ValueError(f"未支援的檢索方式：{method}")
-    root = str(_corpus_dir(corpus).resolve())
+    root = _root(corpus)
     if detect and not company:
         company = _detect(root, question)
     top = None  # 查無判斷用的分數（只有 GATED 方式有）
@@ -347,6 +390,6 @@ def classification_table(corpus=None) -> list[dict]:
 def public_company_counts(corpus=None) -> dict[str, int]:
     """公開事實段落的公司 -> 段落數（「綜合」＝無法歸屬）。"""
     out: dict[str, int] = {}
-    for s in _public(str(_corpus_dir(corpus).resolve())):
+    for s in _public(_root(corpus)):
         out[s["company"]] = out.get(s["company"], 0) + 1
     return dict(sorted(out.items()))
