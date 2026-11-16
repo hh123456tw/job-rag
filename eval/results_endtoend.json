@@ -1,0 +1,95 @@
+{
+ "date": "2026-11-16",
+ "method": "真 DeepSeek；網站實際路徑 /api/search + /api/answer",
+ "note": "12 題；同一人出題；只跑一次；拒答＝答案為查無或被檢索門檻擋下",
+ "rows": [
+  {
+   "id": "u02",
+   "top_score": 0.692,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "u03",
+   "top_score": 0.649,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "u06",
+   "top_score": 0.671,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "u07",
+   "top_score": 0.658,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "u08",
+   "top_score": 0.7,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "r14",
+   "top_score": 0.642,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "r15",
+   "top_score": 0.626,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "r16",
+   "top_score": 0.663,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "r17",
+   "top_score": 0.672,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "r18",
+   "top_score": 0.532,
+   "search_status": "low",
+   "answer": null,
+   "refused": true
+  },
+  {
+   "id": "r19",
+   "top_score": 0.731,
+   "search_status": "ok",
+   "answer": "查無",
+   "refused": true
+  },
+  {
+   "id": "r20",
+   "top_score": 0.504,
+   "search_status": "low",
+   "answer": null,
+   "refused": true
+  }
+ ],
+ "n": 12,
+ "refused": 12,
+ "by_gate": 2,
+ "by_answer_layer": 10
+}
