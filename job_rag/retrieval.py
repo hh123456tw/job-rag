@@ -421,6 +421,8 @@ def search(question: str, method: str = DEFAULT_METHOD, company: str | None = No
     root = _root(corpus, mode)
     if detect and not company:
         company = _detect(root, question)
+    if company and company not in question:  # 在公司頁只問「薪水多少？」：段落開頭有公司名，問句補上才比得準
+        question = f"{company} {question}"
     top = None  # 查無判斷用的分數（只有 GATED 方式有）
     if method == "bm25":
         pool, ranked = _rank_bm25(root, question, company)
