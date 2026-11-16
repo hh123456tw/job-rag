@@ -208,7 +208,7 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
     qs = json.loads(Path(a.questions).read_text(encoding="utf-8"))["questions"]
-    find = lambda q: search(q)  # 預設方式（bge-m3）、k=3、套查無門檻
+    find = lambda q: search(q)  # 預設方式（bge-m3）、k=DEFAULT_K、套查無門檻
     if not a.run:
         text = format_estimate(estimate(qs, find))
         Path("eval/estimate_generation.txt").write_text(text + "\n", encoding="utf-8")

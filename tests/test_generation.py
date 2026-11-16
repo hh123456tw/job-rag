@@ -99,7 +99,7 @@ def test_nothing_from_excluded_sections_reaches_generation_or_judge(monkeypatch)
     # contexts 都是檢索結果：每一段都找得到對應的公開事實段落
     for r in rows:
         for c in r["contexts"]:
-            assert any(h["text"] in c for h in search(r["question"], corpus=MINI, k=3, gate=False))
+            assert any(h["text"] in c for h in search(r["question"], corpus=MINI, k=retrieval.DEFAULT_K, gate=False))
 
 
 # ---- 失敗要標記，不補分 ----

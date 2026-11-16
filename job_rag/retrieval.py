@@ -407,7 +407,7 @@ def _dedupe(pool, ranked):
     return kept
 
 
-DEFAULT_METHOD, DEFAULT_K = "bge-m3", 3  # 預設檢索方式與取前幾段（介面與 /about 都讀這兩個）
+DEFAULT_METHOD, DEFAULT_K = "bge-m3", 5  # 預設檢索方式與取前幾段（介面與 /about 都讀這兩個）
 
 
 def search(question: str, method: str = DEFAULT_METHOD, company: str | None = None,

@@ -26,9 +26,9 @@ def test_result_fields():
     assert "鯨魚" in r["text"]
 
 
-def test_returns_at_most_three_ranked():
+def test_returns_at_most_default_k_ranked():
     r = q("FastAPI 工程師")
-    assert 1 <= len(r) <= 3
+    assert 1 <= len(r) <= retrieval.DEFAULT_K
     assert [x["score"] for x in r] == sorted((x["score"] for x in r), reverse=True)
 
 

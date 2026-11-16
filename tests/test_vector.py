@@ -126,7 +126,7 @@ def test_vector_scores_are_cosine_and_descending(method):
 
 def test_vector_query_with_unrelated_text_still_returns_k():
     # 沒有查無門檻（之後的票）：向量檢索一律回 k 個
-    assert len(q("zzzxqv qqq 量子麵包", method="bge-m3")) == 3
+    assert len(q("zzzxqv qqq 量子麵包", method="bge-m3")) == retrieval.DEFAULT_K
 
 
 # ---- 混合 ----

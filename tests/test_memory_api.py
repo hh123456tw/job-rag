@@ -7,7 +7,7 @@ from job_rag import guard, retrieval
 from tests.test_answer import MINI, FakePost  # noqa: F401
 from tests.test_vector import fake_env  # noqa: F401  (autouse fixture)
 
-HIST = json.dumps([{"q": "甲科技有哪些職缺？", "a": "徵後端工程師 [1]", "m": "demo"}], ensure_ascii=False)
+HIST = json.dumps([{"q": "甲科技有哪些職缺？", "a": "歷史答案獨特標記 [1]", "m": "demo"}], ensure_ascii=False)
 
 
 @pytest.fixture
@@ -58,7 +58,7 @@ def test_history_is_not_stored_on_the_server(web, monkeypatch):
     c = web.app.test_client()
     c.get("/api/answer", query_string={"q": "那薪水呢？", "company": "甲科技", "history": HIST})
     c.get("/api/answer", query_string={"q": "那薪水呢？", "company": "甲科技"})  # 同一個客戶端、這次沒帶
-    assert "先前對話" not in post.calls[1][2]["messages"][1]["content"] and "徵後端工程師" not in json.dumps(post.calls[1][2], ensure_ascii=False)
+    assert "先前對話" not in post.calls[1][2]["messages"][1]["content"] and "歷史答案獨特標記" not in json.dumps(post.calls[1][2], ensure_ascii=False)
 
 
 @pytest.mark.parametrize("path", ["/api/search", "/api/answer", "/answer"])
