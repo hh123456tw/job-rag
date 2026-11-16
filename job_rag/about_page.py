@@ -127,6 +127,35 @@ def _level(d) -> str:
             f"<div><h3>刻意沒做</h3><ul class=plain>{li(undone)}</ul></div></div>")
 
 
+def _arch(n_segments: int, n_companies: int) -> str:
+    """系統架構圖：純 HTML／CSS。方框文字取自程式常數與載入結果，每個方框都對得上程式（tests/test_about_eng.py）。"""
+    r = retrieval
+
+    def box(t, x):
+        return f"<li class=box><b>{escape(t)}</b><small>{escape(x)}</small></li>"
+
+    def chain(items):
+        return "<ol class=pipe>" + "".join(box(*i) for i in items) + "</ol>"
+    main = [("公開資料", f"{n_companies} 家、{n_segments} 段公開事實段落"),
+            ("切段", f"依標題切；太長再切（約 {r.CHUNK} 字、重疊 {r.OVERLAP} 字）"),
+            ("向量", f"{r.DEFAULT_METHOD}，本機載入，不連網"),
+            ("索引", "FAISS（IndexFlatIP，記憶體內）"),
+            (f"取前 K 段", f"K = {r.DEFAULT_K}，前 {r.DEFAULT_K} 段原文先顯示"),
+            ("查無門檻", f"最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}：不呼叫 LLM"),
+            ("生成", "DeepSeek，只根據段落回答"),
+            ("答案與出處", "附引用編號；失敗回到原文")]
+    ev = [("評估集", "手寫題目與金標段落"), ("MRR／Hit@k", "量找法"), ("RAGAS", "量答案"), ("另一個 AI 複查", "GPT 獨立複查")]
+    mode = [("展示", "預設；只有公開事實段落"), ("自用", "本人密碼通過後才開；另有本機資料")]
+    return (f"<div class=arch><p class=lab>主流程</p>{chain(main)}<p class=lab>評估迴路</p>{chain(ev)}"
+            f"<p class=lab>模式隔離</p>{chain(mode)}</div>")
+
+
+def _eng(d, n_segments: int, n_companies: int) -> str:
+    """給工程面試官的技術細節（預設收合）。附在第 4 塊底下；沒有評估資料時整塊不顯示。"""
+    return ("<details class=eng><summary>給工程面試官：技術細節</summary>"
+            f"<h3>系統架構</h3>{_arch(n_segments, n_companies)}</details>")
+
+
 def _scores(d) -> str:
     return (f"<p>用 {d['n_answerable']} 道有答案的題目，量五種找法：正確的段落有沒有排進前 3 名。條越長越好。</p>"
             f"{_bars(d)}{_terms(d)}<details class=more><summary>看詳細數字</summary>{_details(d)}</details>")
@@ -198,7 +227,7 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int) -> 
 <li><b>答案優先，失敗時回到原文。</b>先立刻顯示原文，再請 LLM 整理答案；失敗、逾時或達用量上限時，直接展開原文。</li>
 <li><b>沒把握就說「可能沒有答案」。</b>最高相似度低於門檻就提示，並且不呼叫 LLM，不亂答。</li>
 </ul>{_memory(data)}</section>
-<section><h2>4. 我比較了 5 種找法</h2>{_scores(data) if data else err}</section>
+<section><h2>4. 我比較了 5 種找法</h2>{(_scores(data) + _eng(data, n_segments, n_companies)) if data else err}</section>
 <section><h2>5. 兩個失敗案例</h2>{_cases(data) if data else err}</section>
 <section><h2>6. 限制</h2><ul class=plain>
 <li>{counts}</li>
