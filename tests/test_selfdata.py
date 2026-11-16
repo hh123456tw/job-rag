@@ -1,4 +1,4 @@
-"""票 24：面經載入器。全部用手寫假資料，不讀真的 selfdata/。"""
+"""票 24：面經載入器。全部用手寫假資料，不讀真的自用資料夾。"""
 import json
 
 from job_rag.selfdata import article_counts, load_interviews

@@ -127,6 +127,8 @@ def test_fake_answer_flag_is_not_set_by_launchers_or_docs_as_default():
     from pathlib import Path
     root = Path(__file__).parent.parent
     for f in ("start.bat", "start_phone.bat", "start_public.bat", "scripts/start_public.ps1"):
+        if not (root / f).exists():
+            continue  # 公開版不含通道啟動檔
         assert "FAKE_ANSWER" not in (root / f).read_text(encoding="utf-8"), f
 
 

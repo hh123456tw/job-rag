@@ -12,20 +12,20 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # 公開版路徑 -> 私人 repo 路徑（必要檔；缺一個就報錯）
 FILES = {
-    "app.py": "app.py", "start_phone.bat": "start_phone.bat", ".env.example": ".env.example",
+    "app.py": "app.py", "start_phone.bat": "start_phone.bat", ".env.example": "public/env.example",  # 公開版的 .env.example 不含自用設定
     "requirements.txt": "requirements.txt", "requirements-ragas.txt": "requirements-ragas.txt",
     "requirements-vector.txt": "requirements-vector.txt",
     "README.md": "public/README.md", "start.bat": "public/start.bat", ".gitignore": "public/gitignore",  # 公開版專用範本
     "eval/questions.sample.json": "eval/questions.sample.json",
 }
-# 只複製這些樣式的檔案（副檔名也限制；scripts/ 只有圖示腳本，匯出腳本與個人用途的腳本不含）
-GLOBS = ["job_rag/*.py", "scripts/make_icons.py", "static/*.png", "tests/*.py", "tests/fixtures/mini/**/*.md", "sample_corpus/**/*.md"]
+# 只複製這些樣式的檔案（副檔名也限制；scripts/ 只有圖示腳本；匯出腳本、通道啟動檔 start_public.*、個人用途的腳本都不含）
+GLOBS = ["job_rag/*.py", "job_rag/company_presets.json", "scripts/make_icons.py", "static/*.png", "tests/*.py", "tests/fixtures/mini/**/*.md", "sample_corpus/**/*.md"]
 NOT_PUBLIC = {"tests/test_export_public.py"}  # 匯出腳本的測試依賴私人 repo 的檔案
 
 FORBIDDEN_PARTS = {".git", ".scratch", "demo", "models", ".cache", "dist", "docs", ".env", "SPEC.md", "GLOSSARY.md", "CLAUDE.md", "selfdata"}  # selfdata：自用資料（票 24）
 ALLOWED_EVAL = {"eval/questions.sample.json"}
 # 這些字眼只准出現在「分類與過濾私人段落」的程式與它的測試、假語料裡（它們必須叫得出被排除的類別）
-WORDS = re.compile("履歷|面試|評價|風險|判斷|作戰|媒合|廠商深查|求職策略")
+WORDS = re.compile("履歷|面試|評價|風險|判斷|作戰|媒合|廠商深查|求職策略|協作")
 WORD_OK = ("job_rag/retrieval.py", "job_rag/evaluate.py", "job_rag/classify.py", "job_rag/selfdata.py", "tests/")
 PATTERNS = {
     "hf 金鑰": re.compile(r"\bhf_\w+"), "sk 金鑰": re.compile(r"\bsk-\w+"),
@@ -33,8 +33,11 @@ PATTERNS = {
     "手機": re.compile(r"(?<![\w.-])09\d{2}[- ]?\d{3}[- ]?\d{3}(?!\d)"),
     "市話": re.compile(r"(?<![\w.-])\(?0\d{1,2}\)?[- ]?\d{3,4}[- ]?\d{4}(?!\d)"),
     "私人路徑或帳號": re.compile(r"C:\\claude|cygnu|hh123456|henry6655", re.I),
+    "通道或密碼檔名稱": re.compile(r"ngrok|tracing-herbs|owner_pin\.txt", re.I),  # 任何檔案都不准提
+    "存取碼被賦值": re.compile(r"ACCESS_CODE\s*[=:]\s*[^\s\"'#]"),  # 同上：只准寫變數名稱
     "本人密碼被賦值": re.compile(r"OWNER_PIN\s*[=:]\s*[^\s\"'#]"),  # 只准寫變數名稱，不准寫值（空值的範例可以）
 }
+SELF_PATH = re.compile(r"selfdata[/\\]")
 SURVEY_NAME = re.compile(r"(?<![\w])(?:0[0-9]|1[0-6])_[^\s\"'`,)\]/\\<>|]+?\.md")
 # 假語料用的檔名（測試與 fixtures）：樣式像完整語料，但不是真檔名
 FAKE_NAMES = {"01_甲科技.md", "01_甲.md", "02_乙.md", "02_乙資訊.md", "01_丙公司.md", "03_丙.md", "04_丁.md", "03_神通資訊.md",
@@ -85,6 +88,8 @@ def scan(out, real_names=(), secrets=()) -> list[str]:
             continue
         for label, rx in PATTERNS.items():
             found += [f"{rel}：{label}：{m.group(0)}" for m in rx.finditer(txt)]
+        if rel != "job_rag/selfdata.py":  # 自用資料夾的路徑：只有讀它的那個模組可以提
+            found += [f"{rel}：自用資料夾路徑：{m.group(0)}" for m in SELF_PATH.finditer(txt)]
         if not rel.startswith(WORD_OK):
             found += [f"{rel}：私人用語：{m.group(0)}" for m in WORDS.finditer(txt)]
         found += [f"{rel}：完整語料的檔名：{m.group(0)}" for m in SURVEY_NAME.finditer(txt) if m.group(0) not in FAKE_NAMES]

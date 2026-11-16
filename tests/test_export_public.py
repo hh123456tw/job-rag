@@ -44,6 +44,37 @@ def test_public_files_come_from_the_public_templates():
     assert {"sample_corpus/S1_奧衍.md", "eval/questions.sample.json", "static/icon-192.png", "scripts/make_icons.py"} <= set(src)
 
 
+# ---- 票 26：公開版要能跑現在的程式，但不帶通道啟動檔與自用設定 ----
+def test_export_includes_everything_the_app_imports_and_reads():
+    src = {d for _, d in ex.collect(ROOT)[0]}
+    assert {"job_rag/company_presets.json", "job_rag/guard.py", "job_rag/memory.py", "job_rag/owner.py", "job_rag/chat_ui.py",
+            "job_rag/about_page.py", "start.bat", "start_phone.bat", ".env.example"} <= src
+    for tunnel in ("start_public.bat", "scripts/start_public.ps1", "scripts/check_self_presets.py", "scripts/gen_company_presets.py",
+                   "scripts/export_public_repo.py", "smoke_deepseek.py"):
+        assert tunnel not in src, tunnel
+
+
+def test_collect_never_copies_tunnel_launchers_even_if_present(tmp_path):
+    for rel in ("app.py", "start_public.bat", "scripts/start_public.ps1", "scripts/check_self_presets.py", "job_rag/company_presets.json"):
+        _touch(tmp_path, rel)
+    got = {dst for _, dst in ex.collect(tmp_path)[0]}
+    assert got == {"app.py", "job_rag/company_presets.json"}
+
+
+def test_public_env_example_has_no_self_mode_setting(exported):
+    env = (exported / ".env.example").read_text(encoding="utf-8")
+    assert "DEEPSEEK_API_KEY=" in env and "OWNER_PIN" not in env and "SELF_DIR" not in env
+
+
+def test_public_readme_title_matches_ui_and_has_no_private_topics(exported):
+    txt = (exported / "README.md").read_text(encoding="utf-8")
+    assert txt.splitlines()[0] == "# 求職情報問答"
+    for w in ("自用", "OWNER", "PIN", "協作", "ngrok", "存取碼", "ACCESS_CODE", "履歷", "求職策略", "selfdata"):
+        assert w not in txt, w
+    for w in ("公司對話頁", "預設題目", "追問", "查無", "專案說明", "信賴區間", "English summary"):
+        assert w in txt, w
+
+
 # ---- 掃描：每條規則都要有抓得到、和抓不到的例子 ----
 def _scan(tmp_path, rel, text, **kw):
     _touch(tmp_path, rel, text)
@@ -53,6 +84,8 @@ def _scan(tmp_path, rel, text, **kw):
 @pytest.mark.parametrize("text", [
     "token = hf_AbCdEf123456", "key = sk-abc123def", "寄到 someone@example.com", "電話 0912-345-678", "電話 (02) 2345-6789 或 02-2345-6789",
     r"路徑 C:\claude\x", "使用者 cygnu", "帳號 hh123456", "帳號 henry6655", "我的履歷", "面試心得", "公司評價", "有風險", "我的判斷", "面談作戰卡",
+    "ngrok http 5000", "https://x.tracing-herbs.ngrok.app", "JOB_RAG_ACCESS_CODE=abc-123", "set JOB_RAG_ACCESS_CODE=abc", "owner_pin.txt",
+    "ACCESS_CODE: abc123", "AI 協作紀錄", "AI協作",
 ])
 def test_scan_catches_private_strings(tmp_path, text):
     assert _scan(tmp_path, "app.py", text + "\n"), text
@@ -96,6 +129,12 @@ def test_scan_blocks_self_data_folder_and_pin_values_but_allows_variable_names(t
     assert _scan(tmp_path / "h", "tests/test_a.py", "monkeypatch.setenv('JOB_RAG_OWNER_PIN', PIN)\n") == []
     assert _scan(tmp_path / "i", "app.py", "面經內文開頭二十四個字的片段在這裡出現了\n", secrets=["面經內文開頭二十四個字的片段在這裡出現了"])
     assert _scan(tmp_path / "j", "app.py", "完全不相干\n", secrets=["", "面經內文"]) == []  # 空字串不算，沒出現不算
+
+
+def test_scan_blocks_self_data_path_mentions_except_in_the_self_data_module(tmp_path):
+    assert _scan(tmp_path / "a", "README.md", "資料放在 selfdata/面經\n") and _scan(tmp_path / "b", "app.py", "open('selfdata/x')\n")
+    assert _scan(tmp_path / "c", "job_rag/selfdata.py", "# selfdata/面經/**/*.jsonl\n") == []
+    assert _scan(tmp_path / "d", "job_rag/selfdata.py", "owner_pin.txt\n")  # 密碼檔名任何地方都不准
 
 
 def test_self_mode_words_are_allowed_only_in_the_self_data_module(tmp_path):
