@@ -1,7 +1,7 @@
 # 03: 向量檢索與混合，共 5 種方式
 
 **Blocked by:** 02
-**Status:** ready-for-human
+**Status:** resolved
 
 **What to build:** 在同一個縫上加入 bge-small-zh、bge-m3、multilingual-e5（FAISS）與混合（BM25＋bge-m3，RRF，k=60）。評估表擴成 5 種。
 
