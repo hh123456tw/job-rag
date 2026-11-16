@@ -271,11 +271,23 @@ def test_self_index_still_loading_gives_503_not_a_leak_or_a_hang(web, monkeypatc
     assert web.app.test_client().get("/api/search", query_string={"q": "貓熊"}).status_code == 200  # 展示不受影響
 
 
-def test_answer_limit_and_threshold_apply_in_both_modes(web, monkeypatch):
+def test_owner_is_exempt_from_answer_limit_but_threshold_still_applies(web, monkeypatch):
     monkeypatch.setenv("JOB_RAG_ANSWER_LIMIT", "1")
     monkeypatch.setattr(web, "_post", FakePost())
     own = as_owner(web)
     assert own.get("/api/answer", query_string={"q": "貓熊 職缺", "company": "甲科技"}).get_json()["status"] == "ok"
-    assert own.get("/api/answer", query_string={"q": "貓熊 職缺", "company": "甲科技"}).status_code == 429
+    assert own.get("/api/answer", query_string={"q": "貓熊 職缺", "company": "甲科技"}).status_code == 200  # 本人不受每小時上限
     monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 99)
     assert own.get("/api/answer", query_string={"q": "貓熊", "company": "甲科技"}).get_json()["status"] == "low"
+
+
+def test_local_direct_requests_are_exempt_from_answer_limit_but_proxied_ones_are_not(web, monkeypatch):
+    monkeypatch.setenv("JOB_RAG_ANSWER_LIMIT", "1")
+    monkeypatch.setenv("JOB_RAG_LOCAL_OPEN", "1")
+    monkeypatch.setattr(web, "_post", FakePost())
+    c, q = web.app.test_client(), {"q": "貓熊 職缺", "company": "甲科技"}
+    assert c.get("/api/answer", query_string=q).get_json()["status"] == "ok"
+    assert c.get("/api/answer", query_string=q).status_code == 200  # 本機直連：不受限
+    via_proxy = {"X-Forwarded-For": "1.2.3.4"}
+    assert c.get("/api/answer", query_string=q, headers=via_proxy).get_json()["status"] == "ok"
+    assert c.get("/api/answer", query_string=q, headers=via_proxy).status_code == 429  # 經代理：照樣限制

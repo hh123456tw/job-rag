@@ -24,6 +24,11 @@ from job_rag.evaluate import DEPTH, hit_rank
 from job_rag.ui import page
 
 app = Flask(__name__)
+def _unlimited(mode: str) -> bool:
+    """每小時上限只管公開訪客：本人（自用模式）與本機直連不受限。"""
+    return mode == "self" or (os.environ.get("JOB_RAG_LOCAL_OPEN") == "1" and request.remote_addr in ("127.0.0.1", "::1") and "X-Forwarded-For" not in request.headers)
+
+
 _limiter = guard.RateLimit()  # 「整理成答案」的全域用量；測試可換成注入時鐘的版本
 _owner = Owner()  # 本人密碼與簽名 cookie（票 24）；金鑰每次啟動隨機產生，重啟即失效
 
@@ -308,7 +313,7 @@ def answer_json():
         return _tag({"status": "error", "message": f"錯誤：{e}"}), 500
     if _low_cross(hits) if cross else _low(hits, company):
         return _tag({"status": "low"})
-    if wait := _limiter.try_acquire(guard.answer_limit()):
+    if not _unlimited(mode) and (wait := _limiter.try_acquire(guard.answer_limit())):
         return _tag({"status": "limit", "message": f"整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
                      f"請約 {-(-wait // 60)} 分鐘後再試。原文在下面，不受影響。"}), 429
     t0 = time.perf_counter()
@@ -504,7 +509,7 @@ def index():
         raw = (LOW if low else "") + _hits_html(hits, low)
         if hits and not low:
             if a.get("answer"):  # 沒有 JS 時的退路：伺服器端整理（與 /answer 同樣計次）
-                if wait := _limiter.try_acquire(guard.answer_limit()):
+                if not _unlimited(mode) and (wait := _limiter.try_acquire(guard.answer_limit())):
                     status = 429
                     ans = (f"<p class='err'>整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
                            f"請約 {-(-wait // 60)} 分鐘後再試（原文結果不受影響）。</p>")
