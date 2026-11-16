@@ -7,7 +7,7 @@ from tests.test_answer import MINI, PUB, FakePost, sent_text  # noqa: F401
 from tests.test_answer import key  # noqa: F401  (autouse fixture)
 
 # 真實測試的尼諾思案例（eval/crossjudge/live_input.json L14）：段落只說這個「頁面」存在，沒說公司採用
-NINO = {"company": "尼諾思科技", "file": "05_尼諾思.md", "heading_path": "5. 技術堆疊",
+NINO = {"company": "尼諾思科技", "file": "xx_範例.md", "heading_path": "5. 技術堆疊",
         "text": "- 【自述】ROS 2、MoveIt、Gazebo。\n- 【自述】AMD Vitis AI／FPGA／DPU 的頁面。\n- 語言、雲端、框架：查無。"}
 HIST = [{"q": "甲科技有哪些職缺？", "a": "徵後端工程師 [1]"}, {"q": "那薪水呢？", "a": "月薪四萬到六萬 [1]"}]
 
