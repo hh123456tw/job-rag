@@ -1,7 +1,7 @@
 # 23: 資料少的三家移出系統
 
 **Blocked by:** 22
-**Status:** ready-for-agent
+**Status:** resolved
 
 奧衍、尼諾思（尼諾思科技）、醫宇宙移出系統。研究筆記檔不動（在 repo 外）。現場公司由 11 家變 8 家。
 
