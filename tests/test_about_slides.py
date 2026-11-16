@@ -194,3 +194,36 @@ def test_slides_never_use_forbidden_wording(client, root):  # noqa: F811
             assert w not in text, w
     src = open("job_rag/about_slides.py", encoding="utf-8").read()
     assert not WORDS.search(src)
+
+
+def test_versus_bars_recount_every_question_from_the_ranks(client, root):  # noqa: F811
+    f = json.loads((root / "eval/results_methods.json").read_text(encoding="utf-8"))["methods"]
+    rr = lambda r: 1 / r if r else 0.0
+    sec = slide(get(client).get_data(as_text=True), "forest")
+    got = {}
+    for m, k, v in re.findall(r'<rect class="sg (?:win|tie|loss)" data-m="([\w-]+)" data-k="(\w+)" data-v="(\d+)"', sec):
+        got.setdefault(m, {})[k] = int(v)
+    a = f["bge-m3"]["ranks"]
+    assert list(got) == ["bm25", "bge-small-zh", "e5-large", "hybrid"]
+    for m, c in got.items():
+        b = f[m]["ranks"]
+        want = {"win": sum(rr(a[i]) > rr(b[i]) for i in a), "loss": sum(rr(a[i]) < rr(b[i]) for i in a)}
+        want["tie"] = len(a) - want["win"] - want["loss"]
+        assert c == {k: v for k, v in want.items() if v}
+    assert got["hybrid"] == {"win": 1, "tie": 2, "loss": 1}  # 夾具手算：a1 勝、a2 a3 平、a4 負
+
+
+def test_hybrid_is_always_written_with_its_two_parts_on_slides(client):
+    h = get(client).get_data(as_text=True)
+    for key in ("methods", "forest", "qa"):
+        sec = slide(h, key)
+        assert "BM25＋bge-m3" in sec or "（BM25＋bge-m3）" in sec, key
+    assert "混合（BM25＋bge-m3）" in slide(h, "forest") and "不能確定誰真的比較好" in slide(h, "forest") and "看詳細數字" in slide(h, "forest")
+
+
+def test_methods_slide_defines_hit_and_mrr_in_plain_words(client, root):  # noqa: F811
+    d = about.load(root)
+    m3 = next(r for r in d["table"] if r["method"] == "bge-m3")
+    sec = slide(get(client).get_data(as_text=True), "methods")
+    assert "Hit@3＝正確答案的那段，有排進前 3 名的題數比例" in sec and "Hit@1 是第 1 名、Hit@5 是前 5 名" in sec
+    assert f"{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{m3['hit@3']:.3f}" in sec and "MRR＝正確段落名次的倒數平均" in sec

@@ -8,8 +8,9 @@ from .ui import page
 
 LABEL = {"bm25": "BM25（jieba 斷詞）", "bge-small-zh": "bge-small-zh", "bge-m3": "bge-m3", "e5-large": "multilingual-e5",
          "hybrid": "混合（BM25＋bge-m3）"}
+HYBRID = LABEL["hybrid"]  # 「混合」當方法名稱時一律寫這個，讓人知道混的是哪兩個
 PLAIN = {"bm25": "關鍵字比對", "bge-small-zh": "小型向量模型", "bge-m3": "大型向量模型", "e5-large": "另一個向量模型", "hybrid": "關鍵字加向量"}
-SHORT = {"bm25": "BM25", "bge-small-zh": "bge-small-zh", "bge-m3": "bge-m3", "e5-large": "e5", "hybrid": "混合"}
+SHORT = {"bm25": "BM25", "bge-small-zh": "bge-small-zh", "bge-m3": "bge-m3", "e5-large": "e5", "hybrid": HYBRID}
 
 def _f(x):
     return f"{x:.3f}"
@@ -70,8 +71,10 @@ def _details(d) -> str:
             f"<td>{_f(r[k])}<small>[{_f(r['ci'][k][0])}, {_f(r['ci'][k][1])}]</small></td>" for k in ("hit@1", "hit@3", "mrr"))
         + "</tr>" for r in d["table"])
     g, c, gt = d["generation"], d["cross"], d["gate"]
+    m3 = next(r for r in d["table"] if r["method"] == "bge-m3")
     intro = (
-        f"<p>評分單位是段落。<b>Hit@1</b>、<b>Hit@3</b>：正確段落排在第 1 名、前 3 名內的題數比例。"
+        f"<p>評分單位是段落。<b>Hit@3</b>：正確答案的那段，有排進前 3 名的題數比例（<b>Hit@1</b> 是第 1 名、<b>Hit@5</b> 是前 5 名）；"
+        f"例：{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{_f(m3['hit@3'])}。"
         f"<b>MRR</b>（平均倒數名次）：正確段落平均排第幾名的倒數，越接近 1 越好。方括號是 95% 信賴區間："
         f"把 {d['n_answerable']} 題重抽 {d['bootstrap']} 次，成績落在這個範圍。名次最多看到第 {d['depth']}。</p>"
         f"<table><tr><th>找法</th><th>Hit@1</th><th>Hit@3</th><th>MRR</th></tr>{rows}</table>")
@@ -154,7 +157,7 @@ def _level(d) -> str:
     g, c = d["generation"], d["cross"]
     done = [
         "依標題切段，答案附出處與引用編號",
-        f"比較 {len(METHODS)} 種找法（關鍵字、向量、混合），用同一批題目量",
+        f"比較 {len(METHODS)} 種找法（關鍵字、向量、{HYBRID}），用同一批題目量",
         f"檢索評估：MRR {_f(best['mrr'])}（95% 區間 {_f(lo)}–{_f(hi)}）",
         f"沒把握就不亂答：最高相似度低於 {retrieval.NOT_FOUND_THRESHOLD:.3f} 不呼叫 LLM",
     ]
@@ -248,10 +251,10 @@ def _trade(d, n_segments: int) -> str:
          + ("區間有重疊，差距只能當方向。" if overlap else "") + speed + "bge-small-zh 與 e5 沒量過載入與編碼時間。"),
         ("不加重排序模型（reranker）",
          f"沒量過。資料少，單獨 bge-m3 的 MRR 已有 {_f(m3['mrr'])}；沒有試過加 reranker 會不會更好。"),
-        ("不用混合檢索",
-         f"混合＝BM25 關鍵字名次加 bge-m3 語意名次，用 RRF 合併。原本預期它會贏。bge-m3 減混合的 MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
+        ("不用混合檢索（BM25＋bge-m3）",
+         f"{HYBRID}＝BM25 關鍵字名次加 bge-m3 語意名次，用 RRF 合併。原本預期它會贏。bge-m3 減{HYBRID}的 MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
          + ("：區間含 0，數據沒有支持混合比較好，所以用較簡單的單一向量找法。" if df["lo"] <= 0 <= df["hi"]
-            else "：區間不含 0，單一向量找法與混合的差異可信。")),
+            else f"：區間不含 0，單一向量找法與{HYBRID}的差異可信。")),
         ("DeepSeek 生成與評審，另請 GPT 複查",
          f"{check}評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查；兩者都只量答案有沒有依據，不量對不對。"
          if gen else "評審和生成同為 DeepSeek，可能偏愛自己的答案；兩者都只量答案有沒有依據，不量對不對。這份輸出沒有複查結果。"),
@@ -293,7 +296,7 @@ def _fixes(d) -> str:
     df, rf = d["mrr_diff"], d["ragas_fix"]
     items = [
         f"<b>找法：</b>BM25 的 MRR {_ci(by['bm25'])} → bge-m3 的 MRR {_ci(by['bge-m3'])}。",
-        f"<b>混合檢索被否決：</b>我們原本預期混合會贏，數據沒有支持。bge-m3 減混合的 MRR 差 {df['diff']:+.3f}，"
+        f"<b>混合檢索（BM25＋bge-m3）被否決：</b>我們原本預期{HYBRID}會贏，數據沒有支持。bge-m3 減{HYBRID}的 MRR 差 {df['diff']:+.3f}，"
         f"95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
         + ("，含 0，看不出混合比較好。" if df["lo"] <= 0 <= df["hi"] else "，不含 0。"),
     ]
@@ -385,6 +388,11 @@ def _seg(n, title, claim, evidence, say) -> str:
             f"<p class=claim>{escape(claim)}</p>{evidence}{_say(say)}</section>")
 
 
+def _vs_line(d) -> str:
+    v = next((x for x in d["versus"] if x["method"] == "hybrid"), None) if d else None
+    return f"{v['n']} 題裡 {v['tie']} 題排名一樣、{v['win']} 題 bge-m3 排得比較前、{v['loss']} 題比較後；" if v else ""
+
+
 def _qa(d, n_segments: int) -> str:
     """問答備案：常被追問的 5 題。數字取自輸出檔與載入結果；缺資料的句子略過。"""
     m3 = next((r for r in d["table"] if r["method"] == "bge-m3"), None) if d else None
@@ -396,9 +404,9 @@ def _qa(d, n_segments: int) -> str:
         ("為什麼不用重排序模型（reranker）？",
          ["我沒有試過。", f"資料少，bge-m3 的 MRR 已有 {_f(m3['mrr'])}。" if m3 else None,
           "加了會不會更好，我沒量過，所以不說它有用或沒用。"]),
-        ("為什麼混合檢索沒有贏？",
-         ["我原本以為混合會贏。",
-          f"bge-m3 減混合的 MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]。" if df else None,
+        ("為什麼混合檢索（BM25＋bge-m3）沒有贏？",
+         [f"我原本以為{HYBRID}會贏。",
+          (_vs_line(d) + f"MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]。") if df else None,
           ("區間含 0，看不出誰比較好。所以我用比較簡單的單一向量找法。" if df and df["lo"] <= 0 <= df["hi"]
            else "區間不含 0，兩者的差異可信。" if df else None)]),
         ("查無門檻是不是太樂觀？",
@@ -430,11 +438,11 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             f"一共 {n_companies} 家公司、{n_segments} 段。", "每段前面加公司名，問到公司時比較容易對上。"],
         3: ["我先問：哪種找法最會找？",
             f"我手寫了 {n} 道有答案的題目，比了 {len(METHODS)} 種找法。" if d else None,
-            "看正確的段落有沒有排進前 3 名。",
+            "看正確的段落有沒有排進前 3 名，這叫 Hit@3；排第 1 名是 Hit@1，前 5 名是 Hit@5。",
             f"網站用的 {r.DEFAULT_METHOD}，{m3['found']} / {n} 題排進前 3 名。" if m3 else None,
             "MRR 的意思是：正確段落排第 1 名得 1 分，第 2 名得 0.5 分，再全部平均。越接近 1 越好。" if d else None,
             (f"bge-m3 的 MRR 是 {_f(m3['mrr'])}" + ("，是五種裡最高的。" if top_mrr else "。")) if m3 else None,
-            "我原本以為混合會更好。數據看不出來，所以選比較簡單的 bge-m3。" if df and df["lo"] <= 0 <= df["hi"] else None,
+            f"我原本以為{HYBRID}會更好。數據看不出來，所以選比較簡單的 bge-m3。" if df and df["lo"] <= 0 <= df["hi"] else None,
             f"問單一公司取前 {r.DEFAULT_K} 段；問全部公司，每家取 {r.PER_COMPANY} 段。"],
         4: ["找得到還不夠，答案也要有依據。",
             f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是取前 3 段時量的，之後改成取前 5 段，我還沒有重跑。" if g else None,
@@ -447,7 +455,7 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             "門檻用同一批題目挑，偏樂觀。門檻高低怎麼影響結果，可以到「查無門檻」頁自己拖拖看。"],
         5: ["做的過程，我踩到幾個坑。",
             f"第一，換找法：BM25 的 MRR {_f(by['bm25']['mrr'])}，換成 bge-m3 是 {_f(m3['mrr'])}。" if m3 else None,
-            "第二，混合檢索被否決。原本預期它會贏，數據沒有支持。" if df and df["lo"] <= 0 <= df["hi"] else None,
+            f"第二，混合檢索（BM25＋bge-m3）被否決。原本預期它會贏，數據沒有支持。" if df and df["lo"] <= 0 <= df["hi"] else None,
             (f"第三，評估程式自己有錯：評審沒看到公司名，第一次忠實度 {_f(fix['first'])}，修正後 {_f(fix['now'])}。題組不同，只能看方向。" if fix else None),
             "連線實測還抓到：答案把「某某頁面」寫成公司採用。我改了提示詞，但仍抓到別的錯誤。" if d and d["live_test"] else None,
             "下面兩個失敗案例，是程式從輸出檔自動挑的，不是我挑好看的。" if d else None],

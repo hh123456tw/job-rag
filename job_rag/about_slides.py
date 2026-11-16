@@ -6,7 +6,7 @@ import statistics
 from markupsafe import escape
 
 from . import METHODS, retrieval
-from .about_page import GEN_NOTE, SHORT, _e2e, _f, _say, _speech, hist
+from .about_page import GEN_NOTE, HYBRID, SHORT, _e2e, _f, _say, _speech, hist
 from .ui import page
 
 W = 340  # 圖的 viewBox 寬；手機約 1:1，桌面等比放大
@@ -23,6 +23,14 @@ def _svg(h, label, body, defs=""):
 
 def _short(name, n=6):
     return name if len(name) <= n else name[: n - 1] + "…"
+
+
+def _mlab(x, y, method, hot, dy=15):
+    """方法名稱的列標籤。混合要寫出混的是哪兩個，所以拆成兩行（名稱＋小字括號），不溢出。"""
+    cls = "bd" if hot else ""
+    if method == "hybrid":
+        return _t(x, y + dy - 6, "混合", cls) + _t(x, y + dy + 6, HYBRID[2:], "xs")
+    return _t(x, y + dy, SHORT[method], cls)
 
 
 def _ticks_h(x0, x1, y, vals, fmt):
@@ -109,14 +117,14 @@ def s_methods(d):
     rows = sorted(d["table"], key=lambda r: -r["mrr"])
     best = rows[0]
     # 圖 A：MRR 與 95% 區間
-    lx, x0, x1, pitch, y0 = 0, 94, 292, 32, 8
+    lx, x0, x1, pitch, y0 = 0, 104, 292, 32, 8
     a = []
     for i, r in enumerate(rows):
         y = y0 + i * pitch
         lo, hi = r["ci"]["mrr"]
         sx = lambda v: x0 + v * (x1 - x0)
         hot = r["method"] == "bge-m3"
-        a.append(_t(lx, y + 15, SHORT[r["method"]], "bd" if hot else "", "start")
+        a.append(_mlab(lx, y, r["method"], hot)
                  + f'<rect class="bar gx{"" if hot else " g"}" data-m="{r["method"]}" data-v="{r["mrr"]!r}" data-lo="{lo!r}" data-hi="{hi!r}" x="{x0}" y="{y}" width="{r["mrr"] * (x1 - x0):.1f}" height="20" rx="4"/>'
                  + f'<g class="eb"><line class="h" x1="{sx(lo):.1f}" x2="{sx(hi):.1f}" y1="{y + 10}" y2="{y + 10}"/><line class="h" x1="{sx(lo):.1f}" x2="{sx(lo):.1f}" y1="{y + 4}" y2="{y + 16}"/>'
                  f'<line class="h" x1="{sx(hi):.1f}" x2="{sx(hi):.1f}" y1="{y + 4}" y2="{y + 16}"/>'
@@ -135,18 +143,20 @@ def s_methods(d):
     for i, r in enumerate(rows):
         y = 20 + i * pitch2
         hot = r["method"] == "bge-m3"
-        b.append(_t(lx, y + 17, SHORT[r["method"]], "bd" if hot else ""))
+        b.append(_mlab(lx, y, r["method"], hot, 17))
         for j, k in enumerate(("hit@1", "hit@3", "hit@5")):
             yy = y + j * (bh + 2)
             b.append(f'<rect class="bar gx h{k[-1]}" data-m="{r["method"]}" data-k="{k}" data-v="{r[k]!r}" x="{x0}" y="{yy}" width="{max(r[k] * (x1 - x0), 0.5):.1f}" height="{bh}" rx="2"/>'
                      + _t(x0 + r[k] * (x1 - x0) + 5, yy + 8, _f(r[k]), "xs"))
     yb = 20 + len(rows) * pitch2
     b.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{yb}" y2="{yb}"/>' + _ticks_h(x0, x1, yb, (0, .25, .5, .75, 1), lambda v: f"{v:g}")
-             + _t(x0, yb + 34, "前 k 名內有正確段落的題數比例", "mu sm"))
+             + _t(x0, yb + 34, "Hit@k：正確段落排進前 k 名的題數比例", "mu sm"))
     B = _svg(yb + 42, "各找法的 Hit@1、Hit@3、Hit@5", "".join(b))
-    fig = f'<div class="two"><figure><figcaption>MRR（含 95% 區間）</figcaption>{A}</figure><figure><figcaption>Hit@1／3／5</figcaption>{B}</figure></div>'
-    notes = (f"<p>用 {d['n_answerable']} 道有答案的題；MRR 是正確段落名次的倒數平均，區間重疊的差距只能當方向。</p>"
-             f"<p>網站用 {retrieval.DEFAULT_METHOD}；問單一公司取前 {retrieval.DEFAULT_K} 段。</p>")
+    fig = f'<div class="two"><figure><figcaption>MRR（含 95% 區間；網站用 {retrieval.DEFAULT_METHOD}）</figcaption>{A}</figure><figure><figcaption>Hit@1／3／5</figcaption>{B}</figure></div>'
+    m3 = next(r for r in rows if r["method"] == "bge-m3")
+    notes = (f"<p>Hit@3＝正確答案的那段，有排進前 3 名的題數比例（Hit@1 是第 1 名、Hit@5 是前 5 名）。"
+             f"例：{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{_f(m3['hit@3'])}。</p>"
+             "<p>MRR＝正確段落名次的倒數平均（第 1 名 1 分、第 2 名 0.5 分）；區間重疊的差距只能當方向。</p>")
     head = f"{len(METHODS)} 種找法，{SHORT[best['method']]} 最高" if best["method"] == "bge-m3" else f"{len(METHODS)} 種找法比一比"
     return head, fig, notes, "methods", None
 
@@ -155,11 +165,11 @@ def _sgn(v):
     return f"{v:+.3f}".replace("-", "−")
 
 
-def s_forest(d):
+def _forest(d):
     rows = d["mrr_diffs"]
     lo = min(0, min(r["lo"] for r in rows)) - 0.04
     hi = max(r["hi"] for r in rows) + 0.04
-    x0, x1, pitch, y0 = 10, W - 10, 52, 40
+    x0, x1, pitch, y0 = 10, W - 10, 66, 40
     X = lambda v: x0 + (v - lo) / (hi - lo) * (x1 - x0)
     n = len(rows)
     yb = y0 + n * pitch
@@ -168,25 +178,61 @@ def s_forest(d):
     for i, r in enumerate(rows):
         y = y0 + i * pitch
         inc = r["lo"] <= 0 <= r["hi"]
-        p.append(f'<line class="zero" x1="{X(0):.1f}" x2="{X(0):.1f}" y1="{y + 6}" y2="{y + 34}"/>' + _t(0, y, f"bge-m3 − {SHORT[r['method']]}", "bd halo")
-                 + _t(W, y, f"{_sgn(r['diff'])}　[{_sgn(r['lo'])}, {_sgn(r['hi'])}]", "sm halo", "end")
-                 + f'<g class="fr gx2"><line class="ci" x1="{X(r["lo"]):.1f}" x2="{X(r["hi"]):.1f}" y1="{y + 20}" y2="{y + 20}"/>'
-                 f'<line class="ci" x1="{X(r["lo"]):.1f}" x2="{X(r["lo"]):.1f}" y1="{y + 14}" y2="{y + 26}"/>'
-                 f'<line class="ci" x1="{X(r["hi"]):.1f}" x2="{X(r["hi"]):.1f}" y1="{y + 14}" y2="{y + 26}"/>'
-                 f'<circle class="pt{" open" if inc else ""}" data-m="{r["method"]}" data-v="{r["diff"]!r}" data-lo="{r["lo"]!r}" data-hi="{r["hi"]!r}" cx="{X(r["diff"]):.1f}" cy="{y + 20}" r="6"/></g>')
+        p.append(f'<line class="zero" x1="{X(0):.1f}" x2="{X(0):.1f}" y1="{y + 24}" y2="{y + 48}"/>' + _t(0, y, f"bge-m3 單用 − {SHORT[r['method']]}", "bd halo")
+                 + _t(0, y + 16, f"差 {_sgn(r['diff'])}，區間 [{_sgn(r['lo'])}, {_sgn(r['hi'])}]", "sm mu halo")
+                 + f'<g class="fr gx2"><line class="ci" x1="{X(r["lo"]):.1f}" x2="{X(r["hi"]):.1f}" y1="{y + 36}" y2="{y + 36}"/>'
+                 f'<line class="ci" x1="{X(r["lo"]):.1f}" x2="{X(r["lo"]):.1f}" y1="{y + 30}" y2="{y + 42}"/>'
+                 f'<line class="ci" x1="{X(r["hi"]):.1f}" x2="{X(r["hi"]):.1f}" y1="{y + 30}" y2="{y + 42}"/>'
+                 f'<circle class="pt{" open" if inc else ""}" data-m="{r["method"]}" data-v="{r["diff"]!r}" data-lo="{r["lo"]!r}" data-hi="{r["hi"]!r}" cx="{X(r["diff"]):.1f}" cy="{y + 36}" r="6"/></g>')
     ticks = [v / 10 for v in range(int(lo * 10) - 1, int(hi * 10) + 2) if lo <= v / 10 <= hi]
     p.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{yb}" y2="{yb}"/>'
              + "".join(f'<line class="ax" x1="{X(v):.1f}" x2="{X(v):.1f}" y1="{yb}" y2="{yb + 4}"/>' + _t(f"{X(v):.1f}", yb + 16, f"{v:g}", "mu sm", "middle") for v in ticks)
-             + _t(W / 2, yb + 34, "MRR 的差（bge-m3 減對方），含 95% 區間", "mu sm", "middle")
+             + _t(W / 2, yb + 34, "MRR 的差（bge-m3 單用減對方），含 95% 區間", "mu sm", "middle")
              + f'<circle class="pt" cx="14" cy="{yb + 54}" r="5"/>' + _t(26, yb + 58, "區間不含 0：差距可信", "sm")
              + f'<circle class="pt open" cx="{W / 2 + 10}" cy="{yb + 54}" r="5"/>' + _t(W / 2 + 22, yb + 58, "區間含 0：看不出差距", "sm"))
-    fig = _svg(yb + 66, "bge-m3 與其他找法的 MRR 差與 95% 區間（森林圖）", "".join(p))
+    fig = _svg(yb + 66, "bge-m3 單用與其他找法的 MRR 差與 95% 區間（森林圖）", "".join(p))
     hy = next(r for r in rows if r["method"] == "hybrid")
     inc = hy["lo"] <= 0 <= hy["hi"]
-    what = "<p><b>混合是什麼：</b>BM25（比對關鍵字）與 bge-m3（比對語意）各排一次名次，再用 RRF 把兩個名次合併：兩邊都排前面的段落分數最高。</p>"
-    notes = (what + "<p>原本以為混合會贏；線碰到 0，代表這批題看不出差別，所以用較簡單的單一向量找法。</p>"
-             if inc else what + "<p>混合與 bge-m3 的差距，區間不含 0，差異可信。</p>")
-    return ("看不出混合比較好" if inc else "混合與 bge-m3 有差距"), fig, notes, "forest", None
+    what = f"<p><b>{HYBRID}是什麼：</b>BM25（比對關鍵字）與 bge-m3（比對語意）各排一次名次，再用 RRF 把兩個名次合併：兩邊都排前面的段落分數最高。</p>"
+    return fig, what + (f"<p>原本以為{HYBRID}會贏；MRR 差的線碰到 0，代表這批題看不出差別。</p>" if inc
+                        else f"<p>{HYBRID}與 bge-m3 的 MRR 差，區間不含 0。</p>")
+
+
+def s_forest(d):
+    """第 5 頁：逐題勝平負條（主圖）；區間森林圖收在「看詳細數字」。"""
+    rows = d["versus"]
+    x0, x1, pitch, y0, bh = 104, W - 8, 42, 30, 28
+    pw = x1 - x0
+    yl = y0 + len(rows) * pitch + 6
+    p = [_t(0, 10, "每列：bge-m3 對該方法，逐題比誰排得比較前", "mu sm"),
+         f'<rect class="sg win" x="0" y="{yl}" width="14" height="12" rx="2"/>' + _t(20, yl + 10, "bge-m3 排得比較前", "sm")
+         + f'<rect class="sg tie" x="150" y="{yl}" width="14" height="12" rx="2"/>' + _t(170, yl + 10, "排名一樣", "sm")
+         + f'<rect class="sg loss" x="240" y="{yl}" width="14" height="12" rx="2"/>' + _t(260, yl + 10, "比較後", "sm")]
+    for i, r in enumerate(rows):
+        y = y0 + i * pitch
+        p.append(_mlab(0, y, r["method"], False, 18))
+        x = x0
+        for k, word in (("win", "前"), ("tie", "一樣"), ("loss", "後")):
+            v, w = r[k], pw * r[k] / r["n"]
+            if v:
+                lab = f"{v} 題{word}" if w >= 52 else str(v)
+                p.append(f'<rect class="sg {k}" data-m="{r["method"]}" data-k="{k}" data-v="{v}" x="{x:.1f}" y="{y}" width="{w:.1f}" height="{bh}"/>'
+                         + _t(f"{x + w / 2:.1f}", y + 19, lab, f"sl {k}", "middle"))
+            x += w
+    defs = '<defs><pattern id="hp2" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.5" height="6" class="hp"/></pattern></defs>'
+    chart = _svg(yl + 22, "bge-m3 對其他四種找法逐題比較：排得比較前、一樣、比較後的題數", "".join(p), defs)
+    forest, detail = _forest(d)
+    n = rows[0]["n"]
+    mostly_tie = all(2 * r["tie"] > n for r in rows)
+    wins = all(r["win"] > r["loss"] for r in rows)
+    diff = [r["win"] + r["loss"] for r in rows]
+    head = "大多數題一樣；有差的題，bge-m3 贏多輸少" if mostly_tie and wins else ("大多數題一樣；有差的題勝負互見" if mostly_tie else "逐題比，看哪邊排得比較前")
+    fig = f'<p class="fh">{escape(head)}</p>{chart}'
+    notes = (f"<p>有差的題只有 {min(diff)}–{max(diff)} 題（共 {n} 題），題數太少，不能確定誰真的比較好。</p>"
+             "<p>完整的信賴區間在「看詳細數字」。</p>")
+    more = f'<details class="more"><summary>看詳細數字</summary>{forest}{detail}</details>'
+    short = "多數題一樣，bge-m3 贏多輸少" if mostly_tie and wins else ("多數題一樣，勝負互見" if mostly_tie else "逐題比誰排得前")
+    return short, fig, notes, "forest", None, more
 
 
 def _ba(label, b_lab, b, a_lab, a, mark=None, b_pre=""):
@@ -328,14 +374,20 @@ def s_limits(d):
     return "限制、沒做的、下一步", fig, "", "limits", None
 
 
+def _vs_line(d):
+    """混合對 bge-m3 的逐題勝平負（講稿與問答備案共用）。"""
+    v = next((x for x in d["versus"] if x["method"] == "hybrid"), None) if d else None
+    return f"{v['n']} 題裡 {v['tie']} 題排名一樣、{v['win']} 題 bge-m3 排得比較前、{v['loss']} 題比較後；" if v else ""
+
+
 def s_qa(d, n_segments):
     m3 = next((r for r in d["table"] if r["method"] == "bge-m3"), None) if d else None
     df, gt = (d["mrr_diff"], d["gate"]) if d else (None, None)
     rows = [("資料放大 100 倍怎麼辦？", "沒做過；要換近似索引、只編新段落，再重新評估。"),
             ("為什麼不用重排序模型？", f"沒試過；bge-m3 的 MRR 已有 {_f(m3['mrr'])}，加了會不會更好沒量過。" if m3 else "沒試過，也沒量過。"),
-            ("為什麼混合檢索沒有贏？",
-             (f"bge-m3 減混合的 MRR 差 {df['diff']:+.3f}，區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
-              + ("，含 0，看不出混合比較好。" if df["lo"] <= 0 <= df["hi"] else "，不含 0。")) if df else "這份輸出沒有比較數字。"),
+            ("為什麼混合（BM25＋bge-m3）沒有贏？",
+             (_vs_line(d) + f"MRR 差 {df['diff']:+.3f}，區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
+              + ("，含 0：差異不大，沒必要加混合（不是證明 bge-m3 較好）。" if df["lo"] <= 0 <= df["hi"] else "，不含 0。")) if df else "這份輸出沒有比較數字。"),
             ("查無門檻是不是太樂觀？",
              "是，門檻用同一批題挑。" + (f"沒有答案的題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}{_e2e(d)}，有答案的題誤擋 {gt['answerable_blocked']}/{gt['n_answerable']}。" if gt else "")),
             ("沒有向量資料庫，算向量檢索嗎？", f"算；問題與 {n_segments} 段都轉成向量比相似度，用 FAISS 在記憶體內比。")]
@@ -371,6 +423,10 @@ CSS = """body.sl{max-width:900px;padding:0 16px 168px}
 .sv .pt{fill:var(--acc);stroke:var(--acc);stroke-width:2}.sv .pt.open{fill:var(--bg)}
 .sv .fb{fill:var(--acc)}.sv .hat{fill:url(#hp);stroke:var(--mute);stroke-opacity:.6}.sv .hp{fill:var(--mute);fill-opacity:.6}.sv .dz{fill:var(--acc)}
 .sv .co{fill:var(--card);stroke:var(--line)}.sv .sg{fill:var(--acc)}.sv .sw.hat{fill:url(#hp)}
+.fh{margin:0 0 8px;font-weight:650;font-size:1.0625rem}
+.sv .sg.win{fill:var(--acc)}.sv .sg.tie{fill:url(#hp2);stroke:var(--mute)}.sv .sg.loss{fill:var(--warn)}
+.sv .sl{font-size:12px;font-weight:650;fill:var(--fg);paint-order:stroke}.sv .sl.win{fill:var(--on-acc)}.sv .sl.loss{fill:var(--on-warn)}.sv .sl.tie{stroke:var(--bg);stroke-width:4px}
+.more{margin-top:12px}.more summary{color:var(--mute);font-weight:500}
 .gx{transform-box:fill-box;transform-origin:0 50%}.gy{transform-box:fill-box;transform-origin:50% 100%}.gx2{transform-box:fill-box;transform-origin:50% 50%}
 .js .cur .gx{animation:gx .3s ease-out both}.js .cur .gy{animation:gy .3s ease-out both}
 @keyframes gx{from{transform:scaleX(0)}}@keyframes gy{from{transform:scaleY(0)}}
@@ -428,14 +484,15 @@ def _speeches(say, d):
     """各頁講稿：沿用 about_page._speech 的口語稿，依頁挑句；None（缺資料）由 _say 略過。"""
     s3, s4 = say[3], say[4]
     r = retrieval
-    hybrid = ["我原本以為混合會更好。", "這批題看不出差別，所以選比較簡單的 bge-m3。"] if d and d["mrr_diff"]["lo"] <= 0 <= d["mrr_diff"]["hi"] else [None]
+    hybrid = ([f"我原本以為{HYBRID}會更好。", _vs_line(d).rstrip("；"), "有差的題太少，不能說 bge-m3 真的比較好。", "結論是差異不大，沒必要加混合，所以用比較簡單的 bge-m3。"]
+              if d and d["mrr_diff"]["lo"] <= 0 <= d["mrr_diff"]["hi"] else [None])
     return {
         "cover": say[1],
         "arch": ["資料進來，先切段、轉成向量、放進索引。", f"問題進來，先找最像的前 {r.DEFAULT_K} 段。",
                  f"最高相似度太低，就不呼叫 DeepSeek。", "答案附出處；評估另外離線跑一條迴路。"],
         "chunk": say[2],
         "methods": s3[:6] + [s3[7]],
-        "forest": hybrid + ["看線有沒有碰到 0：碰到，就是看不出差別。"],
+        "forest": hybrid,
         "fixes": say[5],
         "funnel": s4[5:8],
         "cross": [s3[7], say[6][3] if len(say[6]) > 3 else None],
@@ -459,11 +516,11 @@ def render(data, error, n_segments, n_companies, lengths=None, companies=None) -
     slides = [b() for b in builders]
     slides = [s for s in slides if s]
     out, dots = [], []
-    for i, (title, fig, notes, key, kick) in enumerate(slides, 1):
+    for i, (title, fig, notes, key, kick, *ex) in enumerate(slides, 1):
         k = f'<p class="kick">{escape(kick)}</p>' if kick else ""
         n = f'<div class="sn">{notes}</div>' if notes else ""
         sy = _say(sp[key]) if any(sp.get(key) or []) else ""
-        out.append(f'<section class="slide" id="p{i}" data-slide="{key}" aria-label="第 {i} 頁">{k}<h2>{escape(title)}</h2><div class="fig">{fig}</div>{n}{sy}</section>')
+        out.append(f'<section class="slide" id="p{i}" data-slide="{key}" aria-label="第 {i} 頁">{k}<h2>{escape(title)}</h2><div class="fig">{fig}</div>{n}{ex[0] if ex else ""}{sy}</section>')
         dots.append(f'<button type="button" aria-label="第 {i} 頁：{escape(title)}"></button>')
     nav = ('<div id="nav"><div class="in"><div class="dots" role="group" aria-label="頁碼">' + "".join(dots) + '</div>'
            '<div class="nv"><button id="pv" type="button">‹ 上一頁</button><span id="pos" aria-live="polite"></span><button id="nx" type="button">下一頁 ›</button></div></div></div>')

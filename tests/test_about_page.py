@@ -183,7 +183,7 @@ def test_bars_are_sorted_by_found_count_and_numbers_match(client):
     assert [(b[0], int(b[4])) for b in bars] == [("大型向量模型", 4), ("關鍵字加向量", 4), ("小型向量模型", 3), ("關鍵字比對", 2), ("另一個向量模型", 2)]
     assert [float(b[3]) for b in bars] == [100.0, 100.0, 75.0, 50.0, 50.0]
     assert [bool(b[2]) for b in bars] == [True, True, False, False, False]  # 並列最多的都標「最好」
-    assert [b[1] for b in bars][:3] == ["bge-m3", "混合", "bge-small-zh"]  # 內部名稱放小字
+    assert [b[1] for b in bars][:3] == ["bge-m3", "混合（BM25＋bge-m3）", "bge-small-zh"]  # 內部名稱放小字
 
 
 def test_detailed_numbers_are_in_a_collapsed_details_with_plain_mrr(client):

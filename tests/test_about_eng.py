@@ -93,7 +93,7 @@ def trade_rows(client) -> dict:
 def test_tradeoff_rows_exist_and_numbers_come_from_the_output_files(client):
     rows = trade_rows(client)
     assert list(rows) == ["選 FAISS，不選 Qdrant／Milvus", "選 bge-m3，不選 bge-small-zh／multilingual-e5", "不加重排序模型（reranker）",
-                          "不用混合檢索", "DeepSeek 生成與評審，另請 GPT 複查"]
+                          "不用混合檢索（BM25＋bge-m3）", "DeepSeek 生成與評審，另請 GPT 複查"]
     n = sum(retrieval.public_company_counts().values())
     assert f"只有 {n} 段" in rows["選 FAISS，不選 Qdrant／Milvus"]
     m3 = rows["選 bge-m3，不選 bge-small-zh／multilingual-e5"]
@@ -101,7 +101,7 @@ def test_tradeoff_rows_exist_and_numbers_come_from_the_output_files(client):
     assert "沒量過載入與編碼時間" in m3  # 沒有紀錄的數字不寫
     rr = rows["不加重排序模型（reranker）"]
     assert "沒量過" in rr and "0.875" in rr and "有量" not in rr and "證明" not in rr
-    hy = rows["不用混合檢索"]
+    hy = rows["不用混合檢索（BM25＋bge-m3）"]
     assert re.search(r"MRR 差 [+-]0\.\d{3}，95% 區間 \[[+-]0\.\d{3}, [+-]0\.\d{3}\]", hy) and "數據沒有支持" in hy
     assert "自我偏好" in rows["DeepSeek 生成與評審，另請 GPT 複查"] or "偏愛自己" in rows["DeepSeek 生成與評審，另請 GPT 複查"]
 
@@ -178,7 +178,7 @@ def test_three_fixes_show_numbers_from_the_files(client, full):
     assert len(items) == 4
     assert "BM25" in items[0] and "bge-m3" in items[0]
     assert "0.550" in items[0] and "0.875" in items[0] and "→" in items[0]  # 夾具手算：BM25 (0+0.2+1+1)/4，bge-m3 (1+1+1+0.5)/4
-    assert "數據沒有支持" in items[1] and "原本預期混合會贏" in items[1] and re.search(r"[+-]0\.\d{3}，95% 區間 \[", items[1])
+    assert "數據沒有支持" in items[1] and "原本預期混合（BM25＋bge-m3）會贏" in items[1] and re.search(r"[+-]0\.\d{3}，95% 區間 \[", items[1])
     assert "第一次" in items[2] and "舊題組" in items[2] and "評審沒看到公司名" in items[2]
     assert "0.500" in items[2] and "0.833" in items[2] and "評分 3 題" in items[2]  # 第一次 → 修正後
     assert "不再把" in items[3] and "已採用" in items[3] and "仍抓到其他類型的錯誤" in items[3] and "eval/live_test.md" in items[3]

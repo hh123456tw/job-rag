@@ -229,6 +229,21 @@ def _mrr_diffs(methods: dict) -> list[dict]:
     return out
 
 
+def _versus(methods: dict) -> list[dict]:
+    """bge-m3 對其他四種找法逐題比：以 1/名次（前 10 名內沒有算 0）判誰排得比較前。win＝bge-m3 比較前，loss＝對方比較前。"""
+    a = methods["bge-m3"]["ranks"]
+    rr = lambda r: 1 / r if r else 0.0
+    out = []
+    for m in METHODS:
+        if m == "bge-m3":
+            continue
+        b = methods[m]["ranks"]
+        w = sum(rr(a[i]) > rr(b[i]) for i in a)
+        l = sum(rr(a[i]) < rr(b[i]) for i in a)
+        out.append({"method": m, "win": w, "tie": len(a) - w - l, "loss": l, "n": len(a)})
+    return out
+
+
 def _perf(root: Path):
     """bge-m3 載入與查詢時間：只引用 eval/spaces_feasibility.md（本機模擬，較快的那組核心）。檔缺或格式對不上就回 None，不猜。"""
     try:
@@ -282,7 +297,7 @@ def load(root=None) -> dict:
                  "unanswerable_blocked": len(gate["unanswerable_blocked"]),
                  "n_unanswerable": m["n_unanswerable"], "answerable_blocked": len(gate["answerable_blocked"]),
                  "n_answerable": m["n_answerable"]},
-        "mrr_diff": _mrr_diff(m["methods"]), "mrr_diffs": _mrr_diffs(m["methods"]), "salary_fix": _salary_fix(root), "perf": _perf(root),
+        "mrr_diff": _mrr_diff(m["methods"]), "mrr_diffs": _mrr_diffs(m["methods"]), "versus": _versus(m["methods"]), "salary_fix": _salary_fix(root), "perf": _perf(root),
         "ragas_fix": _ragas_fix(root, gen), "live_test": (root / "eval/live_test.md").exists(),
         "cases": _cases(questions, m["methods"], table),
     }
