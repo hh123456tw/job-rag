@@ -353,6 +353,7 @@ def _rank_vector(root, method, question, company):
 # 因為混合自己的 RRF 分數只看名次、不代表有多像。BM25 等其他方式沒做門檻。
 # 值由 eval 的 30 題挑出（沒有獨立測試題），見 eval/results_methods.txt。
 NOT_FOUND_THRESHOLD = 0.700
+SCOPED_DROP = 0.08  # 已指定公司時，門檻比 NOT_FOUND_THRESHOLD 低這麼多（0.700 → 0.620）：範圍只剩一家，低分段落交給答案層判斷（沒寫就回「查無」）。依據見 eval/results_scoped.txt（小樣本、偏樂觀）
 GATED = ("bge-m3", "hybrid")
 
 

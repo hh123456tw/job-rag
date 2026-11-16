@@ -251,8 +251,12 @@ def _low_cross(hits):
     return not hits or max(h["score"] for h in hits) < retrieval.CROSS_FLOOR
 
 
-def _low(hits):
-    return not hits or hits[0]["score"] < retrieval.NOT_FOUND_THRESHOLD
+def _thr(company):
+    return round(retrieval.NOT_FOUND_THRESHOLD - retrieval.SCOPED_DROP, 3) if company else retrieval.NOT_FOUND_THRESHOLD
+
+
+def _low(hits, company=None):
+    return not hits or hits[0]["score"] < _thr(company)
 
 
 def _fake_post():
@@ -294,7 +298,7 @@ def answer_json():
         hits = _cross_hits(rq, mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
         return _tag({"status": "error", "message": f"錯誤：{e}"}), 500
-    if _low_cross(hits) if cross else _low(hits):
+    if _low_cross(hits) if cross else _low(hits, company):
         return _tag({"status": "low"})
     if wait := _limiter.try_acquire(guard.answer_limit()):
         return _tag({"status": "limit", "message": f"整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
@@ -335,9 +339,9 @@ def api_search():
     search_ms = _ms(t0)
     keep = ("company", "file", "heading_path", "text", "also_in")
     scored = retrieval.DEFAULT_METHOD == "bge-m3"  # 只有 bge-m3 的相似度有「分數／門檻」可比；其他方式不帶，不編
-    low = _low_cross(hits) if cross else _low(hits)
+    low = _low_cross(hits) if cross else _low(hits, company)
     return _tag({"status": "low" if low else "ok", "company": company or "", "detected": detected, "expanded": rq != q.strip(), "cross": cross, "per": retrieval.PER_COMPANY if cross else 0,
-                 "threshold": retrieval.CROSS_FLOOR if cross else retrieval.NOT_FOUND_THRESHOLD, "search_ms": search_ms,
+                 "threshold": retrieval.CROSS_FLOOR if cross else _thr(company), "search_ms": search_ms,
                  "hits": [{k: h.get(k, []) for k in keep} | ({"private": h["private"]} if "private" in h else {})
                           | ({"score": h["score"]} if scored and "score" in h else {}) for h in hits]})
 
@@ -488,7 +492,7 @@ def index():
         if not use and _on("JOB_RAG_DETECT") and (use := detect_company(q, mode=mode)):
             note += f"<p class='warn'>已偵測到公司：{escape(use)}，只搜這一家。要查全部公司，請把問句裡的公司名拿掉。</p>"
         hits = search(q, company=use, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)  # 預設檢索方式沿用 job_rag；載入模型很慢，只搜一次
-        low = _low(hits)  # 最高分低於門檻：不呼叫 DeepSeek，原文淡色並展開
+        low = _low(hits, use)  # 最高分低於門檻：不呼叫 DeepSeek，原文淡色並展開
         raw = (LOW if low else "") + _hits_html(hits, low)
         if hits and not low:
             if a.get("answer"):  # 沒有 JS 時的退路：伺服器端整理（與 /answer 同樣計次）

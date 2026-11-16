@@ -69,7 +69,7 @@ def test_api_search_cross_adds_fields_and_covers_companies(web):
 def test_single_company_paths_unchanged(web):
     for q, comp in (("甲科技比較重視什麼", ""), ("哪間公司有後端職缺", "甲科技")):
         d = web.get("/api/search", query_string={"q": q, "company": comp}).get_json()
-        assert d["cross"] is False and d["threshold"] == retrieval.NOT_FOUND_THRESHOLD
+        assert d["cross"] is False and d["threshold"] == (retrieval.NOT_FOUND_THRESHOLD if d["company"] == "" else round(retrieval.NOT_FOUND_THRESHOLD - retrieval.SCOPED_DROP, 3))
         assert len({h["company"] for h in d["hits"]}) == 1
 
 
