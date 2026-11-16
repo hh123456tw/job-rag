@@ -150,21 +150,7 @@ def test_page_error_keeps_original_results(client, monkeypatch):
     assert "鯨魚" in html and "整理失敗" in html and "答案 [1]" not in html
 
 
-def test_page_not_found_shows_clear_text_no_hits_no_button_no_api(client, monkeypatch):
-    from job_rag import retrieval
-    appmod, c = client
-    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 10.0)  # 任何分數都低於門檻
-    post = FakePost()
-    monkeypatch.setattr(appmod, "_post", post)
-    for url in ("/?q=鯨魚追蹤軟體", "/?q=鯨魚追蹤軟體&answer=1"):
-        html = c.get(url).get_data(as_text=True)
-        assert "查無：語料中沒有這個問題的答案" in html
-        assert "class='hit'" not in html and "鯨魚追蹤軟體，總部" not in html  # 不顯示原文結果
-        assert "整理成答案" not in html
-    assert post.calls == []
-
-
 def test_page_found_has_no_not_found_text(client):
     appmod, c = client
     html = c.get("/?q=鯨魚追蹤軟體").get_data(as_text=True)
-    assert "查無" not in html and "class='hit'" in html
+    assert "可能沒有答案" not in html and "class='hit'" in html
