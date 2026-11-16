@@ -112,12 +112,14 @@ def report(a):
     for m in METRICS:
         xs = [i[m] for i in per if isinstance(i[m], (int, float))]
         stat[m] = {"n": len(xs), "mean": sum(xs) / len(xs) if xs else None, "ci95": _boot(xs) if len(xs) > 1 else None}
-    low = [i for i in per if any(isinstance(i[m], (int, float)) and i[m] < 0.9 for m in METRICS)]
+    low = [i for i in per if isinstance(i["faithfulness"], (int, float)) and i["faithfulness"] < 0.9]  # 忠實度低的題逐題寫原因
+    low_ar = [i for i in per if isinstance(i["answer_relevancy"], (int, float)) and i["answer_relevancy"] < 0.9]  # 答案相關性低的題只列分數，未逐題檢視
     out = {"n_answerable": len(ans), "n_scored_candidates": len(todo), "gated": gated, "model_not_found": nf, "context_mismatch": mism,
            "unanswerable_given_answer": [r["id"] for r in rows if not r["answerable"] and r["answer_status"] == "ok" and r["answer"].strip() != NOT_FOUND],
            "stats": stat, "per_question": per, "low_ids": [i["id"] for i in low],
            "reasons": {i["id"]: REASONS.get(i["id"]) for i in low},
-           "note": "答案相關性沒量：本機 bge-m3 嵌入模型要約 5GB 記憶體，當時可用記憶體只有約 5–7GB（主服務與其他子代理各載一個），為避免當機只量忠實度。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案沿用票 39（K=5、補公司名、已指定公司門檻 0.62）。"}
+           "low_ar_ids": [i["id"] for i in low_ar],
+           "note": "答案相關性是第二次補量（先停掉主服務騰出記憶體，用本機 bge-m3 嵌入）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案沿用票 39（K=5、補公司名、已指定公司門檻 0.62）。"}
     OUT.with_suffix(".json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     f = lambda x: "-" if x is None else f"{x:.3f}"
     L = ["獨立測試題 RAGAS（現行設定：K=5、補公司名、已指定公司門檻 0.62；題組 eval/questions_heldout.json）",
@@ -128,7 +130,7 @@ def report(a):
     for m, nm in (("faithfulness", "忠實度"), ("answer_relevancy", "答案相關性")):
         s = stat[m]
         L.append(f"{nm}：平均 {f(s['mean'])}（{s['n']} 題）" + (f"；bootstrap 95% 區間 {s['ci95'][0]:.3f}–{s['ci95'][1]:.3f}" if s["ci95"] else ""))
-    L += ["", "## 低於 0.9 的題與原因（人工讀答案與段落後寫，是推論）"] + [f"{i['id']}（忠實度 {f(i['faithfulness'])}）：{REASONS.get(i['id'], '（尚未人工檢視）')}" for i in low]
+    L += ["", "## 低於 0.9 的題與原因（人工讀答案與段落後寫，是推論）"] + [f"{i['id']}（忠實度 {f(i['faithfulness'])}）：{REASONS.get(i['id'], '（尚未人工檢視）')}" for i in low] + ["", "## 答案相關性低於 0.9 的題（只列分數，未逐題檢視原因）", "、".join(f"{i['id']} {f(i['answer_relevancy'])}" for i in low_ar) or "無"]
     L += ["", "## 限制", out["note"]]
     OUT.with_suffix(".txt").write_text("\n".join(L) + "\n", encoding="utf-8")
     print("\n".join(L))
