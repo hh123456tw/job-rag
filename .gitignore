@@ -7,3 +7,5 @@ __pycache__/
 models/
 .cache/
 .venv-ragas/
+# 公開版語料包（匯出產物）
+dist/

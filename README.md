@@ -116,3 +116,19 @@ python -X utf8 -m job_rag.generation
 - 筆電沒有外部網路（例如熱點沒有行動網路）：原文結果照常顯示；按「整理成答案」會顯示「整理失敗：無法連到 DeepSeek（逾時或無網路）…」，原文結果不受影響。
 
 **驗證紀錄**：用筆電自己的區網 IP 以 curl 測過：預熱期間回「準備中」且帶自動重新整理，載入完成後回查詢頁；從區網位址連來的頁面沒有手機網址那一行。斷網情境用測試替身驗證（`tests/test_phone.py`）。手機實機要自己測一次。
+
+## 公開版語料包（票 18 預備）
+
+只含公開事實段落（公司、檔名、標題路徑、文字）與 bge-m3 預先算好的向量，不含原始調查檔。
+
+- 匯出：`python -X utf8 -m job_rag.export_bundle`（需要 `JOB_RAG_CORPUS` 與本機模型），輸出到 `dist/public_bundle/`（不進 git）。
+- 使用：設 `JOB_RAG_BUNDLE=<資料夾>`，`search()` 改從語料包載入，不需要原始語料，也不重新編碼段落（查詢句仍用本機 bge-m3）。沒設時行為不變。
+- 段落雜湊與向量檔、筆數對不上時會報錯。語料包模式只支援 `bm25`、`bge-m3`、`hybrid`。
+- 免費雲端 CPU 的量測見 `eval/spaces_feasibility.md`（`python -X utf8 eval/measure_spaces.py`）。
+
+## 加到主畫面（票 16，輕量 PWA）
+`/manifest.webmanifest`、`static/icon-{180,192,512}.png`（`python scripts/make_icons.py` 重產，只用 Pillow）與三種畫面共用的 meta 標籤（`job_rag/ui.py` 的 `PWA_HEAD`）。加到主畫面後以 standalone 開啟。路徑都是根路徑，換網址不用改。
+**不做 service worker、不做離線快取**：查詢需要後端，離線快取只會讓畫面顯示舊內容。
+- http 區網 IP：iOS Safari 的「加到主畫面」可用，不需要 https；Android Chrome 的安裝提示（安裝為 App）需要 https，http 下最多是瀏覽器標示的主畫面捷徑，是否全螢幕未驗證。
+- https（通道或雲端）：兩者都可用，Android 才有安裝選項。
+- 依據：[Chrome 安裝條件](https://web.dev/articles/install-criteria)、[MDN](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable)（安裝不需要 service worker；localhost 例外）。
