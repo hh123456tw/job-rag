@@ -6,7 +6,7 @@ import statistics
 from markupsafe import escape
 
 from . import METHODS, retrieval
-from .about_page import GEN_NOTE, HYBRID, SHORT, _e2e, _f, _say, _speech, _sweep_line, hist
+from .about_page import GEN_NOTE, HYBRID, SHORT, _e2e, _f, _held_gen, _say, _speech, _sweep_line, hist
 from .ui import page
 
 W = 340  # 圖的 viewBox 寬；手機約 1:1，桌面等比放大
@@ -349,7 +349,7 @@ def s_ragas(d):
         chk = (f'<div class="e2e"><b data-v="{c["supported"]}" data-n="{c["claims"]}">{c["supported"]} / {c["claims"]}</b>'
                f'<span>個說法有依據（另請 GPT 獨立複查 {c["n"]} 題）</span>'
                f'<i class="tr"><i class="fl" style="width:{100 * c["supported"] / c["claims"]:.1f}%"></i></i></div>')
-    notes = f"<p>評審與生成同為 DeepSeek，同模型自評可能偏樂觀，所以另請 GPT 複查。</p><p>{GEN_NOTE}</p>"
+    notes = f"<p>評審與生成同為 DeepSeek，同模型自評可能偏樂觀，所以另請 GPT 複查。</p><p>{GEN_NOTE}{_held_gen(d)}</p>"
     return f"答案有依據：忠實度 {g['faithfulness']:.2f}", f'<div class="two">{chart}{chk}</div>', notes, "ragas", None
 
 

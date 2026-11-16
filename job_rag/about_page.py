@@ -101,6 +101,7 @@ def _details(d) -> str:
         f"<p><b>生成層（RAGAS，用 LLM 當評審的 RAG 評估工具）</b>：忠實度（答案的每個陳述，段落裡找不找得到依據）平均 {_f(g['faithfulness'])}，"
         f"答案相關性（從答案反推問題，和原問題像不像）平均 {_f(g['answer_relevancy'])}。"
         f"已評分 {g['scored']} 題；另有 {g['gated']} 題被查無門檻擋住，沒有打分{failed}。{GEN_NOTE}</p>"
+        + (f"<p>{_held_gen(d)}</p>" if _held_gen(d) else "") +
         f"<p>另請 GPT 獨立複查{same} {c['n']} 題（不是 RAGAS）：{c['claims']} 個陳述中 {c['supported']} 個有依據，"
         f"忠實度平均 {_f(c['mean'])}，{verdict}。</p>" + gate + _real_line(d))
 
@@ -146,6 +147,16 @@ def _mrr(d) -> str:
             f"<li><b>我們的結果：</b>網站用的 bge-m3 是 {_f(best['mrr'])}（95% 區間 {_f(lo)}–{_f(hi)}）。</li></ul>")
 
 
+def _held_gen(d) -> str:
+    """獨立題（現行設定）的 RAGAS 一句話；輸出檔缺就回空字串。"""
+    h = d.get("held_gen")
+    if not h:
+        return ""
+    ar = f"，答案相關性 {_f(h['answer_relevancy'])}（{h['n_ar']} 題）" if h["answer_relevancy"] is not None else ""
+    return (f"獨立題（現行設定：K=5、補公司名）：忠實度 {_f(h['faithfulness'])}（{h['n']} 題）{ar}；另有 {h['gated']} 題被查無門檻擋住、"
+            f"{h['not_found']} 題生成回查無，沒有打分。同為 DeepSeek 評自己的答案，可能偏樂觀。")
+
+
 def _ragas(d) -> str:
     g = d["generation"]
     if g is None:
@@ -155,7 +166,7 @@ def _ragas(d) -> str:
             f"<li><b>忠實度 {_f(g['faithfulness'])}：</b>答案的每個說法，在給它的段落裡找得到依據。</li>"
             f"<li><b>答案相關性 {_f(g['answer_relevancy'])}：</b>答案有回答到問題。</li>"
             f"<li><b>範圍：</b>共評分 {g['scored']} 題。評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。</li>"
-            f"<li><b>設定：</b>{GEN_NOTE}</li></ul>")
+            f"<li><b>設定：</b>{GEN_NOTE}</li>" + (f"<li>{_held_gen(d)}</li>" if _held_gen(d) else "") + "</ul>")
 
 
 def _level(d) -> str:

@@ -15,8 +15,8 @@ def _embed_fn(texts):
     return retrieval._encode("bge-m3", texts, is_query=True).tolist()  # 本機 bge-m3，已正規化
 
 
-def make_scorer(env_file=".env", base_url=BASE_URL, embed_fn=_embed_fn):
-    """回傳 score_fn(question, answer, contexts) -> {"faithfulness", "answer_relevancy"}；失敗丟例外。"""
+def make_scorer(env_file=".env", base_url=BASE_URL, embed_fn=_embed_fn, metrics=("faithfulness", "answer_relevancy")):
+    """回傳 score_fn(question, answer, contexts) -> {指標: 分數}；失敗丟例外。metrics 只含 faithfulness 時不載入嵌入模型（記憶體不足時用）。"""
     import instructor
     from openai import AsyncOpenAI
     from ragas.embeddings.base import BaseRagasEmbedding
@@ -47,10 +47,13 @@ def make_scorer(env_file=".env", base_url=BASE_URL, embed_fn=_embed_fn):
             # DeepSeek 只支援 json_object，不支援 json_schema：用 instructor.Mode.JSON
             llm = llm_factory(model, client=client, mode=instructor.Mode.JSON,
                               extra_body={"thinking": {"type": "disabled"}}, max_tokens=4096)
-            f = await Faithfulness(llm=llm).ascore(user_input=question, response=text, retrieved_contexts=contexts)
-            a = await AnswerRelevancy(llm=llm, embeddings=emb).ascore(user_input=question, response=text)
+            out = {}
+            if "faithfulness" in metrics:
+                out["faithfulness"] = (await Faithfulness(llm=llm).ascore(user_input=question, response=text, retrieved_contexts=contexts)).value
+            if "answer_relevancy" in metrics:
+                out["answer_relevancy"] = (await AnswerRelevancy(llm=llm, embeddings=emb).ascore(user_input=question, response=text)).value
         finally:
             await client.close()
-        return {"faithfulness": f.value, "answer_relevancy": a.value}
+        return out
 
     return lambda question, text, contexts: asyncio.run(_score(question, text, contexts))
