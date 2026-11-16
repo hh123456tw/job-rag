@@ -81,9 +81,22 @@ def _bars(d) -> str:
         f"<b>{r['found']} / {n}</b></li>" for r in rows) + "</ul>"
 
 
+def _terms(d) -> str:
+    """兩個評估名詞（MRR、RAGAS）的白話說明，直接顯示在成績下面，不收合。數字取自輸出檔。"""
+    best = next(r for r in d["table"] if r["method"] == "bge-m3")
+    g = d["generation"]
+    mrr = (f"<p><b>MRR</b>（平均倒數名次）：每一題看正確段落排第幾名，取「1 ÷ 名次」（第 1 名得 1 分、第 2 名得 0.5 分、第 3 名約 0.33 分，"
+           f"前 {d['depth']} 名內沒有就是 0），再把所有題目平均。越接近 1，正確段落越常排在最前面。網站實際用的 bge-m3 是 {_f(best['mrr'])}。</p>")
+    if g is None:
+        return mrr + "<p><b>RAGAS</b>：用另一個語言模型當評審、替答案打分的評估工具。這份輸出沒有生成層評估（需要 DeepSeek 金鑰，見 README）。</p>"
+    return (mrr + f"<p><b>RAGAS</b>：用另一個語言模型當評審、替「答案」打分的開源評估工具。我們用兩項：<b>忠實度</b>（答案的每個說法，"
+            f"在給它的段落裡找不找得到依據）{_f(g['faithfulness'])}，<b>答案相關性</b>（答案有沒有回答到問題）{_f(g['answer_relevancy'])}，"
+            f"共評分 {g['scored']} 題。評審和生成都是 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。</p>")
+
+
 def _scores(d) -> str:
     return (f"<p>用 {d['n_answerable']} 道有答案的題目，量五種找法：正確的段落有沒有排進前 3 名。條越長越好。</p>"
-            f"{_bars(d)}<details class=more><summary>看詳細數字</summary>{_details(d)}</details>")
+            f"{_bars(d)}{_terms(d)}<details class=more><summary>看詳細數字</summary>{_details(d)}</details>")
 
 
 def _case(c, depth) -> str:

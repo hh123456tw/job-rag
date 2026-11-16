@@ -172,3 +172,18 @@ def test_without_generation_output_third_card_says_none(client, root):  # noqa: 
     html = client[1].get("/about").get_data(as_text=True)
     cards = re.findall(r"<div class=stat><b>([^<]+)</b>", html)
     assert cards == ["4 / 4", "1 / 1", "沒有"]
+
+
+def test_mrr_and_ragas_are_explained_in_plain_words_outside_the_details(client):
+    html = client[1].get("/about").get_data(as_text=True)
+    outside = re.sub(r"<details class=more>.*?</details>", "", html, flags=re.S)
+    assert "<b>MRR</b>（平均倒數名次）" in outside and "1 ÷ 名次" in outside and "0.875" in outside  # bge-m3 的 MRR 取自輸出檔
+    assert "<b>RAGAS</b>：用另一個語言模型當評審" in outside and "忠實度" in outside and "答案相關性" in outside
+    assert "偏愛自己的答案" in outside and "GPT 複查" in outside
+
+
+def test_without_generation_output_ragas_says_so_but_mrr_stays(client, root):  # noqa: F811
+    (root / "eval/results_generation.json").unlink()
+    (root / "eval/crossjudge/judge_gpt.json").unlink()
+    outside = re.sub(r"<details class=more>.*?</details>", "", client[1].get("/about").get_data(as_text=True), flags=re.S)
+    assert "<b>MRR</b>" in outside and "沒有生成層評估" in outside
