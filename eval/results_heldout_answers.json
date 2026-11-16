@@ -1,0 +1,1242 @@
+{
+ "note": "單次執行；答案由 DeepSeek 產生，可能隨機。",
+ "deepseek_calls": 27,
+ "rows": [
+  {
+   "id": "h01",
+   "set": "questions_heldout",
+   "question": "EPS 多少？",
+   "company": "台灣大哥大",
+   "answerable": true,
+   "top_score": 0.713835597038269,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "台灣大哥大",
+   "cross": false,
+   "answer": "根據段落 [1]，2025 全年稅後純益 144.4 億元，年增 4%，EPS 為 4.77 元，創 7 年新高 [1]。另段落 [1] 也提到 2024 年 EPS 為 4.57 元 [1]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "台灣大哥大",
+     "title": "2. 業務與財務"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "8. 近一年新聞（2025-11 至 2026-11）"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "二、使用者指定的 4 筆缺口（已讀完內頁） > D667 營運系統產品暨專案管理PM"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "四、D666 詳細（唯一內文明寫部門＋AI Agent 的職缺）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h02",
+   "set": "questions_heldout",
+   "question": "用什麼雲端？",
+   "company": "聯合報",
+   "answerable": true,
+   "top_score": 0.6826270818710327,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "聯合報",
+   "cross": false,
+   "answer": "使用 Google Cloud，具體包含 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions [1][2]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "聯合報",
+     "title": "5. 技術堆疊"
+    },
+    {
+     "company": "聯合報",
+     "title": "3. 數據發展部在做什麼"
+    },
+    {
+     "company": "聯合報",
+     "title": "1. 基本資料 > 1.1 法人關係（重點）"
+    },
+    {
+     "company": "聯合報",
+     "title": "2. 業務與財務"
+    },
+    {
+     "company": "聯合報",
+     "title": "1. 基本資料 > 1.4 集團（公司自述）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h03",
+   "set": "questions_heldout",
+   "question": "董事長是誰？",
+   "company": "叡揚資訊",
+   "answerable": true,
+   "top_score": 0.7420244216918945,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "叡揚資訊",
+   "cross": false,
+   "answer": "董事長是張培鏞（代表人）[1][2]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "叡揚資訊",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "二、叡揚資訊（公司頁 https://www.104.com.tw/company/aavnrjk ，78 筆，共 4 頁） > 1~2 年經歷"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "二、叡揚資訊（共 15 筆主列網址 + 3 筆補充）"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "1. 叡揚資訊（只讀到公司頁第 1 頁；與 AI／Python／軟體相關者） > 1-5 銷售支援顧問(22032401)（Presale）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h04",
+   "set": "questions_heldout",
+   "question": "公司在哪裡？",
+   "company": "神通資訊",
+   "answerable": true,
+   "top_score": 0.7205837965011597,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "神通資訊",
+   "cross": false,
+   "answer": "公司總部位於台北市內湖區堤頂大道二段187號 [1][2]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "神通資訊",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "神通資訊",
+     "title": "一、神通資訊科技股份有限公司（MiTAC Information）"
+    },
+    {
+     "company": "神通資訊",
+     "title": "一、神通資訊科技股份有限公司（MiTAC Information） > 2. 60046X0_AI 資深工程師（決策導向／平台型系統）"
+    },
+    {
+     "company": "神通資訊",
+     "title": "一、神通資訊科技股份有限公司（MiTAC Information） > 1. 60036X0_AI 工程師（決策導向／平台型系統）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h05",
+   "set": "questions_heldout",
+   "question": "什麼時候上櫃？",
+   "company": "藍新資訊",
+   "answerable": true,
+   "top_score": 0.7678747773170471,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "藍新資訊",
+   "cross": false,
+   "answer": "公司於 2026-10-27 掛牌上櫃，承銷價 68 元，開盤 73.7 元 [1][4]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "藍新資訊",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "8. 近一年新聞"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "2. 藍新資訊（公司頁 14 筆，下列為 AI／軟體／系統相關）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h06",
+   "set": "questions_heldout",
+   "question": "海外有哪些據點？",
+   "company": "凱基證券",
+   "answerable": true,
+   "top_score": 0.6949057579040527,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "凱基證券",
+   "cross": false,
+   "answer": "凱基證券的海外據點有：香港、泰國、新加坡、印尼、中國大陸（公司自述）[1]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "凱基證券",
+     "title": "2. 業務與財務 > 業務"
+    },
+    {
+     "company": "凱基證券",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "凱基證券",
+     "title": "一、凱基證券（共 13 筆網址）"
+    },
+    {
+     "company": "凱基證券",
+     "title": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 2. 【數位創新部】AI Solution 工程師／架構師"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h07",
+   "set": "questions_heldout",
+   "question": "客戶是哪些類型？",
+   "company": "華電聯網",
+   "answerable": true,
+   "top_score": 0.6812957525253296,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "華電聯網",
+   "cross": false,
+   "answer": "依段落 [1]，華電聯網 2025 年的客戶組合是：企業 44.1%、政府 31.5%、電信 24.4%（公司自述）[1]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "華電聯網",
+     "title": "2. 業務與財務 > 主要客戶"
+    },
+    {
+     "company": "華電聯網",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "華電聯網",
+     "title": "1. 華電聯網股份有限公司"
+    },
+    {
+     "company": "華電聯網",
+     "title": "1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）"
+    },
+    {
+     "company": "華電聯網",
+     "title": "8. 近一年新聞"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h08",
+   "set": "questions_heldout",
+   "question": "股利配多少？",
+   "company": "中華網龍",
+   "answerable": true,
+   "top_score": 0.690380871295929,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "中華網龍",
+   "cross": false,
+   "answer": "2025 年配發 0.33 元現金股利，是 12 年來首次配息 [1]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "中華網龍",
+     "title": "2. 業務與財務 > 近 3 年營收"
+    },
+    {
+     "company": "中華網龍",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "中華網龍",
+     "title": "8. 近一年新聞"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h09",
+   "set": "questions_heldout",
+   "question": "遠振資訊的資本額是多少？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.7466379404067993,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "遠振資訊",
+   "cross": false,
+   "answer": "遠振資訊的資本額，段落中有兩組說法：\n\n- [1] 記載資本總額 20,000,000 元，實收資本額 16,054,500 元（第三方彙整資料）。\n- [2] 記載資本額 1300 萬元。\n\n兩者不一致，資料中沒有說明差異原因。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "遠振資訊",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "遠振資訊",
+     "title": "二、遠振資訊股份有限公司 > 公司簡介"
+    },
+    {
+     "company": "遠振資訊",
+     "title": "2. 業務與財務"
+    },
+    {
+     "company": "遠振資訊",
+     "title": "8. 近一年新聞"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h10",
+   "set": "questions_heldout",
+   "question": "數據立的續約率是多少？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.6749431490898132,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "數據立",
+   "cross": false,
+   "answer": "根據 [5]，文中稱「90% 續約」，但該篇為廣編／業配（sponsored by Data-DI）性質，公司自述與獎項也未經主辦單位查證。資料中沒有提到獨立報導的續約率。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "數據立",
+     "title": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）"
+    },
+    {
+     "company": "數據立",
+     "title": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-6 其他（非工程）"
+    },
+    {
+     "company": "數據立",
+     "title": "8. 近一年新聞"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h11",
+   "set": "questions_heldout",
+   "question": "艾普特有哪四大事業群？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.5907121300697327,
+   "threshold_used": 0.62,
+   "search_status": "low",
+   "detected_company": "艾普特",
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h12",
+   "set": "questions_heldout",
+   "question": "宏碁雲架構的母公司是誰？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.7385895848274231,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "宏碁雲架構",
+   "cross": false,
+   "answer": "宏碁雲架構的母公司是安碁資訊股份有限公司（ACSI，6690）[1]。資料也提到它是國內首家 IPO 資安服務商安碁資訊的子公司（公司自述）[2]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "宏碁雲架構",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "宏碁雲架構",
+     "title": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介"
+    },
+    {
+     "company": "宏碁雲架構",
+     "title": "1. 宏碁雲架構服務股份有限公司（eDC）"
+    },
+    {
+     "company": "宏碁雲架構",
+     "title": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h13",
+   "set": "questions_heldout",
+   "question": "典凡科技的資深網路架構師年薪多少？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.8214676976203918,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "典凡科技",
+   "cross": false,
+   "answer": "典凡科技資深網路架構師的年薪為 1,500,000 元以上 [1][4][5]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "典凡科技",
+     "title": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師"
+    },
+    {
+     "company": "典凡科技",
+     "title": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 2. 基礎架構工程師（Infra Engineer）／資料中心維運工程師"
+    },
+    {
+     "company": "典凡科技",
+     "title": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 3. 客戶駐點服務工程師（Network Engineer）／網路工程師"
+    },
+    {
+     "company": "典凡科技",
+     "title": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）"
+    },
+    {
+     "company": "典凡科技",
+     "title": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h14",
+   "set": "questions_heldout",
+   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.7647413611412048,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "宏碁雲架構",
+   "cross": false,
+   "answer": "根據 [1] 與 [5]，雲端維運工程師的月薪為 37,000 元以上。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "宏碁雲架構",
+     "title": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）"
+    },
+    {
+     "company": "宏碁雲架構",
+     "title": "1. 宏碁雲架構服務股份有限公司（eDC） > 其餘職缺（只列職稱、地點、薪資，來源：公司頁）"
+    },
+    {
+     "company": "宏碁雲架構",
+     "title": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h15",
+   "set": "questions_heldout",
+   "question": "艾普特的 PM 專案規劃師月薪多少？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.7388363480567932,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "艾普特",
+   "cross": false,
+   "answer": "艾普特的 PM 專案規劃師月薪為 40,000~42,000 元 [1][4]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "艾普特",
+     "title": "2. 艾普特 > 相關職缺"
+    },
+    {
+     "company": "艾普特",
+     "title": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h16",
+   "set": "questions_heldout",
+   "question": "數據立的產品維運工程師要會哪些工具？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.7833949327468872,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "數據立",
+   "cross": false,
+   "answer": "根據 [1]，數據立的產品維運工程師必須精通 Linux、Docker、Grafana + Prometheus，並具備 Kafka、Nginx、DNS／SSL，以及 Shell、Python 3.9+、Java JDK 17+ 的日誌排查能力。加分條件是 Hadoop、Elasticsearch、Doris、ClickHouse、Kibana [1]。另外，[4] 的職缺列表備註提到工具包括 Linux、Java、MySQL、Hadoop、K8s、Shell、LLM、Claude [4][5]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "數據立",
+     "title": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師"
+    },
+    {
+     "company": "數據立",
+     "title": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-2 AI 全端研發工程師"
+    },
+    {
+     "company": "數據立",
+     "title": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-4 數據解決方案工程師"
+    },
+    {
+     "company": "數據立",
+     "title": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h17",
+   "set": "questions_heldout",
+   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.697206974029541,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "神通資訊",
+   "cross": false,
+   "answer": "神通資訊（公司自述）有三個核心，其中之一是 MiTAC Agent Builder 企業 AI 一體機 [1]。第三方資料指出，MiTAC Agent Builder 於 2026-04-23 與 AMD、撼訊科技共同發表，可零程式碼建 Agent、決策可稽核；硬體為 AMD Ryzen AI Max+ 395 與 Radeon AI PRO R9700 [1]。另有第三方報導提到伺服器版為神雲 TN85-B8261 搭 EPYC 與 Instinct MI350P，並指出兩篇報導的硬體不同，可能是不同機型 [2]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "神通資訊",
+     "title": "3. 業務與財務 > 產品與業務"
+    },
+    {
+     "company": "神通資訊",
+     "title": "6. 技術堆疊"
+    },
+    {
+     "company": "神通資訊",
+     "title": "一、神通資訊科技股份有限公司（MiTAC Information） > 5. 60106X0_產品經理（AI & Product Manager）"
+    },
+    {
+     "company": "神通資訊",
+     "title": "一、神通資訊科技股份有限公司（MiTAC Information） > 1. 60036X0_AI 工程師（決策導向／平台型系統）"
+    },
+    {
+     "company": "神通資訊",
+     "title": "一、神通資訊科技股份有限公司（MiTAC Information） > 2. 60046X0_AI 資深工程師（決策導向／平台型系統）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h18",
+   "set": "questions_heldout",
+   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.7225244045257568,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "凱基證券",
+   "cross": false,
+   "answer": "凱基證券 2026 上半年稅後純益為 179.4 億元，年增 383% [1][3]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "凱基證券",
+     "title": "2. 業務與財務 > 近 3 年獲利（稅後純益）"
+    },
+    {
+     "company": "凱基證券",
+     "title": "8. 近一年新聞（2025-11 至 2026-11）"
+    },
+    {
+     "company": "凱基證券",
+     "title": "2. 業務與財務 > 業務"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h19",
+   "set": "questions_heldout",
+   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.702530026435852,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "華電聯網",
+   "cross": false,
+   "answer": "華電聯網高級工程師（高雄）（資料庫）職缺要求會 MySQL、Oracle、PL/SQL 及 Stored Procedure [1]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "華電聯網",
+     "title": "2. 軟體／AI／資料／雲端相關職缺（詳頁已讀）"
+    },
+    {
+     "company": "華電聯網",
+     "title": "1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h20",
+   "set": "questions_heldout",
+   "question": "叡揚資訊 2026 前三季的營收是多少？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.7284232378005981,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "叡揚資訊",
+   "cross": false,
+   "answer": "叡揚資訊 2026 前三季營收為 15.34 億，年增 6.58% [2]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "叡揚資訊",
+     "title": "8. 近一年新聞"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "2. 業務與財務 > 近年營收"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "1. 基本資料"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h21",
+   "set": "questions_heldout",
+   "question": "哪些公司的職缺要求 Spring Boot？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.5285290479660034,
+   "threshold_used": 0.534,
+   "search_status": "low",
+   "detected_company": null,
+   "cross": true,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h22",
+   "set": "questions_heldout",
+   "question": "哪幾家公司的職缺會用到 VMware？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.5654742121696472,
+   "threshold_used": 0.534,
+   "search_status": "ok",
+   "detected_company": null,
+   "cross": true,
+   "answer": "藍新資訊：平台包含 VMware 虛擬化 [1]。\n台灣大哥大：資料沒寫。\n華電聯網：資料沒寫。\n叡揚資訊：資料沒寫。\n凱基證券：資料沒寫。\n中華網龍：資料沒寫。\n神通資訊：資料沒寫。\n聯合報：資料沒寫。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "藍新資訊",
+     "title": "5. 技術堆疊"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > E. AI 相關但偏非工程（產品、商務、專案、營運）"
+    },
+    {
+     "company": "華電聯網",
+     "title": "2. 軟體／AI／資料／雲端相關職缺（詳頁已讀）"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "2. 藍新資訊（公司頁 14 筆，下列為 AI／軟體／系統相關） > 2-2 AI平台工程師"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "5. 技術堆疊"
+    },
+    {
+     "company": "凱基證券",
+     "title": "一、凱基證券（共 13 筆網址）"
+    },
+    {
+     "company": "中華網龍",
+     "title": "3. 中華網龍（公司頁 10 筆，全部有網址）"
+    },
+    {
+     "company": "神通資訊",
+     "title": "4. 報名部門：新興應用部"
+    },
+    {
+     "company": "中華網龍",
+     "title": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-3 Unity3D 工程師-吞食天地M"
+    },
+    {
+     "company": "神通資訊",
+     "title": "一、神通資訊科技股份有限公司（MiTAC Information） > 2. 60046X0_AI 資深工程師（決策導向／平台型系統）"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "4. 職缺"
+    },
+    {
+     "company": "聯合報",
+     "title": "二、聯合報系 > A. 聯經數位股份有限公司（數據發展部相關）"
+    },
+    {
+     "company": "聯合報",
+     "title": "4. 職缺"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h23",
+   "set": "questions_heldout",
+   "question": "哪家公司有做 AI Agent 的產品？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.5908567905426025,
+   "threshold_used": 0.534,
+   "search_status": "ok",
+   "detected_company": null,
+   "cross": true,
+   "answer": "凱基證券：資料中沒有提到有做 AI Agent 的產品；職缺提到開發自主決策 AI Agent、串接 RPA 與內部系統 [1]。\n神通資訊：公司自述的產品沒有寫 AI Agent；第三方資料提到 MiTAC Agent Builder 企業 AI 一體機，可零程式碼建 Agent [2]。\n叡揚資訊：發表 InsAI（地端 VLM），C.ai 3.0 為 Agentic Portal，並研發 Agentic AI／Harness [4]；C.ai 對話服務平台在 2026 報導稱為 Agentic Portal [8]。\n藍新資訊：職缺提到 Agentic AI、RAG、Workflow [7]。\n華電聯網：自研產品有 SmartQ LAS 企業專屬生成式 AI 平台，資料中沒有提到 AI Agent 產品 [11]。\n台灣大哥大：職缺列表出現「AI Agent 導入」字樣 [5]，資料中沒有提到 AI Agent 產品。\n中華網龍：職缺提到用 AI 工具維護與開發遊戲，資料中沒有提到 AI Agent 產品 [14]。\n聯合報：資料中沒有提到 AI Agent 產品 [15][16]。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "凱基證券",
+     "title": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 1. 【數位創新部】AI Agent 應用開發工程師（最相關）"
+    },
+    {
+     "company": "神通資訊",
+     "title": "3. 業務與財務 > 產品與業務"
+    },
+    {
+     "company": "神通資訊",
+     "title": "二、AI／Python／後端／資料／全端相關職缺（已點進內頁，共 6 筆） > 2. P011PG4_高級工程師　【生成式 AI／Agent】"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "8. 近一年新聞"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > E. AI 相關但偏非工程（產品、商務、專案、營運）"
+    },
+    {
+     "company": "凱基證券",
+     "title": "8. 近一年新聞（2025-11 至 2026-11）"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "2. 藍新資訊（公司頁 14 筆，下列為 AI／軟體／系統相關） > 2-1 AI前線部署工程師（主 agent 已讀）"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > A. AI／LLM／Python 類 > I110 AI 產品經理"
+    },
+    {
+     "company": "中華網龍",
+     "title": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關）"
+    },
+    {
+     "company": "華電聯網",
+     "title": "2. 業務與財務 > 產品與服務"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "2. 藍新資訊（公司頁 14 筆，下列為 AI／軟體／系統相關） > 2-2 AI平台工程師"
+    },
+    {
+     "company": "華電聯網",
+     "title": "8. 近一年新聞"
+    },
+    {
+     "company": "中華網龍",
+     "title": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-2 AI應用遊戲工程師"
+    },
+    {
+     "company": "聯合報",
+     "title": "5. 技術堆疊"
+    },
+    {
+     "company": "聯合報",
+     "title": "3. 數據發展部在做什麼"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h24",
+   "set": "questions_heldout",
+   "question": "哪些公司使用 Google Cloud？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.5678555965423584,
+   "threshold_used": 0.534,
+   "search_status": "ok",
+   "detected_company": null,
+   "cross": true,
+   "answer": "聯合報：使用 Google Cloud，包括 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions [1]；2018 起把網站與分析搬上 Google Cloud [2]。\n藍新資訊：資料沒寫。\n神通資訊：代理產品包括 Google Cloud（公司自述） [5]。\n叡揚資訊：資料沒寫。\n華電聯網：資料沒寫。\n中華網龍：資料沒寫。\n凱基證券：資料沒寫。\n台灣大哥大：資料沒寫。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "聯合報",
+     "title": "5. 技術堆疊"
+    },
+    {
+     "company": "聯合報",
+     "title": "3. 數據發展部在做什麼"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "5. 技術堆疊"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "2. 藍新資訊（公司頁 14 筆，下列為 AI／軟體／系統相關）"
+    },
+    {
+     "company": "神通資訊",
+     "title": "3. 業務與財務 > 產品與業務"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "2. 業務與財務 > 主要客戶"
+    },
+    {
+     "company": "神通資訊",
+     "title": "3. 業務與財務 > 主要客戶"
+    },
+    {
+     "company": "華電聯網",
+     "title": "2. 業務與財務 > 主要客戶"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "3. 報名部門在做什麼（企業服務應用部）"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "中華網龍",
+     "title": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關）"
+    },
+    {
+     "company": "華電聯網",
+     "title": "2. 業務與財務 > 產品與服務"
+    },
+    {
+     "company": "中華網龍",
+     "title": "5. 技術堆疊"
+    },
+    {
+     "company": "凱基證券",
+     "title": "5. 技術堆疊"
+    },
+    {
+     "company": "凱基證券",
+     "title": "8. 近一年新聞（2025-11 至 2026-11）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h25",
+   "set": "questions_heldout",
+   "question": "哪些公司的職缺要會 C#？",
+   "company": null,
+   "answerable": true,
+   "top_score": 0.6586793661117554,
+   "threshold_used": 0.534,
+   "search_status": "ok",
+   "detected_company": null,
+   "cross": true,
+   "answer": "凱基證券：資訊部有 C# 全端技術工程師，技能為 C#、WinForm、MS SQL、T-SQL 效能 [1]；另有 C#／ASP.NET 全端工程師，擅長工具為 C#、ASP.NET、VueJS [2]。\n神通資訊：資料沒寫。\n叡揚資訊：產品開發工程師(21020201A) 必要 C#、ASP.NET Core [5]；另有工具列 C#、ASP.NET、VB.NET、MS SQL、PL/SQL [7]。\n中華網龍：AI應用遊戲工程師內文要求 C++／C#、Unity、Git [6]。\n華電聯網：(C#)資深軟體工程師技能為 C#、ASP.NET、Web A…[8]。\n台灣大哥大：資料沒寫。\n藍新資訊：資料沒寫。\n聯合報：資料沒寫。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "凱基證券",
+     "title": "一、凱基證券（公司頁 https://www.104.com.tw/company/am88jqw ，共 6 頁，約 99+ 筆） > 其他 AI／後端／全端／系統相關（經歷要求 1 年以上）"
+    },
+    {
+     "company": "凱基證券",
+     "title": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 6. 【資訊部】C#／ASP.NET 全端工程師"
+    },
+    {
+     "company": "神通資訊",
+     "title": "三、只讀列表、未開內頁（連結取得但技能細項不完整） > 10. C011CH2_後端開發工程師(java)／前端開發工程師(angular)"
+    },
+    {
+     "company": "神通資訊",
+     "title": "一、神通資訊科技股份有限公司（MiTAC Information） > 3. 60076X0_後端工程師（Node.js）"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "1. 叡揚資訊（只讀到公司頁第 1 頁；與 AI／Python／軟體相關者） > 1-3 產品開發工程師(21020201A)"
+    },
+    {
+     "company": "中華網龍",
+     "title": "3. 中華網龍（公司頁 10 筆，全部有網址）"
+    },
+    {
+     "company": "叡揚資訊",
+     "title": "二、叡揚資訊（共 15 筆主列網址 + 3 筆補充）"
+    },
+    {
+     "company": "華電聯網",
+     "title": "2. 軟體／AI／資料／雲端相關職缺（詳頁已讀）"
+    },
+    {
+     "company": "台灣大哥大",
+     "title": "三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > E. AI 相關但偏非工程（產品、商務、專案、營運）"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "2. 藍新資訊（公司頁 14 筆，下列為 AI／軟體／系統相關） > 2-1 AI前線部署工程師（主 agent 已讀）"
+    },
+    {
+     "company": "中華網龍",
+     "title": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-1 AI 應用研發工程師（已讀單頁）"
+    },
+    {
+     "company": "藍新資訊",
+     "title": "4. 職缺"
+    },
+    {
+     "company": "聯合報",
+     "title": "二、聯合報系 > A. 聯經數位股份有限公司（數據發展部相關） > A2. 數據系統開發工程師（JAVA）【數據發展部相關，標示】"
+    },
+    {
+     "company": "聯合報",
+     "title": "4. 職缺"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h26",
+   "set": "questions_heldout",
+   "question": "有颱風假嗎？",
+   "company": "神通資訊",
+   "answerable": false,
+   "top_score": 0.593835711479187,
+   "threshold_used": 0.62,
+   "search_status": "low",
+   "detected_company": "神通資訊",
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h27",
+   "set": "questions_heldout",
+   "question": "有員工持股信託嗎？",
+   "company": "凱基證券",
+   "answerable": false,
+   "top_score": 0.6341038942337036,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "凱基證券",
+   "cross": false,
+   "answer": "資料中沒有提到凱基證券有員工持股信託。",
+   "answer_status": "ok",
+   "sources": [
+    {
+     "company": "凱基證券",
+     "title": "1. 基本資料"
+    },
+    {
+     "company": "凱基證券",
+     "title": "2. 業務與財務 > 業務"
+    },
+    {
+     "company": "凱基證券",
+     "title": "8. 近一年新聞（2025-11 至 2026-11）"
+    },
+    {
+     "company": "凱基證券",
+     "title": "一、凱基證券（公司頁 https://www.104.com.tw/company/am88jqw ，共 6 頁，約 99+ 筆）"
+    }
+   ],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h28",
+   "set": "questions_heldout",
+   "question": "有交通津貼嗎？",
+   "company": "聯合報",
+   "answerable": false,
+   "top_score": 0.6010428667068481,
+   "threshold_used": 0.62,
+   "search_status": "low",
+   "detected_company": "聯合報",
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h29",
+   "set": "questions_heldout",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.7134503126144409,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "數據立",
+   "cross": false,
+   "answer": "查無",
+   "answer_status": "ok",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h30",
+   "set": "questions_heldout",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.586934506893158,
+   "threshold_used": 0.62,
+   "search_status": "low",
+   "detected_company": "遠振資訊",
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h31",
+   "set": "questions_heldout",
+   "question": "典凡科技今年的營收目標是多少？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.6849967241287231,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "典凡科技",
+   "cross": false,
+   "answer": "查無",
+   "answer_status": "ok",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h32",
+   "set": "questions_heldout",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.6072321534156799,
+   "threshold_used": 0.62,
+   "search_status": "low",
+   "detected_company": "中華網龍",
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h33",
+   "set": "questions_heldout",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.6503349542617798,
+   "threshold_used": 0.62,
+   "search_status": "ok",
+   "detected_company": "艾普特",
+   "cross": false,
+   "answer": "查無",
+   "answer_status": "ok",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h34",
+   "set": "questions_heldout",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.6307466626167297,
+   "threshold_used": 0.7,
+   "search_status": "low",
+   "detected_company": null,
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h35",
+   "set": "questions_heldout",
+   "question": "鴻海的董事長是誰？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.4547005295753479,
+   "threshold_used": 0.7,
+   "search_status": "low",
+   "detected_company": null,
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h36",
+   "set": "questions_heldout",
+   "question": "富邦金控旗下有哪些子公司？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.5353647470474243,
+   "threshold_used": 0.7,
+   "search_status": "low",
+   "detected_company": null,
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h37",
+   "set": "questions_heldout",
+   "question": "台北明天會下雨嗎？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.4808999001979828,
+   "threshold_used": 0.7,
+   "search_status": "low",
+   "detected_company": null,
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h38",
+   "set": "questions_heldout",
+   "question": "履歷的自傳要怎麼寫？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.47564589977264404,
+   "threshold_used": 0.7,
+   "search_status": "low",
+   "detected_company": null,
+   "cross": false,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h39",
+   "set": "questions_heldout",
+   "question": "哪些公司有哺乳室？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.46799975633621216,
+   "threshold_used": 0.534,
+   "search_status": "low",
+   "detected_company": null,
+   "cross": true,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  },
+  {
+   "id": "h40",
+   "set": "questions_heldout",
+   "question": "哪間公司有員工社團？",
+   "company": null,
+   "answerable": false,
+   "top_score": 0.5136443376541138,
+   "threshold_used": 0.534,
+   "search_status": "low",
+   "detected_company": null,
+   "cross": true,
+   "answer": null,
+   "answer_status": "skipped_low",
+   "sources": [],
+   "date": "2026-11-16",
+   "run": 1
+  }
+ ]
+}
