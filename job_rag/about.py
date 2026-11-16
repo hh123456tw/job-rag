@@ -88,7 +88,7 @@ def _cases(questions: list[dict], methods: dict, table: list[dict]) -> list[dict
     miss.sort(key=lambda c: (-len(c["failed_methods"]), c["id"]))
     g = methods["bge-m3"]["gate"]
     scores = methods["bge-m3"]["gate_scores"]
-    blocked = [{"kind": "blocked", "id": i, "score": scores[i], "threshold": g["threshold"],
+    blocked = [{"kind": "blocked", "id": i, "score": scores[i], "threshold": g.get("thresholds", {}).get(i, g["threshold"]),
                 "rank": methods["bge-m3"]["ranks"][i]} for i in g["answerable_blocked"]]
     blocked.sort(key=lambda c: (c["threshold"] - c["score"], c["id"]))
     picked = miss[:1] + blocked[:1]
@@ -126,6 +126,22 @@ def _cross_eval(root: Path):
                 "per": r["per_default"], "floor": r["floor"],
                 "coverage": sum(x["coverage"] for x in ans if x["coverage"] is not None) / sum(x["coverage"] is not None for x in ans)}
     except (OSError, ValueError, KeyError, TypeError, ZeroDivisionError):
+        return None
+
+
+def _real_eval(root: Path):
+    """新 20 題真實問法評估（票 33）。輸出檔不存在、讀不了、或和題檔對不上（過期）都回 None，頁面就不寫這一句。"""
+    try:
+        r = json.loads((root / "eval/results_real.json").read_text(encoding="utf-8"))
+        qs = json.loads((root / "eval/questions_real.json").read_text(encoding="utf-8"))["questions"]
+        if r["digest"] != questions_digest(qs):
+            return None
+        c, m = r["gate_current"], r["metrics"]
+        return {"n": r["n"], "n_answerable": r["n_answerable"], "n_unanswerable": r["n_unanswerable"],
+                "hit1": m["hit@1"], "hit3": m["hit@3"], "hit5": m["hit@5"], "mrr": m["mrr"],
+                "blocked_u": len(c["blocked_u"]), "blocked_a": len(c["blocked_a"]),
+                "cross_passed": sum(x["pass"] for x in r["cross"]), "cross_n": len(r["cross"])}
+    except (OSError, ValueError, KeyError, TypeError):
         return None
 
 
@@ -184,11 +200,12 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
-        "gate": {"threshold": gate["threshold"], "unanswerable_blocked": len(gate["unanswerable_blocked"]),
+        "gate": {"threshold": gate["threshold"], "scoped_threshold": gate.get("scoped_threshold"), "n_scoped": len(gate.get("scoped_ids", [])),
+                 "unanswerable_blocked": len(gate["unanswerable_blocked"]),
                  "n_unanswerable": m["n_unanswerable"], "answerable_blocked": len(gate["answerable_blocked"]),
                  "n_answerable": m["n_answerable"]},
         "mrr_diff": _mrr_diff(m["methods"]), "perf": _perf(root),

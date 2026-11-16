@@ -24,6 +24,24 @@ def _rank(r, depth):
     return f"第 {r} 名" if r else f"前 {depth} 名內沒有"
 
 
+def _gate_t(gt) -> str:
+    """未指定公司的門檻；有已指定公司的題時，一併寫出較低的那個。"""
+    return f"{gt['threshold']:.3f}" + (f"（已指定公司 {gt['scoped_threshold']:.3f}）" if gt.get("scoped_threshold") and gt.get("n_scoped") else "")
+
+
+GEN_NOTE = "量測時為 K=3 設定；之後 K 改成 5，生成層沒有重跑，數字照舊。"
+
+
+def _real_line(d) -> str:
+    x = d.get("real_eval")
+    if not x:
+        return ""
+    return (f"<p><b>另外 {x['n']} 道真實問法</b>（公司頁內短問句、單一公司、跨公司、語料沒有答案；同一人出題，題少，只能當方向）："
+            f"非跨公司的有答案題 Hit@1 {_f(x['hit1'])}、Hit@3 {_f(x['hit3'])}、Hit@5 {_f(x['hit5'])}、MRR {_f(x['mrr'])}；"
+            f"非跨公司的沒有答案題擋住 {x['blocked_u']}/{x['n_unanswerable']}，有答案題誤擋 {x['blocked_a']}/{x['n_answerable']}；"
+            f"跨公司題 {x['cross_passed']}/{x['cross_n']} 結果正確。</p>")
+
+
 def _details(d) -> str:
     """詳細數字（預設收合）：完整成績表、查無門檻、生成層。名詞在這裡才出現，各解釋一次。"""
     rows = "".join(
@@ -36,11 +54,11 @@ def _details(d) -> str:
         f"<b>MRR</b>（平均倒數名次）：正確段落平均排第幾名的倒數，越接近 1 越好。方括號是 95% 信賴區間："
         f"把 {d['n_answerable']} 題重抽 {d['bootstrap']} 次，成績落在這個範圍。名次最多看到第 {d['depth']}。</p>"
         f"<table><tr><th>找法</th><th>Hit@1</th><th>Hit@3</th><th>MRR</th></tr>{rows}</table>")
-    gate = (f"<p><b>查無門檻</b>（bge-m3 最高相似度 {gt['threshold']:.3f}，低於它就提示「可能沒有答案」）："
+    gate = (f"<p><b>查無門檻</b>（bge-m3 最高相似度 {_gate_t(gt)}，低於它就提示「可能沒有答案」）："
             f"不可回答題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}，"
             f"可回答題誤擋 {gt['answerable_blocked']}/{gt['n_answerable']}。</p>")
     if g is None:  # 公開版：沒有 DeepSeek 金鑰，沒有生成層輸出
-        return intro + "<p><b>生成層（RAGAS）</b>：這份輸出沒有生成層評估（需要 DeepSeek 金鑰，見 README）。</p>" + gate
+        return intro + "<p><b>生成層（RAGAS）</b>：這份輸出沒有生成層評估（需要 DeepSeek 金鑰，見 README）。</p>" + gate + _real_line(d)
     same = "同樣" if c["n"] == g["scored"] else "其中"
     verdict = "結果一致" if c["consistent"] else "結果和 RAGAS 不一致，請看輸出檔"
     failed = f"，評估失敗 {g['failed']} 題" if g["failed"] else ""
@@ -48,9 +66,9 @@ def _details(d) -> str:
         intro +
         f"<p><b>生成層（RAGAS，用 LLM 當評審的 RAG 評估工具）</b>：忠實度（答案的每個陳述，段落裡找不找得到依據）平均 {_f(g['faithfulness'])}，"
         f"答案相關性（從答案反推問題，和原問題像不像）平均 {_f(g['answer_relevancy'])}。"
-        f"已評分 {g['scored']} 題；另有 {g['gated']} 題被查無門檻擋住，沒有打分{failed}。</p>"
+        f"已評分 {g['scored']} 題；另有 {g['gated']} 題被查無門檻擋住，沒有打分{failed}。{GEN_NOTE}</p>"
         f"<p>另請 GPT 獨立複查{same} {c['n']} 題（不是 RAGAS）：{c['claims']} 個陳述中 {c['supported']} 個有依據，"
-        f"忠實度平均 {_f(c['mean'])}，{verdict}。</p>" + gate)
+        f"忠實度平均 {_f(c['mean'])}，{verdict}。</p>" + gate + _real_line(d))
 
 
 def _stat(big, text) -> str:
@@ -102,7 +120,8 @@ def _ragas(d) -> str:
             "<li><b>量什麼：</b>答案好不好（不是段落找得準不準）。是用另一個語言模型當評審的開源評估工具。</li>"
             f"<li><b>忠實度 {_f(g['faithfulness'])}：</b>答案的每個說法，在給它的段落裡找得到依據。</li>"
             f"<li><b>答案相關性 {_f(g['answer_relevancy'])}：</b>答案有回答到問題。</li>"
-            f"<li><b>範圍：</b>共評分 {g['scored']} 題。評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。</li></ul>")
+            f"<li><b>範圍：</b>共評分 {g['scored']} 題。評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。</li>"
+            f"<li><b>設定：</b>{GEN_NOTE}</li></ul>")
 
 
 def _level(d) -> str:
@@ -148,7 +167,7 @@ def _arch(n_segments: int, n_companies: int) -> str:
             ("向量", f"{r.DEFAULT_METHOD}，本機載入，不連網"),
             ("索引", "FAISS（IndexFlatIP，記憶體內）"),
             (f"取前 K 段", f"K = {r.DEFAULT_K}，前 {r.DEFAULT_K} 段原文先顯示"),
-            ("查無門檻", f"最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}：不呼叫 LLM"),
+            ("查無門檻", f"最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}）：不呼叫 LLM"),
             ("生成", "DeepSeek，只根據段落回答"),
             ("答案與出處", "附引用編號；失敗回到原文")]
     ev = [("評估集", "手寫題目與金標段落"), ("MRR／Hit@k", "量找法"), ("RAGAS", "量答案"), ("另一個 AI 複查", "GPT 獨立複查")]
@@ -397,11 +416,11 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             "我原本以為混合會更好。數據看不出來，所以選比較簡單的 bge-m3。" if df and df["lo"] <= 0 <= df["hi"] else None,
             f"問單一公司取前 {r.DEFAULT_K} 段；問全部公司，每家取 {r.PER_COMPANY} 段。"],
         4: ["找得到還不夠，答案也要有依據。",
-            f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。" if g else None,
+            f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是取前 3 段時量的，之後改成取前 5 段，我還沒有重跑。" if g else None,
             "但評審和生成都是 DeepSeek，可能偏愛自己的答案。" if g else None,
             f"所以另請 GPT 複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None,
             "這只量有沒有依據，不量對不對。" if g else None,
-            f"沒把握時，系統不亂答。最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}，就說「可能沒有答案」。",
+            f"沒把握時，系統不亂答。最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}），就說「可能沒有答案」。",
             (f"故意問沒有答案的 {gt['n_unanswerable']} 題，擋住 {gt['unanswerable_blocked']} 題。"
              f"代價是有答案的 {gt['n_answerable']} 題，誤擋 {gt['answerable_blocked']} 題。" if gt else None),
             "門檻用同一批題目挑，偏樂觀。"],
@@ -460,7 +479,7 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int, len
                  if not data or data["generation"] else "")
     counts = f"只有 {data['n_answerable']} 題有答案、{data['n_unanswerable']} 題沒答案，只能當方向。" if data else "題目很少，只能當方向。"
     say = _speech(data, n_companies, n_segments)
-    gate = (f"<p><b>查無門檻</b>（最高相似度低於 {data['gate']['threshold']:.3f} 就提示「可能沒有答案」）："
+    gate = (f"<p><b>查無門檻</b>（最高相似度低於 {_gate_t(data['gate'])} 就提示「可能沒有答案」）："
             f"不可回答題擋住 {data['gate']['unanswerable_blocked']}/{data['gate']['n_unanswerable']}，"
             f"可回答題誤擋 {data['gate']['answerable_blocked']}/{data['gate']['n_answerable']}。</p>") if data else ""
     s1 = _seg(1, "這是什麼", "點一家公司，直接問問題，答案附出處。",
