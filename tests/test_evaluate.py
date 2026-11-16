@@ -96,7 +96,7 @@ def test_report_has_no_private_only_row():
 
 def test_excluded_section_is_not_searchable_so_its_question_misses():
     from job_rag import search
-    assert search("刺蝟密語", mode="demo", corpus=MINI) == []
+    assert search("刺蝟密語", corpus=MINI) == []
 
 
 def test_unanswerable_refusal_rate_is_not_invented():
@@ -127,3 +127,42 @@ def test_scores_are_grouped_by_question_type():
     assert "不可回答" not in rep["by_type"]  # 不可回答題不計 Hit@k / MRR
     out = format_report(rep)
     assert "單一公司" in out and "職缺" in out
+
+
+# ---- 5 種方式並列（票 03）----
+from job_rag.evaluate import compare, format_table, SUSPICIOUS
+
+
+def _fake_models(monkeypatch, tmp_path):
+    from tests.test_vector import FakeModel
+    from job_rag import retrieval
+    monkeypatch.setenv("JOB_RAG_CACHE", str(tmp_path))
+    monkeypatch.setattr(retrieval, "_load_model", lambda m: FakeModel(m))
+    for f in (retrieval._segments, retrieval._public, retrieval._bm25, retrieval._index):
+        f.cache_clear()
+
+
+def test_compare_runs_all_five_methods_and_table_lists_each(monkeypatch, tmp_path):
+    _fake_models(monkeypatch, tmp_path)
+    reps = compare(QS, corpus=MINI)
+    assert list(reps) == ["bm25", "bge-small-zh", "bge-m3", "e5-large", "hybrid"]
+    t = format_table(reps)
+    for m in reps:
+        assert m in t
+    for head in ("Hit@1", "Hit@3", "MRR"):
+        assert head in t
+    assert "私人" not in t and "查詢模式" not in t
+
+
+def _rep(h1, h3, mrr):
+    g = {"ranks": {}, "metrics": {"n": 10, "hit@1": h1, "hit@3": h3, "mrr": mrr}, "unanswerable": {"n": 0, "refusal_rate": None}}
+    return {"method": "x", "scores": g}
+
+
+def test_near_perfect_score_is_flagged_suspicious():
+    assert SUSPICIOUS in format_table({"bm25": _rep(1.0, 1.0, 1.0)})
+    assert SUSPICIOUS in format_table({"bm25": _rep(0.9, 0.96, 0.93)})
+
+
+def test_ordinary_scores_are_not_flagged():
+    assert SUSPICIOUS not in format_table({"bm25": _rep(0.6, 0.8, 0.7)})

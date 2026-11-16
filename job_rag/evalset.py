@@ -77,7 +77,7 @@ def verify(questions: list[dict], corpus=None) -> list[str]:
                     bad(f"金標標題不存在：{g['file']} / {g['heading']}")
                 elif not any(_squash(g["quote"]) in _squash(t) for t in under):
                     bad(f"引文不在金標標題之下：{g['file']} / {g['heading']}：{g['quote']}")
-                flags |= {s["private"] for s in segs if s["file"] == g["file"] and
+                flags |= {s["excluded"] for s in segs if s["file"] == g["file"] and
                           (s["heading_path"] == g["heading"] or s["heading_path"].startswith(g["heading"] + " > "))}
             if True in flags:
                 bad("金標落在排除段落（金標只能是公開事實段落）")

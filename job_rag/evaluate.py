@@ -28,14 +28,14 @@ DEPTH = 10  # 名次最多看到第 10；更後面算未命中（MRR 也算 0）
 QUESTIONS = "eval/questions.json"
 
 
-def _group(questions, mode, method, corpus):
+def _group(questions, method, corpus):
     from . import search
     ranks, n_unans = {}, 0
     for q in questions:
         if not q["answerable"]:
             n_unans += 1
             continue
-        res = search(q["question"], method=method, mode=mode, k=DEPTH, corpus=corpus)
+        res = search(q["question"], method=method, k=DEPTH, corpus=corpus)
         ranks[q["id"]] = hit_rank(res, q["gold"])
     return {
         "ranks": ranks,
@@ -47,7 +47,7 @@ def _group(questions, mode, method, corpus):
 
 def evaluate(questions: list[dict], method: str = "bm25", corpus=None) -> dict:
     """全部題，只查公開事實段落（排除段落不在索引內）。"""
-    scores = _group(questions, "demo", method, corpus)
+    scores = _group(questions, method, corpus)
     types = {}
     for q in questions:
         if q["answerable"]:
@@ -75,16 +75,52 @@ def format_report(rep: dict) -> str:
     return "\n".join(out)
 
 
+SUSPICIOUS = "※ 命中率接近 100%：先懷疑題目太簡單，不要當成方法很強"
+NEAR_PERFECT = 0.95
+TABLE_OUT = "eval/results_methods.txt"
+
+
+def compare(questions: list[dict], methods=None, corpus=None) -> dict:
+    from . import METHODS
+    return {m: evaluate(questions, method=m, corpus=corpus) for m in (methods or METHODS)}
+
+
+def format_table(reps: dict) -> str:
+    out = [f"檢索方式並列　評分單位：段落　只查公開事實段落　Hit@k 的 k=1、3；名次最多看到 {DEPTH}",
+           f"{'方式':<14}{'題數':>4}{'Hit@1':>8}{'Hit@3':>8}{'MRR':>8}"]
+    flagged = False
+    for name, rep in reps.items():
+        m = rep["scores"]["metrics"]
+        if m is None:
+            out.append(f"{name:<14}（無可回答題）")
+            continue
+        flagged |= m["hit@1"] >= NEAR_PERFECT or m["hit@3"] >= NEAR_PERFECT
+        out.append(f"{name:<14}{m['n']:>4}{m['hit@1']:>8.3f}{m['hit@3']:>8.3f}{m['mrr']:>8.3f}")
+    n = next(iter(reps.values()))["scores"]["unanswerable"]["n"]
+    out.append(f"\n不可回答題 {n} 題；正確拒答率：尚未實作門檻")
+    if flagged:
+        out.append(SUSPICIOUS)
+    return "\n".join(out)
+
+
 def main():
     import argparse
     import json
     from pathlib import Path
     ap = argparse.ArgumentParser()
     ap.add_argument("--questions", default=QUESTIONS)
-    ap.add_argument("--method", default="bm25")
+    ap.add_argument("--method", default="bm25", help="bm25、bge-small-zh、bge-m3、e5-large、hybrid，或 all")
+    ap.add_argument("--out", help="all 時預設寫入 " + TABLE_OUT)
     a = ap.parse_args()
     qs = json.loads(Path(a.questions).read_text(encoding="utf-8"))["questions"]
-    print(format_report(evaluate(qs, method=a.method)))
+    if a.method == "all":
+        text = format_table(compare(qs))
+        out = Path(a.out or TABLE_OUT)
+        out.write_text(text + "\n", encoding="utf-8")
+        print(text)
+        print(f"\n已寫入 {out}")
+    else:
+        print(format_report(evaluate(qs, method=a.method)))
 
 
 if __name__ == "__main__":
