@@ -1,6 +1,7 @@
 """評分器。檢索只透過 search()；金標用「檔名＋標題路徑」定義。"""
 import re
 
+from .retrieval import THIRD_PARTY
 from .stats import BOOTSTRAP, SEED, gate_outcome, mrr_interval, paired_diff_interval, pick_threshold, verdict
 
 
@@ -191,7 +192,6 @@ def format_gate(questions: list[dict], reps: dict) -> str:
     return "\n".join(out)
 
 
-THIRD_PARTY = re.compile("面試趣|面試心得|面試題|面試紀錄|面試區|GoodJob|goodjob")
 DEEP = re.compile(r"^\d\d_")  # 一公司一檔的深查檔；其餘（A_、B_、補、網址）是 104 職缺檔
 
 
@@ -202,14 +202,14 @@ def format_interview(drops: list[dict]) -> str:
     other = [d for d in pub if d not in third and d not in job]
     show = lambda d: f"  {d['file']} > {d['heading_path'][:30]} | {d['line'][:50]}"
     out = ["## 「面試」行過濾",
-           "做法：載入語料時，內文含「面試」二字的行整行丟掉（面試資訊不屬公開事實）。標題行不丟，否則排除段落的內容會併進上一段。",
+           "做法：載入語料時，內文含「面試」二字的行丟掉（面試資訊不屬公開事實）。表格列只清空含「面試」的欄位，保留職缺名稱、網址等其他欄位；第三方面試網站的表格列與非表格行整行丟掉。標題行不丟，否則排除段落的內容會併進上一段。逐行判斷見 eval/line_filter_review.md。",
            f"丟掉 {len(drops)} 行；其中在公開事實段落內 {len(pub)} 行，其餘 {len(drops) - len(pub)} 行本來就在排除段落。",
            f"公開段落內的 {len(pub)} 行：第三方面試心得或面試網站 {len(third)} 行（本來就不是公司公開事實）；"
            f"104 職缺檔 {len(job)} 行（最可能真的丟了公開職缺內容，逐行列出）；"
            f"其他 {len(other)} 行（多為「面試時要問」「面試前請核對」這類提醒語，列前 3 行）。"]
     out += [show(d) for d in job] + [show(d) for d in other[:3]]
-    out.append("誤丟風險：整行丟掉，同一行的公開內容（表格列的職缺名稱、「優先面試」這類條件）也一起沒了；"
-               "「面試官」「面試前請核對」這類說明文字同樣會被丟。全部列出：python -X utf8 -m job_rag.classify")
+    out.append("誤丟風險：非表格行整行丟掉，同一行的公開內容（「優先面試」這類條件）也一起沒了；"
+               "表格列的「面試」欄位內若同時寫了工具、人數、地點，也會一起沒了。全部列出：python -X utf8 -m job_rag.classify")
     return "\n".join(out)
 
 

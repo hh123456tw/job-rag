@@ -49,7 +49,7 @@ set JOB_RAG_MODELS_TEST=1 && python -m pytest tests/test_vector.py   # 真模型
 題少（25 題），所以把題目重抽 1000 次（固定亂數種子 0），看 MRR 會落在哪個範圍。bge-m3 與混合的差，用同一批重抽的題目算；區間不含 0，才說差異可信。
 
 ## 「面試」行過濾
-載入語料時，內文含「面試」二字的行整行丟掉（標題行不丟）。被丟的行數、範例與可能誤丟的公開內容寫在 `eval/results_methods.txt`；全部列出：`python -X utf8 -m job_rag.classify`。
+載入語料時，內文含「面試」二字的非表格行整行丟掉；表格列只清空含「面試」的欄位，保留職缺名稱、網址等其他欄位；第三方面試網站的列整行丟掉。標題行不丟。被丟的行數與範例寫在 `eval/results_methods.txt`，逐行判斷在 `eval/line_filter_review.md`；全部列出：`python -X utf8 -m job_rag.classify`。
 
 ## 整理成答案（DeepSeek）
 ```
