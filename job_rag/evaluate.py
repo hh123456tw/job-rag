@@ -28,14 +28,14 @@ DEPTH = 10  # 名次最多看到第 10；更後面算未命中（MRR 也算 0）
 QUESTIONS = "eval/questions.json"
 
 
-def _group(questions, mode, method, corpus):
+def _group(questions, method, corpus):
     from . import search
     ranks, n_unans = {}, 0
     for q in questions:
         if not q["answerable"]:
             n_unans += 1
             continue
-        res = search(q["question"], method=method, mode=mode, k=DEPTH, corpus=corpus)
+        res = search(q["question"], method=method, k=DEPTH, corpus=corpus)
         ranks[q["id"]] = hit_rank(res, q["gold"])
     return {
         "ranks": ranks,
@@ -47,7 +47,7 @@ def _group(questions, mode, method, corpus):
 
 def evaluate(questions: list[dict], method: str = "bm25", corpus=None) -> dict:
     """全部題，只查公開事實段落（排除段落不在索引內）。"""
-    return {"method": method, "scores": _group(questions, "demo", method, corpus)}
+    return {"method": method, "scores": _group(questions, method, corpus)}
 
 
 def _fmt(m):

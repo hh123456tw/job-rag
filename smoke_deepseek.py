@@ -7,7 +7,7 @@ from job_rag.answer import AnswerError, answer
 
 q = sys.argv[1] if len(sys.argv) > 1 else "這家公司做什麼？"
 try:
-    r = answer(q, search(q, mode="demo"))
+    r = answer(q, search(q))
 except (AnswerError, RuntimeError) as e:
     sys.exit(f"失敗：{e}")
 print(r["answer"])

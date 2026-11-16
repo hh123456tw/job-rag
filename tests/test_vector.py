@@ -30,14 +30,19 @@ class FakeModel:
         return out  # 故意不正規化：由 search() 負責正規化
 
 
+def _clear():
+    for f in (retrieval._segments, retrieval._public, retrieval._bm25, retrieval._index):
+        f.cache_clear()
+
+
 @pytest.fixture(autouse=True)
 def fake_env(monkeypatch, tmp_path):
     FakeModel.calls = []
     monkeypatch.setenv("JOB_RAG_CACHE", str(tmp_path / "cache"))
     monkeypatch.setattr(retrieval, "_load_model", lambda method: FakeModel(method))
-    retrieval._index.cache_clear()
+    _clear()
     yield
-    retrieval._index.cache_clear()
+    _clear()
 
 
 def q(text, **kw):
@@ -68,28 +73,31 @@ def test_rrf_item_in_one_list_only_gets_one_term():
 def test_every_method_finds_the_obvious_segment(method):
     r = q("鯨魚追蹤軟體", method=method)
     assert r and r[0]["company"] == "甲科技" and r[0]["heading_path"].endswith("基本資料")
-    assert set(r[0]) >= {"company", "file", "heading_path", "private", "text", "score"}
+    assert set(r[0]) >= {"company", "file", "heading_path", "text", "score"}
 
 
 def test_methods_list():
     assert METHODS == ("bm25", "bge-small-zh", "bge-m3", "e5-large", "hybrid")
 
 
-# ---- 模式與公司過濾：每一種方式 ----
+# ---- 排除段落：每一種方式都查不到、也不會被編碼 ----
+SECRETS = ("刺蝟密語", "狐獴密語", "企鵝密語", "河馬密語", "海豹密語", "浣熊限制", "水獺密語")
+
+
 @pytest.mark.parametrize("method", METHODS)
-def test_demo_mode_never_returns_private_for_any_method(method):
-    secrets = ("刺蝟密語", "狐獴密語", "企鵝密語", "浣熊限制")
-    for word in [*secrets, "珊瑚礁 壓力測試", "離職率"]:
-        res = q(word, method=method, mode="demo", k=100)
+def test_excluded_never_returned_for_any_method(method):
+    for word in [*SECRETS, "珊瑚礁 壓力測試", "離職率", "風險備註", "職缺風險"]:
+        res = q(word, method=method, k=100)
         assert res or method == "bm25", (method, word)  # 向量方式一定有結果，但必須全是公開段落
-        assert all(not x["private"] for x in res), (method, word)
-        assert not any(w in x["text"] for x in res for w in secrets), (method, word)
+        assert not any(w in x["text"] for x in res for w in (*SECRETS, "珊瑚礁", "離職率")), (method, word)
+        assert all("private" not in x for x in res)
 
 
-@pytest.mark.parametrize("method", METHODS)
-def test_query_mode_can_return_private_for_any_method(method):
-    r = q("刺蝟密語", method=method, mode="query")
-    assert r and r[0]["private"] is True and r[0]["company"] == "乙資訊"
+@pytest.mark.parametrize("method", VECTOR)
+def test_excluded_text_is_never_encoded(method):
+    q("鯨魚追蹤軟體", method=method)
+    sent = "".join(t for _, ts in FakeModel.calls for t in ts)
+    assert "鯨魚" in sent and not any(w in sent for w in (*SECRETS, "珊瑚礁", "離職率"))
 
 
 @pytest.mark.parametrize("method", METHODS)
@@ -151,7 +159,7 @@ def test_passage_vectors_are_cached_on_disk_not_recomputed():
     assert sum(len(ts) for _, ts in FakeModel.calls) > 1
     retrieval._index.cache_clear()  # 模擬重開程式：只剩磁碟快取
     FakeModel.calls = []
-    q("珊瑚礁", method="bge-m3", mode="query")
+    q("珊瑚礁", method="bge-m3")
     assert sum(len(ts) for _, ts in FakeModel.calls) == 1  # 只編碼查詢
 
 
@@ -162,11 +170,24 @@ def test_cache_invalidated_when_corpus_text_changes(tmp_path):
     q("鯨魚", method="bge-m3", corpus=c)
     f = c / "01_甲科技.md"
     f.write_text(f.read_text(encoding="utf-8") + "\n## 5. 技術堆疊\n新增獨特詞彙：樹懶。\n", encoding="utf-8")
-    retrieval._segments.cache_clear()
-    retrieval._index.cache_clear()
+    _clear()
     FakeModel.calls = []
     q("鯨魚", method="bge-m3", corpus=c)
     assert sum(len(ts) for _, ts in FakeModel.calls) > 1  # 內容變了，重算
+
+
+def test_cache_invalidated_when_classification_rules_change(monkeypatch):
+    q("鯨魚", method="bge-m3")
+    _clear()
+    FakeModel.calls = []
+    q("鯨魚", method="bge-m3")
+    assert sum(len(ts) for _, ts in FakeModel.calls) == 1  # 規則沒變：吃快取
+    monkeypatch.setattr(retrieval, "PUBLIC", retrieval.PUBLIC | {"風險備註"})  # 規則變了：多一段公開
+    _clear()
+    FakeModel.calls = []
+    q("鯨魚", method="bge-m3")
+    assert sum(len(ts) for _, ts in FakeModel.calls) > 1  # 重算，不吃舊快取
+    assert q("企鵝密語", method="bm25")  # 新規則下這段才進索引
 
 
 def test_search_makes_no_network_call(monkeypatch):
@@ -184,6 +205,6 @@ def test_search_makes_no_network_call(monkeypatch):
 def test_real_model_smoke(monkeypatch, tmp_path, method):
     monkeypatch.undo()  # 還原成真的 _load_model
     monkeypatch.setenv("JOB_RAG_CACHE", str(tmp_path / "real"))
-    retrieval._index.cache_clear()
+    _clear()
     r = search("鯨魚追蹤軟體在哪裡", method=method, corpus=MINI)
     assert r and r[0]["company"] == "甲科技"

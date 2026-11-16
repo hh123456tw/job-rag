@@ -38,8 +38,8 @@ def _key(env_file) -> str:
 
 
 def answer(question: str, hits: list[dict], post=_post, env_file=".env") -> dict:
-    """只用 hits 中的公開事實段落。回 {"answer", "sources"}；失敗丟 AnswerError。"""
-    used = [h for h in hits if not h["private"]]
+    """hits 來自 search()，只可能是公開事實段落。回 {"answer", "sources"}；失敗丟 AnswerError。"""
+    used = hits
     if not used:
         return {"answer": NOT_FOUND, "sources": []}
     key = _key(env_file)

@@ -96,7 +96,7 @@ def test_report_has_no_private_only_row():
 
 def test_excluded_section_is_not_searchable_so_its_question_misses():
     from job_rag import search
-    assert search("刺蝟密語", mode="demo", corpus=MINI) == []
+    assert search("刺蝟密語", corpus=MINI) == []
 
 
 def test_unanswerable_refusal_rate_is_not_invented():
@@ -124,7 +124,8 @@ def _fake_models(monkeypatch, tmp_path):
     from job_rag import retrieval
     monkeypatch.setenv("JOB_RAG_CACHE", str(tmp_path))
     monkeypatch.setattr(retrieval, "_load_model", lambda m: FakeModel(m))
-    retrieval._index.cache_clear()
+    for f in (retrieval._segments, retrieval._public, retrieval._bm25, retrieval._index):
+        f.cache_clear()
 
 
 def test_compare_runs_all_five_methods_and_table_lists_each(monkeypatch, tmp_path):

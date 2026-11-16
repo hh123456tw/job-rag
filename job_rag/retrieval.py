@@ -1,4 +1,4 @@
-"""語料 -> 段落 -> 分類 -> BM25 檢索。對外只有 search（與分類表）。"""
+"""語料 -> 段落 -> 分類 -> 丟掉排除段落 -> 檢索。對外只有 search（與分類表）。索引裡只有公開事實段落。"""
 import hashlib
 import os
 import re
@@ -9,7 +9,7 @@ import jieba
 import numpy as np
 from rank_bm25 import BM25Okapi
 
-# 公開事實：標題（去編號、去無害括號、去空白後）完全相同才算。其餘一律私人。
+# 公開事實：標題（去編號、去無害括號、去空白後）完全相同才算。其餘一律排除。
 PUBLIC = {
     "基本資料", "基本資料與身分確認", "基本資料與法人關係", "業務與財務",
     "報名部門在做什麼", "報名部門：新興應用部", "智能應用發展部在做什麼", "數據發展部在做什麼",
@@ -28,11 +28,12 @@ PUBLIC = {
     # 測試用假語料的 104 公司區塊
     "甲科技股份有限公司",
 }
-# 即使在公開區段之下，這些子標題仍是判斷，歸私人。
-PRIVATE_SUB = {"候選評估", "典凡小結", "叡揚補充", "藍新資訊補充"}
+# 即使在公開區段之下，這些子標題仍是判斷，歸排除。
+EXCLUDED_SUB = {"候選評估", "典凡小結", "叡揚補充", "藍新資訊補充"}
 # 括號內有這些字時不剝括號（括號可能在說「這是判斷」）。
-_PRIVATE_WORDS = re.compile("風險|判斷|評價|面試|推測|矛盾|不一致|限制|未查到|對應|作戰|不要")
-ALIASES = {"台哥大": "台灣大哥大", "聯合報系": "聯合報", "網龍": "中華網龍", "宏碁雲": "宏碁雲架構", "尼諾思": "尼諾思科技"}
+_EXCLUDED_WORDS = re.compile("風險|判斷|評價|面試|推測|矛盾|不一致|限制|未查到|對應|作戰|不要")
+ALIASES = {"台哥大": "台灣大哥大", "聯合報系": "聯合報", "網龍": "中華網龍", "宏碁雲": "宏碁雲架構", "尼諾思": "尼諾思科技",
+           "神通": "神通資訊", "華電": "華電聯網"}  # 檔名簡稱（補2_神通、補3_華電）
 GENERAL = "綜合"
 _HEAD = re.compile(r"^(#{1,6})\s+(.*\S)\s*$")
 _NUM = re.compile(r"^(?:\d+(?:\.\d+)*\.?|[一二三四五六七八九十]+、|\([a-z]\))\s*")
@@ -42,14 +43,14 @@ CHUNK, OVERLAP = 600, 90
 
 def _norm(title: str) -> str:
     t = _NUM.sub("", title.strip())
-    t = _PAREN.sub(lambda m: m.group(0) if _PRIVATE_WORDS.search(m.group(0)) else "", t)
+    t = _PAREN.sub(lambda m: m.group(0) if _EXCLUDED_WORDS.search(m.group(0)) else "", t)
     return re.sub(r"\s+", "", t)
 
 
-def _is_private(path: list[str]) -> bool:
-    """path 不含 H1。未知標題、空路徑都是私人。"""
+def _is_excluded(path: list[str]) -> bool:
+    """path 不含 H1。未知標題、空路徑都是排除。"""
     norms = [_norm(t) for t in path]
-    if not norms or any(n in PRIVATE_SUB for n in norms[1:]):
+    if not norms or any(n in EXCLUDED_SUB for n in norms[1:]):
         return True
     return norms[0] not in PUBLIC
 
@@ -70,13 +71,16 @@ def _corpus_dir(corpus) -> Path:
     return p
 
 
-def _company_of(path: list[str], names: list[str]) -> str:
+def _company_of(path: list[str], stem: str, names: list[str]) -> str:
+    """先看標題路徑（由外到內，第一個含公司名的標題）；沒有再看檔名。
+    檔名含不只一家公司時不猜，歸「綜合」。"""
     pairs = [*ALIASES.items(), *((n, n) for n in names)]
     for t in path:
         for alias, name in pairs:
             if alias in t:
                 return name
-    return GENERAL
+    in_stem = {name for alias, name in pairs if alias in stem}
+    return in_stem.pop() if len(in_stem) == 1 else GENERAL
 
 
 @lru_cache(maxsize=4)
@@ -97,11 +101,11 @@ def _segments(root: str) -> tuple:
             if not text:
                 return
             path = [t for lv, t in stack if lv > 1]
-            company = file_company or _company_of([*path, f.stem], names)
+            company = file_company or _company_of(path, f.stem, names)
             head = " > ".join(path) or (stack[0][1] if stack else f.stem)
             for piece in _pieces(text):
                 segs.append({
-                    "company": company, "file": f.name, "heading_path": head, "private": _is_private(path),
+                    "company": company, "file": f.name, "heading_path": head, "excluded": _is_excluded(path),
                     "text": piece, "_index": f"{company} {head}\n{piece}",
                     "_title": " > ".join(_norm(t) for t in path) or "(標題前言)",
                 })
@@ -124,9 +128,15 @@ def _tok(s: str) -> list[str]:
     return [t.lower() for t in jieba.cut_for_search(s) if re.search(r"\w", t)]
 
 
+@lru_cache(maxsize=4)
+def _public(root: str) -> tuple:
+    """載入時就丟掉排除段落：往後的索引、快取、檢索都只看這裡。"""
+    return tuple(s for s in _segments(root) if not s["excluded"])
+
+
 @lru_cache(maxsize=8)
-def _bm25(root: str, mode: str):
-    pool = [s for s in _segments(root) if mode == "query" or not s["private"]]
+def _bm25(root: str):
+    pool = list(_public(root))
     return pool, (BM25Okapi([_tok(s["_index"]) for s in pool]) if pool else None)
 
 
@@ -168,8 +178,9 @@ def _encode(method: str, texts: list[str], is_query: bool) -> np.ndarray:
 
 
 def _passage_vectors(root: str, method: str) -> np.ndarray:
-    """全部段落（含私人，依 _segments 順序）的向量。磁碟快取，內容雜湊變了才重算。"""
-    segs = _segments(root)
+    """公開事實段落（依 _public 順序）的向量。磁碟快取；雜湊含公司與段落文字，
+    分類規則或公司歸屬一改、段落清單變了就重算。"""
+    segs = _public(root)
     h = hashlib.sha1("\x00".join(s["_index"] for s in segs).encode("utf-8")).hexdigest()[:16]
     f = Path(os.environ.get("JOB_RAG_CACHE", ".cache")) / f"{method}_{h}.npy"
     if f.is_file():
@@ -181,22 +192,20 @@ def _passage_vectors(root: str, method: str) -> np.ndarray:
 
 
 @lru_cache(maxsize=8)
-def _index(root: str, method: str, mode: str):
-    """(候選池, FAISS 內積索引)。演示模式的池在這裡就剔掉私人段落。"""
+def _index(root: str, method: str):
+    """(候選池, FAISS 內積索引)。"""
     import faiss
-    segs = _segments(root)
-    keep = [i for i, s in enumerate(segs) if mode == "query" or not s["private"]]
-    pool = [segs[i] for i in keep]
+    pool = list(_public(root))
     if not pool:
         return pool, None
-    vecs = _passage_vectors(root, method)[keep]
+    vecs = _passage_vectors(root, method)
     idx = faiss.IndexFlatIP(vecs.shape[1])
     idx.add(np.ascontiguousarray(vecs))
     return pool, idx
 
 
-def _rank_bm25(root, question, mode, company):
-    pool, bm = _bm25(root, mode)
+def _rank_bm25(root, question, company):
+    pool, bm = _bm25(root)
     if not pool:
         return pool, []
     scores = bm.get_scores(_tok(question))
@@ -204,38 +213,44 @@ def _rank_bm25(root, question, mode, company):
     return pool, [(i, float(scores[i])) for i in order if scores[i] > 0 and (not company or pool[i]["company"] == company)]
 
 
-def _rank_vector(root, method, question, mode, company):
-    pool, idx = _index(root, method, mode)
+def _rank_vector(root, method, question, company):
+    pool, idx = _index(root, method)
     if not pool:
         return pool, []
     sims, ids = idx.search(_encode(method, [question], is_query=True), len(pool))
     return pool, [(int(i), float(s)) for s, i in zip(sims[0], ids[0]) if not company or pool[i]["company"] == company]
 
 
-def search(question: str, method: str = "bm25", mode: str = "demo", company: str | None = None,
+def search(question: str, method: str = "bm25", company: str | None = None,
            k: int = 3, corpus=None) -> list[dict]:
-    """排序後的段落。模式與公司過濾在排名前做：演示模式的候選池根本不含私人段落。"""
+    """排序後的公開事實段落。排除段落在載入時就丟了，候選池根本沒有它們。"""
     if method not in METHODS:
         raise ValueError(f"未支援的檢索方式：{method}")
-    if mode not in ("demo", "query"):
-        raise ValueError(f"未知模式：{mode}")
     root = str(_corpus_dir(corpus).resolve())
     if method == "bm25":
-        pool, ranked = _rank_bm25(root, question, mode, company)
+        pool, ranked = _rank_bm25(root, question, company)
     elif method == "hybrid":
-        pool, rb = _rank_bm25(root, question, mode, company)
-        _, rv = _rank_vector(root, "bge-m3", question, mode, company)
+        pool, rb = _rank_bm25(root, question, company)
+        _, rv = _rank_vector(root, "bge-m3", question, company)
         ranked = rrf([[i for i, _ in rb], [i for i, _ in rv]])
     else:
-        pool, ranked = _rank_vector(root, method, question, mode, company)
-    return [{key: pool[i][key] for key in ("company", "file", "heading_path", "private", "text")} | {"score": float(sc)}
+        pool, ranked = _rank_vector(root, method, question, company)
+    return [{key: pool[i][key] for key in ("company", "file", "heading_path", "text")} | {"score": float(sc)}
             for i, sc in ranked[:k]]
 
 
 def classification_table(corpus=None) -> list[dict]:
-    """標題 × 公開／私人 × 段落數，給人檢查分類。"""
+    """標題 × 公開／排除 × 段落數，給人檢查分類。"""
     counts: dict[tuple[str, bool], int] = {}
     for s in _segments(str(_corpus_dir(corpus).resolve())):
-        key = (s["_title"], s["private"])
+        key = (s["_title"], s["excluded"])
         counts[key] = counts.get(key, 0) + 1
-    return [{"title": t, "private": p, "count": n} for (t, p), n in sorted(counts.items(), key=lambda kv: (kv[0][1], kv[0][0]))]
+    return [{"title": t, "excluded": e, "count": n} for (t, e), n in sorted(counts.items(), key=lambda kv: (kv[0][1], kv[0][0]))]
+
+
+def public_company_counts(corpus=None) -> dict[str, int]:
+    """公開事實段落的公司 -> 段落數（「綜合」＝無法歸屬）。"""
+    out: dict[str, int] = {}
+    for s in _public(str(_corpus_dir(corpus).resolve())):
+        out[s["company"]] = out.get(s["company"], 0) + 1
+    return dict(sorted(out.items()))
