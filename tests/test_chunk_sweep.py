@@ -55,13 +55,13 @@ def test_url_cut_is_counted_and_lost_when_overlap_cannot_recover_it():
 
 
 def test_url_followed_by_space_or_closing_paren_is_not_a_cut():
-    for t in ("012345678 http://a.b tail words", "01234567 (http://a.b) tail words"):
+    for t in ("abcdefghi http://a.b tail words", "abcdefgh (http://a.b) tail words"):
         assert sw.boundary_cuts(pair(t), 20, 4)["url_end_cut"] == 0, t
     assert sw.boundary_cuts(pair("see http://x tail"), 20, 4)["boundaries"] == 0  # 只有一段：沒有接縫
 
 
 def test_url_inside_overlap_is_cut_but_not_lost():
-    t = "0123456789012345 http://abcdefgh"  # 網址從第 17 字起，在下一段的重疊區（第 16 字起）內
+    t = "abcdefghijklmnop http://abcdefgh"  # 網址從第 17 字起，在下一段的重疊區（第 16 字起）內
     c = sw.boundary_cuts(pair(t), 20, 4)
     assert (c["url_end_cut"], c["url_lost"]) == (1, 0)
 
