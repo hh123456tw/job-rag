@@ -232,10 +232,9 @@ input[type=range]::-webkit-slider-thumb{height:32px;width:32px}input[type=range]
 .t-leg .on{background:var(--acc)}.t-leg .sq{border-radius:2px}.t-leg .rg{background:none;border-color:var(--err);width:18px;height:18px;vertical-align:-4px;margin-right:4px}
 #chart{width:100%;height:auto;display:block;margin:4px 0 8px;-webkit-user-select:none;user-select:none}
 #chart text{font:14px system-ui,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;fill:var(--mute)}#chart .rl{fill:var(--fg);font-weight:650}#chart .rl,#chart .lb{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
-#chart .tk{font-size:13px}#chart .lb{font-weight:650}#chart .lbt,#chart .lbs{fill:var(--acc)}#chart .lbf{fill:var(--fg)}
+#chart .tk{font-size:13px}#chart .lb{font-weight:700;font-size:17px}#chart .lbt,#chart .lbs{fill:var(--acc)}#chart .lbf{fill:var(--fg)}
 #chart .miss{font-style:italic}#chart .ax{stroke:var(--line)}#chart .bl{stroke:var(--line);stroke-dasharray:2 3}
-#chart .mv{stroke:var(--acc);stroke-width:2}#chart .mvs{stroke:var(--acc);stroke-width:2;stroke-dasharray:5 3}
-#chart .fl{stroke:var(--fg);stroke-width:2;stroke-dasharray:2 3}
+#chart .mv{stroke:var(--acc);stroke-width:2.5}
 .pt{cursor:pointer;outline:none}.pt .hz{fill:transparent}.pt .d{fill:var(--acc);stroke:var(--acc);stroke-width:1.5;fill-opacity:.15}.pt.hi .d{fill-opacity:1}
 .pt .ring{fill:none;stroke:var(--err);stroke-width:2.5;display:none}.pt.wrong .ring{display:inline}
 .gray .pt:not(.on){opacity:.2}.pt.pick .d{stroke:var(--fg);stroke-width:3.5}.pt:focus-visible .d{stroke:var(--fg);stroke-width:3.5}
@@ -286,8 +285,8 @@ function upd(){var S=[0,0,0,0,0];
 P.forEach(function(p){var ok=p.s>=th(p),bad=ok!==p.a;if(p.g!=='cross'&&!p.h){S[p.a?1:3]++;if(p.a&&ok)S[0]++;if(!p.a&&!ok)S[2]++;if(bad)S[4]++}
 p.e.classList.toggle('hi',ok);p.e.classList.toggle('wrong',bad);p.e.classList.toggle('on',filt!=='gray'||gz(p));p.e.classList.toggle('pick',p===pick)});
 $('ca').textContent=S[0]+'/'+S[1];$('cu').textContent=S[2]+'/'+S[3];$('cw').textContent=S[4];
-$('tv').textContent=t.toFixed(3);$('ts').textContent=(t-D).toFixed(3);line('l-t',t);line('l-s',t-D);
-lab('lb-t',t,'未指定 '+t.toFixed(3));lab('lb-s',t-D,'已指定公司 '+(t-D).toFixed(3));
+$('tv').textContent=t.toFixed(3);$('ts').textContent=(t-D).toFixed(3);line('l-s',t-D);
+lab('lb-s',t-D,'門檻 '+(t-D).toFixed(3));
 R.classList.toggle('gray',filt==='gray'&&GZ!==null);
 var rows=[].slice.call(R.querySelectorAll('.t-r')),n=0;
 rows.sort(function(a,b){return desc?B[b.dataset.id].s-B[a.dataset.id].s:B[a.dataset.id].s-B[b.dataset.id].s});
@@ -339,7 +338,7 @@ def _dot(p, x, y, t, drop, floor):
 MISS_OF = {"top": ("評估題組", "真實問法", "獨立測試題"), "cross": ("跨公司題", "真實問法", "獨立測試題")}  # 各列的點來自哪些來源
 ROWS = (("有答案的題", "top", lambda p: p["g"] != "cross" and p["a"]), ("語料沒有答案的題", "top", lambda p: p["g"] != "cross" and not p["a"]),
         ("跨公司題", "cross", lambda p: p["g"] == "cross"))
-HEAD = 38  # 圖頂留給門檻文字的高度
+HEAD = 28  # 圖頂留給門檻文字的高度
 
 
 def _chart(pts, miss, lo, hi, t, drop, floor):
@@ -348,7 +347,7 @@ def _chart(pts, miss, lo, hi, t, drop, floor):
         row = [p for p in pts if f(p)]
         lane, n = _lanes(row, lo, hi)
         parts.append(f'<text x={PAD} y={y + 14} class=rl>{escape(f"{title}（{len(row)} 題）")}</text>')
-        y += 22 + (18 if src == "cross" else 0)  # 跨公司列多放一行固定門檻的文字
+        y += 22
         if not row:
             why = [f"{k}：{v}" for k, v in miss.items() if k in MISS_OF[src]]
             parts.append(f'<text x={PAD} y={y + 10} class=miss>{escape("缺資料：" + "；".join(why) if why else "沒有這類題")}</text>')
@@ -360,13 +359,9 @@ def _chart(pts, miss, lo, hi, t, drop, floor):
         ends.append(y)
         parts.append(f'<line class=bl x1={PAD} x2={VW - PAD} y1={y + 3} y2={y + 3} />')
         y += 10
-    cross_top = ends[1] + 32  # 跨公司列標題下方
-    vl = lambda cls, v, a, b, id_="": f'<line {id_} class={cls} x1={_x(v, lo, hi):.1f} x2={_x(v, lo, hi):.1f} y1={a} y2={b} />'
-    fx = _x(floor, lo, hi)
-    side = f"x={fx + 4:.1f}" if fx < VW - 120 else f"text-anchor=end x={fx - 4:.1f}"
-    lines = (vl("mv", t, HEAD - 4, ends[1], "id=l-t") + vl("mvs", t - drop, HEAD - 4, ends[1], "id=l-s")
-             + vl("fl", floor, cross_top, ends[2]) + f'<text class="lb lbf" {side} y={cross_top + 12:.1f}>跨公司 {floor:.3f}</text>'
-             + '<text class="lb lbt" id=lb-t y=14 /><text class="lb lbs" id=lb-s y=30 />')
+    x = _x(t - drop, lo, hi)  # 只畫一根線：已指定公司用的門檻；未指定（高 drop）與跨公司（固定 floor）改在圖下用文字說明，各點的算法不變
+    lines = (f'<line id=l-s class=mv x1={x:.1f} x2={x:.1f} y1={HEAD - 6} y2={ends[1]} />'
+             '<text class="lb lbs" id=lb-s y=17 />')
     ticks = "".join(f'<line class=ax x1={_x(v, lo, hi):.1f} x2={_x(v, lo, hi):.1f} y1={y} y2={y + 4} />'
                     f'<text class=tk x={_x(v, lo, hi):.1f} y={y + 18} text-anchor=middle>{v:.1f}</text>'
                     for v in [round(lo + 0.1 * i, 1) for i in range(int((hi - lo) / 0.1 + 1e-9) + 1)])
@@ -432,9 +427,10 @@ def render(d: dict) -> str:
 <div id=th data-t={T!r} data-drop={drop!r} data-floor={floor!r} data-lo={lo!r} data-hi={hi!r} data-l={PAD} data-w={VW - 2 * PAD} data-vw={VW} data-gz="{gzs}">
 <div class=t-nums><div><b id=ca>{s['a']}/{s['b']}</b><span>可回答的題，有回答</span></div><div><b id=cu>{s['c']}/{s['d']}</b><span>沒答案的題，有拒答</span></div><div><b id=cw>{s['n']}</b><span>處理錯的題</span></div></div>
 <div class=t-ctl><label for=sl>拖拖看：門檻</label><input id=sl type=range min={SL_LO} max={SL_HI} step={SL_STEP} value={T!r}>
-<div class=t-vals><span>未指定公司 <output id=tv>{T:.3f}</output></span><span>已指定公司 <output id=ts>{T - drop:.3f}</output></span><button id=b-reset class=t-btn type=button>還原</button></div></div>
+<div class=t-vals><span>門檻 <output id=ts>{T - drop:.3f}</output></span><button id=b-reset class=t-btn type=button>還原</button></div></div>
 <div class=t-leg><span><i class=on></i>深色：放行</span><span><i></i>淡色：擋住</span><span><i class=rg></i>紅圈：處理錯</span>{sq_leg}</div>
 {_chart(pts, miss, lo, hi, T, drop, floor)}
+<p class=mute id=thn>圖上的線是指定公司時用的門檻。沒指定公司的題，門檻比它高 {drop:.3f}（現在是 <output id=tv>{T:.3f}</output>）；跨公司的題固定用 {floor:.3f}，不跟著動。每一點都用自己適用的那個門檻算。</p>
 {_held_note(pts, T, drop, floor)}
 <div id=card aria-live=polite><p class=kv>點圖上的點，或打開下面的題目清單，看這題問了什麼、系統答了什麼。</p></div>
 <details id=lst class=more><summary>題目清單（{len(pts)} 題）</summary>

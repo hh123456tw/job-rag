@@ -163,3 +163,13 @@ def test_badge_blocked_pass_and_no_record():
     assert tp.badge(p, ran, 0.85, 0.08, 0.5) == "擋住"  # 拖高門檻後被擋，不管實跑結果
     assert tp.badge(p, {"run": {"search": "ok", "ans_status": "ok", "answer": "查無，因為…"}}, 0.7, 0.08, 0.5) == "回答"  # 只有整句剛好是「查無」才算查無
     assert tp.badge(p, {"run": {"search": "ok", "ans_status": "error", "answer": None}}, 0.7, 0.08, 0.5) == "失敗"
+
+
+def test_chart_draws_exactly_one_threshold_line(client, root, monkeypatch):  # noqa: F811
+    monkeypatch.setattr(tp, "ROOT", root)
+    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 0.7)
+    h = client[1].get("/threshold").get_data(as_text=True)
+    svg = h[h.index("<svg id=chart"): h.index("</svg>")]
+    assert svg.count("class=mv ") == 1 and "id=l-s" in svg and "id=l-t" not in svg and "mvs" not in svg and "class=fl" not in svg
+    assert "id=lb-s" in svg and "未指定" not in svg and "跨公司 0." not in svg
+    assert "比它高 0.080" in h and "固定用 0.534" in h  # 另外兩個門檻改成圖下小字
