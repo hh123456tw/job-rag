@@ -10,6 +10,7 @@ from markupsafe import escape
 from job_rag import about, detect_company, netinfo, public_company_counts, retrieval, search
 from job_rag.about_page import render as render_about
 from job_rag.answer import AnswerError, _post, answer
+from job_rag.evalset import questions_path
 from job_rag.evaluate import DEPTH, hit_rank
 from job_rag.ui import page
 
@@ -64,8 +65,19 @@ LIVE_COMPANIES = [("台灣大哥大", "台灣大哥大"), ("聯合報", "聯合�
 # 常用問題：鍵 -> (按鈕文字, 接在公司名後的句尾)。句型必須通順、對任何公司都適用；措辭挑選見 eval/button_check.md
 FAQ = {"what": ("這家做什麼", "是做什麼的？"), "jobs": ("有哪些職缺", "有哪些職缺？"),
        "tech": ("用什麼技術", "的技術堆疊與開發工具有哪些？"), "fin": ("財務與新聞", "的營收和近期新聞是什麼？")}
-DEMOS = ["u07", "u06"]  # 查無示範：不可回答題的題號
-EVAL = {q["id"]: q for q in json.loads((Path(__file__).parent / "eval" / "questions.json").read_text(encoding="utf-8"))["questions"]}
+EVAL = {q["id"]: q for q in json.loads(questions_path().read_text(encoding="utf-8"))["questions"]}
+# 查無示範：不可回答題的題號。完整題組用 u07、u06；範例題組沒有這兩題，就用前兩個不可回答題
+DEMOS = [i for i in ("u07", "u06") if i in EVAL] or [i for i, q in EVAL.items() if not q["answerable"]][:2]
+
+
+def _company_buttons():
+    """語料只含 11 家預設公司的一部分（例如 3 家範例語料）時，按鈕改列語料裡有的公司；全有或一家都沒有時用原清單。"""
+    names = {n for n in public_company_counts() if n != "綜合"}
+    live = {n for _, n in LIVE_COMPANIES}
+    if not names & live or live <= names:
+        return LIVE_COMPANIES
+    label = {n: l for l, n in LIVE_COMPANIES}
+    return [(label.get(n, n), n) for n in sorted(names)]
 LOW = "<p class='warn'><b>可能沒有答案。</b>語料中找不到很接近的內容，也可能只是問法太籠統。下面的原文仍可參考，請自己核對。</p>"
 
 
@@ -154,7 +166,7 @@ def index():
             err = f"<p class='err'>錯誤：{escape(e)}</p>"
     pick = "".join(
         f"<button name=pick value=\"{'' if name == company else name}\" aria-pressed={'true class=sel' if name == company else 'false'}>{label}</button>"
-        for label, name in LIVE_COMPANIES)
+        for label, name in _company_buttons())
     faq = "".join(f"<button name=faq value={k}>{label}</button>" for k, (label, _) in FAQ.items())
     demo = "".join(f"<button name=demo value=\"{i}\" class=demo>{escape(EVAL[i]['question'])}</button>" for i in DEMOS)
     return page("求職情報問答", f"""<nav><b>問答</b><a href="/about">專案說明</a></nav>

@@ -30,7 +30,6 @@ def metrics(ranks: list[int | None]) -> dict:
 
 
 DEPTH = 10  # 名次最多看到第 10；更後面算未命中（MRR 也算 0）
-QUESTIONS = "eval/questions.json"
 
 
 def _group(questions, method, corpus, detect=False, dedupe=False):
@@ -59,7 +58,7 @@ def _group(questions, method, corpus, detect=False, dedupe=False):
 
 
 def evaluate(questions: list[dict], method: str = "bge-m3", corpus=None, detect=False, dedupe=False) -> dict:
-    """全部題，只查公開事實段落（排除段落不在索引內）。detect／dedupe 是票 14 的兩個開關，預設關。"""
+    """全部題，只查公開事實段落（排除段落不在索引內）。detect／dedupe 是兩個可選開關，預設關。"""
     scores = _group(questions, method, corpus, detect, dedupe)
     types = {}
     for q in questions:
@@ -167,8 +166,8 @@ def format_gate(questions: list[dict], reps: dict) -> str:
     out = ["## 查無",
            f"做法：最高分低於門檻就回查無。門檻是 bge-m3 的最高相似度 {T:.3f}。混合也用它的 bge-m3 最高分判斷"
            "（混合自己的 RRF 分數只看名次，不代表有多像，沒辦法比門檻）。BM25、bge-small-zh、e5-large 的分數尺度不同，沒做門檻。",
-           "挑法：試每個相鄰分數的中點，選「可回答題放行率＋不可回答題擋住率」最高者，同分取較低；兩種題各算比率，因為 25 題比 5 題多很多。",
-           "限制：門檻用評估的同一批 30 題挑，沒有獨立測試題，所以下面的數字是用挑門檻的題目打分，偏樂觀，只能當方向。"]
+           "挑法：試每個相鄰分數的中點，選「可回答題放行率＋不可回答題擋住率」最高者，同分取較低；兩種題各算比率，因為兩種題的題數差很多。",
+           "限制：門檻用評估的同一批題挑，沒有獨立測試題，所以下面的數字是用挑門檻的題目打分，偏樂觀，只能當方向。"]
     rep = reps.get("bge-m3")
     top = rep and rep["scores"].get("gate_scores")
     if not top:
@@ -285,8 +284,9 @@ def main():
     import argparse
     import json
     from pathlib import Path
+    from .evalset import questions_path
     ap = argparse.ArgumentParser()
-    ap.add_argument("--questions", default=QUESTIONS)
+    ap.add_argument("--questions", default=str(questions_path()))
     ap.add_argument("--method", default="bge-m3", help="bm25、bge-small-zh、bge-m3、e5-large、hybrid，或 all")
     ap.add_argument("--out", help="all 時預設寫入 " + TABLE_OUT)
     ap.add_argument("--detect", action="store_true", help="開公司名自動過濾")

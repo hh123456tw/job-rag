@@ -96,20 +96,23 @@ def test_type_summary_counts_by_type():
     assert type_summary(qs) == "跨公司 2、職缺 1、不可回答 1"
 
 
-# ---- 真正的 eval/questions.json ----
+# ---- 完整題組 eval/questions.json（私人 repo 才有）----
 import json
 import os
 from collections import Counter
 
 import pytest
 
-REAL = Path(__file__).parent.parent / "eval" / "questions.json"
+# 完整題組（30 題）不在公開版裡：設 JOB_RAG_REAL_QUESTIONS=<完整 questions.json> 才跑這一節
+REAL_PATH = os.environ.get("JOB_RAG_REAL_QUESTIONS")
+needs_real = pytest.mark.skipif(not REAL_PATH, reason="需要完整題組（JOB_RAG_REAL_QUESTIONS）")
 
 
 def _real():
-    return json.loads(REAL.read_text(encoding="utf-8"))["questions"]
+    return json.loads(Path(REAL_PATH).read_text(encoding="utf-8"))["questions"]
 
 
+@needs_real
 def test_real_question_set_composition():
     qs = _real()
     assert len(qs) == 30
@@ -122,6 +125,7 @@ def test_real_question_set_composition():
     assert all("private" not in q for q in qs)
 
 
+@needs_real
 def test_no_interview_or_review_questions_remain():
     # 面試／評價題（排除段落）已移除：題號 i** 不存在，金標不指向「面試」「評價」標題
     qs = _real()
@@ -130,6 +134,7 @@ def test_no_interview_or_review_questions_remain():
     assert not any(w in h for h in heads for w in ("面試", "評價"))
 
 
+@needs_real
 @pytest.mark.skipif(not os.environ.get("JOB_RAG_CORPUS"), reason="需要完整語料")
 def test_real_question_set_verifies_against_real_corpus():
     assert verify(_real()) == []

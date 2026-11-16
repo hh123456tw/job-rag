@@ -1,4 +1,4 @@
-# Generation-layer evaluation (ticket 11). Conflicts with the main env's openai 3.x,
+# Generation-layer evaluation. Conflicts with the main env's openai 3.x,
 # so install into a separate venv (see README):
 #   python -m venv --system-site-packages .venv-ragas
 #   .venv-ragas\Scripts\python -m pip install -r requirements-ragas.txt

@@ -163,3 +163,17 @@ def test_cases_fill_up_to_two_and_never_invent(root):
     assert [c["id"] for c in load(root)["cases"]] == ["a4", "a3"]  # 只剩門檻誤擋：最高分近的先
     put(root, "eval/results_methods.json", methods_file(ranks=ranks, gate=dict(GATE, answerable_blocked=[])))
     assert load(root)["cases"] == []
+
+
+# ---- 公開版：沒有 DeepSeek 金鑰就沒有生成層輸出；兩個生成層檔都沒有時，只略過那一塊 ----
+def test_without_any_generation_output_load_skips_that_block(root):
+    (root / "eval/results_generation.json").unlink()
+    (root / "eval/crossjudge/judge_gpt.json").unlink()
+    d = load(root)
+    assert d["generation"] is None and d["cross"] is None
+    assert {r["method"]: r for r in d["table"]}["bge-m3"]["mrr"] == pytest.approx(0.875)  # 檢索成績照常
+
+
+def test_questions_file_falls_back_to_the_sample_set(root):
+    (root / "eval/questions.json").rename(root / "eval/questions.sample.json")
+    assert load(root)["n_answerable"] == 4

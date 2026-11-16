@@ -8,9 +8,20 @@ from pathlib import Path
 
 from .retrieval import _corpus_dir, _segments
 
+ROOT = Path(__file__).parent.parent
+FULL, SAMPLE = "eval/questions.json", "eval/questions.sample.json"
 PENDING = "待使用者確認"  # 只有使用者能改成已確認；程式與 AI 不改
 REVIEW = "## 題目審查"
 _HEAD = re.compile(r"^(#{1,6})\s+(.*\S)\s*$")
+
+
+def questions_path(root=None) -> Path:
+    """題目檔：有完整題組（eval/questions.json）就用它，沒有才用範例題組。兩個都沒有就報錯。"""
+    root = Path(root or ROOT)
+    for rel in (FULL, SAMPLE):
+        if (root / rel).is_file():
+            return root / rel
+    raise FileNotFoundError(f"找不到題目檔：{root / FULL} 或 {root / SAMPLE}")
 
 
 def _squash(s: str) -> str:
@@ -114,7 +125,7 @@ def type_summary(questions: list[dict]) -> str:
 
 def main():
     import sys
-    qs = json.loads(Path("eval/questions.json").read_text(encoding="utf-8"))["questions"]
+    qs = json.loads(questions_path().read_text(encoding="utf-8"))["questions"]
     probs = verify(qs)
     print(f"{len(qs)} 題；問題 {len(probs)} 個")
     for p in probs:

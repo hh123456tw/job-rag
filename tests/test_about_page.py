@@ -112,3 +112,12 @@ def test_each_passage_is_indexed_with_company_and_heading_prefix():
 def test_committed_output_files_match_the_current_question_set():
     d = about.load()  # 真的輸出檔；題組改了卻沒重跑評估，這裡會失敗
     assert d["n_answerable"] == 25 and d["n_unanswerable"] == 5 and len(d["table"]) == 5
+
+
+def test_page_without_generation_output_says_so_and_keeps_retrieval_scores(client, root):  # noqa: F811
+    (root / "eval/results_generation.json").unlink()
+    (root / "eval/crossjudge/judge_gpt.json").unlink()
+    r = client[1].get("/about")
+    html = r.get_data(as_text=True)
+    assert r.status_code == 200 and "0.875" in html and "沒有生成層評估" in html and "RAGAS" in html
+    assert "無法顯示" not in html

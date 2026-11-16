@@ -1,4 +1,4 @@
-"""生成層評估（票 11）：search() → 查無則不呼叫 LLM → answer() → RAGAS 評審。
+"""生成層評估：search() → 查無則不呼叫 LLM → answer() → RAGAS 評審。
 流程只靠三個可替換的函式（search_fn、answer_fn、score_fn），測試用替身，不打 API。"""
 import csv
 import io
@@ -14,7 +14,7 @@ OUT = "eval/results_generation.txt"
 REVIEW_OUT = "eval/review_sample.csv"
 REVIEW_COLS = ["題號", "問題", "答案", "引用段落", "是否忠於出處（使用者填）"]
 NOTE = ("評審與生成都是 DeepSeek：同一個模型評自己寫的答案，分數可能偏高（自我偏好）。"
-        "題數少（25 題可回答題），分數只能當方向，不能當精確數字。"
+        "題數少（可回答題只有幾十題以內），分數只能當方向，不能當精確數字。"
         "分數要和人工抽查 10 題對照後才可信。")
 
 
@@ -199,8 +199,9 @@ def main():
     import json
     from pathlib import Path
     from . import search
+    from .evalset import questions_path
     ap = argparse.ArgumentParser(description="生成層評估。預設是乾跑（不打 API）；--run 才會呼叫 DeepSeek 並花錢。")
-    ap.add_argument("--questions", default="eval/questions.json")
+    ap.add_argument("--questions", default=str(questions_path()))
     ap.add_argument("--run", action="store_true", help="正式執行：呼叫 DeepSeek 生成與評審")
     ap.add_argument("--out", default=OUT)
     ap.add_argument("--review-out", default=REVIEW_OUT)

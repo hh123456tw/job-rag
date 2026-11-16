@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 
 from job_rag import retrieval, search
+from job_rag.evalset import questions_path
 from job_rag.export_bundle import export_bundle
 from tests.test_vector import FakeModel, _clear
 
@@ -148,7 +149,7 @@ def test_real_model_bundle_ranks_equal_corpus_ranks(tmp_path, monkeypatch):
     _clear()
     out = tmp_path / "b"
     export_bundle(os.environ["JOB_RAG_CORPUS"], out)
-    qs = [e["question"] for e in json.loads((Path(__file__).parents[1] / "eval" / "questions.json").read_text(encoding="utf-8"))["questions"]][:8]
+    qs = [e["question"] for e in json.loads(questions_path().read_text(encoding="utf-8"))["questions"]][:8]
     assert len(qs) >= 5
     want = [search(x, method=m, k=5, gate=False) for x in qs for m in ("bge-m3", "hybrid")]
     _clear()

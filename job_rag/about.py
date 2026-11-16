@@ -5,6 +5,7 @@ from pathlib import Path
 
 from . import METHODS
 from .evaluate import questions_digest
+from .evalset import questions_path
 from .generation import FAILED, GATED, SCORED, summarize
 
 ROOT = Path(__file__).parent.parent
@@ -16,7 +17,7 @@ class AboutDataError(RuntimeError):
     pass
 
 
-def _read(root: Path, rel: str):
+def _read(root: Path, rel):
     p = Path(root) / rel
     try:
         return json.loads(p.read_text(encoding="utf-8"))
@@ -91,20 +92,25 @@ def _cases(questions: list[dict], methods: dict, table: list[dict]) -> list[dict
 
 def load(root=None) -> dict:
     root = Path(root or ROOT)
-    questions = _read(root, "eval/questions.json")["questions"]
+    questions = _read(root, questions_path(root))["questions"]
     m = _read(root, "eval/results_methods.json")
     if m.get("digest") != questions_digest(questions):
         raise AboutDataError("results_methods.json 和現在的題組對不上（題組已變動，輸出檔過期）；請重跑 evaluate --method all。")
     table = _table(m["methods"])
-    gen = _generation(questions, _read(root, "eval/results_generation.json"))
-    cross = _cross(_read(root, "eval/crossjudge/judge_gpt.json"), gen)
+    # 公開版沒有 DeepSeek 金鑰就沒有生成層輸出：兩個檔都不存在才略過那一塊；只缺一個或壞掉仍是錯誤
+    gen_files = [root / "eval/results_generation.json", root / "eval/crossjudge/judge_gpt.json"]
+    if not any(f.exists() for f in gen_files):
+        gen = cross = None
+    else:
+        gen = _generation(questions, _read(root, "eval/results_generation.json"))
+        cross = _cross(_read(root, "eval/crossjudge/judge_gpt.json"), gen)
     gate = m["methods"]["bge-m3"].get("gate")
     if not gate:
         raise AboutDataError("results_methods.json 的 bge-m3 沒有查無門檻結果。")
     return {
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
-        "generation": {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
+        "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
         "gate": {"threshold": gate["threshold"], "unanswerable_blocked": len(gate["unanswerable_blocked"]),
                  "n_unanswerable": m["n_unanswerable"], "answerable_blocked": len(gate["answerable_blocked"]),
                  "n_answerable": m["n_answerable"]},

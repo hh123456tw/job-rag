@@ -25,7 +25,7 @@ class FakePost:
 
 @pytest.fixture(autouse=True)
 def key(monkeypatch):
-    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-test")
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
     monkeypatch.delenv("DEEPSEEK_MODEL", raising=False)
 
 
@@ -40,7 +40,7 @@ def test_answer_has_sources_and_request_shape():
     assert r["sources"] == [{"company": "甲科技", "file": "01_甲科技.md", "heading_path": "基本資料"}]
     url, headers, body, timeout = post.calls[0]
     assert url == "https://api.deepseek.com/chat/completions"
-    assert headers["Authorization"] == "Bearer sk-test"
+    assert headers["Authorization"] == "Bearer test-key"
     assert body["model"] == "deepseek-flash" and timeout > 0
     assert "公開事實ABC" in sent_text(post)
 
@@ -99,10 +99,10 @@ def test_model_configurable(monkeypatch):
 def test_key_read_from_env_file(monkeypatch, tmp_path):
     monkeypatch.delenv("DEEPSEEK_API_KEY")
     f = tmp_path / ".env"
-    f.write_text('DEEPSEEK_API_KEY="sk-file"\n', encoding="utf-8")
+    f.write_text('DEEPSEEK_API_KEY="file-key"\n', encoding="utf-8")
     post = FakePost()
     answer("問題", [PUB], post=post, env_file=f)
-    assert post.calls[0][1]["Authorization"] == "Bearer sk-file"
+    assert post.calls[0][1]["Authorization"] == "Bearer file-key"
 
 
 # ---- 頁面（預設 bge-m3，用假嵌入器）----

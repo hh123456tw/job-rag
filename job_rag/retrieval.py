@@ -137,16 +137,20 @@ def _strip_interview(line: str) -> str:
     return "|".join(cells) if any(c.strip() for c in cells) else ""
 
 
+DEEP_FILE = re.compile(r"^(0[1-9]|1[0-6]|S\d+)_")
+DEEP_PREFIX = re.compile(r"^(?:\d+|S\d+)_")
+
+
 @lru_cache(maxsize=4)
 def _parse(root: str) -> tuple:
     """(段落, 被丟掉的面試行)。"""
     root_p = Path(root)
     files = sorted(root_p.rglob("*.md"))
-    deep = lambda f: f.parent == root_p and re.match(r"^(0[1-9]|1[0-6])_", f.name)
-    names = [re.sub(r"^\d+_", "", f.stem) for f in files if deep(f)]
+    deep = lambda f: f.parent == root_p and DEEP_FILE.match(f.name)  # 一公司一檔；範例語料用 S1_ 這種編號
+    names = [DEEP_PREFIX.sub("", f.stem) for f in files if deep(f)]
     segs, drops = [], []
     for f in files:
-        file_company = re.sub(r"^\d+_", "", f.stem) if deep(f) else None
+        file_company = DEEP_PREFIX.sub("", f.stem) if deep(f) else None
         stack: list[tuple[int, str]] = []  # (level, title)，含 H1
         body: list[str] = []
         dropped: list[str] = []

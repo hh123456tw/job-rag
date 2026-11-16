@@ -14,11 +14,11 @@ DUP = "神通資訊做雲端服務，獨特詞彙：海星。\n"
 @pytest.fixture
 def corpus(tmp_path):
     files = {
-        "01_台灣大哥大.md": "# 台灣大哥大\n## 基本資料\n台灣大哥大做行動通訊，獨特詞彙：海馬。\n",
+        "07_台灣大哥大.md": "# 台灣大哥大\n## 基本資料\n台灣大哥大做行動通訊，獨特詞彙：海馬。\n",
         "02_藍新資訊.md": "# 藍新資訊\n## 基本資料\n藍新資訊做金流相關系統。藍新金流是子公司，獨特詞彙：海龜。\n",
         "03_神通資訊.md": "# 神通資訊\n## 基本資料\n" + DUP,
         "04_聯合報.md": "# 聯合報\n## 基本資料\n聯合報做新聞，獨特詞彙：海鷗。\n## 職缺\n" + DUP,
-        "補2_神通.md": "# 補2\n## 基本資料\n" + DUP.replace("，", "，  ") + "\n## 職缺\n神通資訊徵工程師 Python 3 年。\n",
+        "補9_神通.md": "# 補2\n## 基本資料\n" + DUP.replace("，", "，  ") + "\n## 職缺\n神通資訊徵工程師 Python 3 年。\n",
     }
     for name, text in files.items():
         (tmp_path / name).write_text(text, encoding="utf-8")
@@ -97,18 +97,18 @@ def test_dedupe_fills_k_after_merging(corpus):
 
 
 # ---- 評分的命中判斷 ----
-G = [{"file": "補2_神通.md", "heading": "基本資料"}]
+G = [{"file": "補9_神通.md", "heading": "基本資料"}]
 
 
 def test_hit_rank_counts_also_in_places():
     res = [{"file": "03_神通資訊.md", "heading_path": "基本資料",
-            "also_in": [{"file": "補2_神通.md", "heading_path": "基本資料"}]}]
+            "also_in": [{"file": "補9_神通.md", "heading_path": "基本資料"}]}]
     assert hit_rank(res, G) == 1
 
 
 def test_hit_rank_also_in_miss_when_not_gold():
     res = [{"file": "03_神通資訊.md", "heading_path": "基本資料",
-            "also_in": [{"file": "補2_神通.md", "heading_path": "基本資料風險"}]}]
+            "also_in": [{"file": "補9_神通.md", "heading_path": "基本資料風險"}]}]
     assert hit_rank(res, G) is None
 
 
@@ -127,7 +127,7 @@ def test_evaluate_detect_switch(corpus):
 
 # ---- 出處清單不重複 ----
 def test_answer_sources_have_no_duplicates(monkeypatch):
-    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-test")
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
     h = {"company": "甲", "file": "a.md", "heading_path": "基本資料", "text": "第一段"}
     r = answer("問題", [h, h | {"text": "第二段"}], post=FakePost(), env_file="none")
     assert r["sources"] == [{"company": "甲", "file": "a.md", "heading_path": "基本資料"}]

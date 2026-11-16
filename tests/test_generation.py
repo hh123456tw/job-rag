@@ -90,7 +90,7 @@ def test_nothing_from_excluded_sections_reaches_generation_or_judge(monkeypatch)
     questions = [{"id": f"q{i}", "question": t, "answerable": True}
                  for i, t in enumerate(["FastAPI 職缺", "主管愛開會嗎", "面試官會問什麼", "團隊離職率", "風險備註",
                                         "職缺風險很高嗎", "月休幾天 口試", "我的對應 優先 1"])]
-    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-test")
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
     rows = run_eval(questions, lambda q: search(q, corpus=MINI), lambda q, h: answer(q, h, post=Post()), sc)
     assert sent and judged
     everything = "\n".join(sent + judged)

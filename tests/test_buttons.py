@@ -19,8 +19,11 @@ def client(monkeypatch):
 
 
 ROOT = Path(__file__).parent.parent
-EVAL = json.loads((ROOT / "eval" / "questions.json").read_text(encoding="utf-8"))["questions"]
-BY_ID = {q["id"]: q for q in EVAL}
+from job_rag.evalset import questions_path  # noqa: E402
+
+EVAL = json.loads(questions_path().read_text(encoding="utf-8"))["questions"]  # 完整題組；公開版只有範例題組
+FIRST_ANSWERABLE = next(q for q in EVAL if q["answerable"])
+FIRST_UNANSWERABLE = next(q for q in EVAL if not q["answerable"])
 LIVE = ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊", "凱基證券", "華電聯網", "奧衍", "中華網龍", "尼諾思", "醫宇宙"]
 
 
@@ -102,7 +105,7 @@ def test_two_demo_buttons_are_unanswerable_eval_questions(client):
     import app as appmod
     assert len(appmod.DEMOS) == 2
     for qid in appmod.DEMOS:
-        assert qid.startswith("u") and BY_ID[qid]["answerable"] is False
+        assert qid.startswith("u") and next(q for q in EVAL if q["id"] == qid)["answerable"] is False
     _, c = client
     html = c.get("/").get_data(as_text=True)
     for qid in appmod.DEMOS:
@@ -140,16 +143,16 @@ EVAL_LINK = "看這題在評估裡的成績"
 
 def test_eval_link_only_when_question_equals_an_eval_question(client):
     _, c = client
-    same = BY_ID["s01"]["question"]
+    same = FIRST_ANSWERABLE["question"]
     html = c.get("/", query_string={"q": same}).get_data(as_text=True)
     assert EVAL_LINK in html and "id=eval" in html
-    for near in (same[:-1], same.replace("奧衍", "叡揚資訊"), "鯨魚追蹤軟體"):
+    for near in (same[:-1], same.replace(same[0], "某", 1), "鯨魚追蹤軟體"):
         assert EVAL_LINK not in c.get("/", query_string={"q": near}).get_data(as_text=True), near
 
 
 def test_eval_panel_for_unanswerable_question_says_expected_not_found(client):
     _, c = client
-    html = c.get("/", query_string={"q": BY_ID["u07"]["question"]}).get_data(as_text=True)
+    html = c.get("/", query_string={"q": FIRST_UNANSWERABLE["question"]}).get_data(as_text=True)
     assert "不可回答題" in html.split("id=eval", 1)[1]
 
 
@@ -158,3 +161,13 @@ def test_no_collaboration_wording(client):
     text = c.get("/").get_data(as_text=True) + (ROOT / "README.md").read_text(encoding="utf-8")
     for bad in ("AI 協作", "AI協作", "協作"):
         assert bad not in text
+
+
+# ---- 範例語料只有 3 家：公司按鈕只列語料裡有的公司；查無示範用範例題組的不可回答題 ----
+def test_company_buttons_list_the_corpus_companies_when_it_has_only_some_of_the_11(monkeypatch):
+    from tests.test_sample_corpus import SAMPLE
+    monkeypatch.setenv("JOB_RAG_CORPUS", str(SAMPLE))
+    import app as appmod
+    html = appmod.app.test_client().get("/").get_data(as_text=True)
+    assert re.findall(r"name=pick value=\"[^\"]*\"[^>]*>([^<]+)</button>", html) == ["奧衍", "尼諾思", "遠振資訊"]  # 不含沒有的 9 家
+    assert ">台灣大哥大</button>" not in html and ">奧衍</button>" in html

@@ -97,7 +97,7 @@ def test_laptop_offline_keeps_original_results_and_shows_clear_error(web, monkey
 
     def down(*a, **k):
         raise urllib.error.URLError(socket.gaierror(11001, "getaddrinfo failed"))
-    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-test")
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
     monkeypatch.setattr(urllib.request, "urlopen", down)
     c = web.test_client()
     html = c.get("/?q=鯨魚追蹤軟體").get_data(as_text=True)

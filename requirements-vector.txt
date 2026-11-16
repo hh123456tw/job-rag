@@ -1,0 +1,5 @@
+# Vector retrieval (bge-m3 etc.) and icon script. Already used by job_rag/retrieval.py; listed here so a clean machine can install them.
+numpy
+faiss-cpu
+sentence-transformers
+Pillow

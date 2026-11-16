@@ -1,0 +1,9 @@
+# API key and local files never go into git
+.env
+__pycache__/
+.venv/
+.venv-ragas/
+*.faiss
+models/
+.cache/
+dist/

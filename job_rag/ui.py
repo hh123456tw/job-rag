@@ -45,7 +45,7 @@ li{margin:6px 0}
 @media(prefers-reduced-motion:reduce){*,::before{animation:none!important;transition:none!important}}"""
 
 
-# PWA（票 16）：只有 manifest 與 meta，沒有 service worker（查詢需要後端，離線快取只會造成舊內容）。
+# PWA：只有 manifest 與 meta，沒有 service worker（查詢需要後端，離線快取只會造成舊內容）。
 # theme-color 的色碼要與 CSS 的 --bg 相同（淺、深各一）；tests/test_pwa.py 會核對 manifest 的色碼。
 PWA_HEAD = ("<link rel=manifest href=/manifest.webmanifest>"
             "<meta name=theme-color content='#fafaf9' media='(prefers-color-scheme: light)'>"

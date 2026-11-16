@@ -1,0 +1,244 @@
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司是 UiPath 的認證經銷商？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "S1_奧衍.md",
+     "heading": "1. 基本資料",
+     "quote": "2019 年成為 UiPath 認證經銷商"
+    },
+    {
+     "file": "S1_奧衍.md",
+     "heading": "2. 業務與財務",
+     "quote": "代理的產品：UiPath（RPA）"
+    }
+   ],
+   "source": "取自完整題組 c01，金標改指範例語料的檔案",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "奧衍的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "S1_奧衍.md",
+     "heading": "1. 基本資料",
+     "quote": "資本額 | 2000 萬"
+    }
+   ],
+   "source": "取自完整題組 s01，金標改指範例語料的檔案",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "J1_職缺彙整.md",
+     "heading": "2. 遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    },
+    {
+     "file": "S3_遠振資訊.md",
+     "heading": "4. 職缺",
+     "quote": "「目前開放職缺」為 0 筆"
+    }
+   ],
+   "source": "取自完整題組 j05，金標改指範例語料的檔案",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "奧衍的解決方案架構師（Junior）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "J1_職缺彙整.md",
+     "heading": "1. 奧衍股份有限公司（公司頁 4 筆；含 3 筆技術職缺） > 1-3 解決方案架構師 - Solutions Architect（Junior）",
+     "quote": "月薪 36,000~50,000"
+    }
+   ],
+   "source": "取自完整題組 j07，金標改指範例語料的檔案",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "奧衍的 RPA 開發工程師（Junior）需要外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "J1_職缺彙整.md",
+     "heading": "1. 奧衍股份有限公司（公司頁 4 筆；含 3 筆技術職缺） > 1-1 【擴編】RPA 開發工程師／流程自動化工程師 (Junior)_無經驗另有培訓",
+     "quote": "出差外派：需外派，一年累積時間未定"
+    }
+   ],
+   "source": "取自完整題組 j09，金標改指範例語料的檔案",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "n01",
+   "question": "尼諾思科技的主要產品有哪些？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "S2_尼諾思科技.md",
+     "heading": "2. 業務與財務 > 2.1 公司簡介與產品",
+     "quote": "PerformX 工業智能平台"
+    }
+   ],
+   "source": "新增於範例語料",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "n02",
+   "question": "遠振資訊代理哪一家公司的資安產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "S3_遠振資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "Penta Security 台灣獨家代理"
+    }
+   ],
+   "source": "新增於範例語料",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "n03",
+   "question": "奧衍是哪一年成立的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "S1_奧衍.md",
+     "heading": "1. 基本資料",
+     "quote": "成立 | 2016 年"
+    }
+   ],
+   "source": "新增於範例語料",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "n04",
+   "question": "尼諾思科技的技術堆疊用到哪些機器人模擬工具？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "S2_尼諾思科技.md",
+     "heading": "5. 技術堆疊",
+     "quote": "ROS 2、MoveIt、Gazebo、NVIDIA Omniverse"
+    }
+   ],
+   "source": "新增於範例語料",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "n05",
+   "question": "遠振資訊有哪些認證？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "J1_職缺彙整.md",
+     "heading": "2. 遠振資訊股份有限公司 > 公司簡介",
+     "quote": "ISO 27001、cPanel Certified Partner"
+    },
+    {
+     "file": "S3_遠振資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "ISO 27001：官網稱資料中心與管理團隊已取得"
+    }
+   ],
+   "source": "新增於範例語料",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "n06",
+   "question": "遠振資訊的 AI 企業信箱一年多少錢？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "S3_遠振資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "實用型 NT$600／年（1GB）"
+    }
+   ],
+   "source": "新增於範例語料",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "n07",
+   "question": "哪些公司目前在 104 沒有開放職缺？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "J1_職缺彙整.md",
+     "heading": "2. 遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    },
+    {
+     "file": "J1_職缺彙整.md",
+     "heading": "3. 尼諾思智慧科技股份有限公司 > 目前開放職缺",
+     "quote": "0 筆。公司頁的「工作機會」分頁沒有顯示職缺數"
+    }
+   ],
+   "source": "新增於範例語料",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u21",
+   "question": "奧衍的特休天數是幾天？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "特休",
+    "特別休假",
+    "休假天數"
+   ],
+   "source": "新增於範例語料（關鍵字查過範例語料全文，沒有出現）",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u22",
+   "question": "尼諾思科技的股票代號是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "股票代號",
+    "股票代碼"
+   ],
+   "source": "新增於範例語料（關鍵字查過範例語料全文，沒有出現）",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u23",
+   "question": "遠振資訊的客服電話是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "客服電話",
+    "電話"
+   ],
+   "source": "新增於範例語料（關鍵字查過範例語料全文，沒有出現）",
+   "status": "待使用者確認"
+  }
+ ]
+}

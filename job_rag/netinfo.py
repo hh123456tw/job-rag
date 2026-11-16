@@ -1,11 +1,11 @@
-"""手機現場展示：偵測筆電的區網 IPv4、組啟動提示。只在手機模式（JOB_RAG_HOST 非本機）使用；不做任何通道或轉發。"""
+"""手機展示：偵測筆電的區網 IPv4、組啟動提示。只在手機模式（JOB_RAG_HOST 非本機）使用；不做任何通道或轉發。"""
 import ipaddress
 import json
 import os
 import subprocess
 
 LOOPBACK = ("127.0.0.1", "localhost", "::1")
-# 虛擬網卡與非區網介面的名稱字樣（小寫比對）。shortcut: 只認名稱字樣，未知的虛擬網卡會被列為候選，現場看清單選。
+# 虛擬網卡與非區網介面的名稱字樣（小寫比對）。shortcut: 只認名稱字樣，未知的虛擬網卡會被列為候選，請看清單選。
 VIRTUAL = ("vmware", "virtualbox", "vethernet", "hyper-v", "wsl", "docker", "loopback", "bluetooth", "藍牙",
            "tap-", "vpn", "tailscale", "zerotier", "虛擬")
 
