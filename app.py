@@ -7,7 +7,7 @@ from pathlib import Path
 from flask import Flask, request
 from markupsafe import escape
 
-from job_rag import about, detect_company, public_company_counts, retrieval, search
+from job_rag import about, detect_company, netinfo, public_company_counts, retrieval, search
 from job_rag.about_page import render as render_about
 from job_rag.answer import AnswerError, _post, answer
 from job_rag.evaluate import DEPTH, hit_rank
@@ -34,6 +34,18 @@ def warmup():
 def start_warmup():
     _warm["state"] = "loading"
     threading.Thread(target=warmup, daemon=True).start()
+
+
+_phone = {"cands": None}  # 啟動時偵測的區網位址；None 表示沒偵測過（測試與直接 import）
+
+
+def _phone_footer():
+    """只在手機模式、且請求來自本機時，頁尾顯示一行小字，讓人在筆電畫面上看到手機要輸入的網址。"""
+    if not netinfo.phone_mode() or request.remote_addr not in ("127.0.0.1", "::1"):
+        return ""
+    cands = _phone["cands"] if _phone["cands"] is not None else netinfo.detect()
+    port = os.environ.get("JOB_RAG_PORT", "5000")
+    return f"<small>{str(escape(netinfo.banner(cands, port))).replace(chr(10), '<br>')}</small>"
 
 
 def _status_page():
@@ -144,9 +156,13 @@ def index():
 <h3>2. 常用問題</h3><div class="grid faq">{faq}</div>
 <h3>或自己輸入問題</h3><div class=ask><input name=q value="{escape(q)}" placeholder="輸入問題" enterkeyhint=search><button class=go>查</button></div>
 <h3>查無示範（語料裡沒有答案的問題）</h3><div class=row>{demo}</div></form>
-{note}{err}{body}{ans}{link}{panel}""")
+{note}{err}{body}{ans}{link}{panel}{_phone_footer()}""")
 
 
 if __name__ == "__main__":
     start_warmup()
-    app.run(port=int(os.environ.get("JOB_RAG_PORT", "5000")))
+    port = int(os.environ.get("JOB_RAG_PORT", "5000"))
+    if netinfo.phone_mode():  # 手機模式：對區網開放（僅區網；不做通道或轉發）。印出手機要開的網址
+        _phone["cands"] = netinfo.detect()
+        print(netinfo.banner(_phone["cands"], port), flush=True)
+    app.run(host=netinfo.listen_host(), port=port)
