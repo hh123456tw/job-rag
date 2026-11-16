@@ -429,7 +429,7 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             f"沒把握時，系統不亂答。最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}），就說「可能沒有答案」。",
             (f"故意問沒有答案的 {gt['n_unanswerable']} 題，擋住 {gt['unanswerable_blocked']} 題{_e2e(d)}。"
              f"代價是有答案的 {gt['n_answerable']} 題，誤擋 {gt['answerable_blocked']} 題。" if gt else None),
-            "門檻用同一批題目挑，偏樂觀。", "門檻高低怎麼影響結果，可以到「查無門檻」頁自己拖拖看。"],
+            "門檻用同一批題目挑，偏樂觀。門檻高低怎麼影響結果，可以到「查無門檻」頁自己拖拖看。"],
         5: ["做的過程，我踩到幾個坑。",
             f"第一，換找法：BM25 的 MRR {_f(by['bm25']['mrr'])}，換成 bge-m3 是 {_f(m3['mrr'])}。" if m3 else None,
             "第二，混合檢索被否決。原本預期它會贏，數據沒有支持。" if df and df["lo"] <= 0 <= df["hi"] else None,
