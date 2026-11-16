@@ -1,0 +1,7 @@
+# 完整語料與私人段落不進 git（之後公開 repo 時仍成立）
+data/corpus/
+.env
+__pycache__/
+.venv/
+*.faiss
+models/
