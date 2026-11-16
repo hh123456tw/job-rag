@@ -1,7 +1,7 @@
 # 02: 評估題與評分器
 
 **Blocked by:** 01
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
 **What to build:** 30 題評估題（25 可回答、5 不可回答），每題標金標段落。AI 草擬，使用者逐題對照原檔確認。評分器算 Hit@1、Hit@3、MRR（可回答題），不可回答題另算正確拒答率。先對 BM25 產出第一份成績。
 
@@ -9,3 +9,7 @@
 - [ ] 指標以手算的小例子驗證
 - [ ] 不可回答題的答案確實不在語料（逐題檢查）
 - [ ] 使用者確認過全部 30 題後，狀態才能設為 resolved（需要使用者）
+
+## Comments
+
+- 程式與測試完成（70 passed）。等使用者逐題確認 eval/questions.md 的 30 題；確認後改為 resolved。
