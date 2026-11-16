@@ -210,7 +210,7 @@ input[type=range]::-webkit-slider-thumb{height:32px;width:32px}input[type=range]
 .t-leg{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.9375rem;margin:12px 0 0}.t-leg i{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid var(--acc);vertical-align:-2px;margin-right:6px}
 .t-leg .on{background:var(--acc)}.t-leg .rg{background:none;border-color:var(--err);width:18px;height:18px;vertical-align:-4px;margin-right:4px}
 #chart{width:100%;height:auto;display:block;margin:4px 0 8px;-webkit-user-select:none;user-select:none}
-#chart text{font:14px system-ui,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;fill:var(--mute)}#chart .rl{fill:var(--fg);font-weight:650}
+#chart text{font:14px system-ui,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;fill:var(--mute)}#chart .rl{fill:var(--fg);font-weight:650}#chart .rl,#chart .lb{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
 #chart .tk{font-size:13px}#chart .lb{font-weight:650}#chart .lbt,#chart .lbs{fill:var(--acc)}#chart .lbf{fill:var(--fg)}
 #chart .miss{font-style:italic}#chart .ax{stroke:var(--line)}#chart .bl{stroke:var(--line);stroke-dasharray:2 3}
 #chart .mv{stroke:var(--acc);stroke-width:2}#chart .mvs{stroke:var(--acc);stroke-width:2;stroke-dasharray:5 3}
@@ -338,12 +338,12 @@ def _chart(pts, miss, lo, hi, t, drop, floor):
         ends.append(y)
         parts.append(f'<line class=bl x1={PAD} x2={VW - PAD} y1={y + 3} y2={y + 3} />')
         y += 10
-    cross_top = ends[1] + 13
+    cross_top = ends[1] + 32  # 跨公司列標題下方
     vl = lambda cls, v, a, b, id_="": f'<line {id_} class={cls} x1={_x(v, lo, hi):.1f} x2={_x(v, lo, hi):.1f} y1={a} y2={b} />'
     fx = _x(floor, lo, hi)
     side = f"x={fx + 4:.1f}" if fx < VW - 120 else f"text-anchor=end x={fx - 4:.1f}"
     lines = (vl("mv", t, HEAD - 4, ends[1], "id=l-t") + vl("mvs", t - drop, HEAD - 4, ends[1], "id=l-s")
-             + vl("fl", floor, cross_top, ends[2]) + f'<text class="lb lbf" {side} y={cross_top + 20:.1f}>跨公司 {floor:.3f}</text>'
+             + vl("fl", floor, cross_top, ends[2]) + f'<text class="lb lbf" {side} y={cross_top + 12:.1f}>跨公司 {floor:.3f}</text>'
              + '<text class="lb lbt" id=lb-t y=14 /><text class="lb lbs" id=lb-s y=30 />')
     ticks = "".join(f'<line class=ax x1={_x(v, lo, hi):.1f} x2={_x(v, lo, hi):.1f} y1={y} y2={y + 4} />'
                     f'<text class=tk x={_x(v, lo, hi):.1f} y={y + 18} text-anchor=middle>{v:.1f}</text>'
@@ -401,7 +401,7 @@ def render(d: dict) -> str:
 <div id=card aria-live=polite><p class=kv>點圖上的點，或打開下面的題目清單，看這題問了什麼、系統答了什麼。</p></div>
 <details id=lst class=more><summary>題目清單（{len(pts)} 題）</summary>
 <div class=t-tools><button id=f-all class=t-btn type=button aria-pressed=true>全部</button><button id=f-wrong class=t-btn type=button aria-pressed=false>處理錯的</button><button id=f-gray class=t-btn type=button aria-pressed=false>灰色地帶</button><button id=f-sort class=t-btn type=button>分數：高到低</button></div>
-<p class=mute id=lnote aria-live=polite></p><ul class=t-rows>{_rows(pts, cd, T, drop, floor)}</ul></details>
+<p class=mute>「處理錯」只看第 ① 層門檻；放行後答案層回「查無」的題，最後仍會拒答。</p><p class=mute id=lnote aria-live=polite></p><ul class=t-rows>{_rows(pts, cd, T, drop, floor)}</ul></details>
 {miss_html}<script type=application/json id=pd>{pd}</script></div>
 {_layers(d.get("e2e"), c)}
 <h2>讀這張圖要小心</h2><p class=mute>題目很少，門檻又是用同一批題調的，圖只是讓人看到取捨，不是最佳解。答案是各題實跑一次的結果（單次執行，DeepSeek 可能隨機，再跑一次文字會不同）。</p>
