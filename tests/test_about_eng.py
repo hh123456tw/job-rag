@@ -144,3 +144,67 @@ def test_limits_section_has_four_lines(client):
     items = re.findall(r"<li>([^<]+)</li>", sec)
     assert len(items) == 4 and "單機" in items[0] and "存取碼" in items[1] and "本人密碼" in items[1]
     assert "4 題" in items[2] and "獨立測試題" in items[3]
+
+
+# ---- 票 30：三次用數據做的修正 ----
+RUN1 = "eval/results_generation_run1_judge_without_company.json"
+
+
+def run1_rows():
+    from tests.test_about_data import gen_rows
+    rows = gen_rows()
+    for r, f in zip((r for r in rows if r["status"] == "已評分"), (0.5, 1.0, 0.0)):
+        r["faithfulness"] = f  # 平均 0.5
+    return rows
+
+
+def fixes(client) -> list[str]:
+    html = client.get("/about").get_data(as_text=True)
+    m = re.search(r"<h3>三次用數據做的修正</h3><ul class=plain>(.*?)</ul>", html, re.S)
+    assert m, "找不到修正段"
+    assert m.start() < html.index("<details class=eng>")  # 在找法成績旁，不在收合區裡
+    return re.findall(r"<li>(.*?)</li>", m.group(1), re.S)
+
+
+@pytest.fixture
+def full(root):  # noqa: F811
+    put(root, RUN1, run1_rows())
+    put(root, "eval/live_test.md", "# 真實連線測試\n")
+    return root
+
+
+def test_three_fixes_show_numbers_from_the_files(client, full):
+    items = fixes(client)
+    assert len(items) == 4
+    assert "BM25" in items[0] and "bge-m3" in items[0]
+    assert "0.550" in items[0] and "0.875" in items[0] and "→" in items[0]  # 夾具手算：BM25 (0+0.2+1+1)/4，bge-m3 (1+1+1+0.5)/4
+    assert "數據沒有支持" in items[1] and "原本預期混合會贏" in items[1] and re.search(r"[+-]0\.\d{3}，95% 區間 \[", items[1])
+    assert "第一次" in items[2] and "舊題組" in items[2] and "評審沒看到公司名" in items[2]
+    assert "0.500" in items[2] and "0.833" in items[2] and "評分 3 題" in items[2]  # 第一次 → 修正後
+    assert "不再把" in items[3] and "已採用" in items[3] and "仍抓到其他類型的錯誤" in items[3] and "eval/live_test.md" in items[3]
+
+
+@pytest.mark.parametrize("rel,gone", [(RUN1, "第一次"), ("eval/live_test.md", "提示詞修正")])
+def test_missing_file_skips_only_that_item(client, full, rel, gone):
+    (full / rel).unlink()
+    items = fixes(client)
+    assert len(items) == 3 and not any(gone in i for i in items)
+    assert any("BM25" in i for i in items) and any("混合" in i for i in items)
+
+
+def test_broken_run1_file_skips_the_item_not_the_page(client, full):
+    put(full, RUN1, "{不是 json")
+    r = client.get("/about")
+    assert r.status_code == 200 and not any("第一次" in i for i in fixes(client))
+
+
+def test_no_generation_output_skips_the_ragas_fix(client, full):
+    (full / "eval/results_generation.json").unlink()
+    (full / "eval/crossjudge/judge_gpt.json").unlink()
+    assert not any("第一次" in i for i in fixes(client))
+
+
+def test_fixes_have_no_forbidden_wording(client, full):
+    html = client.get("/about").get_data(as_text=True)
+    for w in ("AI 協作", "AI協作", "協作", "私人"):
+        assert w not in html

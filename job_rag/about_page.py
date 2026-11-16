@@ -240,9 +240,27 @@ def _eng(d, n_segments: int, n_companies: int, lengths=None) -> str:
             f"{_trade(d, n_segments)}{_scale()}{_limits(d)}</details>")
 
 
+def _fixes(d) -> str:
+    """三次用數據做的修正：每項一行「之前 → 之後」。只放有檔案可對照的；缺檔的那一項不顯示。"""
+    by = {r["method"]: r for r in d["table"]}
+    df, rf = d["mrr_diff"], d["ragas_fix"]
+    items = [
+        f"<b>找法：</b>BM25 的 MRR {_ci(by['bm25'])} → bge-m3 的 MRR {_ci(by['bge-m3'])}。",
+        f"<b>混合檢索被否決：</b>我們原本預期混合會贏，數據沒有支持。bge-m3 減混合的 MRR 差 {df['diff']:+.3f}，"
+        f"95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
+        + ("，含 0，看不出混合比較好。" if df["lo"] <= 0 <= df["hi"] else "，不含 0。"),
+    ]
+    if rf:
+        items.append(f"<b>評估程式的錯誤：</b>第一次 RAGAS 忠實度 {_f(rf['first'])}（評分 {rf['first_scored']} 題，舊題組；原因是評審沒看到公司名）"
+                     f" → 修正後 {_f(rf['now'])}（評分 {rf['now_scored']} 題）。題組與評分題數不同，只能看方向。")
+    if d["live_test"]:
+        items.append("<b>提示詞修正：</b>不再把「某某頁面」寫成公司已採用。後續連線測試仍抓到其他類型的錯誤（見 eval/live_test.md）。")
+    return "<h3>三次用數據做的修正</h3><ul class=plain>" + "".join(f"<li>{x}</li>" for x in items) + "</ul>"
+
+
 def _scores(d) -> str:
     return (f"<p>用 {d['n_answerable']} 道有答案的題目，量五種找法：正確的段落有沒有排進前 3 名。條越長越好。</p>"
-            f"{_bars(d)}{_terms(d)}<details class=more><summary>看詳細數字</summary>{_details(d)}</details>")
+            f"{_bars(d)}{_terms(d)}{_fixes(d)}<details class=more><summary>看詳細數字</summary>{_details(d)}</details>")
 
 
 def _case(c, depth) -> str:

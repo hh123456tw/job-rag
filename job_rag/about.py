@@ -15,6 +15,9 @@ FOUND = 3  # Hit@3：前 3 名內有金標段落才算找到
 CONSISTENT = 0.05  # GPT 複查與 RAGAS 的忠實度平均差在這個範圍內，才說「一致」
 
 
+RUN1 = "eval/results_generation_run1_judge_without_company.json"  # 第一次 RAGAS 執行（舊題組，評審沒看到公司名）
+
+
 class AboutDataError(RuntimeError):
     pass
 
@@ -129,6 +132,18 @@ def _perf(root: Path):
     return {"load": load.group(1), "query": query.group(1)} if load and query else None
 
 
+def _ragas_fix(root: Path, gen):
+    """第一次 RAGAS（舊題組、評審沒看到公司名）的忠實度。目前的生成層輸出沒有、舊輸出檔缺或讀不了，就回 None（只略過這一項）。"""
+    if gen is None:
+        return None
+    try:
+        first = summarize(_read(root, RUN1))
+        return {"first": first["faithfulness"], "first_scored": first["answerable"]["scored"],
+                "now": gen["faithfulness"], "now_scored": gen["scored"]} if first["faithfulness"] is not None else None
+    except (AboutDataError, KeyError, TypeError, ValueError, AttributeError):
+        return None
+
+
 def load(root=None) -> dict:
     root = Path(root or ROOT)
     questions = _read(root, questions_path(root))["questions"]
@@ -159,5 +174,6 @@ def load(root=None) -> dict:
                  "n_unanswerable": m["n_unanswerable"], "answerable_blocked": len(gate["answerable_blocked"]),
                  "n_answerable": m["n_answerable"]},
         "mrr_diff": _mrr_diff(m["methods"]), "perf": _perf(root),
+        "ragas_fix": _ragas_fix(root, gen), "live_test": (root / "eval/live_test.md").exists(),
         "cases": _cases(questions, m["methods"], table),
     }
