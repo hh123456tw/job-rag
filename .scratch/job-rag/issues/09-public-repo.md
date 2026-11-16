@@ -8,3 +8,9 @@
 - [ ] 用範例語料從零重現流程的步驟寫在 README 並實測過一次
 - [ ] repo 內找不到任何私人段落、金鑰或完整語料
 - [ ] `SPEC.md`、`.scratch` 內容公開前先檢查是否含私人策略（不自動公開；使用者決定）
+
+## 修正（2026-11-16）
+
+- 不重寫私人 repo 的歷史，也不把私人 repo 改成公開。改為：用**白名單匯出**一個全新的乾淨資料夾 `dist/public_repo/`（預設拒絕，只複製明列的檔案），使用者要公開時另建一個新的 GitHub repo，從這個資料夾 `git init`。私人 repo 保持私人。
+- 白名單不含：SPEC.md、GLOSSARY.md、CLAUDE.md、`.scratch/`、`docs/agents/`、`demo/`、`.env`、`models/`、`.cache/`、`dist/`、完整語料、含求職策略或履歷內容的任何文字。
+- 匯出內容：程式、測試（只含假語料 fixtures）、啟動檔、公開版 README、`requirements`、3 家範例語料（只含公開事實段落，用現有載入流程過濾後重新寫成同格式的 md）、對應範例語料的範例評估題。
