@@ -241,6 +241,12 @@ def _is_cross(rq, company, mode) -> bool:
     return not company and is_cross(rq, mode=mode)
 
 
+def _cross_hits(rq, mode):
+    """跨公司檢索：只取介面列出的公司（現場 8 家；索引裡其他公司沒有按鈕，不列入）。對不上任何一家時退回索引裡全部公司。"""
+    names = set(public_company_counts(mode=mode)) - {"綜合"}
+    return cross_search(rq, mode=mode, companies=({n for _, n in _company_buttons(mode)} & names) or None)
+
+
 def _low_cross(hits):
     return not hits or max(h["score"] for h in hits) < retrieval.CROSS_FLOOR
 
@@ -285,7 +291,7 @@ def answer_json():
     try:
         rq = expand(q, history, mode=mode)
         cross = _is_cross(rq, company, mode)
-        hits = cross_search(rq, mode=mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
+        hits = _cross_hits(rq, mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
         return _tag({"status": "error", "message": f"錯誤：{e}"}), 500
     if _low_cross(hits) if cross else _low(hits):
@@ -323,7 +329,7 @@ def api_search():
         if not company and _on("JOB_RAG_DETECT") and (d := detect_company(rq, mode=mode)):
             company, detected = d, True
         cross = _is_cross(rq, company, mode)
-        hits = cross_search(rq, mode=mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
+        hits = _cross_hits(rq, mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
         return _tag({"status": "error", "message": f"搜尋失敗：{e}"}), 500
     search_ms = _ms(t0)

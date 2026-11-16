@@ -452,8 +452,9 @@ def is_cross(question: str, corpus=None, mode: str = "demo") -> bool:
     return bool(_CROSS_WORDS.search(question)) and not mentions_company(question, corpus, mode)
 
 
-def cross_search(question: str, per: int | None = None, corpus=None, mode: str = "demo") -> list[dict]:
+def cross_search(question: str, per: int | None = None, corpus=None, mode: str = "demo", companies=None) -> list[dict]:
     """每家公司各取最像的 per 段（bge-m3），依分數由高到低。一次編碼問句；「綜合」不算公司。
+    companies：只取這些公司（介面列出的公司；索引另有沒列出的公司時用）；None＝索引裡全部公司。
     展示模式只看公開索引；自用模式才含自用段落。"""
     per = PER_COMPANY if per is None else per
     pool, ranked = _rank_vector(_root(corpus, mode), "bge-m3", question, None)
@@ -461,7 +462,7 @@ def cross_search(question: str, per: int | None = None, corpus=None, mode: str =
     rows = []
     for i, sc in ranked:  # ranked 已由高到低
         c = pool[i]["company"]
-        if c != GENERAL and taken.get(c, 0) < per:
+        if c != GENERAL and (companies is None or c in companies) and taken.get(c, 0) < per:
             taken[c] = taken.get(c, 0) + 1
             rows.append((i, sc))
     return [{key: pool[i][key] for key in ("company", "file", "heading_path", "text")} | {"score": float(sc)}

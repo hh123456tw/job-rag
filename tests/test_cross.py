@@ -93,3 +93,8 @@ def test_cross_rules_only_in_cross_prompt(monkeypatch):
     assert sys_a == SYSTEM + CROSS_RULES and sys_b == SYSTEM
     for w in ("逐家公司", "資料沒寫", "不排名", "[n]"):
         assert w in CROSS_RULES
+
+
+def test_cross_search_companies_filter_limits_to_listed_companies():
+    hits = cross_search("哪間公司有後端職缺", per=3, corpus=MINI, companies={"甲科技"})
+    assert hits and {h["company"] for h in hits} == {"甲科技"}

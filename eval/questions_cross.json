@@ -1,0 +1,20 @@
+{
+ "說明": "票 31 跨公司題。relevant = 現場 8 家公司中，公開段落含 keywords 任一詞的公司（由 eval/run_cross.py 對載入的語料算，不手寫）。不可回答題：keywords 在整份公開語料出現 0 次（程式核對）。",
+ "questions": [
+  {"id": "x01", "question": "哪一間薪水比較好？", "answerable": true, "keywords": ["月薪", "年薪"]},
+  {"id": "x02", "question": "哪些公司用 Python？", "answerable": true, "keywords": ["Python"]},
+  {"id": "x03", "question": "哪些公司有 AI 相關職缺？", "answerable": true, "keywords": ["AI"]},
+  {"id": "x04", "question": "哪一家的職缺需要出差或外派？", "answerable": true, "keywords": ["出差", "外派"]},
+  {"id": "x05", "question": "哪間公司用 Java？", "answerable": true, "keywords": ["Java"]},
+  {"id": "x06", "question": "哪些公司用 React？", "answerable": true, "keywords": ["React"]},
+  {"id": "x07", "question": "哪家公司有雲端職缺？", "answerable": true, "keywords": ["雲端"]},
+  {"id": "x08", "question": "哪些公司有前端工程師職缺？", "answerable": true, "keywords": ["前端"]},
+  {"id": "x09", "question": "哪一間公司營收比較高？", "answerable": true, "keywords": ["營收"]},
+  {"id": "x10", "question": "哪些公司使用 Docker 或 Kubernetes？", "answerable": true, "keywords": ["Docker", "Kubernetes"]},
+  {"id": "x11", "question": "哪一家適合優先投遞後端工程師？", "answerable": true, "keywords": ["後端"]},
+  {"id": "x12", "question": "各家公司近期有什麼新聞？", "answerable": true, "keywords": ["新聞"]},
+  {"id": "u01", "question": "哪間公司有員工餐廳？", "answerable": false, "keywords": ["員工餐廳"]},
+  {"id": "u02", "question": "哪些公司提供寵物友善辦公室？", "answerable": false, "keywords": ["寵物"]},
+  {"id": "u03", "question": "哪家公司用 Golang？", "answerable": false, "keywords": ["Golang"]}
+ ]
+}
