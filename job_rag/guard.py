@@ -6,7 +6,7 @@ import time
 from collections import deque
 
 COOKIE = "jr_k"
-DEFAULT_LIMIT = 30
+DEFAULT_LIMIT = 100
 WINDOW = 3600  # 秒；滑動視窗
 
 

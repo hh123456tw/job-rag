@@ -1,0 +1,299 @@
+{
+ "rows": [
+  {
+   "low": false,
+   "answer": "台灣大哥大主要從事電信（行動、寬頻）、有線電視、企業服務、新科技事業與電商（momo）等業務 [2]。",
+   "sources": [
+    "台灣大哥大 · 01_台灣大哥大.md · 1. 基本資料",
+    "台灣大哥大 · 01_台灣大哥大.md · 2. 業務與財務",
+    "台灣大哥大 · 01_台灣大哥大.md · 8. 近一年新聞（2025-11 至 2026-11）"
+   ],
+   "error": null,
+   "company": "台灣大哥大",
+   "question": "台灣大哥大是做什麼的？",
+   "http": 200,
+   "sec": 1.2
+  },
+  {
+   "low": false,
+   "answer": "台灣大哥大的技術堆疊與開發工具，依段落內容如下：\n\n[1] 公司自述自研 GenAIus、MCP、向量檢索 RAG，使用 NVIDIA GB300 算力，並自研語音模型 myVoca。段落另推測企業端偏 Java／.NET 與資料倉儲，AI 端有 Python，但企業服務應用部實際使用語言查無。\n\n[3] Java 全端軟體工程師職缺的技能重點包括 Java、SQL、JS／HTML5／CSS、SA／SD；加分條件為 Spring Boot、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP。\n\n[2] 另提到 I91 職缺涉及 K8S 平台團隊，但與 Python 後端關聯低。",
+   "sources": [
+    "台灣大哥大 · 01_台灣大哥大.md · 5. 技術堆疊",
+    "台灣大哥大 · 補1_台哥大.md · 三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > C. 平台／雲端／基礎架構類 > I91 中介軟體平台技術課主管、I96 資深基礎架構整合工程師、I100 IT基礎架構工程師、I202 資料庫平台工程師、I94 資深系統工程師",
+    "台灣大哥大 · 補1_台哥大.md · 三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > B. 後端／全端／軟體類 > I102 Java全端軟體工程師（台北、高雄）"
+   ],
+   "error": null,
+   "company": "台灣大哥大",
+   "question": "台灣大哥大的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 1.9
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "聯合報",
+   "question": "聯合報是做什麼的？",
+   "http": 200,
+   "sec": 0.3
+  },
+  {
+   "low": false,
+   "answer": "根據段落內容，聯合報的技術堆疊與開發工具如下：\n\n- 雲端與廣告工具：Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）；廣告使用 Google Ad Manager（2013 起）與 Google Analytics [1]。\n- 語言／框架：筆試線索只見 SQL 與 Python，其餘查無 [1]。\n- 特定職缺工具：演算法工程師職缺的擅長工具欄位列出 Python、PostgreSQL [2]。\n- GitHub、技術部落格、技術分享：搜尋一次，未找到數據發展部的公開技術文章，查無 [1]。\n\n另外，Streamlined Newsroom 由聯經數位開發，不是數據發展部；Publish X 底層的模型、RAG、框架查無 [1]。",
+   "sources": [
+    "聯合報 · 02_聯合報.md · 5. 技術堆疊",
+    "聯合報 · 補5_典凡_聯合報系.md · 二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。"
+   ],
+   "error": null,
+   "company": "聯合報",
+   "question": "聯合報的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 1.8
+  },
+  {
+   "low": false,
+   "answer": "根據段落，叡揚資訊的業務與客戶相關資訊如下：\n\n- **主要客戶領域**：金融、醫學中心、政府 [3]。\n- **雲端服務客戶數**：超過 40,000 [3]。\n- 具名客戶：查無 [3]。\n\n段落中沒有更具體說明叡揚資訊的產品或服務內容。",
+   "sources": [
+    "叡揚資訊 · 03_叡揚資訊.md · 1. 基本資料",
+    "叡揚資訊 · 03_叡揚資訊.md · 2. 業務與財務 > 主要客戶"
+   ],
+   "error": null,
+   "company": "叡揚資訊",
+   "question": "叡揚資訊是做什麼的？",
+   "http": 200,
+   "sec": 1.4
+  },
+  {
+   "low": false,
+   "answer": "叡揚資訊的技術堆疊與開發工具如下：\n\n- **後端**：Java、Spring Boot、Spring MVC、MyBatis、Hibernate、JPA；Python 為加分 [1]。\n- **前端**：React、jQuery、AJAX、Webpack [1]。\n- **資料庫**：MS SQL Server、Oracle [1]。\n- **開發流程**：DevSecOps、Code Review [1]。\n- **AI**：LLM、VLM、電腦視覺、ServiceNow AI 平台；InsAI 支援地端部署 [1]。\n- **筆試**：C 語言演算法、網頁、SQL [1]。\n- **雲端**：查無（只看到 SaaS 服務，沒看到雲廠商名稱）[1]。\n- **GitHub、技術部落格**：查無 [1]。",
+   "sources": [
+    "叡揚資訊 · 03_叡揚資訊.md · 5. 技術堆疊",
+    "叡揚資訊 · 補4_凱基_叡揚.md · 二、叡揚資訊（公司頁 https://www.104.com.tw/company/aavnrjk ，78 筆，共 4 頁） > 1~2 年經歷",
+    "叡揚資訊 · 03_叡揚資訊.md · 1. 基本資料"
+   ],
+   "error": null,
+   "company": "叡揚資訊",
+   "question": "叡揚資訊的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 1.7
+  },
+  {
+   "low": false,
+   "answer": "神通資訊主要從事電腦系統整合服務業，總部位於台北市內湖區堤頂大道二段187號，員工約1,000人，其中技術人員約占80% [1][2]。公司前身是1974年成立的神通電腦，神通資訊科技本身於2010年10月7日設立 [1]。公開資料也提到它與無人機國家隊、地端AI等領域有關 [3]。",
+   "sources": [
+    "神通資訊 · 04_神通資訊.md · 1. 基本資料",
+    "神通資訊 · B_神通_聯合報.md · 一、神通資訊科技股份有限公司（MiTAC Information）",
+    "神通資訊 · 04_神通資訊.md · 4. 報名部門：新興應用部"
+   ],
+   "error": null,
+   "company": "神通資訊",
+   "question": "神通資訊是做什麼的？",
+   "http": 200,
+   "sec": 1.6
+  },
+  {
+   "low": false,
+   "answer": "根據段落內容，神通資訊的技術堆疊與開發工具資料如下：\n\n- 硬體方面，第三方報導提到 Agent Builder 硬體為 AMD Ryzen AI Max+ 395、Radeon AI PRO R9700；伺服器版為神雲 TN85-B8261 搭 EPYC 與 Instinct MI350P。不過兩篇報導的硬體不同，可能是不同機型，應以官方為準 [1]。\n- 模型與框架（用哪個 LLM、LangChain 或自研）：查無；報導明確「文中未提及」[1]。\n- 技術職缺以 Java 型（全端、Java 工程師）居多 [1]。\n- 公司官方技術部落格或 GitHub 組織：沒查到 [1]。\n- 新興應用部可能偏 AI 應用整合，但使用語言（Python？）不確定，需在面談確認 [1]。\n- 產品面提到 MiTAC Agent Builder 支援零程式碼建 Agent、低程式碼拖拉介面 [2][3]。",
+   "sources": [
+    "神通資訊 · 04_神通資訊.md · 6. 技術堆疊",
+    "神通資訊 · 04_神通資訊.md · 3. 業務與財務 > 產品與業務"
+   ],
+   "error": null,
+   "company": "神通資訊",
+   "question": "神通資訊的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 2.2
+  },
+  {
+   "low": false,
+   "answer": "藍新資訊主要做資訊軟硬體整合、顧問、導入、雲端建置與維運，平台涵蓋 UNIX、AIX、Linux、NT，以及虛擬化、資料庫、儲存、備份、網路資安；產品線包括全面資安、網路基礎架構、AI 應用、混合雲、儲存備份，並代理 Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5 等品牌，目標客戶為政府、金融、大型企業 [2]。",
+   "sources": [
+    "藍新資訊 · 05_藍新資訊.md · 1. 基本資料",
+    "藍新資訊 · 05_藍新資訊.md · 2. 業務與財務 > 業務【公司自述】",
+    "藍新資訊 · 網址5_宏碁雲_藍新_網龍.md · 2. 藍新資訊（公司頁 14 筆，全部有網址；不是藍新金流／藍新科技）"
+   ],
+   "error": null,
+   "company": "藍新資訊",
+   "question": "藍新資訊是做什麼的？",
+   "http": 200,
+   "sec": 1.7
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "藍新資訊",
+   "question": "藍新資訊的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 0.2
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "凱基證券",
+   "question": "凱基證券是做什麼的？",
+   "http": 200,
+   "sec": 0.2
+  },
+  {
+   "low": false,
+   "answer": "根據段落內容，凱基證券的技術堆疊與開發工具如下：\n\n**現行系統與環境**\n- 作業系統為 Windows 與 Linux；有 2 個 APP；使用 4 種開發語言；5 種資料庫 [1]。\n- 專訪只說有 4 種開發語言，並未寫明是哪四種 [1]。\n\n**新核心系統方向**\n- 朝模組化平台發展，採用 Kubernetes、微服務、DevOps，並具 Cloud Ready 特性 [1]。\n\n**開發工具（來自徵才頁面）**\n- 資訊部軟體開發工程師職缺使用 C#、COBOL、MS SQL，並願意接受 COBOL 培訓 [3]。\n- 資訊部 Python 系統程式設計師職缺使用 Linux、Python、Git [3]。\n- 數位科技人才培育計畫的軟體開發專才養成職缺，工具不拘 [3]。\n\n**AI 相關**\n- AI 應用於內部流程優化、KYC 信用額度，並評估用 AI 輔助開發 [1]。\n- 已建 AI 資料平台與資料中台，數據已結構化 [2]。\n- 智慧牧羊犬結合 AI Agent 加 RPA，做監控、異常偵測、處理建議，但模型與平台未揭露 [2]。\n\n**查無**\n- 雲供應商（GCP／Azure／AWS）查無 [2]。\n- 技術部落格、GitHub 查無凱基證券官方帳號與技術分享 [2]。\n- 對外 API 部分，搜尋摘要稱提供 Python API 與量化課程，但沒有取得原始網址，屬未驗證 [2]。",
+   "sources": [
+    "凱基證券 · 06_凱基證券.md · 5. 技術堆疊",
+    "凱基證券 · 網址3_凱基_叡揚.md · 一、凱基證券（共 13 筆網址）"
+   ],
+   "error": null,
+   "company": "凱基證券",
+   "question": "凱基證券的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 2.7
+  },
+  {
+   "low": false,
+   "answer": "華電聯網是一家電腦系統整合服務業者 [2]，法人全名為華電聯網股份有限公司（Hwacom Systems Inc.）[1]。其職缺涵蓋工程、業務、會計、資安、網路、系統等領域 [2]，產品與服務涉及公有雲資安架構、資安產品研發及雲端 AI/ML 應用等 [3]。",
+   "sources": [
+    "華電聯網 · 07_華電聯網.md · 1. 基本資料",
+    "華電聯網 · E_華電_艾普特_醫宇宙.md · 1. 華電聯網股份有限公司",
+    "華電聯網 · E_華電_艾普特_醫宇宙.md · 1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）"
+   ],
+   "error": null,
+   "company": "華電聯網",
+   "question": "華電聯網是做什麼的？",
+   "http": 200,
+   "sec": 1.4
+  },
+  {
+   "low": false,
+   "answer": "華電聯網的語言、框架、雲、資料庫等具體技術堆疊，公開資料查無 [1]。可確認的技術主題（非具體工具）包括：生成式 AI、AI 影像辨識、5G 專網、C-V2X、AIoT、數位孿生 [1]。推測其主體是網路、資通訊、雲端基礎建設整合，軟體多為自有產品與專案客製，Python 比重不明 [1]。",
+   "sources": [
+    "華電聯網 · 07_華電聯網.md · 5. 技術堆疊",
+    "華電聯網 · 07_華電聯網.md · 2. 業務與財務 > 產品與服務",
+    "華電聯網 · 07_華電聯網.md · 4. 職缺"
+   ],
+   "error": null,
+   "company": "華電聯網",
+   "question": "華電聯網的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 1.6
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "奧衍",
+   "question": "奧衍是做什麼的？",
+   "http": 200,
+   "sec": 0.2
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "奧衍",
+   "question": "奧衍的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 0.2
+  },
+  {
+   "low": false,
+   "answer": "中華網龍主要開發網路連線平台與應用軟體，並提供網路遊戲與手機遊戲服務 [3]。官網列出多款線上遊戲與台、港、中、美等地區入口 [3]。近期產品包括《飄流幻境 Re:星之方舟》、《尋秦記》、《吞食天地 2》Steam 版等 [3]。",
+   "sources": [
+    "中華網龍 · 09_中華網龍.md · 1. 基本資料",
+    "中華網龍 · 09_中華網龍.md · 2. 業務與財務 > 業務"
+   ],
+   "error": null,
+   "company": "中華網龍",
+   "question": "中華網龍是做什麼的？",
+   "http": 200,
+   "sec": 1.3
+  },
+  {
+   "low": false,
+   "answer": "根據段落 [1]，中華網龍近年工程師題目以 Unity、C#、物件導向、演算法為主，【推測】技術偏遊戲 client（Unity／C#）。至於遊戲後端語言、雲平台、資料庫、框架、GitHub、技術部落格、技術分享活動、MyCard 系統語言，段落均標示「查無」。",
+   "sources": [
+    "中華網龍 · 09_中華網龍.md · 5. 技術堆疊",
+    "中華網龍 · F_叡揚_藍新_奧衍_網龍_數據立.md · 4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-5 其他（非工程）",
+    "中華網龍 · F_叡揚_藍新_奧衍_網龍_數據立.md · 4. 中華網龍（公司頁 10 筆；與 AI／軟體相關）"
+   ],
+   "error": null,
+   "company": "中華網龍",
+   "question": "中華網龍的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 1.3
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "尼諾思科技",
+   "question": "尼諾思是做什麼的？",
+   "http": 200,
+   "sec": 0.2
+  },
+  {
+   "low": false,
+   "answer": "根據段落內容，尼諾思的技術堆疊與開發工具包括：\n\n- ROS 2、MoveIt、Gazebo、NVIDIA Omniverse [1]\n- NoSQL 資料庫、微服務、網頁儀表板、API（但具體產品如 Cassandra、Mongo 等查無）[1]\n- AMD Vitis AI／FPGA／DPU [1]\n- 模仿學習、影像辨識 [1]\n- PerformX 可單體或微服務；無主從節點；用 NoSQL 複寫 [2]\n- PerformX 整合 Gazebo、CoppeliaSim、NVIDIA Isaac Sim [3]\n\n至於語言、雲端、框架，段落記載「查無」[1]。",
+   "sources": [
+    "尼諾思科技 · 10_尼諾思科技.md · 5. 技術堆疊",
+    "尼諾思科技 · 10_尼諾思科技.md · 2. 業務與財務 > 2.1 產品",
+    "尼諾思科技 · C_宏碁雲_尼諾思.md · 2. 尼諾思智慧科技股份有限公司 > 公司簡介"
+   ],
+   "error": null,
+   "company": "尼諾思科技",
+   "question": "尼諾思的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 1.7
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "醫宇宙",
+   "question": "醫宇宙是做什麼的？",
+   "http": 200,
+   "sec": 0.2
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "醫宇宙",
+   "question": "醫宇宙的技術堆疊與開發工具有哪些？",
+   "http": 200,
+   "sec": 0.2
+  }
+ ],
+ "followups": [
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "台灣大哥大",
+   "first": "台灣大哥大有哪些職缺？",
+   "follow": "那薪水呢？",
+   "http": 200,
+   "sec": 0.3
+  },
+  {
+   "low": true,
+   "answer": null,
+   "sources": [],
+   "error": null,
+   "company": "中華網龍",
+   "first": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "follow": "那需要作品集嗎？",
+   "http": 200,
+   "sec": 0.2
+  }
+ ]
+}
