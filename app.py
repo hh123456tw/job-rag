@@ -232,14 +232,18 @@ def about_page():
         return render_about(None, str(e), sum(counts.values()), n_company, retrieval.public_segment_lengths()), 500
 
 
+def _ms(t0: float) -> float:
+    return round((time.perf_counter() - t0) * 1000, 1)
+
+
 def _low(hits):
     return not hits or hits[0]["score"] < retrieval.NOT_FOUND_THRESHOLD
 
 
 def _fake_post():
-    """開發用替身（票 21）：只有環境變數 JOB_RAG_FAKE_ANSWER 設成 ok／slow／fail 才啟用；預設沒設，啟動檔也不會設。"""
+    """開發用替身（票 21）：只有環境變數 JOB_RAG_FAKE_ANSWER 設成 ok／slow／fail／usage 才啟用；預設沒設，啟動檔也不會設。"""
     mode = os.environ.get("JOB_RAG_FAKE_ANSWER", "")
-    if mode not in ("ok", "slow", "fail"):
+    if mode not in ("ok", "slow", "fail", "usage"):
         return None
 
     def post(url, headers, body, timeout):
@@ -247,7 +251,9 @@ def _fake_post():
             raise urllib.error.URLError("開發用替身：模擬無網路")
         if mode == "slow":
             time.sleep(4)
-        return {"choices": [{"message": {"content": "（開發用替身的模擬答案）這家公司做的事情寫在原文第 1 段 [1]。"}}]}
+        r = {"choices": [{"message": {"content": "（開發用替身的模擬答案）這家公司做的事情寫在原文第 1 段 [1]。"}}]}
+        # 替身：usage 模式回假的 token 數，只供畫面測試；真的 DeepSeek 才有真用量
+        return r | ({"usage": {"prompt_tokens": 1234, "completion_tokens": 56}} if mode == "usage" else {})
     return post
 
 
@@ -276,11 +282,13 @@ def answer_json():
     if wait := _limiter.try_acquire(guard.answer_limit()):
         return _tag({"status": "limit", "message": f"整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
                      f"請約 {-(-wait // 60)} 分鐘後再試。原文在下面，不受影響。"}), 429
+    t0 = time.perf_counter()
     try:
         r = answer(q, hits, post=_fake_post() or _post, history=history)
     except AnswerError as e:
         return _tag({"status": "error", "message": f"整理失敗：{e}。原文在下面，不受影響。"}), 502
-    return _tag({"status": "ok", "answer": r["answer"], "sources": r["sources"]})
+    return _tag({"status": "ok", "answer": r["answer"], "sources": r["sources"], "answer_ms": _ms(t0)}
+                | ({"usage": r["usage"]} if "usage" in r else {}))
 
 
 @app.get("/api/search")
@@ -298,6 +306,7 @@ def api_search():
         return _tag({"status": "error", "message": "系統準備中，請稍後再試。"}), 503
     if msg := _self_wait(mode):
         return _tag({"status": "error", "message": msg}), 503
+    t0 = time.perf_counter()  # 伺服器端檢索耗時（含追問補全、公司偵測、向量檢索）
     try:
         detected, rq = False, expand(q, history, mode=mode)  # 追問補全後的問句：公司偵測與檢索都用它
         if not company and _on("JOB_RAG_DETECT") and (d := detect_company(rq, mode=mode)):
@@ -305,9 +314,13 @@ def api_search():
         hits = search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
         return _tag({"status": "error", "message": f"搜尋失敗：{e}"}), 500
+    search_ms = _ms(t0)
     keep = ("company", "file", "heading_path", "text", "also_in")
+    scored = retrieval.DEFAULT_METHOD == "bge-m3"  # 只有 bge-m3 的相似度有「分數／門檻」可比；其他方式不帶，不編
     return _tag({"status": "low" if _low(hits) else "ok", "company": company or "", "detected": detected, "expanded": rq != q.strip(),
-                 "hits": [{k: h.get(k, []) for k in keep} | ({"private": h["private"]} if "private" in h else {}) for h in hits]})
+                 "threshold": retrieval.NOT_FOUND_THRESHOLD, "search_ms": search_ms,
+                 "hits": [{k: h.get(k, []) for k in keep} | ({"private": h["private"]} if "private" in h else {})
+                          | ({"score": h["score"]} if scored and "score" in h else {}) for h in hits]})
 
 
 # 答案卡的載入腳本：先把原文收起來（沒有 JS 時維持展開），呼叫 /answer；任何失敗都把原文展開。文字一律用 textContent。

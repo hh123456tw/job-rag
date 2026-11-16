@@ -55,8 +55,16 @@ def history_block(history) -> str:
     return f"先前對話（只用來理解「那」「它」指什麼，不是證據）：{chr(10)}{turns}{chr(10) * 2}"
 
 
+def _usage(resp) -> dict:
+    """DeepSeek 回應裡的 token 用量，只取輸入／輸出兩欄且必須是非負整數；缺或壞就不帶，不補數字。"""
+    u = resp.get("usage") if isinstance(resp, dict) else None
+    if not isinstance(u, dict):
+        return {}
+    return {k: u[k] for k in ("prompt_tokens", "completion_tokens") if type(u.get(k)) is int and u[k] >= 0}
+
+
 def answer(question: str, hits: list[dict], post=_post, env_file=".env", history=None) -> dict:
-    """hits 來自 search()，只可能是公開事實段落。history 是已驗證的最近幾輪 [{"q","a"}]。回 {"answer", "sources"}；失敗丟 AnswerError。"""
+    """hits 來自 search()，只可能是公開事實段落。history 是已驗證的最近幾輪 [{"q","a"}]。回 {"answer", "sources"}，DeepSeek 有給用量時多一個 "usage"；失敗丟 AnswerError。"""
     used = hits
     if not used:
         return {"answer": NOT_FOUND, "sources": []}
@@ -80,11 +88,12 @@ def answer(question: str, hits: list[dict], post=_post, env_file=".env", history
         text = resp["choices"][0]["message"]["content"].strip()
     except (KeyError, IndexError, TypeError, AttributeError) as e:
         raise AnswerError("DeepSeek 回應格式不符") from e
+    extra = {"usage": u} if (u := _usage(resp)) else {}
     if not text or text == NOT_FOUND:
-        return {"answer": NOT_FOUND, "sources": []}
+        return {"answer": NOT_FOUND, "sources": []} | extra
     sources = []
     for h in used:  # 出處不重複：同一個位置的多個段落只列一次
         src = {k: h[k] for k in ("company", "file", "heading_path")}
         if src not in sources:
             sources.append(src)
-    return {"answer": text, "sources": sources}
+    return {"answer": text, "sources": sources} | extra
