@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from job_rag import retrieval, search
-from job_rag.answer import NOT_FOUND, AnswerError, answer
+from job_rag.answer import NOT_FOUND, AnswerError, answer, format_source
 from job_rag.generation import (FAILED, GATED, SCORED, format_report, format_review, review_sample, run_eval,
                                 summarize)
 from tests.test_vector import FakeModel, fake_env  # noqa: F401  (autouse fixture)
@@ -69,8 +69,10 @@ def test_model_replying_not_found_is_not_scored_and_not_filled_with_default():
 def test_contexts_are_exactly_the_retrieved_paragraph_texts():
     hits = [hit(7), hit(8), hit(9)]
     rows, calls = run(qs(("a1", True)), hits_by_id={"a1": hits})
-    assert calls["score"][0][2] == ["內文7", "內文8", "內文9"]
-    assert rows[0]["contexts"] == ["內文7", "內文8", "內文9"]
+    # 評審看到的證據格式要和生成端相同（含公司與標題），否則答案提到公司名會被判成沒有依據
+    assert calls["score"][0][2] == [format_source(i, h) for i, h in enumerate(hits, 1)]
+    assert rows[0]["contexts"] == calls["score"][0][2]
+    assert all(h["company"] in c and h["heading_path"] in c and h["text"] in c for c, h in zip(rows[0]["contexts"], hits))
 
 
 def test_nothing_from_excluded_sections_reaches_generation_or_judge(monkeypatch):
@@ -97,7 +99,7 @@ def test_nothing_from_excluded_sections_reaches_generation_or_judge(monkeypatch)
     # contexts 都是檢索結果：每一段都找得到對應的公開事實段落
     for r in rows:
         for c in r["contexts"]:
-            assert any(c == h["text"] for h in search(r["question"], corpus=MINI, k=3, gate=False))
+            assert any(h["text"] in c for h in search(r["question"], corpus=MINI, k=3, gate=False))
 
 
 # ---- 失敗要標記，不補分 ----

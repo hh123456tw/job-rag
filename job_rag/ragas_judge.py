@@ -46,7 +46,7 @@ def make_scorer(env_file=".env", base_url=BASE_URL, embed_fn=_embed_fn):
         try:
             # DeepSeek 只支援 json_object，不支援 json_schema：用 instructor.Mode.JSON
             llm = llm_factory(model, client=client, mode=instructor.Mode.JSON,
-                              extra_body={"thinking": {"type": "disabled"}})
+                              extra_body={"thinking": {"type": "disabled"}}, max_tokens=4096)
             f = await Faithfulness(llm=llm).ascore(user_input=question, response=text, retrieved_contexts=contexts)
             a = await AnswerRelevancy(llm=llm, embeddings=emb).ascore(user_input=question, response=text)
         finally:

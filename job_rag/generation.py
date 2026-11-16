@@ -5,7 +5,7 @@ import io
 import math
 import random
 
-from .answer import NOT_FOUND, SYSTEM, AnswerError
+from .answer import NOT_FOUND, SYSTEM, AnswerError, format_source
 
 SCORED, FAILED, GATED = "已評分", "評估失敗", "被查無門檻擋住"
 MODEL_NF, ANSWERED = "生成回查無", "已回答（不計分）"
@@ -36,7 +36,7 @@ def run_eval(questions, search_fn, answer_fn, score_fn) -> list[dict]:
             row["status"] = GATED
             continue
         row["hits"] = [{k: h[k] for k in ("company", "file", "heading_path", "text")} for h in hits]
-        row["contexts"] = [h["text"] for h in hits]
+        row["contexts"] = [format_source(i, h) for i, h in enumerate(hits, 1)]
         try:
             text = answer_fn(q["question"], hits)["answer"]
         except AnswerError as e:

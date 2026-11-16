@@ -37,13 +37,18 @@ def _key(env_file) -> str:
     return key
 
 
+def format_source(i: int, h: dict) -> str:
+    """生成端看到的段落格式；評審端也用同一份，才算看到同樣的證據。"""
+    return f"[{i}] ({h['company']} / {h['heading_path']})" + chr(10) + h["text"]
+
+
 def answer(question: str, hits: list[dict], post=_post, env_file=".env") -> dict:
     """hits 來自 search()，只可能是公開事實段落。回 {"answer", "sources"}；失敗丟 AnswerError。"""
     used = hits
     if not used:
         return {"answer": NOT_FOUND, "sources": []}
     key = _key(env_file)
-    context = "\n\n".join(f"[{i}] ({h['company']} / {h['heading_path']})\n{h['text']}" for i, h in enumerate(used, 1))
+    context = (chr(10) * 2).join(format_source(i, h) for i, h in enumerate(used, 1))
     body = {
         "model": os.environ.get("DEEPSEEK_MODEL") or DEFAULT_MODEL,
         "messages": [{"role": "system", "content": SYSTEM},
