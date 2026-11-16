@@ -1,4 +1,7 @@
 """評分器。檢索只透過 search()；金標用「檔名＋標題路徑」定義。"""
+import re
+
+from .stats import BOOTSTRAP, SEED, gate_outcome, mrr_interval, paired_diff_interval, pick_threshold, verdict
 
 
 def hit_rank(results: list[dict], golds: list[dict]) -> int | None:
@@ -29,23 +32,29 @@ QUESTIONS = "eval/questions.json"
 
 
 def _group(questions, method, corpus):
-    from . import search
-    ranks, n_unans = {}, 0
+    from . import gate_score, retrieval, search
+    ranks, top, n_unans = {}, {}, 0
     for q in questions:
         if not q["answerable"]:
             n_unans += 1
-            continue
-        res = search(q["question"], method=method, k=DEPTH, corpus=corpus)
-        ranks[q["id"]] = hit_rank(res, q["gold"])
-    return {
-        "ranks": ranks,
-        "metrics": metrics(list(ranks.values())) if ranks else None,
-        # 此票沒有查無門檻：不假造拒答率
-        "unanswerable": {"n": n_unans, "refusal_rate": None},
-    }
+        else:  # 排名不套門檻：量的是檢索本身
+            ranks[q["id"]] = hit_rank(search(q["question"], method=method, k=DEPTH, corpus=corpus, gate=False), q["gold"])
+        s = gate_score(q["question"], method, corpus=corpus)
+        if s is not None:
+            top[q["id"]] = s
+    out = {"ranks": ranks, "metrics": metrics(list(ranks.values())) if ranks else None,
+           "gate_scores": top or None,  # 題號 -> 最高分；沒做門檻的方式是 None
+           "unanswerable": {"n": n_unans, "refusal_rate": None}}
+    if top:  # 沒做門檻的方式不假造拒答率
+        t = retrieval.NOT_FOUND_THRESHOLD
+        by = {q["id"]: q["answerable"] for q in questions}
+        got = gate_outcome({i: s for i, s in top.items() if by[i]}, {i: s for i, s in top.items() if not by[i]}, t)
+        out["gate"] = {"threshold": t, **got}
+        out["unanswerable"] |= {"refusal_rate": len(got["unanswerable_blocked"]) / n_unans if n_unans else None}
+    return out
 
 
-def evaluate(questions: list[dict], method: str = "bm25", corpus=None) -> dict:
+def evaluate(questions: list[dict], method: str = "bge-m3", corpus=None) -> dict:
     """全部題，只查公開事實段落（排除段落不在索引內）。"""
     scores = _group(questions, method, corpus)
     types = {}
@@ -53,6 +62,14 @@ def evaluate(questions: list[dict], method: str = "bm25", corpus=None) -> dict:
         if q["answerable"]:
             types.setdefault(q.get("type", "未分類"), []).append(scores["ranks"][q["id"]])
     return {"method": method, "scores": scores, "by_type": {t: metrics(r) for t, r in types.items()}}
+
+
+def _refusal(g) -> str:
+    if "gate" not in g:
+        return "此方式沒做查無門檻"
+    u, gt = g["unanswerable"], g["gate"]
+    return (f"查無門檻 {gt['threshold']:.3f}：擋住 {len(gt['unanswerable_blocked'])}/{u['n']} 題不可回答題（正確拒答率 {u['refusal_rate']:.2f}）；"
+            f"誤擋 {len(gt['answerable_blocked'])}/{g['metrics']['n']} 題可回答題" if g["metrics"] else "（無可回答題）")
 
 
 def _fmt(m):
@@ -66,7 +83,7 @@ def format_report(rep: dict) -> str:
     g = rep["scores"]
     out.append(f"\n## 全部題（只查公開事實段落）\n{_fmt(g['metrics'])}")
     if g["unanswerable"]["n"]:
-        out.append(f"不可回答題 {g['unanswerable']['n']} 題；正確拒答率：尚未實作門檻")
+        out.append(f"不可回答題 {g['unanswerable']['n']} 題；" + _refusal(g))
     for t, m in rep.get("by_type", {}).items():
         out.append(f"  題型 {t}：{_fmt(m)}")
     miss = [i for i, r in g["ranks"].items() if r is None or r > 3]
@@ -85,9 +102,22 @@ def compare(questions: list[dict], methods=None, corpus=None) -> dict:
     return {m: evaluate(questions, method=m, corpus=corpus) for m in (methods or METHODS)}
 
 
+def _interval(rep):
+    r = list(rep["scores"]["ranks"].values())
+    return mrr_interval(r) if r else None
+
+
+def _gate_cell(g) -> str:
+    if "gate" not in g:
+        return "沒做門檻"
+    gt = g["gate"]
+    return f"擋住 {len(gt['unanswerable_blocked'])}/{g['unanswerable']['n']}　誤擋 {len(gt['answerable_blocked'])}/{g['metrics']['n']}"
+
+
 def format_table(reps: dict) -> str:
     out = [f"檢索方式並列　評分單位：段落　只查公開事實段落　Hit@k 的 k=1、3；名次最多看到 {DEPTH}",
-           f"{'方式':<14}{'題數':>4}{'Hit@1':>8}{'Hit@3':>8}{'MRR':>8}"]
+           "排名不套查無門檻（量檢索本身）；最右欄是套門檻後：擋住＝不可回答題被擋住，誤擋＝可回答題被擋掉",
+           f"{'方式':<14}{'題數':>4}{'Hit@1':>8}{'Hit@3':>8}{'MRR':>8}  {'MRR 95% 區間':<16}查無（擋住／誤擋）"]
     flagged = False
     for name, rep in reps.items():
         m = rep["scores"]["metrics"]
@@ -95,12 +125,96 @@ def format_table(reps: dict) -> str:
             out.append(f"{name:<14}（無可回答題）")
             continue
         flagged |= m["hit@1"] >= NEAR_PERFECT or m["hit@3"] >= NEAR_PERFECT
-        out.append(f"{name:<14}{m['n']:>4}{m['hit@1']:>8.3f}{m['hit@3']:>8.3f}{m['mrr']:>8.3f}")
-    n = next(iter(reps.values()))["scores"]["unanswerable"]["n"]
-    out.append(f"\n不可回答題 {n} 題；正確拒答率：尚未實作門檻")
+        iv = _interval(rep)
+        out.append(f"{name:<14}{m['n']:>4}{m['hit@1']:>8.3f}{m['hit@3']:>8.3f}{m['mrr']:>8.3f}  "
+                   f"{('[%.3f, %.3f]' % iv) if iv else '-':<16}{_gate_cell(rep['scores'])}")
     if flagged:
         out.append(SUSPICIOUS)
     return "\n".join(out)
+
+
+def format_interval_note(reps: dict) -> str:
+    n = next(iter(reps.values()))["scores"]["metrics"]["n"]
+    out = ["## 信賴區間",
+           f"題少（可回答題只有 {n} 題），所以把題目重抽 {BOOTSTRAP} 次（可重複抽、固定亂數種子 {SEED}），"
+           "每次算一次 MRR，取中間 95% 的範圍；區間越寬，越不能肯定成績。"]
+    a, b = reps.get("bge-m3"), reps.get("hybrid")
+    if a and b and a["scores"]["ranks"].keys() == b["scores"]["ranks"].keys() and a["scores"]["ranks"]:
+        iv = paired_diff_interval(list(a["scores"]["ranks"].values()), list(b["scores"]["ranks"].values()))
+        d = a["scores"]["metrics"]["mrr"] - b["scores"]["metrics"]["mrr"]
+        out.append(f"bge-m3 減 hybrid 的 MRR 差：{d:+.3f}，95% 區間 [{iv[0]:+.3f}, {iv[1]:+.3f}]（兩者用同一批重抽的題目）。{verdict(iv)}。")
+    return "\n".join(out)
+
+
+def _sweep(top: dict, answerable: set, chosen: float) -> list[str]:
+    ts = sorted({0.60, 0.65, 0.70, 0.75, round(chosen, 3)})
+    rows = [f"{'門檻':>6}  擋住不可回答題  誤擋可回答題"]
+    for t in ts:
+        o = gate_outcome({i: s for i, s in top.items() if i in answerable},
+                         {i: s for i, s in top.items() if i not in answerable}, t)
+        n_u = len(o["unanswerable_blocked"]) + len(o["unanswerable_passed"])
+        rows.append(f"{t:>6.3f}  {len(o['unanswerable_blocked']):>2}/{n_u:<12}{len(o['answerable_blocked']):>2}/{len(answerable)}")
+    return rows
+
+
+def format_gate(questions: list[dict], reps: dict) -> str:
+    from . import retrieval
+    T = retrieval.NOT_FOUND_THRESHOLD
+    out = ["## 查無",
+           f"做法：最高分低於門檻就回查無。門檻是 bge-m3 的最高相似度 {T:.3f}。混合也用它的 bge-m3 最高分判斷"
+           "（混合自己的 RRF 分數只看名次，不代表有多像，沒辦法比門檻）。BM25、bge-small-zh、e5-large 的分數尺度不同，沒做門檻。",
+           "挑法：試每個相鄰分數的中點，選「可回答題放行率＋不可回答題擋住率」最高者，同分取較低；兩種題各算比率，因為 25 題比 5 題多很多。",
+           "限制：門檻用評估的同一批 30 題挑，沒有獨立測試題，所以下面的數字是用挑門檻的題目打分，偏樂觀，只能當方向。"]
+    rep = reps.get("bge-m3")
+    top = rep and rep["scores"].get("gate_scores")
+    if not top:
+        return "\n".join(out + ["（沒有 bge-m3 的結果，無法列出查無表現）"])
+    ans = {q["id"] for q in questions if q["answerable"]}
+    try:
+        picked = pick_threshold([s for i, s in top.items() if i in ans], [s for i, s in top.items() if i not in ans])
+        out.append(f"重算挑出的門檻：{picked:.4f}；程式內使用：{T:.3f}。")
+    except ValueError as e:
+        out.append(f"重算門檻失敗：{e}")
+    g = rep["scores"]
+    gt, n_u, n_a = g["gate"], g["unanswerable"]["n"], g["metrics"]["n"]
+    out.append(f"結果（門檻 {T:.3f}，bge-m3 與混合相同）：")
+    out.append(f"  不可回答題擋住 {len(gt['unanswerable_blocked'])}/{n_u}：{'、'.join(gt['unanswerable_blocked']) or '無'}；"
+               f"沒擋住：{'、'.join(gt['unanswerable_passed']) or '無'}")
+    out.append(f"  可回答題誤擋 {len(gt['answerable_blocked'])}/{n_a}（{len(gt['answerable_blocked']) / n_a:.0%}）："
+               f"{'、'.join(gt['answerable_blocked']) or '無'}")
+    blocked_u = [top[i] for i in gt["unanswerable_blocked"]]
+    passed_a = [s for i, s in top.items() if i in ans and s >= T]
+    if blocked_u and passed_a:
+        out.append(f"貼線：擋住的不可回答題最高分 {max(blocked_u):.4f}，放行的可回答題最低分 {min(passed_a):.4f}；兩者越近，門檻越是貼著這批題擬合。")
+    out.append("門檻越高，擋住越多不可回答題，也誤擋越多可回答題：")
+    out += ["  " + r for r in _sweep(top, ans, T)]
+    return "\n".join(out)
+
+
+THIRD_PARTY = re.compile("面試趣|面試心得|面試題|面試紀錄|面試區|GoodJob|goodjob")
+DEEP = re.compile(r"^\d\d_")  # 一公司一檔的深查檔；其餘（A_、B_、補、網址）是 104 職缺檔
+
+
+def format_interview(drops: list[dict]) -> str:
+    pub = [d for d in drops if d["public"]]
+    third = [d for d in pub if THIRD_PARTY.search(d["line"])]
+    job = [d for d in pub if d not in third and not DEEP.match(d["file"])]
+    other = [d for d in pub if d not in third and d not in job]
+    show = lambda d: f"  {d['file']} > {d['heading_path'][:30]} | {d['line'][:50]}"
+    out = ["## 「面試」行過濾",
+           "做法：載入語料時，內文含「面試」二字的行整行丟掉（面試資訊不屬公開事實）。標題行不丟，否則排除段落的內容會併進上一段。",
+           f"丟掉 {len(drops)} 行；其中在公開事實段落內 {len(pub)} 行，其餘 {len(drops) - len(pub)} 行本來就在排除段落。",
+           f"公開段落內的 {len(pub)} 行：第三方面試心得或面試網站 {len(third)} 行（本來就不是公司公開事實）；"
+           f"104 職缺檔 {len(job)} 行（最可能真的丟了公開職缺內容，逐行列出）；"
+           f"其他 {len(other)} 行（多為「面試時要問」「面試前請核對」這類提醒語，列前 3 行）。"]
+    out += [show(d) for d in job] + [show(d) for d in other[:3]]
+    out.append("誤丟風險：整行丟掉，同一行的公開內容（表格列的職缺名稱、「優先面試」這類條件）也一起沒了；"
+               "「面試官」「面試前請核對」這類說明文字同樣會被丟。全部列出：python -X utf8 -m job_rag.classify")
+    return "\n".join(out)
+
+
+def format_results(questions: list[dict], reps: dict, drops: list[dict]) -> str:
+    return "\n\n".join([format_table(reps), format_interval_note(reps), format_gate(questions, reps), format_interview(drops)])
 
 
 def main():
@@ -109,12 +223,13 @@ def main():
     from pathlib import Path
     ap = argparse.ArgumentParser()
     ap.add_argument("--questions", default=QUESTIONS)
-    ap.add_argument("--method", default="bm25", help="bm25、bge-small-zh、bge-m3、e5-large、hybrid，或 all")
+    ap.add_argument("--method", default="bge-m3", help="bm25、bge-small-zh、bge-m3、e5-large、hybrid，或 all")
     ap.add_argument("--out", help="all 時預設寫入 " + TABLE_OUT)
     a = ap.parse_args()
     qs = json.loads(Path(a.questions).read_text(encoding="utf-8"))["questions"]
     if a.method == "all":
-        text = format_table(compare(qs))
+        from . import interview_drops
+        text = format_results(qs, compare(qs), interview_drops())
         out = Path(a.out or TABLE_OUT)
         out.write_text(text + "\n", encoding="utf-8")
         print(text)

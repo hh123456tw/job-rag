@@ -12,6 +12,7 @@ MINI = Path(__file__).parent / "fixtures" / "mini"
 
 def q(text, **kw):
     kw.setdefault("corpus", MINI)
+    kw.setdefault("method", "bm25")
     return search(text, **kw)
 
 
@@ -96,7 +97,7 @@ def test_missing_corpus_raises(monkeypatch, tmp_path):
 
 def test_corpus_path_from_env(monkeypatch):
     monkeypatch.setenv("JOB_RAG_CORPUS", str(MINI))
-    assert search("鯨魚追蹤軟體")[0]["company"] == "甲科技"
+    assert search("鯨魚追蹤軟體", method="bm25")[0]["company"] == "甲科技"
 
 
 def test_classification_table_rows():
@@ -147,5 +148,5 @@ def test_ambiguous_file_and_no_company_in_title_stays_general(mixed_corpus):
 
 @pytest.mark.skipif(not os.environ.get("JOB_RAG_CORPUS"), reason="需要完整語料")
 def test_real_corpus_smoke():
-    assert search("FastAPI")
+    assert search("FastAPI", method="bm25")
     assert "綜合" not in public_company_counts()  # 公開段落都歸得到公司

@@ -20,7 +20,7 @@ def index():
                 f"<div class='hit'><b>{escape(h['company'])}</b> · {escape(h['file'])} · "
                 f"{escape(h['heading_path'])}<pre>{escape(h['text'])}</pre></div>"
                 for h in hits
-            ) or "<p>沒有符合的段落。</p>"
+            ) or "<p><b>查無：語料中沒有這個問題的答案。</b>請換個問法，或確認公司名稱。</p>"
             if hits:  # 沒有原文結果就沒有可整理的內容
                 if request.args.get("answer"):
                     try:

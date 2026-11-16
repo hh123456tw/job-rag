@@ -12,3 +12,9 @@ for label, flag in (("被排除的段落（不進索引）", True), ("公開事�
 print("## 公開段落：各公司段落數\n\n| 公司 | 段落數 |\n|---|---|")
 for company, n in public_company_counts().items():
     print(f"| {company} | {n} |")
+from . import interview_drops
+
+drops = [d for d in interview_drops() if d["public"]]
+print(f"\n## 「面試」行過濾：公開事實段落內被丟掉的行（{len(drops)} 行，可能誤丟公開內容的要人看）\n")
+for d in drops:
+    print(f"- {d['file']} > {d['heading_path']}：{d['line']}")

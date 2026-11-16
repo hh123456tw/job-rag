@@ -16,10 +16,10 @@ python -m pytest tests               # 用 tests/fixtures/mini 的假語料
 ## 評估（票 02）
 ```
 python -X utf8 -m job_rag.evalset --write-md   # 核對 30 題：引文在金標標題下、不可回答題的關鍵字搜不到；重寫 eval/questions.md
-python -X utf8 -m job_rag.evaluate             # 對 BM25 評分；需 JOB_RAG_CORPUS
+python -X utf8 -m job_rag.evaluate             # 對預設方式（bge-m3）評分；需 JOB_RAG_CORPUS
 ```
 題目在 `eval/questions.json`（程式讀）與 `eval/questions.md`（人讀）。核對狀態一律是「待使用者確認」，只有使用者能改。
-金標用「檔名＋標題路徑」；命中＝前 k 個結果中有段落在金標標題之下。正確拒答率要等查無門檻（之後的票）才算，現在輸出「尚未實作門檻」。
+金標用「檔名＋標題路徑」；命中＝前 k 個結果中有段落在金標標題之下。正確拒答率見下面「查無門檻」。
 
 ## 向量檢索（票 03）
 模型放 `models/`（不進 git），`search(..., method=...)` 全在本機跑，不連網。段落向量快取在 `.cache/`（不進 git），語料內容變了才重算。
@@ -29,6 +29,21 @@ python -m pytest tests                          # 假嵌入器，不需模型
 set JOB_RAG_MODELS_TEST=1 && python -m pytest tests/test_vector.py   # 真模型冒煙，需 models/
 ```
 混合 = BM25 + bge-m3，RRF（k=60，不調權重）。e5 自動加 `query: ` / `passage: ` 前綴。
+
+## 預設檢索方式
+預設是 bge-m3（`search()` 的預設值，介面也用它）。理由：在 25 題可回答題上 5 種方式中成績最好（見 `eval/results_methods.txt`）。
+
+## 查無門檻（票 04）
+- 做法：最高分低於門檻，就回「查無」。介面顯示明確文字，不列原文結果，也沒有「整理成答案」按鈕。
+- 門檻是 bge-m3 最高相似度 0.700（`retrieval.NOT_FOUND_THRESHOLD`）。混合用它的 bge-m3 最高分判斷；BM25、bge-small-zh、e5-large 分數尺度不同，沒做門檻。
+- 挑法：試每個相鄰分數的中點，選「可回答題放行率＋不可回答題擋住率」最高的。
+- 限制：門檻用評估的同一批 30 題挑，沒有獨立測試題，所以拒答率偏樂觀，只能當方向。可回答題被誤擋的比例見 `eval/results_methods.txt`。
+
+## 信賴區間
+題少（25 題），所以把題目重抽 1000 次（固定亂數種子 0），看 MRR 會落在哪個範圍。bge-m3 與混合的差，用同一批重抽的題目算；區間不含 0，才說差異可信。
+
+## 「面試」行過濾
+載入語料時，內文含「面試」二字的行整行丟掉（標題行不丟）。被丟的行數、範例與可能誤丟的公開內容寫在 `eval/results_methods.txt`；全部列出：`python -X utf8 -m job_rag.classify`。
 
 ## 整理成答案（DeepSeek）
 ```

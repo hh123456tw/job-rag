@@ -46,7 +46,7 @@ def test_answer_has_sources_and_request_shape():
 
 
 def test_real_search_sends_only_public_segments():
-    hits = search("刺蝟密語 FastAPI 面試 風險", corpus=MINI, k=50)
+    hits = search("刺蝟密語 FastAPI 面試 風險", corpus=MINI, k=50, method="bm25")
     assert hits
     post = FakePost()
     answer("FastAPI 是什麼", hits, post=post)
@@ -105,7 +105,8 @@ def test_key_read_from_env_file(monkeypatch, tmp_path):
     assert post.calls[0][1]["Authorization"] == "Bearer sk-file"
 
 
-# ---- 頁面 ----
+# ---- 頁面（預設 bge-m3，用假嵌入器）----
+from tests.test_vector import fake_env  # noqa: F401,E402
 @pytest.fixture
 def client(monkeypatch):
     monkeypatch.setenv("JOB_RAG_CORPUS", str(MINI))
@@ -123,14 +124,15 @@ def test_page_no_api_call_until_button(client, monkeypatch):
     assert "答案 [1]" in html and len(post.calls) == 1
 
 
-def test_page_excluded_word_finds_nothing_no_button_no_call(client, monkeypatch):
+def test_page_never_shows_excluded_text_even_when_asked_for_it(client, monkeypatch):
     appmod, c = client
     post = FakePost()
     monkeypatch.setattr(appmod, "_post", post)
-    for url in ("/?q=刺蝟密語", "/?q=刺蝟密語&mode=query", "/?q=刺蝟密語&mode=query&answer=1"):
+    for url in ("/?q=離職率 珊瑚礁 企鵝密語", "/?q=離職率 珊瑚礁&mode=query", "/?q=離職率 珊瑚礁&mode=query&answer=1"):
         html = c.get(url).get_data(as_text=True)
-        assert "<pre>" not in html and "整理成答案" not in html, url
-    assert post.calls == []
+        body = html.split("</form>", 1)[1]  # 表單會回顯問題，只看結果區
+        assert not any(w in body for w in ("離職率", "珊瑚礁", "企鵝密語", "刺蝟密語")), url
+    assert post.calls  # answer=1 的那次有送出；內容只有公開段落（見 test_real_search_sends_only_public_segments）
 
 
 def test_page_has_no_mode_switch_or_banner(client):
@@ -146,3 +148,23 @@ def test_page_error_keeps_original_results(client, monkeypatch):
     monkeypatch.setattr(appmod, "_post", FakePost(exc=TimeoutError("t")))
     html = c.get("/?q=鯨魚追蹤軟體&answer=1").get_data(as_text=True)
     assert "鯨魚" in html and "整理失敗" in html and "答案 [1]" not in html
+
+
+def test_page_not_found_shows_clear_text_no_hits_no_button_no_api(client, monkeypatch):
+    from job_rag import retrieval
+    appmod, c = client
+    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 10.0)  # 任何分數都低於門檻
+    post = FakePost()
+    monkeypatch.setattr(appmod, "_post", post)
+    for url in ("/?q=鯨魚追蹤軟體", "/?q=鯨魚追蹤軟體&answer=1"):
+        html = c.get(url).get_data(as_text=True)
+        assert "查無：語料中沒有這個問題的答案" in html
+        assert "class='hit'" not in html and "鯨魚追蹤軟體，總部" not in html  # 不顯示原文結果
+        assert "整理成答案" not in html
+    assert post.calls == []
+
+
+def test_page_found_has_no_not_found_text(client):
+    appmod, c = client
+    html = c.get("/?q=鯨魚追蹤軟體").get_data(as_text=True)
+    assert "查無" not in html and "class='hit'" in html

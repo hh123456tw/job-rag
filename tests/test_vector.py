@@ -31,7 +31,7 @@ class FakeModel:
 
 
 def _clear():
-    for f in (retrieval._segments, retrieval._public, retrieval._bm25, retrieval._index):
+    for f in (retrieval._parse, retrieval._public, retrieval._bm25, retrieval._index):
         f.cache_clear()
 
 
@@ -40,6 +40,7 @@ def fake_env(monkeypatch, tmp_path):
     FakeModel.calls = []
     monkeypatch.setenv("JOB_RAG_CACHE", str(tmp_path / "cache"))
     monkeypatch.setattr(retrieval, "_load_model", lambda method: FakeModel(method))
+    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 0.0)  # 假嵌入器的分數尺度不同：預設不擋，要測門檻的測試自己設
     _clear()
     yield
     _clear()
@@ -206,5 +207,5 @@ def test_real_model_smoke(monkeypatch, tmp_path, method):
     monkeypatch.undo()  # 還原成真的 _load_model
     monkeypatch.setenv("JOB_RAG_CACHE", str(tmp_path / "real"))
     _clear()
-    r = search("鯨魚追蹤軟體在哪裡", method=method, corpus=MINI)
+    r = search("鯨魚追蹤軟體在哪裡", method=method, corpus=MINI, gate=False)  # 假語料太小，真門檻不適用
     assert r and r[0]["company"] == "甲科技"

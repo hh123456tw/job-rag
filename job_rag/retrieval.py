@@ -83,24 +83,33 @@ def _company_of(path: list[str], stem: str, names: list[str]) -> str:
     return in_stem.pop() if len(in_stem) == 1 else GENERAL
 
 
+INTERVIEW = "面試"  # 含這兩字的內文行整行丟掉（面試資訊不是公開事實）；標題行不丟
+
+
 @lru_cache(maxsize=4)
-def _segments(root: str) -> tuple:
+def _parse(root: str) -> tuple:
+    """(段落, 被丟掉的面試行)。"""
     root_p = Path(root)
     files = sorted(root_p.rglob("*.md"))
     deep = lambda f: f.parent == root_p and re.match(r"^(0[1-9]|1[0-6])_", f.name)
     names = [re.sub(r"^\d+_", "", f.stem) for f in files if deep(f)]
-    segs = []
+    segs, drops = [], []
     for f in files:
         file_company = re.sub(r"^\d+_", "", f.stem) if deep(f) else None
         stack: list[tuple[int, str]] = []  # (level, title)，含 H1
         body: list[str] = []
+        dropped: list[str] = []
 
         def flush():
             text = "\n".join(body).strip()
             body.clear()
+            path = [t for lv, t in stack if lv > 1]
+            for line in dropped:
+                drops.append({"file": f.name, "heading_path": " > ".join(path) or f.stem,
+                              "line": line, "public": not _is_excluded(path)})
+            dropped.clear()
             if not text:
                 return
-            path = [t for lv, t in stack if lv > 1]
             company = file_company or _company_of(path, f.stem, names)
             head = " > ".join(path) or (stack[0][1] if stack else f.stem)
             for piece in _pieces(text):
@@ -118,10 +127,21 @@ def _segments(root: str) -> tuple:
                 while stack and stack[-1][0] >= lv:
                     stack.pop()
                 stack.append((lv, m.group(2)))
+            elif INTERVIEW in line:
+                dropped.append(line.strip())
             else:
                 body.append(line)
         flush()
-    return tuple(segs)
+    return tuple(segs), tuple(drops)
+
+
+def _segments(root: str) -> tuple:
+    return _parse(root)[0]
+
+
+def interview_drops(corpus=None) -> list[dict]:
+    """被丟掉的「面試」行。public=True 的在公開事實段落內，才有誤丟公開內容的可能。"""
+    return list(_parse(str(_corpus_dir(corpus).resolve()))[1])
 
 
 def _tok(s: str) -> list[str]:
@@ -221,20 +241,40 @@ def _rank_vector(root, method, question, company):
     return pool, [(int(i), float(s)) for s, i in zip(sims[0], ids[0]) if not company or pool[i]["company"] == company]
 
 
-def search(question: str, method: str = "bm25", company: str | None = None,
-           k: int = 3, corpus=None) -> list[dict]:
-    """排序後的公開事實段落。排除段落在載入時就丟了，候選池根本沒有它們。"""
+# 查無門檻：最高分低於它就回查無。用 bge-m3 的相似度（越高越像）；混合也用 bge-m3 的最高分判斷，
+# 因為混合自己的 RRF 分數只看名次、不代表有多像。BM25 等其他方式沒做門檻。
+# 值由 eval 的 30 題挑出（沒有獨立測試題），見 eval/results_methods.txt。
+NOT_FOUND_THRESHOLD = 0.700
+GATED = ("bge-m3", "hybrid")
+
+
+def gate_score(question: str, method: str = "bge-m3", company: str | None = None, corpus=None) -> float | None:
+    """查無判斷用的最高分：bge-m3 與混合是 bge-m3 的最高相似度；其他方式沒做門檻回 None。"""
+    if method not in GATED:
+        return None
+    _, ranked = _rank_vector(str(_corpus_dir(corpus).resolve()), "bge-m3", question, company)
+    return ranked[0][1] if ranked else None
+
+
+def search(question: str, method: str = "bge-m3", company: str | None = None,
+           k: int = 3, corpus=None, gate: bool = True) -> list[dict]:
+    """排序後的公開事實段落。排除段落在載入時就丟了，候選池根本沒有它們。
+    查無（最高分低於 NOT_FOUND_THRESHOLD）回空串列；gate=False 不套門檻（評分用）。"""
     if method not in METHODS:
         raise ValueError(f"未支援的檢索方式：{method}")
     root = str(_corpus_dir(corpus).resolve())
+    top = None  # 查無判斷用的分數（只有 GATED 方式有）
     if method == "bm25":
         pool, ranked = _rank_bm25(root, question, company)
     elif method == "hybrid":
         pool, rb = _rank_bm25(root, question, company)
         _, rv = _rank_vector(root, "bge-m3", question, company)
-        ranked = rrf([[i for i, _ in rb], [i for i, _ in rv]])
+        ranked, top = rrf([[i for i, _ in rb], [i for i, _ in rv]]), (rv[0][1] if rv else None)
     else:
         pool, ranked = _rank_vector(root, method, question, company)
+        top = ranked[0][1] if ranked and method in GATED else None
+    if gate and method in GATED and (top is None or top < NOT_FOUND_THRESHOLD):
+        return []
     return [{key: pool[i][key] for key in ("company", "file", "heading_path", "text")} | {"score": float(sc)}
             for i, sc in ranked[:k]]
 
