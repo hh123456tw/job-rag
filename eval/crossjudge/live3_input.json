@@ -1,0 +1,182 @@
+[
+ {
+  "id": "M01",
+  "question": "台灣大哥大是做什麼的？",
+  "answer": "台灣大哥大的業務包括電信（行動、寬頻）、有線電視、企業服務、新科技事業，以及電商（momo）[2]。",
+  "passages": [
+   "[1] (台灣大哥大 / 1. 基本資料)\n- 法人全名：台灣大哥大股份有限公司（英文簡稱 TWM）【第三方】\n  - https://info.technews.tw/company/97176270-台灣大哥大股份有限公司\n- 統編：97176270【第三方】同上\n- 資本額：資本總額 600 億元；實收資本額約 372.33 億元【第三方】\n  - https://ww2.money-link.com.tw/TWStock/StockBasic.aspx?SymId=3045\n- 成立（核准設立）日：1997-02-25【第三方】同 technews 頁\n- 上市：股票代號 3045；上市日 2002-08-26【第三方】同 technews 頁\n- 員工數：查無。\n  - 查了：搜尋「員工人數／永續報告書」，未取得數字。永續報告書與年報 PDF 未開啟。\n- 母公司／集團：查無明確母公司。\n  - 第三方報導顯示董事長為蔡明忠，富邦集團蔡家為主要經營者。持股比例未驗證。\n  - 台灣大經大富媒體科技持有 momo 富邦媒約 45.01%（舊報導，需以年報為準）。\n  - https://www.ctee.com.tw/news/20250425700186-430502（搜尋結果摘要，未逐篇驗證）",
+   "[2] (台灣大哥大 / 2. 業務與財務)\n- 業務【第三方】：電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）。\n  - https://info.technews.tw/company/97176270-台灣大哥大股份有限公司\n- 2025 全年【第三方】：\n  - 合併營收 1,987.6 億元，年減 0.31%。\n  - EBITDA 431.7 億元，年增 1.53%。\n  - 稅後純益 144.4 億元，年增 4%；EPS 4.77 元，7 年新高。\n  - 來源：https://uanalyze.com.tw/articles/5466548988\n- 2025 分項【第三方，引述公司法說】：\n  - Telco＋企業服務營收年增 26%。\n  - 新科技事業營收年增 12%。\n  - momo 會員年增 3%。\n  - 同上來源。\n- 2026 展望【自述，經第三方轉述】：營收成長 5%–7%，營業利益成長 1%–2%。同上來源。\n- 2024 年【第三方】：營收、EBITDA 創歷史新高；EPS 4.57 元。\n  - https://cna.com.tw/business/chinese/403363（只讀到標題摘要）\n- 近 3 年營收趨勢：只確認 2024 創高、2025 持平略減（主因 momo 影響，富果研究說法）。2023 數字與三年完整表：查無。\n  - https://b",
+   "[3] (台灣大哥大 / 8. 近一年新聞（2025-11 至 2026-11）)\n- 2026-04-29：公司發布 2025 企業客戶營收年增 26%、AI 算力服務、AI Coding 超過 50%【自述】。https://www.cna.com.tw/business/chinese/432126\n- 2026-04-27：推 AI 算力服務（GMI Cloud）。https://newtalk.tw/news/view/2026-04-29/1032433\n- 2026-03：2025 財報，EPS 4.77 元，營收年減 0.31%【第三方】。https://uanalyze.com.tw/articles/5466548988\n- 2026-06：Computex 公布桃園 AIDC 預售 100% 完售【自述，經第三方轉述】。https://newtalk.tw/news/view/2026-06-02/1038847（只讀到搜尋摘要）\n- 2026-08-03：MyAgent、AIDC 7,000 顆 GB300、myVoca、「超人計畫」培訓近 2,500 名非 IT 同仁。https://www.ctee.com.tw/news/20260803701567-430502\n- 2026-09：D.E.E.P. Tech Day 發表 MyAgent。https://finance.technews.tw/2026/09/08/deep-tec"
+  ]
+ },
+ {
+  "id": "M02",
+  "question": "台灣大哥大的技術堆疊與開發工具有哪些？",
+  "answer": "根據段落內容，台灣大哥大在技術堆疊與開發工具方面：\n\n- 公司自述自研 GenAIus、MCP、向量檢索 RAG，並使用 NVIDIA GB300 算力、自研語音模型 myVoca [1]。\n- 資料標註為推測的部分是：企業端偏 Java／.NET 與資料倉儲，AI 端有 Python；企業服務應用部實際使用語言則沒有資料 [1]。\n- Java 全端工程師職缺列出 Java、SQL、JS／HTML5／CSS、SA／SD，加分項目包括 Spring Boot、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP [3]。\n- 中介軟體平台職缺提到 K8S 平台團隊與「企業級中介軟體平台」，但指的是內部企業 IT [2]。\n\n至於 GitHub 與技術部落格，資料中沒有提到；企業服務應用部實際使用的語言，資料中也沒有提到 [1]。",
+  "passages": [
+   "[1] (台灣大哥大 / 5. 技術堆疊)\n- 來自公司發表【自述】：自研 GenAIus、MCP、向量檢索 RAG、NVIDIA GB300 算力、自研語音模型 myVoca。\n  - https://www.ctee.com.tw/news/20260803701567-430502\n- GitHub、技術部落格：未查。\n- 【推測】企業端偏 Java／.NET 與資料倉儲；AI 端有 Python。企業服務應用部實際語言查無。",
+   "[2] (台灣大哥大 / 三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > C. 平台／雲端／基礎架構類 > I91 中介軟體平台技術課主管、I96 資深基礎架構整合工程師、I100 IT基礎架構工程師、I202 資料庫平台工程師、I94 資深系統工程師)\n- 連結：皆未取得；基礎架構／DBA／管理職，與 Python 後端關聯低。\n- I91：8 年以上，帶 7–8 人 K8S 平台團隊；內文有「企業級中介軟體平台」（【企業】，但指內部企業 IT）。",
+   "[3] (台灣大哥大 / 三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > B. 後端／全端／軟體類 > I102 Java全端軟體工程師（台北、高雄）)\n- 連結：連結未取得；未開內頁\n- 薪資：面議；年薪約 81~108 萬；經歷不拘；11/10 更新；11~30 人\n- 技能重點：Java、SQL、JS／HTML5／CSS、SA／SD；加分 Spring Boot、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP\n- 內文系統範例：MyCharge CPO 平台、物聯網企業客戶平台、電商代運營平台、企業創新整合開發\n- 企業字樣：有（「物聯網企業客戶平台」「企業創新服務」「企業創新整合開發」）"
+  ]
+ },
+ {
+  "id": "M03",
+  "question": "聯合報的技術堆疊與開發工具有哪些？",
+  "answer": "根據段落，聯合報的技術堆疊與開發工具如下：\n\n- 雲端採用 Google Cloud，包含 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions；廣告使用 Google Ad Manager（2013 起）與 Google Analytics（公司自述）[1]。\n- 語言／框架方面，筆試線索只見 SQL 與 Python，其餘資料中沒有提到 [1]。\n- 徵才條件中出現 Python、PostgreSQL [2]，以及 SQL、Python [2]。\n- 新聞部數據中心的前端開發工程師職缺內文提到 Vue3、與後端 API 串接 [3]。\n- 行銷企畫職缺內文提到 GA4、Meta Ads／Google Ads、UTM、漏斗分析，加分項為 Looker Studio、GTM、A/B Test、AI 輔助分析 [3]。\n\n另外，GitHub、技術部落格、技術分享方面，搜尋一次未找到數據發展部的公開技術文章 [1]；Publish X 底層的模型、RAG、框架，資料中沒有提到 [1]。",
+  "passages": [
+   "[1] (聯合報 / 5. 技術堆疊)\n- 雲：Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）；廣告：Google Ad Manager（2013 起）、Google Analytics。【自述】https://cloud.google.com/customers/udn?hl=zh-TW\n- 語言／框架：筆試線索只見 SQL 與 Python。其餘【查無】。\n- GitHub、技術部落格、技術分享：搜尋一次，未找到數據發展部的公開技術文章。【查無】\n- Streamlined Newsroom（錯字偵測、圖片推薦、提示詞平台、跨通路發布）由聯經數位開發，不是數據發展部。https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710\n- Publish X 底層（模型、RAG、框架）：【查無】。",
+   "[2] (聯合報 / 二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。)\nI／LLM 應用、數位廣告指標\n- 內文：支援 ETL、資料清理、跨系統欄位整併\n- 狀態：1 小時前聯絡過求職者，徵才行為活躍\n**A3. 【數據發展部】助理數據分析師－產品分析中心**\n- 連結：https://www.104.com.tw/job/70mim\n- 薪資：待遇面議；地點：新北市汐止區；經歷：不拘；學歷：大學\n- 更新日：8/03；應徵人數：6~10 人\n- 必要（內文）：基礎 SQL、Python\n- 工作：數據報表維護、建立數據處理自動化與監控機制\n- 狀態：6 天內聯絡過求職者，徵才行為活躍\n- 擅長工具欄位：未開內頁，查無\n**A4. 【數據發展部】演算法工程師**\n- 連結：https://www.104.com.tw/job/4u5lb\n- 薪資：待遇面議；地點：台北市信義區；經歷：不拘；學歷：大學以上\n- 更新日：8/03；應徵人數：6~10 人\n- 擅長工具（欄位）：Python、PostgreSQL\n- 內文：推薦系統、精準廣告、NLP；機器學習；資料處理流程與模型自動化、系統設計建置與維運\n- 狀態：4 天內處理過履歷\n**A5. 【數據發展部】專案經理**\n- 連結：https://www.104.com.tw/job/71sct\n- 薪資：待遇面議；地點：新北市汐止區；經歷：6 年以上；學歷：碩士以上\n- 更新日：8/03；應徵人數：0~5",
+   "[3] (聯合報 / 二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。)\n止區；經歷：5 年以上；學歷：大學\n- 更新日：8/10；應徵人數：0~5 人\n- 內文：向數據發展部總經理報告；跨事業群數據應用專案管理與策略分析。非工程職\n**A8. 【新聞部數據中心】前端開發工程師**\n- 連結：https://www.104.com.tw/job/6i2tp\n- 薪資：月薪 35,000~50,000 元；地點：新北市汐止區；經歷：不拘；學歷：專科\n- 更新日：8/03；應徵人數：6~10 人\n- 內文：Vue3；數位專題前端；與後端 API 串接；付費內容網站頁面\n- 備註：部門寫「新聞部數據中心」，不是「數據發展部」。\n**A9. 【新聞部數據中心】行銷企畫（會員與訂閱成長）**\n- 連結：https://www.104.com.tw/job/6nxx3\n- 薪資：待遇面議；地點：新北市汐止區；經歷：3 年以上；學歷：不拘\n- 更新日：8/03；應徵人數：0~5 人\n- 內文：GA4、Meta Ads／Google Ads、UTM、漏斗分析；加分 Looker Studio、GTM、A/B Test、AI 輔助分析。有每年 12 天遠端工作日。非工程職\n- 狀態：2 天內處理過履歷，徵才行為活躍\n**A10. 【行動發展部】Android行動軟體開發工程師**\n- 連結：https://www.104.com.tw/job/8eulh\n- 薪資：待遇面"
+  ]
+ },
+ {
+  "id": "M04",
+  "question": "叡揚資訊是做什麼的？",
+  "answer": "資料中沒有直接說明叡揚資訊是做什麼的。段落只提到主要客戶為金融、醫學中心、政府，雲端服務客戶數超過 40,000 [3]；以及據點包括台北總部、北投創富研發中心、高雄研發中心，簡報另列上海 [2]。",
+  "passages": [
+   "[1] (叡揚資訊 / 1. 基本資料)\n| 項目 | 內容 | 類型與來源 |\n|---|---|---|\n| 公司名 | 叡揚資訊股份有限公司（Galaxy Software Services，GSS） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| 統編 | 22425662 | 【第三方】同上 |\n| 成立日 | 1987-03-16（核准設立） | 【第三方】同上 |\n| 登記地址 | 臺北市中山區德惠街 9 號 5 樓 | 【第三方】同上；職缺頁亦同 https://www.yourator.co/companies/gss/jobs/36883 |\n| 資本額 | 數字不一致。登記實收 371,441,470 元（登記資本總額 10 億） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| | Yourator 寫 3.53 億 | 【第三方】https://www.yourator.co/companies/gss |\n| | interview.tw 寫 4 億 | 【第三方】https://interview.tw/c/DSV9/info |\n| 董事長／總經理 | 張培鏞（代表人）／陳世安 | 【第三方】https://info.technews.",
+   "[2] (叡揚資訊 / 1. 基本資料)\n】https://interview.tw/c/DSV9/info |\n| 董事長／總經理 | 張培鏞（代表人）／陳世安 | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| 上市櫃 | 上櫃，代號 6752。上櫃日有兩種說法（2020/01/10 或 2020/12/10），未驗證 | 【第三方】同上 |\n| 員工數 | 800（Yourator）；簡報較新版寫 600+，較舊版寫 700+ | 【第三方】https://www.yourator.co/companies/gss ；【自述】https://www.im.tku.edu.tw/wp-content/uploads/2025/11/叡揚資訊_實習生招募資訊.pdf ；https://www.im.fju.edu.tw/wp-content/uploads/2024/11/叡揚資訊_實習生招募資訊.pdf |\n| 母公司／集團 | 查無 | 查了 technews 公司資料、Yourator、interview.tw（寫「無股東資料」） |\n| 據點 | 台北總部、北投創富研發中心、高雄研發中心；簡報另列上海 | 【自述】https://www.gss.com.tw ；實習簡報同上 |\n查無：經濟部商工登記公示資料與公開資訊觀測站的原始頁面。我沒",
+   "[3] (叡揚資訊 / 2. 業務與財務 > 主要客戶)\n- 公司簡報【自述】：金融、醫學中心、政府。雲端服務客戶數「超過 40,000」。https://www.im.fju.edu.tw/wp-content/uploads/2024/11/叡揚資訊_實習生招募資訊.pdf\n- 具名客戶：查無。（technews AI Agent 報導未提具名客戶。）"
+  ]
+ },
+ {
+  "id": "M05",
+  "question": "叡揚資訊的技術堆疊與開發工具有哪些？",
+  "answer": "叡揚資訊的技術堆疊與開發工具，依段落資料如下：\n\n- 後端：Java、Spring Boot、Spring MVC、MyBatis、Hibernate、JPA；Python 為加分 [1]。\n- 前端：React、jQuery、AJAX、Webpack [1]。\n- 資料庫：MS SQL Server、Oracle [1]。\n- 開發流程：DevSecOps、Code Review [1]。\n- AI：LLM、VLM、電腦視覺、ServiceNow AI 平台；InsAI 支援地端部署 [1]。\n- 雲端：資料中沒有提到雲廠商名稱 [1]。\n- GitHub、技術部落格：資料中沒有提到 [1]。",
+  "passages": [
+   "[1] (叡揚資訊 / 5. 技術堆疊)\n- 後端：Java、Spring Boot、Spring MVC、MyBatis、Hibernate、JPA。Python 為加分。【第三方，職缺】https://www.yourator.co/companies/gss/jobs/36883\n- 前端：React、jQuery、AJAX、Webpack。同上。\n- 資料庫：MS SQL Server、Oracle。同上。\n- 開發流程：DevSecOps、Code Review。同上。\n- 筆試：C 語言演算法、網頁、SQL。【第三方，單一心得】https://www.goodjob.life/experiences/65b367ba3729c6fca6db6c05\n- AI：LLM、VLM、電腦視覺、ServiceNow AI 平台；InsAI 支援地端部署。【自述／第三方】https://finance.technews.tw/2026/09/21/ai-agent-specialist-gss/ 、https://wantrich.chinatimes.com/news/20261106900297-420101\n- 雲：查無。（只看到 SaaS 服務，沒看到雲廠商名稱。）\n- GitHub、技術部落格：沒有查。查無。",
+   "[2] (叡揚資訊 / 二、叡揚資訊（公司頁 https://www.104.com.tw/company/aavnrjk ，78 筆，共 4 頁） > 1~2 年經歷)\n礎架構（最接近「資料」）\n- 資深.NET專案工程師(21042301)：2 年以上（內文要求 3 年 .NET）；面議；中山區\n- [校園專區-台北]Java程式設計師：2 年以上；大學；面議；北投區；0~5 人；JAVA、API 設計、**機器學習**（列表寫在工作內容）\n- [校園專區-台北]資安工程師：2 年以上；中山區；面議\n- 系統分析師(24070407)：2 年以上；系統分析師(26031701)：2 年以上；系統分析工程師(23020201)：3 年以上；系統分析師(24030101)：5 年以上\n- 專案經理(26060401)：5 年以上；大數據平台、AI 加值應用；專案經理(24070406)：4 年以上\n- 其他非技術：業務、會計、行銷、總務、MIS 工程師（3 年以上）等，略。",
+   "[3] (叡揚資訊 / 1. 基本資料)\n| 項目 | 內容 | 類型與來源 |\n|---|---|---|\n| 公司名 | 叡揚資訊股份有限公司（Galaxy Software Services，GSS） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| 統編 | 22425662 | 【第三方】同上 |\n| 成立日 | 1987-03-16（核准設立） | 【第三方】同上 |\n| 登記地址 | 臺北市中山區德惠街 9 號 5 樓 | 【第三方】同上；職缺頁亦同 https://www.yourator.co/companies/gss/jobs/36883 |\n| 資本額 | 數字不一致。登記實收 371,441,470 元（登記資本總額 10 億） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| | Yourator 寫 3.53 億 | 【第三方】https://www.yourator.co/companies/gss |\n| | interview.tw 寫 4 億 | 【第三方】https://interview.tw/c/DSV9/info |\n| 董事長／總經理 | 張培鏞（代表人）／陳世安 | 【第三方】https://info.technews."
+  ]
+ },
+ {
+  "id": "M06",
+  "question": "神通資訊是做什麼的？",
+  "answer": "神通資訊科技股份有限公司登記為電腦系統整合服務業 [2]。公司自述員工約 1,000 人，技術人員約 80% [1]。前身是 1974 年成立的神通電腦 [1]。資料中沒有提到更完整的業務項目說明。",
+  "passages": [
+   "[1] (神通資訊 / 1. 基本資料)\n| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 法人全名 | 神通資訊科技股份有限公司 | https://company.g0v.ronny.tw/api/show/53000774 | 第三方（經濟部登記的轉載） |\n| 統編 | 53000774 | https://ehrweb.104.com.tw/job.do?uno=53000774 、 https://info.technews.tw/searchPatent/53000774 | 第三方（兩處一致） |\n| 資本額 | 額定 25 億；實收 21 億（2.1 億股） | https://company.g0v.ronny.tw/api/show/53000774 | 第三方 |\n| 設立／核准日 | 2010-10-07 | 同上 | 第三方 |\n| 登記狀態 | 核准設立 | 同上 | 第三方 |\n| 員工數 | 約 1,000 人，技術人員約 80% | https://www.mitac.com.tw | 自述 |\n| 總部 | 台北市內湖區堤頂大道二段 187 號 | https://www.mitac.com.tw | 自述 |\n| 前身 | 1974 年成立的神通電腦 | https://www.mitac.com.tw 、 https://blog.104.com.",
+   "[2] (神通資訊 / 一、神通資訊科技股份有限公司（MiTAC Information）)\n- 公司頁：https://www.104.com.tw/company/ocjaiy8\n- 公司：電腦系統整合服務業，內湖區堤頂大道二段187號，員工 1000 人。\n- 104 顯示「工作機會 99+」，共 6 頁（每頁 20 筆）。本次只讀第 1 頁（前 20 筆）。\n- 已確認不是神達、神雲。\n- 新興應用部：職缺頁全部沒有出現「新興應用部」字樣。以「神通資訊科技 新興應用」搜尋，104 回傳 0 筆。查無。\n- 注意：下列 AI／後端職缺（編號 6003～6013 系列）的描述寫「AI、數據、平台、Agent」，但頁面沒寫部門名，不能直接認定屬於新興應用部。\n- 注意：這批職缺的更新日都是 09/14（約兩個月前），但頁面仍列為開放中。",
+   "[3] (神通資訊 / 4. 報名部門：新興應用部)\n- 公開資料：查無「新興應用部」。查了：官網、Google 搜尋「神通資訊 新興應用部／新興應用事業」、104 案例文、GoodJob、新聞。\n- 【推測】依公開線索，該部可能做這幾類事（不確定）：\n  - 把 AI 產品（Agent Builder、MiEcoMatrix）做成行業應用或 PoC。\n  - 無人機、AIoT、地端 AI 這類新技術試點。\n  - 這個推測根據：「新興」一詞＋公司 2023 年入選無人機國家隊＋2026 年主推地端 AI。\n- 【自述】公司採「各部門主管自己刊登職缺、自己篩履歷」。所以面談的 2 位經理就是用人主管。https://blog.104.com.tw/mitac-information-e-system/"
+  ]
+ },
+ {
+  "id": "M07",
+  "question": "神通資訊的技術堆疊與開發工具有哪些？",
+  "answer": "神通資訊的技術堆疊與開發工具，資料如下：\n\n- 模型與框架（用哪個 LLM、LangChain 或自研）：資料中沒有提到，報導明確寫「文中未提及」[1]。\n- 硬體方面，第三方資料提到 Agent Builder 使用 AMD Ryzen AI Max+ 395、Radeon AI PRO R9700；伺服器版是神雲 TN85-B8261 搭配 EPYC 與 Instinct MI350P。兩篇報導的硬體不同，可能是不同機型，資料說以官方為準 [1]。\n- 職缺方面，第三方資料顯示技術 Java 型職缺（全端、Java 工程師）居多 [1]。\n- 技術部落格、GitHub：資料中沒有提到公司官方技術部落格或 GitHub 組織 [1]。\n- 新興應用部可能偏 AI 應用整合，但語言不確定（資料標註為推測），要在面談確認 [1]。\n- Agent Builder 主打零程式碼建 Agent、低程式碼拖拉介面 [2][3]。",
+  "passages": [
+   "[1] (神通資訊 / 6. 技術堆疊)\n公開、可信的資料很少。\n- 【第三方】Agent Builder 硬體：AMD Ryzen AI Max+ 395、Radeon AI PRO R9700；伺服器版為神雲 TN85-B8261 搭 EPYC 與 Instinct MI350P。https://www.ctee.com.tw/news/20260423701330-431202 、 https://www.ctee.com.tw/news/20260730701527-431202\n- 兩篇報導的硬體不同，可能是不同機型。以官方為準。\n- 模型、框架（用哪個 LLM、LangChain 或自研）：查無。報導明確「文中未提及」。\n- 【第三方】技術 Java 型職缺（全端、Java 工程師）居多。https://www.goodjob.life/companies/神通資訊科技股份有限公司\n- 技術部落格、GitHub：沒查到公司官方技術部落格或 GitHub 組織。\n- 【推測】新興應用部可能偏 AI 應用整合，但語言（Python？）不確定。要在面談確認。",
+   "[2] (神通資訊 / 3. 業務與財務 > 產品與業務)\n- 【自述】系統整合商，提供「雲」與「端」的 AIoT 解決方案。應用：智慧交通、製造、安防、政府、教育、企業、金融。https://www.mitac.com.tw\n- 【自述】三個核心：MiTAC Agent Builder 企業 AI 一體機、MiAIOT 平台、MiEcoMatrix 永續平台。https://www.mitac.com.tw\n- 【自述】代理產品：Google Cloud、Microsoft、VMware、SugarCRM、Avaya、Cisco 等。https://www.mitac.com.tw\n- 【第三方】交通系統：高鐵行動購票、捷運悠遊卡、公車驗票、輕軌收費。另有智慧教室、智慧圖書館、路口監視與中央監控。2023 入選無人機國家隊。https://blog.104.com.tw/mitac-information-e-system/\n- 【第三方】MiTAC Agent Builder：2026-04-23 與 AMD、撼訊科技共同發表。零程式碼建 Agent、決策可稽核。硬體為 AMD Ryzen AI Max+ 395 與 Radeon AI PRO R9700。https://www.ctee.com.tw/news/20260423701330-431202\n- 【第三方】6 月 COMPUTEX 展出；7 月 AI WAVE 展出，主打",
+   "[3] (神通資訊 / 3. 業務與財務 > 產品與業務)\nttps://www.ctee.com.tw/news/20260423701330-431202\n- 【第三方】6 月 COMPUTEX 展出；7 月 AI WAVE 展出，主打「產、銷、人、發、財」通用型 Agent、低程式碼拖拉介面。https://www.ctee.com.tw/news/20260730701527-431202\n- 【第三方】MiEcoMatrix：ESG／能源管理，含溫室氣體盤查、AI 永續報告書、智慧能源管理。2026-01 入選商周「AI 創新百強」。https://www.ctee.com.tw/news/20260122701190-431202\n- 【第三方】2026-08-06 高階主管論壇：Context Engine、AI 治理、四階段導入路徑。https://www.ctee.com.tw/news/20260806701085-431202"
+  ]
+ },
+ {
+  "id": "M08",
+  "question": "藍新資訊是做什麼的？",
+  "answer": "藍新資訊的核心業務是資訊軟硬體整合、顧問、導入、雲端建置與維運 [2]。公司自述的平台涵蓋 UNIX、AIX、Linux、NT，以及虛擬化、資料庫、儲存、備份、網路資安 [2]。產品線包括全面資安、網路基礎架構、AI 應用、混合雲、儲存備份 [2]。代理品牌有 Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5 [2]。目標客戶為政府、金融、大型企業 [2]。資料另標註推測其為「賣硬體加維運」的系統整合商，軟體開發不是主體（資料標註為推測）[2]。",
+  "passages": [
+   "[1] (藍新資訊 / 1. 基本資料)\n| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 全名 | 藍新資訊股份有限公司（NEWEB INFORMATION CO., LTD.） | https://www.cnyes.com/twstock/6938/company/profile | 第三方 |\n| 統編 | 24540267 | https://ww2.money-link.com.tw/TWStock/StockBasic.aspx?SymId=6938 | 第三方，單一來源，未經商工登記核對 |\n| 成立日 | 2014-04-23 | https://www.cnyes.com/twstock/6938/company/profile | 第三方 |\n| 地址 | 台北市內湖區行忠路 42 號 2 樓 | 同上 | 第三方 |\n| 資本額 | 約 1.46 億（現增後，發行 1,464 萬股）。現增前約 1.25–1.26 億 | cnyes 同上；PTT 文寫 1.26 億 | 第三方，各站不一 |\n| 董事長／總經理 | 郭廷群／楊璦如 | cnyes 同上 | 第三方 |\n| 興櫃 | 2024-01-23，參考價 41 元，國票證券輔導 | https://www.ctee.com.tw/news/20240123700202-439901 | 第三方 |\n| 上櫃 ",
+   "[2] (藍新資訊 / 2. 業務與財務 > 業務【公司自述】)\n- 核心：資訊軟硬體整合、顧問、導入、雲端建置、維運。https://www.newebinfo.com.tw\n- 平台：UNIX、AIX、Linux、NT；虛擬化、資料庫、儲存、備份、網路資安。\n- 產品線：全面資安、網路基礎架構、AI 應用、混合雲、儲存備份。\n- 代理品牌：Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5。\n- 近期獎項：HPE FY25 Best Partner、NetApp FY25 夥伴獎（2025-12）。同官網。\n- 目標客戶：政府、金融、大型企業。業務類型接近 ERP、MES、HIS、金融交易系統的底層平台。\n- 【推測】這是「賣硬體加維運」的系統整合商。軟體開發不是主體。",
+   "[3] (藍新資訊 / 2. 藍新資訊（公司頁 14 筆，全部有網址；不是藍新金流／藍新科技）)\n 11/12 | 0~5 人 | 未開單頁 | 列表；新竹縣竹北市 |\n| 藍新資訊 | 資訊行政專員(中正區；正職，非約聘人員) | https://www.104.com.tw/job/93qc1 | 不拘 | 專科 | 待遇面議 | 11/12 | 6~10 人 | 未開單頁（派駐政府單位） | 列表；專案管理類 |\n| 藍新資訊 | 專案工程師-網路(大安區；正職，非約聘人員) | https://www.104.com.tw/job/96vha | 2 年以上 | 大學 | 月薪 40,000~50,000 | 11/11 | 0~5 人 | 未開單頁（派駐政府單位） | 列表；大安區 |\n| 藍新資訊 | 專案工程師-網路(中正區；正職，非約聘人員) | https://www.104.com.tw/job/9793u | 2 年以上 | 專科 | 月薪 40,000~60,000 | 11/11 | 0~5 人 | 未開單頁（派駐政府單位） | 列表；中正區 |\n| 藍新資訊 | 專案工程師-MIS(楠梓科技園區；正職，非約聘) | https://www.104.com.tw/job/97ftl | 2 年以上 | 專科 | 月薪 45,000~50,000 | 11/09 | 0~5 人 | 未開單頁（派駐客戶端） | 列表；高雄楠梓 |"
+  ]
+ },
+ {
+  "id": "M09",
+  "question": "凱基證券的技術堆疊與開發工具有哪些？",
+  "answer": "凱基證券的技術堆疊與開發工具，依段落可整理如下：\n\n- 現行系統方面，公司自述使用 Windows 與 Linux、2 個 APP、4 種開發語言、5 種資料庫；但專訪只說 4 種語言，沒有寫是哪四種 [1]。\n- 新核心系統方向為模組化平台，採用 Kubernetes、微服務、DevOps，並具備 Cloud Ready [1]。\n- 雲供應商（GCP／Azure／AWS）資料中沒有提到 [2]。\n- 技術部落格、GitHub 部分，資料中沒有提到凱基證券官方帳號與技術分享 [2]。\n- 招募頁面顯示，資訊部軟體開發工程師職缺提到工具為 C#、COBOL、MS SQL，並願意接受 COBOL 培訓 [3]；資訊部 Python 系統程式設計師職缺提到工具為 Linux、Python、Git [3]。\n- 關於 Python API 與量化課程，資料只提到搜尋摘要如此稱，但沒有取得原始網址，屬於未驗證資訊 [2]。\n- 另有資料標註為推測的內容：證券核心交易系統偏傳統（C#／Java／Windows），Python 與 LLM 較可能出現在 AI 團隊與數位創新部（資料標註為推測）[2]。",
+  "passages": [
+   "[1] (凱基證券 / 5. 技術堆疊)\n| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 現行系統 | Windows 與 Linux；2 個 APP；4 種開發語言；5 種資料庫 | https://www.cio.com.tw/interview-huang-ronglin-cio-cio-asia-pacific-region-kaki-securities/ | 自述（亞太區資訊長專訪，2024-06） |\n| 新核心系統方向 | 模組化平台；Kubernetes、微服務、DevOps；Cloud Ready | 同上 | 自述 |\n| 語言名稱 | 查無。專訪只說 4 種，沒寫是哪四種 | 同上 | — |\n| AI 應用 | 內部流程優化、KYC 信用額度（逾八成線上開戶客戶；違規事件減約七成）；評估用 AI 輔助開發 | 同上 | 自述 |\n| 內部 GenAI | 集團打造內部 ChatGPT 類工具 | https://money.udn.com/money/story/5613/9099187 （搜尋摘要；我後來打開該頁回 404，未能再驗證） | 第三方（未驗證） |\n| AI 資料平台 | 已建 AI 資料平台與資料中台，數據已結構化 | https://money.udn.com/money/amp/story/5607/9600778 | 自述（總經理，202",
+   "[2] (凱基證券 / 5. 技術堆疊)\n| 已建 AI 資料平台與資料中台，數據已結構化 | https://money.udn.com/money/amp/story/5607/9600778 | 自述（總經理，2026-07-01） |\n| AI 組織 | AI 團隊改由資訊長直轄，不放在資訊部下 | 同上 | 自述 |\n| 智慧牧羊犬 | AI Agent 加 RPA，做監控、異常偵測、處理建議；模型與平台未揭露 | https://money.udn.com/money/amp/story/5607/9594126 | 自述（2026-06-28） |\n| 對外 API | 搜尋摘要稱凱基證券提供 Python API 與量化課程。我沒有取得原始網址 | 查無可驗證網址 | 未驗證 |\n- 雲供應商（GCP／Azure／AWS）：查無。\n- 技術部落格、GitHub：查無凱基證券官方帳號與技術分享。\n- 重點【推測】：證券核心交易系統偏傳統（C#／Java／Windows）。Python 與 LLM 較可能出現在 AI 團隊（直屬資訊長）與數位創新部。\n---",
+   "[3] (凱基證券 / 一、凱基證券（共 13 筆網址）)\n| 公司 | 職稱 | 網址 | 經歷 | 學歷 | 薪資 | 更新日 | 應徵人數 | 出差外派 | 備註 |\n|---|---|---|---|---|---|---|---|---|---|\n| 凱基證券 | 【資訊部】軟體開發工程師 | https://www.104.com.tw/job/8sf0e | 不拘 | 專科、大學 | 面議（4 萬以上） | 11/13 | 0~5 人 | 無需出差外派 | 內頁。工具：C#、COBOL、MS SQL；願接受 COBOL 培訓；歡迎應屆畢業生 |\n| 凱基證券 | 【2026 數位科技人才培育計畫】軟體開發專才養成 | https://www.104.com.tw/job/911o4 | 不拘 | 大學、碩士 | 面議（4 萬以上） | 11/13 | 6~10 人 | 無需出差外派 | 內頁。工具不拘；對象為應屆生、0~2 年轉職者、上過程式培訓班者；有 Mentor |\n| 凱基證券 | 【資訊部】Python 系統程式設計師 | https://www.104.com.tw/job/7f0ui | 1 年以上 | 大學、碩士 | 面議（4 萬以上） | 11/13 | 0~5 人 | 無需出差外派 | 內頁。工具：Linux、Python、Git；Python 與網站系統各 1 年以上 |\n| 凱基證券 | 【量化策略部】"
+  ]
+ },
+ {
+  "id": "M10",
+  "question": "凱基證券有哪些職缺？",
+  "answer": "凱基證券的職缺如下：\n\n1. 【資訊部】C# 全端技術工程師：需 2 年以上經驗，待遇面議 [1]。\n2. 【凱基金控】資料庫管理工程師、網路整合工程師（雲端）：待遇面議 [1]。\n3. 【凱基金控】創新金融管理師、新興科技發展人員（Agentic AI／數位資產／RWA 研究與 PoC）：待遇面議 [1]。\n4. 【數位創新部】AI Solution 工程師／架構師：需 3 年以上經驗，待遇面議，工作內容包括 Agentic AI 系統、AI 與證券系統整合、AI Guardrail、地端／雲端／Hybrid 架構評估 [2]。\n5. 【量化策略部】量化策略研究員（含 Python）：經歷不拘，待遇面議，技能重點包括 Python、SQL、時間序列、特徵工程、因子建模、爬蟲與資料清理，需投信投顧業務證照（可後補）[3]。\n\n另外，104 公司頁顯示全公司約 99+ 筆職缺 [1]。",
+  "passages": [
+   "[1] (凱基證券 / 一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 其他（只在搜尋列表看到，未開啟內頁，故無連結與技能細節）)\n- 【資訊部】C# 全端技術工程師：2 年以上，待遇面議，11/13 更新，11~30 人應徵（列表頁，無單筆連結）\n- 【凱基金控】資料庫管理工程師、網路整合工程師（雲端）：待遇面議，11/06 更新，列表頁可見，未開內頁\n- 【凱基金控】創新金融管理師、新興科技發展人員（Agentic AI／數位資產／RWA 研究與 PoC）：待遇面議，10/30 更新，列表頁可見，未開內頁",
+   "[2] (凱基證券 / 一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 2. 【數位創新部】AI Solution 工程師／架構師)\n- 連結：https://www.104.com.tw/job/91qox\n- 薪資：待遇面議\n- 地點：台北市中正區忠孝西路\n- 更新日：11/13；應徵人數：6~10 人\n- 經歷／學歷：3 年以上；大學、碩士；資訊、數理統計、財稅金融相關\n- 擅長工具：不拘；工作技能：專案溝通／整合管理、專案規劃執行／範圍管理\n- 技能重點：企業級 AI 系統或大型軟體架構經驗；LLM 與深度學習；AI 框架與模型部署；雲端與容器；DevOps；資安設計；碩士以上、金融業 AI 專案優先\n- 工作內容：Agentic AI 系統、AI 與證券系統整合（API、資料源、身分驗證）、AI Guardrail、地端／雲端／Hybrid 架構評估",
+   "[3] (凱基證券 / 一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 4. 【量化策略部】量化策略研究員（含 Python）)\n- 連結：https://www.104.com.tw/job/8ugm5\n- 薪資：待遇面議\n- 地點：台北市中山區\n- 更新日：11/06；應徵人數：11~30 人\n- 經歷／學歷：不拘；大學、碩士\n- 擅長工具／工作技能：不拘／不拘\n- 技能重點：Python、SQL；時間序列、特徵工程、因子建模；爬蟲與資料清理；需投信投顧業務證照（可後補）"
+  ]
+ },
+ {
+  "id": "M11",
+  "question": "華電聯網是做什麼的？",
+  "answer": "根據段落資料，華電聯網的行業別是「電腦系統整合服務業」[2]。公司全名為華電聯網股份有限公司（英文 Hwacom Systems Inc.）[1]。資料中沒有提到更詳細的業務內容。",
+  "passages": [
+   "[1] (華電聯網 / 1. 基本資料)\n| 項目 | 內容 | 來源 |\n|---|---|---|\n| 法人全名 | 華電聯網股份有限公司（英文 Hwacom Systems Inc.） | https://www.cnyes.com/twstock/6163/company/profile |\n| 統編 | 84778623（未在商工登記官網原文核對） | https://info.technews.tw/company/84778623-%E8%8F%AF%E9%9B%BB%E8%81%AF%E7%B6%B2%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8 |\n| 成立日 | 1994-05-04 | https://www.cnyes.com/twstock/6163/company/profile |\n| 資本額 | 實收約 14.73 億（鉅亨 14.72 億；另有來源 14.04 億，時間點不同） | https://www.cnyes.com/twstock/6163/company/profile |\n| 員工數 | 約 980 人；工程師與研發人員 560 人以上（65% 以上）【自述，法說會，經 AI 整理】 | https://blog.fugle.tw/post/earnings-call-6163-2026-05-14 |\n| 上市櫃",
+   "[2] (華電聯網 / 1. 華電聯網股份有限公司)\n- 公司頁：https://www.104.com.tw/company/12y30460\n- 公司概況：電腦系統整合服務業；員工 920 人；總公司新北市汐止區；資本額 14.1 億（同上公司頁）\n- 公司頁顯示工作機會 99+；職缺列表分 7 頁，本次只讀第 1 頁（20 筆）。\n- 第 1 頁沒有 Python、後端、軟體開發、資料工程類職缺。有 AI 字樣的只有 1 筆（資安產品）。\n- 第 1 頁大部分是工程、業務、會計、資安、網路、系統職缺。",
+   "[3] (華電聯網 / 1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）)\n1. 雲端與AI資安系統及產品工程師（最相關）\n   - 連結：https://www.104.com.tw/job/61qdm\n   - 薪資：待遇面議（經常性薪資 4 萬元以上）\n   - 地點：新北市汐止區新台五路一段102號18樓\n   - 出差外派：無需出差外派\n   - 條件：3 年以上；大學、碩士；科系不拘\n   - 工作內容：公有雲（AWS/GCP/Azure）資安架構、IAM、VPC、WAF/DDoS；資安產品研發，含生成式 AI 安全防護規則調校；用雲端 AI/ML 服務做客戶應用\n   - 技能要求（內文）：Python 或 Shell Script；Docker、Kubernetes、Container Security；Linux、TCP/IP\n   - 擅長工具、工作技能欄：不拘\n2. 資安工程師（技術服務二部/台中）\n   - 連結：https://www.104.com.tw/job/7gani\n   - 薪資：待遇面議（4 萬以上）；地點：台中市南屯區\n   - 出差外派：需出差，一年累積時間未定。內文寫「需配合專案進行駐點工作」\n   - 條件：3 年以上；專科以上；英文中等；證照 CEH、CompTIA Security+ 尤佳；有電信業者服務與企業系統維護經驗尤佳\n3. 系統工程師（新竹）\n   - 連結：https://www.104.co"
+  ]
+ },
+ {
+  "id": "M12",
+  "question": "華電聯網的技術堆疊與開發工具有哪些？",
+  "answer": "華電聯網的具體技術堆疊與開發工具，資料中沒有提到。公開資料查無使用的語言、框架、雲端服務與資料庫；研究時查了官網、職缺平台，並搜尋 GitHub 與技術部落格，但沒有找到公司帳號 [1]。\n\n資料只能確認該公司涉及的技術主題，包括生成式 AI、AI 影像辨識、5G 專網、C-V2X、AIoT、數位孿生 [1][2]；其自研或自有產品則有 SmartQ LAS 企業專屬生成式 AI 平台、FaceKey 人臉辨識整合系統、Cyber Monitor 智慧網管系統、PMS 旅客運輸系統、D-City 驗測平台 [2]。至於「主體是網路、資通訊、雲端基礎建設整合，軟體多為自有產品與專案客製，Python 比重不明」，資料標註為推測 [1]。",
+  "passages": [
+   "[1] (華電聯網 / 5. 技術堆疊)\n- 公開資料查無語言、框架、雲、資料庫。查了：官網、職缺平台、搜尋 GitHub 與技術部落格（沒有找到公司帳號）。\n- 可確認的技術「主題」（不是具體工具）：生成式 AI、AI 影像辨識、5G 專網、C-V2X、AIoT、數位孿生。https://www.cna.com.tw/business/chinese/428282\n- 【推測】主體是網路、資通訊、雲端基礎建設整合。軟體多為自有產品與專案客製。Python 比重不明。",
+   "[2] (華電聯網 / 2. 業務與財務 > 產品與服務)\n- 主力是資通訊整合（占 75.1%）。其餘：智慧整合 12.4%、資安整合 6.5%、媒體整合 5.9%。【自述】https://blog.fugle.tw/post/earnings-call-6163-2026-05-14\n- 自研／自有產品：\n  - SmartQ LAS 企業專屬生成式 AI 平台\n  - FaceKey 人臉辨識整合系統\n  - Cyber Monitor 智慧網管系統\n  - PMS 旅客運輸系統\n  - D-City 驗測平台\n  - 來源：https://www.cna.com.tw/business/chinese/428282\n- 技術主題：生成式 AI、C-V2X 車聯網、5G 專網、AIoT、AR、AI 影像辨識、數位孿生。【自述】同上。\n- AI 專案：機房設備預測性維護、與 Palo Alto 合作 AI 輔助 MDR、國道／雪隧 AI 事故影像偵測、AI 冰機節能。【自述】https://blog.fugle.tw/post/earnings-call-6163-2026-05-14",
+   "[3] (華電聯網 / 4. 職缺)\n- 104 公司頁：自動化工具回 403，已放棄。https://www.104.com.tw/company/12y30460\n- 官網徵才頁只轉連到 104，無職缺內容。https://www.hwacom.com/web/bbs/board.php?bo_table=article&wr_id=80\n- Yourator：公司頁無資料。https://www.yourator.co/companies/hwacom\n- CakeResume（cake.me）：404。https://www.cake.me/companies/hwacom\n- 1111、LinkedIn：搜尋沒有找到華電聯網的 AI／Python／後端／資料職缺。\n- 結論：AI／Python／後端／資料職缺，查無公開刊登。請當天直接問。"
+  ]
+ },
+ {
+  "id": "M13",
+  "question": "中華網龍是做什麼的？",
+  "answer": "中華網龍開發網路連線平台與應用軟體，並提供網路遊戲與手機遊戲服務 [3]。官網也列出多款線上遊戲，以及台灣、香港、中國、美國等地區的入口 [3]。近期產品包括《飄流幻境 Re:星之方舟》、《尋秦記》、《吞食天地 2》Steam 版 [3]。",
+  "passages": [
+   "[1] (中華網龍 / 1. 基本資料)\n- 法人全名：中華網龍股份有限公司。英文名 Chinesegamer International Corp.（官網頁尾）。\n  - 來源：https://www.chinesegamer.net 【自述】\n- 統一編號：70541704。狀態：核准設立。登記機關：商業發展署。代表人：王俊博。登記地：台北市南港區。\n  - 來源：https://twincn.com/item.aspx?no=70541704 【第三方】（由搜尋摘要取得，未逐頁驗證）\n- 資本額：資本總額 10 億元；實收資本額 864,868,580 元（約 8.65 億）。\n  - 來源：https://info.technews.tw/company/70541704-中華網龍股份有限公司 【第三方】（直接開啟回 403，數字取自搜尋摘要）\n- 成立日：2000-03-28。\n  - 來源：同上；https://www.nstock.tw/網龍做什麼.html 【第三方】\n- 員工數：查無。查了 technews 公司資料、nStock、GoodJob。\n- 母公司／集團：智冠科技（5478，統編 81231585）持股 48.42%。網龍是智冠的從屬公司。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n  - 智冠實收資本額 15.6 億元：https://inf",
+   "[2] (中華網龍 / 1. 基本資料)\n。網龍是智冠的從屬公司。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n  - 智冠實收資本額 15.6 億元：https://info.technews.tw/company/81231585-智冠科技股份有限公司 【第三方】\n- 上市櫃狀態：股票代號 3083。是上市或上櫃，本次來源未明載。查無明確字樣。\n- 註：商工登記公示資料與公開資訊觀測站未能直接開啟。以上為第三方轉載。",
+   "[3] (中華網龍 / 2. 業務與財務 > 業務)\n- 業務：開發網路連線平台與應用軟體；提供網路遊戲與手機遊戲服務。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n- 官網列出多款線上遊戲與台、港、中、美等地區入口。\n  - 來源：https://www.chinesegamer.net 【自述】\n- 近期產品：\n  - 《飄流幻境 Re:星之方舟》：2025 年 6 月推出。到 2026 年 2 月單月營收仍近 1,000 萬元。\n  - 《尋秦記》：2026 年 1 月推出。黃易出版社授權，網龍自研。台、港、澳由智冠子公司遊戲新幹線共同發行。\n  - 《吞食天地 2》Steam 版：2024 年貢獻營收。\n  - 來源：https://blog.fugle.tw/post/earnings-call-3083-2026-03-11 、https://blog.fugle.tw/post/earnings-call-3083-2025-03-06 【第三方，AI 摘要】\n  - 發行合約：https://wantrich.chinatimes.com/news/20251103900510-420101 【第三方】\n- 主要客戶：查無（遊戲業是玩家直接消費）。"
+  ]
+ },
+ {
+  "id": "M14",
+  "question": "中華網龍的技術堆疊與開發工具有哪些？",
+  "answer": "資料只提到近年工程師題目以 Unity、C#、物件導向、演算法為主 [1]。資料中沒有提到遊戲後端語言、雲平台、資料庫、框架，也沒有提到 GitHub、技術部落格或技術分享活動 [1]。資料標註為推測的部分是：網龍技術偏遊戲 client（Unity／C#） [1]。",
+  "passages": [
+   "[1] (中華網龍 / 5. 技術堆疊)\n- 近年工程師題目以 Unity、C#、物件導向、演算法為主。見第 6 節。\n  - 來源：https://www.goodjob.life/companies/中華網龍股份有限公司/interview-experiences 【第三方】\n- 遊戲後端語言：查無。\n- 雲平台、資料庫、框架：查無。\n- GitHub、技術部落格、技術分享活動：搜尋沒找到網龍的。查無。\n- MyCard 系統語言：查無。\n  - 注意：MyCard 是智冠集團的點數金流業務，不是網龍的產品。智冠 2026 年推 MyCard 到海外。\n  - 來源：https://technews.tw/2026/04/10/ai-development-center/ 【第三方】\n- 【推測】網龍技術偏遊戲 client（Unity／C#）。你的 Python／Flask／Gemini 背景與此不同。需當天確認。",
+   "[2] (中華網龍 / 4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-5 其他（非工程）)\n- 遊戲企劃（鑽石俱樂部、吞食天地M、飄流幻境）、遊戲美術、遊戲測試-飄流幻境、東南亞商務專員（印尼語）。\n---",
+   "[3] (中華網龍 / 4. 中華網龍（公司頁 10 筆；與 AI／軟體相關）)\n地點：台北市南港區南港路三段47巷2號4樓。來源：https://www.104.com.tw/company/wempj5s"
+  ]
+ },
+ {
+  "id": "M15",
+  "question": "尼諾思的技術堆疊與開發工具有哪些？",
+  "answer": "尼諾思的技術堆疊與開發工具，依段落整理如下：\n\n- 公司自述使用 ROS 2、MoveIt、Gazebo、NVIDIA Omniverse [1]。\n- 公司自述使用 NoSQL 資料庫、微服務、網頁儀表板、API；至於 Cassandra、Mongo 等具體產品，資料中沒有提到 [1]。\n- 官網有 AMD Vitis AI／FPGA／DPU 的頁面（公司自述）[1]。\n- 公司自述涉及模仿學習、影像辨識 [1]。\n- 程式語言、雲端、框架：資料中沒有提到 [1]。\n- PerformX 平台公司自述可單體或微服務、無主從節點、用 NoSQL 複寫 [2]。\n- PerformX（Sim2Real 智慧機器人部署平台）整合 Gazebo、CoppeliaSim、NVIDIA Isaac Sim [3]。\n- xLink 是設備聯網與邊緣整合，為 PerformX 的底層，可接 MES、SCADA、ERP [2]。\n- 夥伴 logo 中的 ROS 2、MoveIt、Gazebo、NVIDIA Omniverse 被標註為「使用的開源或工具生態」，該項資料標註為推測 [2]。",
+  "passages": [
+   "[1] (尼諾思科技 / 5. 技術堆疊)\n沒有職缺，沒有技術部落格，沒有 GitHub。以下來自官網與新聞。\n- 【自述】ROS 2、MoveIt、Gazebo、NVIDIA Omniverse。\n- 【自述】NoSQL 資料庫、微服務、網頁儀表板、API。具體產品（Cassandra、Mongo 等）查無。\n- 【自述】AMD Vitis AI／FPGA／DPU 的頁面。\n- 【自述】模仿學習、影像辨識。\n- 語言、雲端、框架：查無。\n- 查了：官網、新聞、GitHub 搜尋（無結果）。",
+   "[2] (尼諾思科技 / 2. 業務與財務 > 2.1 產品)\n全部是【自述】，官網沒有客戶案例。\n- PerformX 工業智能平台：遙測資料收集、多產線多機台、任務設計、設備管理、UI 小部件；可單體或微服務；無主從節點；用 NoSQL 複寫。https://ninox.ai/performx-%E5%B7%A5%E6%A5%AD%E6%99%BA%E8%83%BD%E5%B9%B3%E5%8F%B0-1\n- AI Robot CNC 上下料：模擬、調節控制、動作控制、追溯回饋四層。https://ninox.ai/ai-robot-cnc-%E4%B8%8A%E4%B8%8B%E6%96%99-1\n- SimXReal 虛實整合：官網只有導覽，未讀到內容。\n- xLink：設備聯網與邊緣整合，PerformX 的底層，可接 MES、SCADA、ERP。https://ninox.ai/xlink\n- AI Accelerator IDE：頁面幾乎是 AMD Vitis AI 的介紹文字，沒說明與 NinoX 的關係。https://ninox.ai/ai-accelerator-ide\n- 選用設備：AI 邊緣計算、相容機器手臂、3D Body Pose。\n- 夥伴 logo：ROS 2、MoveIt、Gazebo、NVIDIA Omniverse。這是「使用的開源或工具生態」，不是簽約客戶。【推測】\n- 官網版權為 2023，用 GoD",
+   "[3] (尼諾思科技 / 2. 尼諾思智慧科技股份有限公司 > 公司簡介)\n- 產業：電腦系統整合服務業\n- 員工人數：5 人\n- 資本額：暫不提供\n- 地址：暫不提供\n- 網址：http://ninox.ai\n- 定位：Industrial Intelligence Platform Provider（工業智慧平台）\n- 主要產品：\n  - PerformX：Sim2Real 智慧機器人部署平台。整合 Gazebo、CoppeliaSim、NVIDIA Isaac Sim；跨品牌控制機械手臂、CNC、PLC；做 Virtual Commissioning。\n  - AI Robot CNC Tending：智慧 CNC 上下料，主打 CNC 一小時換線。\n- 發展歷程：2022.03 完成 Benzol 服務平台；2022.06 入選緯創 Accelerator 第 3 期；2023.05 入選 CIAT 加速器；2024.08 獲智慧扣件設備開發計畫；2025.10 推出 PerformX；2026.09 推出 AI Robot CNC Tending。\n- 20 人關注。\n- 來源：公司頁"
+  ]
+ },
+ {
+  "id": "M16",
+  "question": "台灣大哥大有哪些職缺？",
+  "answer": "台灣大哥大的職缺，資料中提到的有以下這些：\n\n**有較詳細內容的職缺：**\n- **D666**：產品管理師／軟體專案管理師／產品企劃，部門為「中小企業處內部營運系統」，工作內容是規劃會員／申辦、帳務、商機管理等營運系統，以及規劃 AI Agent 任務範圍、人工覆核、PoC 到上線，並協調內部資訊單位與外部廠商。薪資面議，年薪約 77~95 萬，地點台北市大安區，需 2 年以上經歷 [1]。\n\n**列表中的其他職缺：**\n- **107 資料分析／數據工程師（可遠端）**：要求 Python、SQL、PostgreSQL 或 SQL Server、ETL、BI，以及 CI/CD、Docker、MLOps、TensorFlow、PyTorch、Scikit-learn、Pandas 等；年薪 81–108 萬 [2]。\n- **I113 (Sr.) 軟體工程師，全端（可遠端）**：全端框架、CI/CD，AWS／GCP／Azure 加分；年薪約 81–108 萬 [2]。\n- **Java 與 .Net 類**：I165 Java 資深工程師、I150 Java 影音串流、I109 Java 新創金流、I36／I37 Java 帳務、I66 Java 應用系統、I106 .Net 工程師；薪資皆面議，年薪約 81~108 萬，地點台北市大安區。其中 I165 要求 6 年以上、Spring Boot、K8s、雲端、API Spec；I106 要求 1 年以上、C#、ASP.NET Core、Kafka 加分 [3]。\n\n另外，資料中也提到官方徵才頁未能確認，LinkedIn、CakeResume 只出現在搜尋結果、未讀內容，1111 頁面只讀到標題 [2]。",
+  "passages": [
+   "[1] (台灣大哥大 / 四、D666 詳細（唯一內文明寫部門＋AI Agent 的職缺）)\n- 連結：https://www.104.com.tw/job/97dy2\n- 薪資：面議；年薪約 77~95 萬；地點：台北市大安區\n- 經歷：2 年以上；學歷不拘；更新日 11/13；應徵 11~30 人\n- 職務類別：產品管理師、軟體專案管理師、產品企劃\n- 擅長工具：不拘；工作技能：不拘\n- 部門：內文寫「中小企業處內部營運系統」\n- 其他條件：BA／SA／系統 PM 2 年；SDLC、API 串接；SQL、Power BI／Tableau 尤佳；生成式 AI 實操、把營運場景拆成 AI Agent 工作流程；n8n、Dify、Microsoft Copilot Studio 尤佳\n- 工作內容：規劃會員／申辦、帳務、商機管理等營運系統；規劃 AI Agent 任務範圍、人工覆核、PoC 到上線；協調內部資訊單位與外部廠商\n- 判斷：PM／BA，不寫程式。",
+   "[2] (台灣大哥大 / 4. 職缺)\n- 官方徵才頁：未能確認（搜尋沒回傳官網職缺頁）。\n- 104：依規定未嘗試硬爬。搜尋結果中的 104 連結未開啟。\n- LinkedIn、CakeResume：只有 cake.me 公司頁出現在搜尋結果，未讀內容。\n- 1111 頁面對自動工具回傳安全驗證失敗，只讀到標題。\n| 職稱 | 技能要求 | 薪資 | 日期 | 連結 |\n|---|---|---|---|---|\n| 107 資料分析／數據工程師（可遠端） | Python、SQL；PostgreSQL 或 SQL Server；ETL、BI 必備；CI/CD、Docker、MLOps；TensorFlow、PyTorch、Scikit-learn、Pandas；AWS/GCP/Azure 加分；Teradata 加分；LLM 知識加分 | 年薪 81–108 萬（績效平均） | Yourator 頁更新 2026-01-30（無刊登日） | https://www.yourator.co/companies/taiwanmobile/jobs/25039 |\n| I113 (Sr.) 軟體工程師，全端（可遠端） | 全端框架；CI/CD；AWS/GCP/Azure 加分（搜尋摘要） | 年薪約 81–108 萬（搜尋摘要） | 1111 更新 2026-03-09（搜尋摘要） | https://www.1111.c",
+   "[3] (台灣大哥大 / 三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > B. 後端／全端／軟體類 > I165 Java資深工程師、I150 Java影音串流、I109 Java新創金流、I36／I37 Java帳務、I66 Java應用系統、I106 .Net工程師)\n- 連結：皆未取得；未開內頁\n- 共同點：薪資面議，年薪約 81~108 萬；地點台北市大安區；更新日 11/10（I36 為 11/16）\n- I165 Java資深：6 年以上；Spring Boot、K8s、雲端、API Spec；6~10 人\n- I106 .Net：1 年以上；C#、ASP.NET Core、Kafka 加分；30 人以上；內文有「企業創新服務」字樣\n- 企業字樣：只有 I106 有（「企業創新服務」）"
+  ]
+ },
+ {
+  "id": "M17",
+  "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+  "answer": "中華網龍的 AI 應用研發工程師，必要條件包括：Python、TypeScript 或其他後端語言；REST API、JSON、非同步、服務整合；LLM、Agent、RAG 或生成式 AI 專案經驗；以及錯誤處理、測試、Log、Git [1]。\n\n加分條件則有：OpenAI／Anthropic／Gemini API；RAG、Embedding、Vector DB、MCP、Function Calling；Token 成本、Docker、雲端；ComfyUI、FLUX、Stable Diffusion、LoRA；模型微調；GPU／CUDA [1]。另外，擅長工具與工作技能都寫「不拘」[1]。",
+  "passages": [
+   "[1] (中華網龍 / 4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-1 AI 應用研發工程師（已讀單頁）)\n- 連結：https://www.104.com.tw/job/9523j\n- 薪資：月薪 40,000~60,000 元\n- 擅長工具：不拘；工作技能：不拘\n- 必要條件：Python、TypeScript 或其他後端語言；REST API、JSON、非同步、服務整合；LLM、Agent、RAG 或生成式 AI 專案經驗；錯誤處理、測試、Log、Git\n- 加分：OpenAI／Anthropic／Gemini API；RAG、Embedding、Vector DB、MCP、Function Calling；Token 成本、Docker、雲端；ComfyUI、FLUX、Stable Diffusion、LoRA；模型微調；GPU／CUDA\n- 作品集：可提供 LLM／Agent、RAG、MCP、ComfyUI 等作品\n- 工作經歷、學歷、科系：不拘；需求 1 人；管理責任：無\n- 地點：台北市南港區（捷運昆陽站約 390 公尺）\n- 上班時段：日班；出差外派：無需出差外派\n- 更新日：11/03；應徵人數：6~10 人",
+   "[2] (中華網龍 / 4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-2 AI應用遊戲工程師)\n- 連結：https://www.104.com.tw/company/wempj5s\n- 工作：依遊戲需求開發與測試功能；用 AI 工具維護與開發遊戲\n- 月薪 30,000~55,000；專科；經歷不拘；南港；更新日 11/03；應徵 6~10 人",
+   "[3] (中華網龍 / 3. 中華網龍（公司頁 10 筆，全部有網址）)\n| 公司 | 職稱 | 網址 | 經歷 | 學歷 | 薪資 | 更新日 | 應徵人數 | 出差外派 | 備註 |\n|---|---|---|---|---|---|---|---|---|---|\n| 中華網龍 | AI 應用研發工程師 | https://www.104.com.tw/job/9523j | 不拘 | 不拘 | 月薪 40,000~60,000 | 11/03 | 6~10 人 | 無需出差外派 | 擅長工具「不拘」；Python／TypeScript、LLM、Agent、RAG；南港；日班；需求 1 人（沿用舊紀錄，本次僅由公司頁確認網址與列表欄位） |\n| 中華網龍 | AI應用遊戲工程師 | https://www.104.com.tw/job/95dlu | 不拘 | 專科、大學、碩士 | 月薪 30,000~55,000 | 11/03 | 6~10 人 | 無需出差外派 | 擅長工具「不拘」；內文要求 C++／C#、Unity、Git、熟練 AI 編碼代理（Claude Code、Codex）；日班；需求 1 人 |\n| 中華網龍 | 遊戲程式設計師-飄流幻境 | https://www.104.com.tw/job/6fqjo | 不拘 | 大學以上 | 月薪 32,000~68,000 | 11/03 | 0~5 人 | 無需出差外派 | 擅長工具"
+  ]
+ },
+ {
+  "id": "M18",
+  "question": "那薪水呢？",
+  "answer": "AI 應用研發工程師的月薪是 40,000~60,000 元 [1]。",
+  "passages": [
+   "[1] (中華網龍 / 4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-1 AI 應用研發工程師（已讀單頁）)\n- 連結：https://www.104.com.tw/job/9523j\n- 薪資：月薪 40,000~60,000 元\n- 擅長工具：不拘；工作技能：不拘\n- 必要條件：Python、TypeScript 或其他後端語言；REST API、JSON、非同步、服務整合；LLM、Agent、RAG 或生成式 AI 專案經驗；錯誤處理、測試、Log、Git\n- 加分：OpenAI／Anthropic／Gemini API；RAG、Embedding、Vector DB、MCP、Function Calling；Token 成本、Docker、雲端；ComfyUI、FLUX、Stable Diffusion、LoRA；模型微調；GPU／CUDA\n- 作品集：可提供 LLM／Agent、RAG、MCP、ComfyUI 等作品\n- 工作經歷、學歷、科系：不拘；需求 1 人；管理責任：無\n- 地點：台北市南港區（捷運昆陽站約 390 公尺）\n- 上班時段：日班；出差外派：無需出差外派\n- 更新日：11/03；應徵人數：6~10 人",
+   "[2] (中華網龍 / 4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-2 AI應用遊戲工程師)\n- 連結：https://www.104.com.tw/company/wempj5s\n- 工作：依遊戲需求開發與測試功能；用 AI 工具維護與開發遊戲\n- 月薪 30,000~55,000；專科；經歷不拘；南港；更新日 11/03；應徵 6~10 人",
+   "[3] (中華網龍 / 3. 中華網龍（公司頁 10 筆，全部有網址）)\n| 公司 | 職稱 | 網址 | 經歷 | 學歷 | 薪資 | 更新日 | 應徵人數 | 出差外派 | 備註 |\n|---|---|---|---|---|---|---|---|---|---|\n| 中華網龍 | AI 應用研發工程師 | https://www.104.com.tw/job/9523j | 不拘 | 不拘 | 月薪 40,000~60,000 | 11/03 | 6~10 人 | 無需出差外派 | 擅長工具「不拘」；Python／TypeScript、LLM、Agent、RAG；南港；日班；需求 1 人（沿用舊紀錄，本次僅由公司頁確認網址與列表欄位） |\n| 中華網龍 | AI應用遊戲工程師 | https://www.104.com.tw/job/95dlu | 不拘 | 專科、大學、碩士 | 月薪 30,000~55,000 | 11/03 | 6~10 人 | 無需出差外派 | 擅長工具「不拘」；內文要求 C++／C#、Unity、Git、熟練 AI 編碼代理（Claude Code、Codex）；日班；需求 1 人 |\n| 中華網龍 | 遊戲程式設計師-飄流幻境 | https://www.104.com.tw/job/6fqjo | 不拘 | 大學以上 | 月薪 32,000~68,000 | 11/03 | 0~5 人 | 無需出差外派 | 擅長工具"
+  ]
+ }
+]
