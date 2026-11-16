@@ -1,4 +1,5 @@
-# 生成層評估（票 11）。與主環境的 openai 3.x 衝突，所以裝在獨立 venv：
+# Generation-layer evaluation (ticket 11). Conflicts with the main env's openai 3.x,
+# so install into a separate venv (see README):
 #   python -m venv --system-site-packages .venv-ragas
 #   .venv-ragas\Scripts\python -m pip install -r requirements-ragas.txt
 ragas==0.4.4
