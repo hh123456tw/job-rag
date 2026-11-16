@@ -1,6 +1,6 @@
 # 09: 公開 repo 準備
 
-**Blocked by:** 03, 05
+**Blocked by:** 03, 05, 10
 **Status:** ready-for-agent
 
 **What to build:** README、3 家範例語料（只含公開事實）、評估題。完整語料與 `.env` 已被 `.gitignore` 擋住。只用範例語料，另一台電腦能重現流程。
