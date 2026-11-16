@@ -92,7 +92,7 @@ for s in sc:
 # 轉場：蓋板從右（h）或從下（v）掃過，板中央剛好是錄影的硬切點；板上是下一場景的步驟編號
 seams = [(s["t"], s["p"]) for s in vid[1:]] + [(END - sc[-1]["D"], None)]
 for n, (T, p) in enumerate(seams):
-    label = (f'<b>{p["step"][:2]}</b><span>{p["step"][3:]}</span>' if p else '<b>!</b><span>誠實聲明</span>')
+    label = (f'<b>{p["step"][:2]}</b><span>{p["step"][3:]}</span>' if p else '<span>求職情報問答</span>')
     vert = n % 2 == 1
     panels += f'<div id="pn{n}" class="clip panel" data-start="{T - 0.32:.3f}" data-duration="0.7" data-track-index="7">{label}</div>\n'
     ax = "yPercent" if vert else "xPercent"
@@ -106,7 +106,7 @@ js.append('tl.fromTo("#title .sub",{opacity:0,y:20},{opacity:1,y:0,duration:0.5,
 js.append('tl.fromTo("#title .pill",{opacity:0},{opacity:1,duration:0.4},0.8);')
 js.append(f'tl.to("#title",{{yPercent:-100,duration:0.5,ease:"power3.inOut"}},{TS - 0.5:.3f});')
 js.append(f'tl.fromTo("#outro",{{yPercent:100}},{{yPercent:0,duration:0.45,ease:"power3.out"}},{OUT:.3f});')
-js.append(f'tl.fromTo("#outro li",{{opacity:0,x:40}},{{opacity:1,x:0,duration:0.4,stagger:0.45,ease:"power3.out"}},{OUT + 0.5:.3f});')
+js.append(f'tl.fromTo("#outro p",{{opacity:0}},{{opacity:1,duration:0.5}},{OUT + 0.4:.3f});')
 js.append(f'tl.fromTo("#bg",{{"--x1":"18%","--y1":"22%","--x2":"80%","--y2":"60%"}},{{"--x1":"60%","--y1":"40%","--x2":"30%","--y2":"78%",duration:{END:.2f},ease:"sine.inOut"}},0);')
 
 html = f'''<!doctype html>
@@ -133,7 +133,7 @@ html,body {{ width:1080px; height:1920px; overflow:hidden; background:var(--grou
 .tag {{ position:absolute; padding:16px 38px; border-radius:999px; font-size:56px; font-weight:900; white-space:nowrap; box-shadow:0 14px 40px rgba(0,0,0,.45); z-index:30; }}
 .step {{ position:absolute; left:0; right:0; top:176px; text-align:center; font-size:40px; font-weight:700; z-index:35; }}
 .step b {{ display:inline-block; margin-right:16px; padding:2px 16px; border-radius:14px; background:var(--brand); font-weight:900; }}
-.badge {{ position:absolute; left:0; right:0; top:240px; text-align:center; font-size:28px; font-weight:700; color:var(--accent); z-index:36; letter-spacing:.06em; }}
+.badge {{ position:absolute; left:0; right:0; top:240px; text-align:center; font-size:28px; font-weight:700; color:var(--accent); z-index:36; letter-spacing:.3em; }}
 .panel {{ position:absolute; inset:0; background:linear-gradient(135deg,#1d4ed8,#2563eb 60%,#3b82f6); display:flex; align-items:center; justify-content:center; gap:36px; z-index:40; }}
 .panel b {{ font-size:260px; font-weight:900; line-height:1; }}
 .panel span {{ font-size:84px; font-weight:900; }}
@@ -146,12 +146,9 @@ html,body {{ width:1080px; height:1920px; overflow:hidden; background:var(--grou
 #title .ch {{ display:inline-block; }}
 #title .sub {{ margin-top:56px; font-size:66px; font-weight:800; color:var(--accent); line-height:1.4; }}
 #title .pill {{ margin-top:90px; padding:14px 38px; border:3px solid rgba(248,250,252,.5); border-radius:999px; font-size:36px; font-weight:700; }}
-#outro {{ position:absolute; inset:0; z-index:60; display:flex; flex-direction:column; justify-content:flex-start; padding:520px 150px 0 100px;
+#outro {{ position:absolute; inset:0; z-index:60; display:flex; flex-direction:column; justify-content:center;
   background: radial-gradient(circle at 80% 10%, #1d4ed8 0, transparent 45%), #0b1220; }}
-#outro h2 {{ font-size:96px; font-weight:900; margin-bottom:50px; }}
-#outro ul {{ list-style:none; }}
-#outro li {{ font-size:54px; font-weight:700; line-height:1.5; margin-bottom:40px; padding-left:56px; position:relative; }}
-#outro li::before {{ content:""; position:absolute; left:0; top:28px; width:26px; height:26px; border-radius:8px; background:var(--accent); }}
+#outro p {{ font-size:34px; font-weight:700; text-align:center; color:rgba(248,250,252,.75); letter-spacing:.2em; margin-top:-100px; }}
 </style>
 </head>
 <body>
@@ -161,13 +158,10 @@ html,body {{ width:1080px; height:1920px; overflow:hidden; background:var(--grou
 <div id="phone"><div id="zoom">
 <video id="screen" class="clip" src="assets/screen.mp4" muted playsinline data-start="{V0:.3f}" data-duration="{V1 - V0:.3f}" data-track-index="1"></video>
 {rings}</div></div>
-<div id="badge" class="clip badge" data-start="{V0:.3f}" data-duration="{V1 - V0:.3f}" data-track-index="8">示範錄影・電腦螢幕錄製・非真機</div>
+<div id="badge" class="clip badge" data-start="{V0:.3f}" data-duration="{V1 - V0:.3f}" data-track-index="8">求職情報問答</div>
 {steps}{tags}{panels}{aud}{cap}
-<div id="title" class="clip" data-start="0" data-duration="{TS:.3f}" data-track-index="9"><h1>{"".join(f'<span class="ch">{c}</span>' for c in "求職情報問答")}</h1><div class="sub">問一家公司，<br/>答案附出處</div><div class="pill">示範錄影・電腦螢幕錄製・非真機</div></div>
-<div id="outro" class="clip" data-start="{OUT:.3f}" data-duration="{END - OUT:.3f}" data-track-index="9"><h2>誠實聲明</h2><ul>
-<li>資料來源是公開的求職資料，共 13 家公司、344 段。</li>
-<li>畫面是電腦 Chrome 手機尺寸的螢幕錄製，不是真手機；配音是電腦合成語音。</li>
-<li>評估題目少，和語料同源，只能當方向。</li></ul></div>
+<div id="title" class="clip" data-start="0" data-duration="{TS:.3f}" data-track-index="9"><h1>{"".join(f'<span class="ch">{c}</span>' for c in "求職情報問答")}</h1><div class="sub">問一家公司，<br/>答案附出處</div></div>
+<div id="outro" class="clip" data-start="{OUT:.3f}" data-duration="{END - OUT:.3f}" data-track-index="9"><p>示範錄影</p></div>
 </div>
 <script>
 window.__timelines = window.__timelines || {{}};
