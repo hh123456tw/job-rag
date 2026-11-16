@@ -87,3 +87,51 @@ def test_no_score_label_when_server_sends_no_score(page):
                                                            "hits": [{"company": "甲", "file": "f", "heading_path": "h", "text": "t"}]}))
     ask(page)
     assert page.locator(".hit").count() == 1 and page.locator(".sc").count() == 0
+
+
+# ---- 可點引用 ----
+def answer_route(pg, text):
+    top = search(Q, corpus=MINI, gate=False, dedupe=True)[1]  # 故意取第 2 段，確認對到的不是第 1 段
+    sources = [{k: top[k] for k in ("company", "file", "heading_path")}]
+    pg.route("**/api/answer*", lambda r: r.fulfill(json={"status": "ok", "answer": text, "sources": sources}))
+
+
+def test_citation_numbers_become_buttons_that_open_and_flag_the_right_hit(page):
+    answer_route(page, "先 [1] 再 [2]，其他 [9] 與 [0] 不是段落。")
+    ask(page)
+    cites = page.locator(".answer .cite")
+    assert cites.count() == 2 and [cites.nth(i).text_content() for i in range(2)] == ["[1]", "[2]"]
+    assert page.locator(".answer").text_content() == "先 [1] 再 [2]，其他 [9] 與 [0] 不是段落。"  # [9]、[0] 維持純文字
+    assert not page.locator("details.raw").evaluate("d => d.open")
+    cites.nth(1).click()
+    assert page.locator("details.raw").evaluate("d => d.open")
+    assert "flash" in page.locator(".hit").nth(1).get_attribute("class")
+    assert "flash" not in page.locator(".hit").nth(0).get_attribute("class")
+    page.wait_for_function("() => !document.querySelector('.hit.flash')")  # 短暫標示後移除
+
+
+def test_source_label_is_clickable_and_points_to_matching_hit(page):
+    answer_route(page, "答案 [1]")
+    ask(page)
+    src = page.locator(".src .cite")
+    assert src.count() == 1
+    n = src.get_attribute("data-n")
+    assert n == "2"
+    src.click()
+    assert "flash" in page.locator(".hit").nth(int(n) - 1).get_attribute("class")
+
+
+def test_hostile_answer_text_is_inert(page):
+    answer_route(page, "<img src=x onerror=\"window.__pwn=1\"><script>window.__pwn=1</script> [1]")
+    ask(page)
+    assert page.locator(".answer img, .answer script").count() == 0
+    assert page.evaluate("window.__pwn") is None
+    assert "<img" in page.locator(".answer").text_content()
+
+
+def test_citations_survive_reload_of_saved_chat(page):
+    answer_route(page, "答案 [1]")
+    ask(page)
+    page.reload()
+    page.locator(".answer .cite").click()  # 事件委派：還原的 innerHTML 也能點
+    assert page.locator("details.raw").evaluate("d => d.open")

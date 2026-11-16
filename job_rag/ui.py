@@ -65,6 +65,9 @@ body.chat{max-width:820px;height:100vh;height:100dvh;margin:0 auto;padding:0;dis
 .raw{margin-top:10px}.raw .hit{background:var(--bg);margin:8px 0}.raw pre{font:inherit;white-space:pre-wrap;margin:6px 0 0;line-height:1.6}
 .hh{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:4px;font-size:.8125rem;color:var(--mute)}
 .sc{padding:0 8px;border:1px solid var(--line);border-radius:999px;font-variant-numeric:tabular-nums;white-space:nowrap}.sc.lo{border-style:dashed;color:var(--err)}
+.cite{display:inline;min-height:0;padding:.25em .3em;margin:-.25em -.1em;border:0;background:none;color:var(--acc);font:inherit;font-weight:600;text-decoration:underline;text-underline-offset:3px;touch-action:manipulation}
+.src .cite{font-weight:400;text-align:left;white-space:normal}
+.hit.flash{opacity:1;outline:2px solid var(--acc);outline-offset:2px}.raw .hit{transition:outline-color .3s}
 .typing{display:inline-flex;gap:5px;padding:6px 0}.typing i{width:8px;height:8px;border-radius:50%;background:var(--mute);animation:pulse 1.2s ease-in-out infinite}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
 #bar{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
 #bar input{flex:1}#bar .go{min-width:76px}
