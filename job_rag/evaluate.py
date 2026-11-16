@@ -77,16 +77,54 @@ def format_report(rep: dict) -> str:
     return "\n".join(out)
 
 
+SUSPICIOUS = "※ 命中率接近 100%：先懷疑題目太簡單，不要當成方法很強"
+NEAR_PERFECT = 0.95
+TABLE_OUT = "eval/results_methods.txt"
+
+
+def compare(questions: list[dict], methods=None, corpus=None) -> dict:
+    from . import METHODS
+    return {m: evaluate(questions, method=m, corpus=corpus) for m in (methods or METHODS)}
+
+
+def format_table(reps: dict) -> str:
+    out = [f"檢索方式並列　評分單位：段落　Hit@k 的 k=1、3；名次最多看到 {DEPTH}"]
+    flagged = False
+    for key, title in (("demo", "演示模式（只含公開題）"), ("query", "查詢模式（全部題）"),
+                       ("query_private", "僅私人題（查詢模式中的面試、評價題）")):
+        out += [f"\n## {title}", f"{'方式':<14}{'題數':>4}{'Hit@1':>8}{'Hit@3':>8}{'MRR':>8}"]
+        for name, rep in reps.items():
+            m = rep[key]["metrics"]
+            if m is None:
+                out.append(f"{name:<14}（無可回答題）")
+                continue
+            flagged |= m["hit@1"] >= NEAR_PERFECT or m["hit@3"] >= NEAR_PERFECT
+            out.append(f"{name:<14}{m['n']:>4}{m['hit@1']:>8.3f}{m['hit@3']:>8.3f}{m['mrr']:>8.3f}")
+    any_rep = next(iter(reps.values()))
+    out.append(f"\n不可回答題 {any_rep['demo']['unanswerable']['n']} 題；正確拒答率：尚未實作門檻")
+    if flagged:
+        out.append(SUSPICIOUS)
+    return "\n".join(out)
+
+
 def main():
     import argparse
     import json
     from pathlib import Path
     ap = argparse.ArgumentParser()
     ap.add_argument("--questions", default=QUESTIONS)
-    ap.add_argument("--method", default="bm25")
+    ap.add_argument("--method", default="bm25", help="bm25、bge-small-zh、bge-m3、e5-large、hybrid，或 all")
+    ap.add_argument("--out", help="all 時預設寫入 " + TABLE_OUT)
     a = ap.parse_args()
     qs = json.loads(Path(a.questions).read_text(encoding="utf-8"))["questions"]
-    print(format_report(evaluate(qs, method=a.method)))
+    if a.method == "all":
+        text = format_table(compare(qs))
+        out = Path(a.out or TABLE_OUT)
+        out.write_text(text + "\n", encoding="utf-8")
+        print(text)
+        print(f"\n已寫入 {out}")
+    else:
+        print(format_report(evaluate(qs, method=a.method)))
 
 
 if __name__ == "__main__":

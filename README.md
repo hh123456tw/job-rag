@@ -1,6 +1,6 @@
 # 求職情報問答
 
-求職調查檔的問答工具。規格見 `SPEC.md`，名詞見 `GLOSSARY.md`。目前只有 BM25 檢索。
+求職調查檔的問答工具。規格見 `SPEC.md`，名詞見 `GLOSSARY.md`。檢索方式有 5 種（票 03）：bm25、bge-small-zh、bge-m3、e5-large、hybrid。
 
 ## 跑法
 ```
@@ -19,6 +19,15 @@ python -X utf8 -m job_rag.evaluate             # 對 BM25 評分（演示模式�
 ```
 題目在 `eval/questions.json`（程式讀）與 `eval/questions.md`（人讀）。核對狀態一律是「待使用者確認」，只有使用者能改。
 金標用「檔名＋標題路徑」；命中＝前 k 個結果中有段落在金標標題之下。正確拒答率要等查無門檻（之後的票）才算，現在輸出「尚未實作門檻」。
+
+## 向量檢索（票 03）
+模型放 `models/`（不進 git），`search(..., method=...)` 全在本機跑，不連網。段落向量快取在 `.cache/`（不進 git），語料內容變了才重算。
+```
+python -X utf8 -m job_rag.evaluate --method all   # 5 種並列成績表，寫入 eval/results_methods.txt
+python -m pytest tests                          # 假嵌入器，不需模型
+set JOB_RAG_MODELS_TEST=1 && python -m pytest tests/test_vector.py   # 真模型冒煙，需 models/
+```
+混合 = BM25 + bge-m3，RRF（k=60，不調權重）。e5 自動加 `query: ` / `passage: ` 前綴。
 
 ## 整理成答案（DeepSeek）
 ```

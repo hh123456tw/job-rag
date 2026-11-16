@@ -1,10 +1,12 @@
 """語料 -> 段落 -> 分類 -> BM25 檢索。對外只有 search（與分類表）。"""
+import hashlib
 import os
 import re
 from functools import lru_cache
 from pathlib import Path
 
 import jieba
+import numpy as np
 from rank_bm25 import BM25Okapi
 
 # 公開事實：標題（去編號、去無害括號、去空白後）完全相同才算。其餘一律私人。
@@ -128,28 +130,106 @@ def _bm25(root: str, mode: str):
     return pool, (BM25Okapi([_tok(s["_index"]) for s in pool]) if pool else None)
 
 
+METHODS = ("bm25", "bge-small-zh", "bge-m3", "e5-large", "hybrid")
+# 方式 -> (models/ 下的資料夾, 查詢前綴, 段落前綴)
+MODELS = {
+    "bge-small-zh": ("bge-small-zh-v1.5", "", ""),
+    "bge-m3": ("bge-m3", "", ""),
+    "e5-large": ("multilingual-e5-large", "query: ", "passage: "),
+}
+RRF_K = 60
+
+
+def rrf(rankings: list[list], k: int = RRF_K) -> list[tuple]:
+    """Reciprocal Rank Fusion：每個名單中名次 r 的項目得 1/(k+r)，加總後由高到低。"""
+    score: dict = {}
+    for ranking in rankings:
+        for r, item in enumerate(ranking, 1):
+            score[item] = score.get(item, 0.0) + 1.0 / (k + r)
+    return sorted(score.items(), key=lambda kv: (-kv[1], str(kv[0])))
+
+
+@lru_cache(maxsize=3)
+def _load_model(method: str):
+    """只從本機 models/ 載入，不連網。"""
+    from sentence_transformers import SentenceTransformer
+    root = Path(os.environ.get("JOB_RAG_MODELS", "models"))
+    path = root / MODELS[method][0]
+    if not path.is_dir():
+        raise RuntimeError(f"找不到模型：{path}（需先下載）")
+    return SentenceTransformer(str(path), device="cpu", local_files_only=True)
+
+
+def _encode(method: str, texts: list[str], is_query: bool) -> np.ndarray:
+    _, qp, pp = MODELS[method]
+    prefix = qp if is_query else pp
+    v = np.asarray(_load_model(method).encode([prefix + t for t in texts], batch_size=16), dtype="float32")
+    return v / np.maximum(np.linalg.norm(v, axis=1, keepdims=True), 1e-12)
+
+
+def _passage_vectors(root: str, method: str) -> np.ndarray:
+    """全部段落（含私人，依 _segments 順序）的向量。磁碟快取，內容雜湊變了才重算。"""
+    segs = _segments(root)
+    h = hashlib.sha1("\x00".join(s["_index"] for s in segs).encode("utf-8")).hexdigest()[:16]
+    f = Path(os.environ.get("JOB_RAG_CACHE", ".cache")) / f"{method}_{h}.npy"
+    if f.is_file():
+        return np.load(f)
+    v = _encode(method, [s["_index"] for s in segs], is_query=False)
+    f.parent.mkdir(parents=True, exist_ok=True)
+    np.save(f, v)
+    return v
+
+
+@lru_cache(maxsize=8)
+def _index(root: str, method: str, mode: str):
+    """(候選池, FAISS 內積索引)。演示模式的池在這裡就剔掉私人段落。"""
+    import faiss
+    segs = _segments(root)
+    keep = [i for i, s in enumerate(segs) if mode == "query" or not s["private"]]
+    pool = [segs[i] for i in keep]
+    if not pool:
+        return pool, None
+    vecs = _passage_vectors(root, method)[keep]
+    idx = faiss.IndexFlatIP(vecs.shape[1])
+    idx.add(np.ascontiguousarray(vecs))
+    return pool, idx
+
+
+def _rank_bm25(root, question, mode, company):
+    pool, bm = _bm25(root, mode)
+    if not pool:
+        return pool, []
+    scores = bm.get_scores(_tok(question))
+    order = sorted(range(len(pool)), key=lambda i: (-scores[i], i))
+    return pool, [(i, float(scores[i])) for i in order if scores[i] > 0 and (not company or pool[i]["company"] == company)]
+
+
+def _rank_vector(root, method, question, mode, company):
+    pool, idx = _index(root, method, mode)
+    if not pool:
+        return pool, []
+    sims, ids = idx.search(_encode(method, [question], is_query=True), len(pool))
+    return pool, [(int(i), float(s)) for s, i in zip(sims[0], ids[0]) if not company or pool[i]["company"] == company]
+
+
 def search(question: str, method: str = "bm25", mode: str = "demo", company: str | None = None,
            k: int = 3, corpus=None) -> list[dict]:
-    """排序後的段落。模式過濾在這裡做：演示模式的候選池根本不含私人段落。"""
-    if method != "bm25":
+    """排序後的段落。模式與公司過濾在排名前做：演示模式的候選池根本不含私人段落。"""
+    if method not in METHODS:
         raise ValueError(f"未支援的檢索方式：{method}")
     if mode not in ("demo", "query"):
         raise ValueError(f"未知模式：{mode}")
     root = str(_corpus_dir(corpus).resolve())
-    pool, bm = _bm25(root, mode)
-    if not pool:
-        return []
-    scores = bm.get_scores(_tok(question))
-    ranked = sorted(zip(scores, range(len(pool))), key=lambda p: (-p[0], p[1]))
-    out = []
-    for sc, i in ranked:
-        s = pool[i]
-        if sc <= 0 or (company and s["company"] != company):
-            continue
-        out.append({key: s[key] for key in ("company", "file", "heading_path", "private", "text")} | {"score": float(sc)})
-        if len(out) == k:
-            break
-    return out
+    if method == "bm25":
+        pool, ranked = _rank_bm25(root, question, mode, company)
+    elif method == "hybrid":
+        pool, rb = _rank_bm25(root, question, mode, company)
+        _, rv = _rank_vector(root, "bge-m3", question, mode, company)
+        ranked = rrf([[i for i, _ in rb], [i for i, _ in rv]])
+    else:
+        pool, ranked = _rank_vector(root, method, question, mode, company)
+    return [{key: pool[i][key] for key in ("company", "file", "heading_path", "private", "text")} | {"score": float(sc)}
+            for i, sc in ranked[:k]]
 
 
 def classification_table(corpus=None) -> list[dict]:

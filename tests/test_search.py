@@ -111,7 +111,7 @@ def test_no_match_returns_empty_not_filler():
 
 def test_unknown_method_and_mode_raise():
     with pytest.raises(ValueError):
-        q("FastAPI", method="bge-m3")
+        q("FastAPI", method="nope")
     with pytest.raises(ValueError):
         q("FastAPI", mode="secret")
 

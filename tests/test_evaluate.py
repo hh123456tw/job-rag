@@ -116,3 +116,40 @@ def test_wrong_gold_gives_miss_not_error():
 def test_questions_without_answerable_in_a_group_gives_no_metrics():
     rep = evaluate([QS[2]], corpus=MINI)
     assert rep["demo"]["metrics"] is None and rep["query_private"]["metrics"] is None
+
+
+# ---- 5 種方式並列（票 03）----
+from job_rag.evaluate import compare, format_table, SUSPICIOUS
+
+
+def _fake_models(monkeypatch, tmp_path):
+    from tests.test_vector import FakeModel
+    from job_rag import retrieval
+    monkeypatch.setenv("JOB_RAG_CACHE", str(tmp_path))
+    monkeypatch.setattr(retrieval, "_load_model", lambda m: FakeModel(m))
+    retrieval._index.cache_clear()
+
+
+def test_compare_runs_all_five_methods_and_table_lists_each(monkeypatch, tmp_path):
+    _fake_models(monkeypatch, tmp_path)
+    reps = compare(QS, corpus=MINI)
+    assert list(reps) == ["bm25", "bge-small-zh", "bge-m3", "e5-large", "hybrid"]
+    t = format_table(reps)
+    for m in reps:
+        assert m in t
+    for head in ("演示模式", "查詢模式", "私人題", "Hit@1", "Hit@3", "MRR"):
+        assert head in t
+
+
+def _rep(h1, h3, mrr):
+    g = {"ranks": {}, "metrics": {"n": 10, "hit@1": h1, "hit@3": h3, "mrr": mrr}, "unanswerable": {"n": 0, "refusal_rate": None}}
+    return {"method": "x", "demo": g, "query": g, "query_private": g}
+
+
+def test_near_perfect_score_is_flagged_suspicious():
+    assert SUSPICIOUS in format_table({"bm25": _rep(1.0, 1.0, 1.0)})
+    assert SUSPICIOUS in format_table({"bm25": _rep(0.9, 0.96, 0.93)})
+
+
+def test_ordinary_scores_are_not_flagged():
+    assert SUSPICIOUS not in format_table({"bm25": _rep(0.6, 0.8, 0.7)})
