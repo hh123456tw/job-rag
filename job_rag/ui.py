@@ -45,7 +45,18 @@ li{margin:6px 0}
 @media(prefers-reduced-motion:reduce){*,::before{animation:none!important;transition:none!important}}"""
 
 
+# PWA（票 16）：只有 manifest 與 meta，沒有 service worker（查詢需要後端，離線快取只會造成舊內容）。
+# theme-color 的色碼要與 CSS 的 --bg 相同（淺、深各一）；tests/test_pwa.py 會核對 manifest 的色碼。
+PWA_HEAD = ("<link rel=manifest href=/manifest.webmanifest>"
+            "<meta name=theme-color content='#fafaf9' media='(prefers-color-scheme: light)'>"
+            "<meta name=theme-color content='#121316' media='(prefers-color-scheme: dark)'>"
+            "<meta name=apple-mobile-web-app-capable content=yes>"
+            "<meta name=mobile-web-app-capable content=yes>"
+            "<meta name=apple-mobile-web-app-status-bar-style content=default>"  # default：狀態列跟隨頁面底色（淺深都可讀）
+            "<link rel=apple-touch-icon href=/static/icon-180.png>")
+
+
 def page(title: str, body: str, head: str = "") -> str:
     return (f"<!doctype html><html lang=zh-Hant><meta charset=utf-8>"
-            f"<meta name=viewport content='width=device-width,initial-scale=1'>{head}"
+            f"<meta name=viewport content='width=device-width,initial-scale=1'>{PWA_HEAD}{head}"
             f"<title>{title}</title><style>{CSS}</style>{body}")

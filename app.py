@@ -82,6 +82,14 @@ def _eval_panel(q):
     return "<p class=link><a href='#eval'>看這題在評估裡的成績</a></p>", f"<div id=eval class='ans'><b>評估成績（{escape(e['id'])}）</b><p>{escape(txt)}</p></div>"
 
 
+@app.get("/manifest.webmanifest")
+def manifest():  # 路徑都是根路徑相對，http 區網 IP 與 https 通用；預熱期間也可取得
+    icons = [{"src": f"/static/icon-{n}.png", "sizes": f"{n}x{n}", "type": "image/png", "purpose": "any maskable"} for n in (192, 512)]
+    m = {"name": "求職情報問答", "short_name": "求職問答", "start_url": "/", "scope": "/", "display": "standalone",
+         "lang": "zh-Hant", "theme_color": "#fafaf9", "background_color": "#fafaf9", "icons": icons}
+    return app.response_class(json.dumps(m, ensure_ascii=False), mimetype="application/manifest+json")
+
+
 @app.get("/about")
 def about_page():
     if _warm["state"] != "ready":  # 預熱期間與問答頁一致

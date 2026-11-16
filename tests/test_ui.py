@@ -44,7 +44,7 @@ def test_no_external_resources_or_scripts(pages):
 def test_colors_outside_root_tokens_are_variables(pages):
     # 除了 :root 的色票，不再出現寫死的色碼（含舊的 style='color:#c00'）
     for name, html in pages.items():
-        rest = re.sub(r":root\{[^}]*\}", "", html)
+        rest = re.sub(r"<meta name=theme-color[^>]*>", "", re.sub(r":root\{[^}]*\}", "", html))  # theme-color 必須是色碼，由 test_pwa 核對
         assert not re.search(r"#[0-9a-fA-F]{3,6}\b(?![^<]*</title>)", re.sub(r"href=\S+", "", rest)), name
 
 

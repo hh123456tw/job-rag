@@ -93,3 +93,10 @@ python -X utf8 -m job_rag.generation
 
 ## 專案說明頁（票 05）
 `/about`（主頁頂端「專案說明」連結）：給面試官 1–2 分鐘看的 6 塊說明。成績與失敗案例只讀 `eval/results_methods.json`（`python -X utf8 -m job_rag.evaluate --method all` 與 `results_methods.txt` 同次產生）、`eval/results_generation.json`、`eval/crossjudge/judge_gpt.json`，不手寫數字。輸出檔缺、讀不了或和 `eval/questions.json` 的題組對不上（指紋不同），該兩塊顯示錯誤。失敗案例的挑法見 `job_rag/about.py` 的 `_cases`。
+
+## 加到主畫面（票 16，輕量 PWA）
+`/manifest.webmanifest`、`static/icon-{180,192,512}.png`（`python scripts/make_icons.py` 重產，只用 Pillow）與三種畫面共用的 meta 標籤（`job_rag/ui.py` 的 `PWA_HEAD`）。加到主畫面後以 standalone 開啟。路徑都是根路徑，換網址不用改。
+**不做 service worker、不做離線快取**：查詢需要後端，離線快取只會讓畫面顯示舊內容。
+- http 區網 IP：iOS Safari 的「加到主畫面」可用，不需要 https；Android Chrome 的安裝提示（安裝為 App）需要 https，http 下最多是瀏覽器標示的主畫面捷徑，是否全螢幕未驗證。
+- https（通道或雲端）：兩者都可用，Android 才有安裝選項。
+- 依據：[Chrome 安裝條件](https://web.dev/articles/install-criteria)、[MDN](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable)（安裝不需要 service worker；localhost 例外）。
