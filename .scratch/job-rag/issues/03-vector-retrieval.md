@@ -13,3 +13,7 @@
 ## Comments
 
 - 程式與測試完成；成績見 eval/results_methods.txt。待使用者確認（題目仍待票 02 確認）。
+
+## Comments
+
+- 完成。實際下載 4,641,211,567 位元組（約 4.32 GiB）。5 種方式成績表在 eval/results_methods.txt。bge-m3 MRR 0.960，混合 0.873；題少，只能當方向。題組仍會被票 10 的題目修訂改動，之後要重跑。
