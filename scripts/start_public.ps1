@@ -10,6 +10,11 @@ $api = 'http://127.0.0.1:4040/api/tunnels'
 if (-not $env:JOB_RAG_ACCESS_CODE) {
     $env:JOB_RAG_ACCESS_CODE = (& python -c "import secrets;print(secrets.token_urlsafe(9))").Trim()
 }
+# Owner PIN (self-use mode): read from the git-ignored file selfdata\owner_pin.txt when the variable is not already set.
+if (-not $env:JOB_RAG_OWNER_PIN) {
+    $pinFile = Join-Path $PSScriptRoot '..\selfdata\owner_pin.txt'
+    if (Test-Path $pinFile) { $env:JOB_RAG_OWNER_PIN = (Get-Content $pinFile -Raw -Encoding UTF8).Trim() }
+}
 $code = $env:JOB_RAG_ACCESS_CODE
 if ($code.Length -lt 8) { Write-Host 'JOB_RAG_ACCESS_CODE must be at least 8 characters.'; exit 1 }
 $ngrok = Get-Command ngrok -ErrorAction SilentlyContinue
