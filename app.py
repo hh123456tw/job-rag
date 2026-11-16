@@ -65,10 +65,9 @@ def _status_page():
     return page("求職情報問答", body, "<meta http-equiv=refresh content=2>")
 
 
-# (按鈕文字, 語料的公司欄位)。名稱以 public_company_counts() 為準，只有尼諾思不同。
+# (按鈕文字, 語料的公司欄位)。現場 8 家；奧衍、尼諾思、醫宇宙已移出（retrieval.EXCLUDED_COMPANIES）。按鈕文字與公司欄位目前相同。
 LIVE_COMPANIES = [("台灣大哥大", "台灣大哥大"), ("聯合報", "聯合報"), ("叡揚資訊", "叡揚資訊"), ("神通資訊", "神通資訊"),
-                  ("藍新資訊", "藍新資訊"), ("凱基證券", "凱基證券"), ("華電聯網", "華電聯網"), ("奧衍", "奧衍"),
-                  ("中華網龍", "中華網龍"), ("尼諾思", "尼諾思科技"), ("醫宇宙", "醫宇宙")]
+                  ("藍新資訊", "藍新資訊"), ("凱基證券", "凱基證券"), ("華電聯網", "華電聯網"), ("中華網龍", "中華網龍")]
 # 常用問題：鍵 -> (按鈕文字, 接在公司名後的句尾)。句型必須通順、對任何公司都適用；措辭挑選見 eval/button_check.md
 FAQ = {"what": ("這家做什麼", "是做什麼的？"), "jobs": ("有哪些職缺", "有哪些職缺？"),
        "tech": ("用什麼技術", "的技術堆疊與開發工具有哪些？"), "fin": ("財務與新聞", "的營收和近期新聞是什麼？")}
@@ -78,10 +77,13 @@ DEMOS = [i for i in ("u07", "u06") if i in EVAL] or [i for i, q in EVAL.items() 
 
 
 def _company_buttons():
-    """語料只含 11 家預設公司的一部分（例如 3 家範例語料）時，按鈕改列語料裡有的公司；全有或一家都沒有時用原清單。"""
+    """語料只含預設現場公司的一部分時，按鈕改列語料裡有的公司；全有或一家都沒有時用原清單。
+    例外：公開範例語料（3 家都不是現場公司）直接列它的公司。"""
     names = {n for n in public_company_counts() if n != "綜合"}
     live = {n for _, n in LIVE_COMPANIES}
-    if not names & live or live <= names:
+    if not names & live:
+        return [(n, n) for n in sorted(names)] if retrieval.is_sample() else LIVE_COMPANIES
+    if live <= names:
         return LIVE_COMPANIES
     label = {n: l for l, n in LIVE_COMPANIES}
     return [(label.get(n, n), n) for n in sorted(names)]

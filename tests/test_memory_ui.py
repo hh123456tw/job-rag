@@ -50,5 +50,5 @@ def test_follow_up_completion_is_shown_as_a_real_step():
 def test_each_company_page_has_its_own_storage_key(web):  # noqa: F811
     c = web.app.test_client()
     ka = re.search(r'data-key="([^"]*)"', c.get("/c/" + quote("台灣大哥大")).get_data(as_text=True)).group(1)
-    kb = re.search(r'data-key="([^"]*)"', c.get("/c/" + quote("尼諾思")).get_data(as_text=True)).group(1)
-    assert ka == "台灣大哥大" and kb == "尼諾思" and ka != kb
+    kb = re.search(r'data-key="([^"]*)"', c.get("/c/" + quote("藍新資訊")).get_data(as_text=True)).group(1)
+    assert ka == "台灣大哥大" and kb == "藍新資訊" and ka != kb

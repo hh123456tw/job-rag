@@ -25,23 +25,23 @@ from job_rag.evalset import questions_path  # noqa: E402
 EVAL = json.loads(questions_path().read_text(encoding="utf-8"))["questions"]  # 完整題組；公開版只有範例題組
 FIRST_ANSWERABLE = next(q for q in EVAL if q["answerable"])
 FIRST_UNANSWERABLE = next(q for q in EVAL if not q["answerable"])
-LIVE = ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊", "凱基證券", "華電聯網", "奧衍", "中華網龍", "尼諾思", "醫宇宙"]
+LIVE = ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊", "凱基證券", "華電聯網", "中華網龍"]
 
 
 def body_of(html):
     return html.split("<div id=results>", 1)[1]  # 表單會回顯問題，只看結果區
 
 
-def test_home_lists_the_11_live_companies_as_cards(client):
+def test_home_lists_the_8_live_companies_as_cards(client):
     _, c = client
     html = c.get("/").get_data(as_text=True)
     for name in LIVE:
         assert re.search(rf'<a class=card href="/c/[^"]+"><b>{name}</b>', html), name
-    assert len(re.findall(r'<a class="?card[ "]?[^>]*href="/c/', html)) == 12  # 11 家 + 全部公司
+    assert len(re.findall(r'<a class="?card[ "]?[^>]*href="/c/', html)) == 9  # 8 家 + 全部公司
 
 
 def test_company_buttons_match_corpus_company_names():
-    # 對照表的值要是語料的公司欄位（尼諾思 -> 尼諾思科技）；環境變數沒指到真語料就跳過
+    # 對照表的值要是語料的公司欄位；環境變數沒指到真語料就跳過
     import app as appmod
     assert [label for label, _ in appmod.LIVE_COMPANIES] == LIVE
     corpus = os.environ.get("JOB_RAG_REAL_CORPUS")
@@ -61,9 +61,9 @@ def test_selected_company_limits_results_to_that_company(client):
 
 def test_company_page_has_back_to_list_and_noscript_faq_form(client):
     _, c = client
-    html = c.get("/c/" + quote("尼諾思")).get_data(as_text=True)
-    assert 'href="/">← 公司清單<' in html and 'name=company value="尼諾思科技"' not in html.split("<noscript>")[0]
-    assert 'value="尼諾思科技"' in html.split("<noscript>")[1]  # 沒有 JS 的退路：按鈕公司 -> 語料公司欄位
+    html = c.get("/c/" + quote("凱基證券")).get_data(as_text=True)
+    assert 'href="/">← 公司清單<' in html and 'name=company value="凱基證券"' not in html.split("<noscript>")[0]
+    assert 'value="凱基證券"' in html.split("<noscript>")[1]  # 沒有 JS 的退路：按鈕公司 -> 語料公司欄位
 
 
 FAQ = {"what": "是做什麼的？", "jobs": "有哪些職缺？", "tech": "的技術堆疊與開發工具有哪些？", "fin": "的營收和近期新聞是什麼？"}
@@ -71,12 +71,12 @@ FAQ = {"what": "是做什麼的？", "jobs": "有哪些職缺？", "tech": "的�
 
 def test_four_faq_buttons_fill_the_selected_company_into_the_question(client):
     _, c = client
-    html = c.get("/?company=奧衍").get_data(as_text=True)  # 沒有 JS 的公司頁；對話頁的預設題目另見 test_chat.py
+    html = c.get("/?company=凱基證券").get_data(as_text=True)  # 沒有 JS 的公司頁；對話頁的預設題目另見 test_chat.py
     for label in ("這家做什麼", "有哪些職缺", "用什麼技術", "財務與新聞"):
         assert f">{label}</button>" in html
     for key, tail in FAQ.items():
-        html = c.get(f"/?faq={key}&company=奧衍").get_data(as_text=True)
-        assert f"奧衍{tail}" in html and "id=results" in html, key
+        html = c.get(f"/?faq={key}&company=凱基證券").get_data(as_text=True)
+        assert f"凱基證券{tail}" in html and "id=results" in html, key
 
 
 def test_faq_without_company_says_so_not_silent(client):
@@ -96,10 +96,10 @@ def test_faq_tails_are_complete_questions_that_fit_any_company():
 def test_first_submit_button_in_form_is_search_so_enter_runs_it(client):
     # 瀏覽器按 Enter 會「按」表單的第一顆提交按鈕；它必須是「查」（沒有 name，不帶 faq）。沒有 JS 的公司頁與對話頁的輸入列都適用
     _, c = client
-    form = re.search(r"<form id=f>(.*?)</form>", c.get("/?company=奧衍").get_data(as_text=True), re.S).group(1)
+    form = re.search(r"<form id=f>(.*?)</form>", c.get("/?company=凱基證券").get_data(as_text=True), re.S).group(1)
     first = re.search(r"<button(?=[\s>])([^>]*)>(.*?)</button>", form, re.S)
     assert first.group(2) == "查" and "name=" not in first.group(1) and "type=button" not in first.group(1)
-    bar = re.search(r"<form id=bar[^>]*>(.*?)</form>", c.get("/c/" + quote("奧衍")).get_data(as_text=True), re.S).group(1)
+    bar = re.search(r"<form id=bar[^>]*>(.*?)</form>", c.get("/c/" + quote("凱基證券")).get_data(as_text=True), re.S).group(1)
     assert "<button class=go>" in bar  # 對話頁：Enter 送出表單，由腳本處理
 
 
@@ -167,10 +167,10 @@ def test_no_collaboration_wording(client):
 
 
 # ---- 範例語料只有 3 家：公司按鈕只列語料裡有的公司；查無示範用範例題組的不可回答題 ----
-def test_company_buttons_list_the_corpus_companies_when_it_has_only_some_of_the_11(monkeypatch):
+def test_company_buttons_list_the_corpus_companies_when_it_has_only_some_of_the_8(monkeypatch):
     from tests.test_sample_corpus import SAMPLE
     monkeypatch.setenv("JOB_RAG_CORPUS", str(SAMPLE))
     import app as appmod
     html = appmod.app.test_client().get("/").get_data(as_text=True)
-    assert re.findall(r'<a class=card href="/c/[^"]+"><b>([^<]+)</b>', html) == ["奧衍", "尼諾思", "遠振資訊"]  # 不含沒有的 9 家
+    assert re.findall(r'<a class=card href="/c/[^"]+"><b>([^<]+)</b>', html) == ["奧衍", "尼諾思科技", "遠振資訊"]  # 範例語料的 3 家（不在現場清單內），列語料裡有的公司；不含現場清單的 8 家
     assert "<b>台灣大哥大</b>" not in html and "<b>奧衍</b>" in html

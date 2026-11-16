@@ -2,19 +2,14 @@
  "questions": [
   {
    "id": "c01",
-   "question": "哪一家公司是 UiPath 的認證經銷商？",
+   "question": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
    "type": "跨公司",
    "answerable": true,
    "gold": [
     {
-     "file": "08_奧衍.md",
-     "heading": "1. 基本資料",
-     "quote": "2019 年成為 UiPath 認證經銷商"
-    },
-    {
-     "file": "08_奧衍.md",
+     "file": "05_藍新資訊.md",
      "heading": "2. 業務與財務",
-     "quote": "代理的產品：UiPath（RPA）"
+     "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
     }
    ],
    "status": "待使用者確認"
@@ -40,14 +35,14 @@
   },
   {
    "id": "s01",
-   "question": "奧衍的資本額是多少？",
+   "question": "神通資訊的資本額是多少？",
    "type": "單一公司",
    "answerable": true,
    "gold": [
     {
-     "file": "08_奧衍.md",
+     "file": "04_神通資訊.md",
      "heading": "1. 基本資料",
-     "quote": "資本額 | 2000 萬"
+     "quote": "額定 25 億；實收 21 億"
     }
    ],
    "status": "待使用者確認"
@@ -285,19 +280,14 @@
   },
   {
    "id": "j07",
-   "question": "奧衍的解決方案架構師（Junior）月薪範圍是多少？",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
    "type": "職缺",
    "answerable": true,
    "gold": [
     {
-     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
-     "heading": "3. 奧衍股份有限公司（公司頁 4 筆；含 3 筆技術職缺） > 3-3 解決方案架構師 - Solutions Architect（Junior）",
-     "quote": "36,000~50,000"
-    },
-    {
-     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
-     "heading": "2. 奧衍股份有限公司（公司頁 4 筆）",
-     "quote": "36,000~50,000"
+     "file": "B_神通_聯合報.md",
+     "heading": "二、聯合報系 > B. 聯合線上股份有限公司 > B1. 【戰略部】數據優化師（數據分析）",
+     "quote": "月薪 35,000 以上"
     }
    ],
    "status": "待使用者確認"
@@ -323,19 +313,19 @@
   },
   {
    "id": "j09",
-   "question": "奧衍的 RPA 開發工程師（Junior）需要外派嗎？",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
    "type": "職缺",
    "answerable": true,
    "gold": [
     {
-     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
-     "heading": "3. 奧衍股份有限公司（公司頁 4 筆；含 3 筆技術職缺） > 3-1 【擴編】RPA 開發工程師／流程自動化工程師 (Junior)_無經驗另有培訓（已讀單頁）",
-     "quote": "需外派，一年累積時間未定"
+     "file": "補2_神通.md",
+     "heading": "二、AI／Python／後端／資料／全端相關職缺（已點進內頁，共 6 筆） > 3. K026KB6_C++/AI 應用工程師",
+     "quote": "無需出差外派"
     },
     {
-     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
-     "heading": "2. 奧衍股份有限公司（公司頁 4 筆）",
-     "quote": "需外派，年累積時間未定"
+     "file": "網址2_神通_華電.md",
+     "heading": "一、神通資訊科技（公司頁 https://www.104.com.tw/company/ocjaiy8）",
+     "quote": "K026KB6 | https://www.104.com.tw/job/93vim"
     }
    ],
    "status": "待使用者確認"

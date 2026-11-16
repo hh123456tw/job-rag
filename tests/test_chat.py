@@ -108,7 +108,7 @@ def test_all_company_topics_count_every_public_segment(tmp_path):
 
 
 # ---- 對話頁 ----
-def page(web, label="尼諾思"):
+def page(web, label="藍新資訊"):
     r = web.app.test_client().get("/c/" + quote(label))
     return r.status_code, r.get_data(as_text=True)
 
@@ -116,13 +116,13 @@ def page(web, label="尼諾思"):
 def test_company_chat_page_structure(web):
     code, html = page(web)
     assert code == 200 and "<body class=chat" in html
-    assert 'href="/">← 公司清單<' in html and "<b class=app>尼諾思</b>" in html and 'href="/about">專案說明<' in html
+    assert 'href="/">← 公司清單<' in html and "<b class=app>藍新資訊</b>" in html and 'href="/about">專案說明<' in html
     assert re.search(r'<button id=help type=button aria-label="可以問什麼">？</button>', html)  # 右上角「？」
-    assert re.search(r'<form id=bar [^>]*><input id=qi name=q placeholder="例如：尼諾思', html)  # 固定一個範例，沒有動畫
+    assert re.search(r'<form id=bar [^>]*><input id=qi name=q placeholder="例如：藍新資訊', html)  # 固定一個範例，沒有動畫
     assert html.count("<script>") == 1 and not re.search(r"<script[^>]*\bsrc\b", html)
     presets = attr(html, "presets")
-    assert 3 <= len(presets) <= 5 and all("尼諾思" in q for _, _, q in presets)
-    assert "我可以回答關於尼諾思的問題。你可以點下面的題目，或直接問。" in html.replace("&#39;", "'") or "我可以回答關於尼諾思的問題" in html
+    assert 3 <= len(presets) <= 5 and all("藍新資訊" in q for _, _, q in presets)
+    assert "我可以回答關於藍新資訊的問題。你可以點下面的題目，或直接問。" in html.replace("&#39;", "'") or "我可以回答關於藍新資訊的問題" in html
     assert "<noscript>" in html and "name=faq" in html.split("<noscript>")[1]  # 沒有 JS 的退路
 
 
@@ -133,11 +133,11 @@ def test_all_companies_chat_page_and_unknown_company(web):
 
 
 def test_hint_text_comes_from_the_corpus_and_is_honest_about_thin_companies(web):
-    code, html = page(web, "尼諾思")  # MINI 語料沒有尼諾思：沒有任何主題，而且標示公開資料較少
+    code, html = page(web, "藍新資訊")  # MINI 語料沒有藍新資訊：沒有任何主題，而且標示公開資料較少
     lines = attr(html, "hint")
     assert lines[0].startswith("這家公開資料較少（只有 0 段）")
     assert lines[1] == "這家有的資料：" and lines[2].startswith("這家沒有的資料：薪資範圍、員工人數")
-    assert lines[3].startswith("你可以這樣問：「尼諾思") and lines[3].count("「") == 2
+    assert lines[3].startswith("你可以這樣問：「藍新資訊") and lines[3].count("「") == 2
 
 
 def test_hint_lists_real_topics_for_a_company_in_the_corpus(web):
@@ -228,5 +228,5 @@ def test_api_answer_alias_has_the_same_limits(web, monkeypatch):
 def test_chat_pages_are_behind_the_access_code(web, monkeypatch):
     monkeypatch.setenv("JOB_RAG_ACCESS_CODE", "abc-123")
     c = web.app.test_client()
-    assert c.get("/c/" + quote("尼諾思")).status_code == 403 and c.get("/").status_code == 403
-    assert c.get("/c/" + quote("尼諾思"), query_string={"k": "abc-123"}).status_code == 200
+    assert c.get("/c/" + quote("藍新資訊")).status_code == 403 and c.get("/").status_code == 403
+    assert c.get("/c/" + quote("藍新資訊"), query_string={"k": "abc-123"}).status_code == 200

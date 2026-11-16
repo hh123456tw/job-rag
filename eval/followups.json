@@ -34,16 +34,16 @@
   },
   {
    "id": "f03",
-   "company": "奧衍",
-   "previous": "奧衍是做什麼的？",
+   "company": "聯合報",
+   "previous": "聯合報是做什麼的？",
    "question": "資本額多少？",
    "type": "追問",
    "answerable": true,
    "gold": [
     {
-     "file": "08_奧衍.md",
+     "file": "02_聯合報.md",
      "heading": "1. 基本資料",
-     "quote": "資本額 | 2000 萬"
+     "quote": "資本額：30.9 億元"
     }
    ],
    "status": "待使用者確認"
@@ -83,15 +83,15 @@
   {
    "id": "f06",
    "company": "",
-   "previous": "哪一家公司是 UiPath 的認證經銷商？",
+   "previous": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
    "question": "它的資本額是多少？",
    "type": "追問",
    "answerable": true,
    "gold": [
     {
-     "file": "08_奧衍.md",
+     "file": "05_藍新資訊.md",
      "heading": "1. 基本資料",
-     "quote": "資本額 | 2000 萬"
+     "quote": "約 1.46 億"
     }
    ],
    "status": "待使用者確認"

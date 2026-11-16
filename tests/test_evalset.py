@@ -138,3 +138,18 @@ def test_no_interview_or_review_questions_remain():
 @pytest.mark.skipif(not os.environ.get("JOB_RAG_REAL_CORPUS"), reason="需要完整語料（JOB_RAG_REAL_CORPUS）")
 def test_real_question_set_verifies_against_real_corpus():
     assert verify(_real(), os.environ["JOB_RAG_REAL_CORPUS"]) == []
+
+
+def test_gold_in_an_excluded_company_is_rejected(tmp_path, monkeypatch):
+    # 票 23：公司在移出名單內，它的段落不在索引裡；金標指到那裡要被擋下（引文雖然真的在原檔）
+    from job_rag import retrieval
+    (tmp_path / "01_甲科技.md").write_text("# 甲\n## 1. 基本資料\n甲科技做鯨魚追蹤。\n", encoding="utf-8")
+    (tmp_path / "02_乙資訊.md").write_text("# 乙\n## 1. 基本資料\n乙資訊做資安。\n", encoding="utf-8")
+    qs = [A("a", [g("02_乙資訊.md", "1. 基本資料", "乙資訊做資安")])]
+    assert verify(qs, tmp_path) == []
+    monkeypatch.setattr(retrieval, "EXCLUDED_COMPANIES", frozenset({"乙資訊"}))
+    retrieval._parse.cache_clear()
+    try:
+        assert any("不在索引內" in p for p in verify(qs, tmp_path))
+    finally:
+        retrieval._parse.cache_clear()

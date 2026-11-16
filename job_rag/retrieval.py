@@ -38,6 +38,10 @@ _EXCLUDED_WORDS = re.compile("風險|判斷|評價|面試|推測|矛盾|不一�
 ALIASES = {"台哥大": "台灣大哥大", "聯合報系": "聯合報", "網龍": "中華網龍", "宏碁雲": "宏碁雲架構", "尼諾思": "尼諾思科技",
            "神通": "神通資訊", "華電": "華電聯網"}  # 檔名簡稱（補2_神通、補3_華電）
 GENERAL = "綜合"
+# 移出名單（票 23）：這些公司（語料的公司欄位）載入時整家略過，不進索引、向量快取、清單、偵測。研究筆記檔不動、不刪。
+# 公開範例語料（sample_corpus/）是獨立的示範資料，不受名單影響。
+EXCLUDED_COMPANIES = frozenset({"奧衍", "尼諾思科技", "醫宇宙"})
+SAMPLE_CORPUS = Path(__file__).resolve().parent.parent / "sample_corpus"
 _HEAD = re.compile(r"^(#{1,6})\s+(.*\S)\s*$")
 _NUM = re.compile(r"^(?:\d+(?:\.\d+)*\.?|[一二三四五六七八九十]+、|\([a-z]\))\s*")
 _PAREN = re.compile(r"[（(][^）)]*[）)]")
@@ -85,6 +89,11 @@ def _root(corpus=None) -> str:
     if not Path(b).is_dir():
         raise RuntimeError(f"語料包路徑不存在：{b}（JOB_RAG_BUNDLE）")
     return BUNDLE_PREFIX + str(Path(b).resolve())
+
+
+def is_sample(corpus=None) -> bool:
+    """目前（或指定）的語料是不是 repo 內的公開範例語料。"""
+    return not (corpus is None and os.environ.get("JOB_RAG_BUNDLE")) and _corpus_dir(corpus).resolve() == SAMPLE_CORPUS
 
 
 def segments_hash(index_texts) -> str:
@@ -150,6 +159,7 @@ def _parse(root: str) -> tuple:
     deep = lambda f: f.parent == root_p and DEEP_FILE.match(f.name)  # 一公司一檔；範例語料用 S1_ 這種編號
     names = [DEEP_PREFIX.sub("", f.stem) for f in files if deep(f)]
     segs, drops = [], []
+    skip = frozenset() if root_p.resolve() == SAMPLE_CORPUS else EXCLUDED_COMPANIES
     for f in files:
         file_company = DEEP_PREFIX.sub("", f.stem) if deep(f) else None
         stack: list[tuple[int, str]] = []  # (level, title)，含 H1
@@ -160,13 +170,16 @@ def _parse(root: str) -> tuple:
             text = "\n".join(body).strip()
             body.clear()
             path = [t for lv, t in stack if lv > 1]
+            company = file_company or _company_of(path, f.stem, names)
+            if company in skip:  # 移出名單：連「面試」行的統計都不算
+                body.clear(), dropped.clear()
+                return
             for line in dropped:
                 drops.append({"file": f.name, "heading_path": " > ".join(path) or f.stem,
                               "line": line, "public": not _is_excluded(path)})
             dropped.clear()
             if not text:
                 return
-            company = file_company or _company_of(path, f.stem, names)
             head = " > ".join(path) or (stack[0][1] if stack else f.stem)
             for piece in _pieces(text):
                 segs.append({
