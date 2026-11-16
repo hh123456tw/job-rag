@@ -1,0 +1,164 @@
+{
+ "questions": [
+  {
+   "id": "f01",
+   "company": "華電聯網",
+   "previous": "華電聯網有哪些職缺？",
+   "question": "要出差嗎？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "E_華電_艾普特_醫宇宙.md",
+     "heading": "1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）",
+     "quote": "需出差，一年累積時間未定"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f02",
+   "company": "叡揚資訊",
+   "previous": "叡揚資訊的技術堆疊與開發工具有哪些？",
+   "question": "那薪水呢？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "4. 職缺",
+     "quote": "月薪 35,000–55,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f03",
+   "company": "奧衍",
+   "previous": "奧衍是做什麼的？",
+   "question": "資本額多少？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "08_奧衍.md",
+     "heading": "1. 基本資料",
+     "quote": "資本額 | 2000 萬"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f04",
+   "company": "藍新資訊",
+   "previous": "藍新資訊用什麼技術？",
+   "question": "成立多久了？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "成立日 | 2014-04-23"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f05",
+   "company": "台灣大哥大",
+   "previous": "台灣大哥大是做什麼的？",
+   "question": "那職缺薪資呢？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "4. 職缺",
+     "quote": "年薪約 81–108 萬"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f06",
+   "company": "",
+   "previous": "哪一家公司是 UiPath 的認證經銷商？",
+   "question": "它的資本額是多少？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "08_奧衍.md",
+     "heading": "1. 基本資料",
+     "quote": "資本額 | 2000 萬"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f07",
+   "company": "凱基證券",
+   "previous": "凱基證券是做什麼的？",
+   "question": "地址在哪裡？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "1. 基本資料",
+     "quote": "台北市中山區明水路 698"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f08",
+   "company": "中華網龍",
+   "previous": "中華網龍是做什麼的？",
+   "question": "成立日是哪天？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "1. 基本資料",
+     "quote": "成立日：2000-03-28"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f09",
+   "company": "華電聯網",
+   "previous": "華電聯網的技術堆疊與開發工具有哪些？",
+   "question": "那新聞呢？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "8. 近一年新聞",
+     "quote": "宣布成立碩維"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "f10",
+   "company": "",
+   "previous": "哪一家公司有自研的語音模型？",
+   "question": "它的資本額是多少？",
+   "type": "追問",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "1. 基本資料",
+     "quote": "資本總額 600 億元"
+    }
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}

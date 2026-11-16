@@ -13,6 +13,7 @@ from markupsafe import escape
 from job_rag import about, guard, detect_company, netinfo, public_company_counts, retrieval, search
 from job_rag.about_page import render as render_about
 from job_rag.chat_ui import CHAT_JS
+from job_rag.memory import HistoryError, clean_history, expand
 from job_rag.topics import topics
 from job_rag.answer import NOT_FOUND, AnswerError, _post, answer
 from job_rag.evalset import questions_path
@@ -182,10 +183,14 @@ def answer_json():
     q, company = request.args.get("q", "").strip(), request.args.get("company", "").strip() or None
     if not q:
         return {"status": "error", "message": "沒有問題"}, 400
+    try:
+        history = clean_history(request.args.get("history", ""))  # 伺服器不存對話：每次由前端帶最近 2 輪
+    except HistoryError as e:
+        return {"status": "error", "message": str(e)}, 400
     if _warm["state"] != "ready":
         return {"status": "error", "message": "系統準備中，請稍後再試（原文結果不受影響）。"}, 503
     try:
-        hits = search(q, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"))
+        hits = search(expand(q, history), company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"))
     except RuntimeError as e:
         return {"status": "error", "message": f"錯誤：{e}"}, 500
     if _low(hits):
@@ -194,7 +199,7 @@ def answer_json():
         return {"status": "limit", "message": f"整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
                 f"請約 {-(-wait // 60)} 分鐘後再試。原文在下面，不受影響。"}, 429
     try:
-        r = answer(q, hits, post=_fake_post() or _post)
+        r = answer(q, hits, post=_fake_post() or _post, history=history)
     except AnswerError as e:
         return {"status": "error", "message": f"整理失敗：{e}。原文在下面，不受影響。"}, 502
     return {"status": "ok", "answer": r["answer"], "sources": r["sources"]}
@@ -206,17 +211,21 @@ def api_search():
     q, company = request.args.get("q", "").strip(), request.args.get("company", "").strip() or None
     if not q:
         return {"status": "error", "message": "沒有問題"}, 400
+    try:
+        history = clean_history(request.args.get("history", ""))
+    except HistoryError as e:
+        return {"status": "error", "message": str(e)}, 400
     if _warm["state"] != "ready":
         return {"status": "error", "message": "系統準備中，請稍後再試。"}, 503
     try:
-        detected = False
-        if not company and _on("JOB_RAG_DETECT") and (d := detect_company(q)):
+        detected, rq = False, expand(q, history)  # 追問補全後的問句：公司偵測與檢索都用它
+        if not company and _on("JOB_RAG_DETECT") and (d := detect_company(rq)):
             company, detected = d, True
-        hits = search(q, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"))
+        hits = search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"))
     except RuntimeError as e:
         return {"status": "error", "message": f"搜尋失敗：{e}"}, 500
     keep = ("company", "file", "heading_path", "text", "also_in")
-    return {"status": "low" if _low(hits) else "ok", "company": company or "", "detected": detected,
+    return {"status": "low" if _low(hits) else "ok", "company": company or "", "detected": detected, "expanded": rq != q.strip(),
             "hits": [{k: h.get(k, []) for k in keep} for h in hits]}
 
 

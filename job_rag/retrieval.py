@@ -333,6 +333,13 @@ def _detect(root: str, question: str) -> str | None:
     return found.pop() if len(found) == 1 else None
 
 
+def mentions_company(question: str, corpus=None) -> bool:
+    """問句含任何一家公司的名稱或別名（不論幾家）。"""
+    root = _root(corpus)
+    names = {s["company"] for s in _public(root)} - {GENERAL}
+    return any(t in question for t in names | {a for a, n in ALIASES.items() if n in names})
+
+
 def detect_company(question: str, corpus=None) -> str | None:
     """問句只提到一家公司時回該公司，否則（沒有、兩家以上）回 None。"""
     return _detect(_root(corpus), question)
@@ -356,8 +363,11 @@ def _dedupe(pool, ranked):
     return kept
 
 
-def search(question: str, method: str = "bge-m3", company: str | None = None,
-           k: int = 3, corpus=None, gate: bool = True, detect: bool = False, dedupe: bool = False) -> list[dict]:
+DEFAULT_METHOD, DEFAULT_K = "bge-m3", 3  # 預設檢索方式與取前幾段（介面與 /about 都讀這兩個）
+
+
+def search(question: str, method: str = DEFAULT_METHOD, company: str | None = None,
+           k: int = DEFAULT_K, corpus=None, gate: bool = True, detect: bool = False, dedupe: bool = False) -> list[dict]:
     """排序後的公開事實段落。排除段落在載入時就丟了，候選池根本沒有它們。
     查無（最高分低於 NOT_FOUND_THRESHOLD）回空串列；gate=False 不套門檻（評分用）。
     detect：沒指定 company 時，問句只含一家公司名就只搜那家。dedupe：合併重複段落，結果多一個 also_in。"""

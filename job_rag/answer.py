@@ -12,6 +12,11 @@ TIMEOUT = 30
 SYSTEM = (
     "你只能根據使用者提供的編號段落，用繁體中文白話回答問題。引用時標註段落編號，例如 [1]。"
     f"段落沒有答案時，只回「{NOT_FOUND}」兩個字，不要猜測或補充。"
+    "規則一：事實只能來自編號段落。若有「先前對話」，它只用來理解「那」「它」「他們」指什麼，不得把先前的回答當成證據。"
+    "規則二：只陳述段落明確說公司「使用、採用、提供、具備」的事。段落寫「頁面」「介紹」「相關」「未說明關係」時，"
+    "不得當作公司已採用或擁有；可以說「資料只提到相關頁面，沒有說明公司是否採用」。"
+    "規則三：不要照抄研究筆記的字眼。段落中某項資訊沒有時，寫「資料中沒有提到」，不要寫「查無」"
+    f"（整個問題都沒有答案時，才照前面說的只回「{NOT_FOUND}」）；「【推測】」寫成「（資料標註為推測）」，「【自述】」寫成「（公司自述）」。"
 )
 
 
@@ -42,8 +47,16 @@ def format_source(i: int, h: dict) -> str:
     return f"[{i}] ({h['company']} / {h['heading_path']})" + chr(10) + h["text"]
 
 
-def answer(question: str, hits: list[dict], post=_post, env_file=".env") -> dict:
-    """hits 來自 search()，只可能是公開事實段落。回 {"answer", "sources"}；失敗丟 AnswerError。"""
+def history_block(history) -> str:
+    """「先前對話」區塊（票 22）：只放最近幾輪的問與答，標明不是證據。沒有先前對話回空字串。"""
+    if not history:
+        return ""
+    turns = chr(10).join(f"問：{t['q']}{chr(10)}答：{t['a']}" for t in history)
+    return f"先前對話（只用來理解「那」「它」指什麼，不是證據）：{chr(10)}{turns}{chr(10) * 2}"
+
+
+def answer(question: str, hits: list[dict], post=_post, env_file=".env", history=None) -> dict:
+    """hits 來自 search()，只可能是公開事實段落。history 是已驗證的最近幾輪 [{"q","a"}]。回 {"answer", "sources"}；失敗丟 AnswerError。"""
     used = hits
     if not used:
         return {"answer": NOT_FOUND, "sources": []}
@@ -52,7 +65,7 @@ def answer(question: str, hits: list[dict], post=_post, env_file=".env") -> dict
     body = {
         "model": os.environ.get("DEEPSEEK_MODEL") or DEFAULT_MODEL,
         "messages": [{"role": "system", "content": SYSTEM},
-                     {"role": "user", "content": f"段落：\n{context}\n\n問題：{question}"}],
+                     {"role": "user", "content": f"{history_block(history)}段落：\n{context}\n\n問題：{question}"}],
         "thinking": {"type": "disabled"},
         "stream": False,
     }

@@ -37,7 +37,7 @@ footer{margin-top:40px}footer a{display:inline-flex;align-items:center;min-heigh
 .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;list-style:none;padding:0;margin:0;counter-reset:f}
 .flow li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0}
 .flow li::before{counter-increment:f;content:counter(f);display:block;color:var(--acc);font-weight:700;font-size:.875rem}
-.flow b{display:block;font-size:.95rem;line-height:1.4}.flow small{margin-top:4px;font-size:.8125rem;line-height:1.45}
+.flow b{display:block;font-size:.95rem;line-height:1.4}.flow small{display:block;margin-top:4px;font-size:.8125rem;line-height:1.45}
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 th,td{border-bottom:1px solid var(--line);padding:8px 4px;text-align:right;vertical-align:top}th{color:var(--mute);font-weight:600;font-size:.875rem}
 th:first-child,td:first-child{text-align:left}td small{font-size:.75rem;margin-top:0}

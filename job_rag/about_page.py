@@ -1,7 +1,7 @@
 """專案說明頁的 HTML。數字全部來自 about.load() 的輸出；純 HTML/CSS，不用圖表庫。"""
 from markupsafe import escape
 
-from . import METHODS
+from . import METHODS, memory, retrieval
 from .ui import page
 
 LABEL = {"bm25": "BM25（jieba 斷詞）", "bge-small-zh": "bge-small-zh", "bge-m3": "bge-m3", "e5-large": "multilingual-e5",
@@ -103,6 +103,35 @@ def _cases(d) -> str:
             + "".join(_case(c, d["depth"]) for c in d["cases"]))
 
 
+def _flow(n_segments: int, n_companies: int) -> str:
+    """流程 6 格：標題＋一句「我們怎麼做」。數字與參數取自程式常數與載入結果，不手寫。"""
+    r = retrieval
+    cells = [
+        ("公開資料", f"{n_companies} 家調查筆記只留公司做什麼、職缺、技術、財務這類公開事實，共 {n_segments} 段。"),
+        ("切段", f"依標題切開，每段前面加上公司名與標題；太長的再細切（約 {r.CHUNK} 字、重疊 {r.OVERLAP} 字）。"),
+        ("找段落", f"用 {r.DEFAULT_METHOD} 把問題和每段轉成向量，取最相近的前 {r.DEFAULT_K} 段；選它是因為比較了 {len(METHODS)} 種找法。"),
+        ("原文結果", "先把這幾段原文立刻顯示，標出公司、檔名與標題，讓人自己核對。"),
+        ("整理答案", f"把這幾段交給 DeepSeek，要求只根據段落回答並附出處編號；追問會帶入最近 {memory.MAX_TURNS} 輪對話。"),
+        ("出處或「可能沒有答案」", f"最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f} 就不呼叫 DeepSeek，只顯示淡色原文；呼叫失敗時也回到原文。"),
+    ]
+    return "<ol class=flow>" + "".join(f"<li><b>{escape(t)}</b><small>{escape(x)}</small></li>" for t, x in cells) + "</ol>"
+
+
+def _memory(data) -> str:
+    """對話記憶小段（票 22）。沒有輸出檔就不顯示；輸出檔有問題只在這一段顯示錯誤。"""
+    if not data:
+        return ""
+    if data["followup_error"]:
+        return f"<p class=err>對話記憶的評估無法顯示：{escape(data['followup_error'])}</p>"
+    f = data["followup"]
+    if not f:
+        return ""
+    return (f"<p><b>對話記憶。</b>對話會記住最近 2 輪（記在瀏覽器，伺服器不存）。追問很短、沒提公司名也沒提主題時，"
+            f"系統把上一題的問句接在前面再搜；這是簡單規則，不用 LLM 改寫問句。追問只用 {f['n']} 題量過：正確段落排進前 3 名的題數，"
+            f"不補全 {f['plain']}/{f['n']}，補全 {f['expand']}/{f['n']}（規則補全了其中 {f['expanded']} 題）。"
+            f"只量了檢索，沒有量多輪答案品質；題少，只能當方向。</p>")
+
+
 def render(data: dict | None, error: str, n_segments: int, n_companies: int) -> str:
     """data 為 None 時（輸出檔缺或過期），成績與失敗案例改顯示明確錯誤，不用舊數字。"""
     err = f"<p class=err>無法顯示：{escape(error)}</p>"
@@ -115,21 +144,14 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int) -> 
 <p class=lead>點一家公司，直接問問題。答案先出現，附出處；原文收在下面，隨時可以核對。目前收 {n_companies} 家公司的公開資料。</p>
 {_stats(data)}</section>
 <section><h2>2. 流程</h2>
-<ol class=flow>
-<li><b>公開資料</b><small>{n_companies} 家公司，只收公開事實</small></li>
-<li><b>切段</b><small>依標題切成小段</small></li>
-<li><b>找段落</b><small>找出最相關的幾段</small></li>
-<li><b>原文結果</b><small>前 3 段，收在「看原文」</small></li>
-<li><b>整理答案</b><small>請 LLM（大型語言模型）整理，附出處</small></li>
-<li><b>出處或「可能沒有答案」</b><small>失敗時說明原因，原文展開</small></li>
-</ol></section>
+{_flow(n_segments, n_companies)}</section>
 <section><h2>3. 五個設計決定</h2><ul class=plain>
 <li><b>依標題切段，每段前面加公司名。</b>這樣問句提到公司或主題時，比較容易對上。</li>
 <li><b>比較五種找法。</b>不先假設哪種好，用同一批題目量。</li>
 <li><b>只用公開事實。</b>個人意見與推測在載入時就丟掉：不進索引、不送 LLM，畫面給別人看也安全。</li>
 <li><b>答案優先，失敗時回到原文。</b>先立刻顯示原文，再請 LLM 整理答案；失敗、逾時或達用量上限時，直接展開原文。</li>
 <li><b>沒把握就說「可能沒有答案」。</b>最高相似度低於門檻就提示，並且不呼叫 LLM，不亂答。</li>
-</ul></section>
+</ul>{_memory(data)}</section>
 <section><h2>4. 我比較了 5 種找法</h2>{_scores(data) if data else err}</section>
 <section><h2>5. 兩個失敗案例</h2>{_cases(data) if data else err}</section>
 <section><h2>6. 限制</h2><ul class=plain>

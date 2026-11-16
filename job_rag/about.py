@@ -91,6 +91,21 @@ def _cases(questions: list[dict], methods: dict, table: list[dict]) -> list[dict
     return [c | {"question": by[c["id"]]["question"], "gold": by[c["id"]]["gold"]} for c in picked]
 
 
+def _followup(root: Path):
+    """追問題迷你評估（票 22）。輸出檔不存在回 None（頁面不顯示）；存在但讀不了或和題組對不上，丟 AboutDataError。"""
+    if not (root / "eval/results_followups.json").exists():
+        return None
+    from .followups import QUESTIONS, digest
+    r = _read(root, "eval/results_followups.json")
+    qs = _read(root, QUESTIONS)["questions"]
+    if r.get("digest") != digest(qs):
+        raise AboutDataError("results_followups.json 和現在的追問題組對不上（輸出檔過期）；請重跑 python -X utf8 -m job_rag.followups。")
+    try:
+        return {"n": r["n"], "plain": r["no_expand"]["found"], "expand": r["expand"]["found"], "expanded": len(r["expanded_ids"])}
+    except (KeyError, TypeError) as e:
+        raise AboutDataError(f"results_followups.json 格式不對：{e}") from e
+
+
 def load(root=None) -> dict:
     root = Path(root or ROOT)
     questions = _read(root, questions_path(root))["questions"]
@@ -108,7 +123,12 @@ def load(root=None) -> dict:
     gate = m["methods"]["bge-m3"].get("gate")
     if not gate:
         raise AboutDataError("results_methods.json 的 bge-m3 沒有查無門檻結果。")
+    try:  # 追問評估的錯誤只影響那一小段，不拖垮整頁
+        followup, followup_error = _followup(root), ""
+    except AboutDataError as e:
+        followup, followup_error = None, str(e)
     return {
+        "followup": followup, "followup_error": followup_error,
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
