@@ -47,7 +47,12 @@ def _group(questions, mode, method, corpus):
 
 def evaluate(questions: list[dict], method: str = "bm25", corpus=None) -> dict:
     """全部題，只查公開事實段落（排除段落不在索引內）。"""
-    return {"method": method, "scores": _group(questions, "demo", method, corpus)}
+    scores = _group(questions, "demo", method, corpus)
+    types = {}
+    for q in questions:
+        if q["answerable"]:
+            types.setdefault(q.get("type", "未分類"), []).append(scores["ranks"][q["id"]])
+    return {"method": method, "scores": scores, "by_type": {t: metrics(r) for t, r in types.items()}}
 
 
 def _fmt(m):
@@ -62,6 +67,8 @@ def format_report(rep: dict) -> str:
     out.append(f"\n## 全部題（只查公開事實段落）\n{_fmt(g['metrics'])}")
     if g["unanswerable"]["n"]:
         out.append(f"不可回答題 {g['unanswerable']['n']} 題；正確拒答率：尚未實作門檻")
+    for t, m in rep.get("by_type", {}).items():
+        out.append(f"  題型 {t}：{_fmt(m)}")
     miss = [i for i, r in g["ranks"].items() if r is None or r > 3]
     if miss:
         out.append("前 3 名未命中：" + "、".join(f"{i}(名次{g['ranks'][i] or '無'})" for i in miss))

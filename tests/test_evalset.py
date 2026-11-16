@@ -116,6 +116,7 @@ def test_real_question_set_composition():
     assert sum(q["answerable"] for q in qs) == 25
     c = Counter(q["type"] for q in qs)
     assert c["不可回答"] == 5 and all(c[t] > 0 for t in ("跨公司", "單一公司", "職缺"))
+    assert c["跨公司"] <= 3  # 答案散在多處的題少放，金標容易漏列
     assert set(c) == {"跨公司", "單一公司", "職缺", "不可回答"}
     assert all(q["status"] == PEND for q in qs)  # 只有使用者能改成已確認
     assert all("private" not in q for q in qs)

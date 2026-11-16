@@ -9,6 +9,7 @@ from pathlib import Path
 from .retrieval import _corpus_dir, _segments
 
 PENDING = "待使用者確認"  # 只有使用者能改成已確認；程式與 AI 不改
+REVIEW = "## 題目審查"
 _HEAD = re.compile(r"^(#{1,6})\s+(.*\S)\s*$")
 
 
@@ -121,7 +122,11 @@ def main():
     if "--write-md" in sys.argv:
         head = ("# 評估題（30 題）\n\n由 `eval/questions.json` 產生，勿手改。\n"
                 "核對狀態「待使用者確認」＝AI 已用程式核對引文，但使用者尚未逐題對照原檔。\n\n")
-        Path("eval/questions.md").write_text(head + to_markdown(qs), encoding="utf-8")
+        md = Path("eval/questions.md")
+        keep = ""  # 手寫的「題目審查」一節不被重寫洗掉
+        if md.exists() and REVIEW in (old := md.read_text(encoding="utf-8")):
+            keep = "\n" + old[old.index(REVIEW):]
+        md.write_text(head + to_markdown(qs) + keep, encoding="utf-8")
     sys.exit(1 if probs else 0)
 
 

@@ -114,3 +114,16 @@ def test_wrong_gold_gives_miss_not_error():
 def test_questions_without_answerable_gives_no_metrics():
     rep = evaluate([QS[2]], corpus=MINI)
     assert rep["scores"]["metrics"] is None
+
+
+# ---- 題型分組 ----
+def test_scores_are_grouped_by_question_type():
+    qs = [Q("a", "鯨魚追蹤軟體", [("01_甲科技.md", "1. 基本資料")]) | {"type": "單一公司"},
+          Q("b", "刺蝟密語", [("02_乙資訊.md", "7. 工作評價")]) | {"type": "職缺"},
+          Q("c", "量子麵包 zzzxqv") | {"type": "不可回答"}]
+    rep = evaluate(qs, corpus=MINI)
+    assert rep["by_type"]["單一公司"]["n"] == 1 and rep["by_type"]["單一公司"]["hit@1"] == 1
+    assert rep["by_type"]["職缺"]["hit@3"] == 0
+    assert "不可回答" not in rep["by_type"]  # 不可回答題不計 Hit@k / MRR
+    out = format_report(rep)
+    assert "單一公司" in out and "職缺" in out

@@ -20,87 +20,6 @@
    "status": "待使用者確認"
   },
   {
-   "id": "c02",
-   "question": "哪一家公司在 2026 年 10 月掛牌上櫃？",
-   "type": "跨公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "05_藍新資訊.md",
-     "heading": "1. 基本資料",
-     "quote": "2026-10-27 掛牌，承銷價 68 元"
-    },
-    {
-     "file": "05_藍新資訊.md",
-     "heading": "8. 近一年新聞",
-     "quote": "68 元掛牌上櫃"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "c03",
-   "question": "哪一家公司拿到 WAN-IFRA 的數位媒體獎？",
-   "type": "跨公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "02_聯合報.md",
-     "heading": "3. 數據發展部在做什麼",
-     "quote": "WAN-IFRA 2026 Digital Media Awards"
-    },
-    {
-     "file": "02_聯合報.md",
-     "heading": "8. 近一年新聞",
-     "quote": "Publish X 獲 WAN-IFRA 金獎"
-    },
-    {
-     "file": "補5_典凡_聯合報系.md",
-     "heading": "二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁）",
-     "quote": "連兩年獲 WAN-IFRA"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "c04",
-   "question": "哪一家公司的客戶案例有良興？",
-   "type": "跨公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "15_數據立.md",
-     "heading": "2. 業務與財務",
-     "quote": "良興（零售）：AI 會議記錄系統"
-    },
-    {
-     "file": "15_數據立.md",
-     "heading": "8. 近一年新聞",
-     "quote": "良興合作專文"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "c05",
-   "question": "哪一家公司是安碁資訊的子公司？",
-   "type": "跨公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "13_宏碁雲架構.md",
-     "heading": "1. 基本資料",
-     "quote": "安碁資訊股份有限公司（ACSI，6690）"
-    },
-    {
-     "file": "C_宏碁雲_尼諾思.md",
-     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
-     "quote": "安碁資訊（6690）的子公司"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
    "id": "c06",
    "question": "哪一家公司有自研的語音模型？",
    "type": "跨公司",
@@ -129,20 +48,6 @@
      "file": "08_奧衍.md",
      "heading": "1. 基本資料",
      "quote": "資本額 | 2000 萬"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "s02",
-   "question": "凱基證券 2025 年的稅後純益是多少？",
-   "type": "單一公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "06_凱基證券.md",
-     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
-     "quote": "約 115.03～115.1 億"
     }
    ],
    "status": "待使用者確認"
@@ -204,6 +109,96 @@
    "status": "待使用者確認"
   },
   {
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "AI 智慧辨識（InsAI，VLM，支援地端）"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "InsAI 支援地端部署"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "InsAI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s11",
+   "question": "艾普特是做什麼的公司？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "數位行銷公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "2. 業務與財務 > 產品與服務（【自述】https://tftech.com.tw ）",
+     "quote": "企業級資料保護與雙活資料中心"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 公司簡介",
+     "quote": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+    },
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "2. 業務與財務",
+     "quote": "機房維運管理、雲端相關服務"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
    "id": "j01",
    "question": "典凡科技的 AI 應用工程師年薪多少？",
    "type": "職缺",
@@ -218,6 +213,11 @@
      "file": "補5_典凡_聯合報系.md",
      "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
      "quote": "薪資：年薪 900,000~1,200,000 元"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 900,000~1,200,000"
     }
    ],
    "status": "待使用者確認"
@@ -231,6 +231,11 @@
     {
      "file": "C_宏碁雲_尼諾思.md",
      "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
      "quote": "Django"
     }
    ],
@@ -279,114 +284,6 @@
    "status": "待使用者確認"
   },
   {
-   "id": "j06",
-   "question": "奧衍有沒有公開的職缺？",
-   "type": "職缺",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "08_奧衍.md",
-     "heading": "4. 職缺",
-     "quote": "目前沒有招募中的職缺"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "c07",
-   "question": "哪一家公司的工程師全員通過 Red Hat 認證？",
-   "type": "跨公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "16_遠振資訊.md",
-     "heading": "5. 技術堆疊",
-     "quote": "全員通過 Red Hat 認證"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "c08",
-   "question": "哪一家公司的 Agent Builder 企業 AI 一體機使用 AMD Ryzen AI Max+ 395？",
-   "type": "跨公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "04_神通資訊.md",
-     "heading": "3. 業務與財務 > 產品與業務",
-     "quote": "AMD Ryzen AI Max+ 395"
-    },
-    {
-     "file": "04_神通資訊.md",
-     "heading": "6. 技術堆疊",
-     "quote": "AMD Ryzen AI Max+ 395"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "c09",
-   "question": "哪一家公司 2025 年配息是 12 年來第一次？",
-   "type": "跨公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "09_中華網龍.md",
-     "heading": "2. 業務與財務 > 近 3 年營收",
-     "quote": "12 年來首次配息"
-    },
-    {
-     "file": "09_中華網龍.md",
-     "heading": "8. 近一年新聞",
-     "quote": "12 年來首次"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "s07",
-   "question": "凱基證券的現行系統用了幾種資料庫？",
-   "type": "單一公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "06_凱基證券.md",
-     "heading": "5. 技術堆疊",
-     "quote": "5 種資料庫"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "s08",
-   "question": "台灣大哥大 2025 年的稅後純益是多少？",
-   "type": "單一公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "01_台灣大哥大.md",
-     "heading": "2. 業務與財務",
-     "quote": "稅後純益 144.4 億元"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "s09",
-   "question": "尼諾思的 xLink 是做什麼的？",
-   "type": "單一公司",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "10_尼諾思科技.md",
-     "heading": "2. 業務與財務 > 2.1 產品",
-     "quote": "設備聯網與邊緣整合"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
    "id": "j07",
    "question": "奧衍的解決方案架構師（Junior）月薪範圍是多少？",
    "type": "職缺",
@@ -406,15 +303,140 @@
    "status": "待使用者確認"
   },
   {
-   "id": "u01",
-   "question": "台灣大哥大有提供員工宿舍或租屋補助嗎？",
-   "type": "不可回答",
-   "answerable": false,
-   "gold": [],
-   "absence_keywords": [
-    "宿舍",
-    "租屋",
-    "住宿補助"
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-1 AI 解決方案工程師（已讀單頁）",
+     "quote": "需出差，一年累積約三個月以下"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）",
+     "quote": "AI 解決方案工程師（技術）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "奧衍的 RPA 開發工程師（Junior）需要外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "3. 奧衍股份有限公司（公司頁 4 筆；含 3 筆技術職缺） > 3-1 【擴編】RPA 開發工程師／流程自動化工程師 (Junior)_無經驗另有培訓（已讀單頁）",
+     "quote": "需外派，一年累積時間未定"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "2. 奧衍股份有限公司（公司頁 4 筆）",
+     "quote": "需外派，年累積時間未定"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-1 AI 應用研發工程師（已讀單頁）",
+     "quote": "Python、TypeScript 或其他後端語言"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "3. 中華網龍（公司頁 10 筆，全部有網址）",
+     "quote": "Python／TypeScript、LLM、Agent、RAG"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "2. 藍新資訊（公司頁 14 筆，下列為 AI／軟體／系統相關） > 2-1 AI前線部署工程師（主 agent 已讀）",
+     "quote": "Agentic AI、RAG、Workflow"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "2. 藍新資訊（公司頁 14 筆，全部有網址；不是藍新金流／藍新科技）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、Docker、K8s、n8n"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補2_神通.md",
+     "heading": "二、AI／Python／後端／資料／全端相關職缺（已點進內頁，共 6 筆） > 1. 60296BD_AI 工程師　【生成式 AI】",
+     "quote": "Python、FastAPI；LLM API（OpenAI、Claude 等）與向量資料庫"
+    },
+    {
+     "file": "網址2_神通_華電.md",
+     "heading": "一、神通資訊科技（公司頁 https://www.104.com.tw/company/ocjaiy8）",
+     "quote": "LLM／RAG／Python／FastAPI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補3_華電.md",
+     "heading": "2. 軟體／AI／資料／雲端相關職缺（詳頁已讀）",
+     "quote": "Python 三年以上、Linux、Docker"
+    },
+    {
+     "file": "網址2_神通_華電.md",
+     "heading": "二、華電聯網（公司頁 https://www.104.com.tw/company/12y30460）",
+     "quote": "Python／Linux／Docker，AI 模型維護"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "A_凱基_台哥大.md",
+     "heading": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 2. 【數位創新部】AI Solution 工程師／架構師",
+     "quote": "企業級 AI 系統或大型軟體架構經驗"
+    },
+    {
+     "file": "網址3_凱基_叡揚.md",
+     "heading": "一、凱基證券（共 13 筆網址）",
+     "quote": "AI Solution 工程師/架構師"
+    },
+    {
+     "file": "補4_凱基_叡揚.md",
+     "heading": "一、凱基證券（公司頁 https://www.104.com.tw/company/am88jqw ，共 6 頁，約 99+ 筆） > 其他 AI／後端／全端／系統相關（經歷要求 1 年以上）",
+     "quote": "AI Solution 工程師／架構師：3 年以上"
+    }
    ],
    "status": "待使用者確認"
   },
@@ -447,27 +469,43 @@
    "status": "待使用者確認"
   },
   {
-   "id": "u04",
-   "question": "聯合報有沒有開放新聞系學生的記者實習？",
+   "id": "u06",
+   "question": "叡揚資訊的特休天數是幾天？",
    "type": "不可回答",
    "answerable": false,
    "gold": [],
    "absence_keywords": [
-    "新聞系",
-    "記者實習",
-    "編輯實習"
+    "特休",
+    "特別休假",
+    "休假天數"
    ],
    "status": "待使用者確認"
   },
   {
-   "id": "u05",
-   "question": "華電聯網的員工持股信託比例是多少？",
+   "id": "u07",
+   "question": "藍新資訊可以在家上班嗎？",
    "type": "不可回答",
    "answerable": false,
    "gold": [],
    "absence_keywords": [
-    "員工持股",
-    "持股信託"
+    "在家上班",
+    "居家辦公",
+    "混合辦公",
+    "WFH",
+    "在家工作"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "平均年薪",
+    "平均薪資",
+    "薪資中位數"
    ],
    "status": "待使用者確認"
   }
