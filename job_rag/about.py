@@ -36,7 +36,8 @@ def _table(methods: dict) -> list[dict]:
     for m in METHODS:
         if m not in methods:
             raise AboutDataError(f"results_methods.json 少了檢索方式 {m}；請重跑 evaluate --method all。")
-        out.append({"method": m, **{k: methods[m][k] for k in ("hit@1", "hit@3", "mrr", "ci")}})
+        found = sum(_found(r) for r in methods[m]["ranks"].values())  # 前 3 名找到的題數（整數，不從比例反推）
+        out.append({"method": m, "found": found, **{k: methods[m][k] for k in ("hit@1", "hit@3", "mrr", "ci")}})
     return out
 
 

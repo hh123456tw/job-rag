@@ -38,7 +38,7 @@ def test_every_screen_has_both_themes_viewport_and_reduced_motion(pages):
 def test_no_external_resources_or_scripts(pages):
     for name, html in pages.items():
         assert not re.search(r"(src|href)=[\"']?(https?:)?//", html), name
-        assert "<script" not in html and "@import" not in html and "<img" not in html, name
+        assert not re.search(r"<script[^>]*\bsrc\b", html) and "@import" not in html and "<img" not in html, name
 
 
 def test_colors_outside_root_tokens_are_variables(pages):

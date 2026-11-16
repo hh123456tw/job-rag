@@ -33,7 +33,7 @@ def test_every_screen_links_manifest_and_ios_tags(pages):  # noqa: F811
 
 def test_no_service_worker_anywhere(pages, client):  # noqa: F811
     for name, html in pages.items():
-        assert "serviceWorker" not in html and "<script" not in html, name
+        assert "serviceWorker" not in html and not re.search(r"<script[^>]*\bsrc\b", html), name
     assert client.get("/sw.js").status_code == 404
 
 

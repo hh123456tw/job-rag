@@ -1,5 +1,6 @@
 """整理成答案：只測 answer() 與 Flask 頁面的外部行為。HTTP 用替身，不呼叫真 API。"""
 import json
+import re
 import urllib.error
 from pathlib import Path
 
@@ -130,7 +131,8 @@ def test_page_never_shows_excluded_text_even_when_asked_for_it(client, monkeypat
     monkeypatch.setattr(appmod, "_post", post)
     for url in ("/?q=離職率 珊瑚礁 企鵝密語", "/?q=離職率 珊瑚礁&mode=query", "/?q=離職率 珊瑚礁&mode=query&answer=1"):
         html = c.get(url).get_data(as_text=True)
-        body = html.split("</form>", 1)[1]  # 表單會回顯問題，只看結果區
+        body = html.split("<div id=results>", 1)[1]  # 頁首會回顯問題，只看結果區
+        body = re.sub(r"data-q=\"[^\"]*\"", "", body)  # 答案卡把使用者自己的問句放在屬性裡，不是語料內容
         assert not any(w in body for w in ("離職率", "珊瑚礁", "企鵝密語", "刺蝟密語")), url
     assert post.calls  # answer=1 的那次有送出；內容只有公開段落（見 test_real_search_sends_only_public_segments）
 

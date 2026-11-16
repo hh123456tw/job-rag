@@ -123,3 +123,52 @@ def test_page_without_generation_output_says_so_and_keeps_retrieval_scores(clien
     html = r.get_data(as_text=True)
     assert r.status_code == 200 and "0.875" in html and "沒有生成層評估" in html and "RAGAS" in html
     assert "無法顯示" not in html
+
+
+# ---- 票 21：白話改版與「答案優先」的事實 ----
+def test_three_stat_cards_match_the_output_files(client):
+    html = client[1].get("/about").get_data(as_text=True)
+    cards = re.findall(r"<div class=stat><b>([^<]+)</b><span>([^<]+)</span>", html)
+    assert [c[0] for c in cards] == ["4 / 4", "1 / 1", "4 / 5"]  # bge-m3 前 3 名 4/4；不可回答題擋住 1/1；GPT 複查 5 個陳述 4 個有依據
+    assert "前 3 名" in cards[0][1] and "可能沒有答案" in cards[1][1] and "5 個說法" in cards[2][1]
+
+
+def test_bars_are_sorted_by_found_count_and_numbers_match(client):
+    html = client[1].get("/about").get_data(as_text=True)
+    bars = re.findall(r"<span class=lab>([^<]+)<small>([^<]+)</small>( <em>最好</em>)?</span><span class=track><i style='width:([\d.]+)%'></i></span><b>(\d+) / 4</b>", html)
+    assert [(b[0], int(b[4])) for b in bars] == [("大型向量模型", 4), ("關鍵字加向量", 4), ("小型向量模型", 3), ("關鍵字比對", 2), ("另一個向量模型", 2)]
+    assert [float(b[3]) for b in bars] == [100.0, 100.0, 75.0, 50.0, 50.0]
+    assert [bool(b[2]) for b in bars] == [True, True, False, False, False]  # 並列最多的都標「最好」
+    assert [b[1] for b in bars][:3] == ["bge-m3", "混合", "bge-small-zh"]  # 內部名稱放小字
+
+
+def test_detailed_numbers_are_in_a_collapsed_details_with_plain_mrr(client):
+    html = client[1].get("/about").get_data(as_text=True)
+    d = re.search(r"<details class=more><summary>看詳細數字</summary>(.*?)</details>", html, re.S)
+    assert d and "<details class=more open" not in html  # 預設收合
+    assert "正確段落平均排第幾名的倒數，越接近 1 越好" in d.group(1) and "0.875" in d.group(1) and "95% 信賴區間" in d.group(1)
+
+
+def test_about_describes_answer_first_and_not_the_old_behavior(client):
+    html = client[1].get("/about").get_data(as_text=True)
+    assert "答案優先，失敗時回到原文" in html and "點一家公司，直接問問題" in html
+    for old in ("預設只顯示原文", "按鈕才用 LLM", "按鈕才呼叫 LLM", "整理成答案"):
+        assert old not in html, old
+    # 對得上程式：答案的來源是 /api/answer，失敗與低分的行為由 tests/test_chat.py、tests/test_answer_first.py 驗證
+    import app as appmod
+    assert any(r.rule == "/api/answer" for r in appmod.app.url_map.iter_rules())
+
+
+def test_stat_cards_hide_when_output_is_missing_and_error_stays(client, root):  # noqa: F811
+    (root / "eval/results_methods.json").unlink()
+    html = client[1].get("/about").get_data(as_text=True)
+    assert "class=stat>" not in html and "無法顯示" in html and "class=bars" not in html
+    assert "0.875" not in html
+
+
+def test_without_generation_output_third_card_says_none(client, root):  # noqa: F811
+    (root / "eval/results_generation.json").unlink()
+    (root / "eval/crossjudge/judge_gpt.json").unlink()
+    html = client[1].get("/about").get_data(as_text=True)
+    cards = re.findall(r"<div class=stat><b>([^<]+)</b>", html)
+    assert cards == ["4 / 4", "1 / 1", "沒有"]

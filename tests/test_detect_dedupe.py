@@ -144,7 +144,7 @@ def client(corpus, monkeypatch):
 
 
 def page(c, url, **kw):
-    return c.get(url, **kw).get_data(as_text=True).split("</form>", 1)[1]
+    return c.get(url, **kw).get_data(as_text=True).split("<div id=results>", 1)[1]
 
 
 def test_ui_detects_company_and_says_so(client):

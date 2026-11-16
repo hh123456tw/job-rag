@@ -2,6 +2,7 @@
 import json
 import os
 import re
+from urllib.parse import quote
 from pathlib import Path
 
 import pytest
@@ -28,15 +29,15 @@ LIVE = ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新�
 
 
 def body_of(html):
-    return html.split("</form>", 1)[1]  # 表單會回顯問題，只看結果區
+    return html.split("<div id=results>", 1)[1]  # 表單會回顯問題，只看結果區
 
 
-def test_page_has_the_11_live_company_buttons(client):
+def test_home_lists_the_11_live_companies_as_cards(client):
     _, c = client
     html = c.get("/").get_data(as_text=True)
     for name in LIVE:
-        assert f">{name}</button>" in html, name
-    assert len(re.findall(r"name=pick", html)) == 11
+        assert re.search(rf'<a class=card href="/c/[^"]+"><b>{name}</b>', html), name
+    assert len(re.findall(r'<a class="?card[ "]?[^>]*href="/c/', html)) == 12  # 11 家 + 全部公司
 
 
 def test_company_buttons_match_corpus_company_names():
@@ -58,11 +59,11 @@ def test_selected_company_limits_results_to_that_company(client):
     assert "<b>甲科技</b>" in body_of(c.get("/?q=鯨魚追蹤軟體").get_data(as_text=True))
 
 
-def test_clicking_selected_company_again_clears_it(client):
+def test_company_page_has_back_to_list_and_noscript_faq_form(client):
     _, c = client
-    html = c.get("/?q=鯨魚追蹤軟體&company=尼諾思科技").get_data(as_text=True)
-    assert re.search(r'name=pick value=""[^>]*>尼諾思</button>', html)  # 已選的那顆再按 = 取消
-    assert 'name=pick value="台灣大哥大"' in html
+    html = c.get("/c/" + quote("尼諾思")).get_data(as_text=True)
+    assert 'href="/">← 公司清單<' in html and 'name=company value="尼諾思科技"' not in html.split("<noscript>")[0]
+    assert 'value="尼諾思科技"' in html.split("<noscript>")[1]  # 沒有 JS 的退路：按鈕公司 -> 語料公司欄位
 
 
 FAQ = {"what": "是做什麼的？", "jobs": "有哪些職缺？", "tech": "的技術堆疊與開發工具有哪些？", "fin": "的營收和近期新聞是什麼？"}
@@ -70,18 +71,18 @@ FAQ = {"what": "是做什麼的？", "jobs": "有哪些職缺？", "tech": "的�
 
 def test_four_faq_buttons_fill_the_selected_company_into_the_question(client):
     _, c = client
-    html = c.get("/").get_data(as_text=True)
+    html = c.get("/?company=奧衍").get_data(as_text=True)  # 沒有 JS 的公司頁；對話頁的預設題目另見 test_chat.py
     for label in ("這家做什麼", "有哪些職缺", "用什麼技術", "財務與新聞"):
         assert f">{label}</button>" in html
     for key, tail in FAQ.items():
         html = c.get(f"/?faq={key}&company=奧衍").get_data(as_text=True)
-        assert f'value="奧衍{tail}"' in html, key
+        assert f"奧衍{tail}" in html and "id=results" in html, key
 
 
 def test_faq_without_company_says_so_not_silent(client):
     _, c = client
-    body = body_of(c.get("/?faq=what").get_data(as_text=True))
-    assert "請先選一家公司" in body and "class='hit" not in body
+    html = c.get("/?faq=what").get_data(as_text=True)
+    assert "請先選一家公司" in html and "class='hit" not in html
 
 
 def test_faq_tails_are_complete_questions_that_fit_any_company():
@@ -93,15 +94,17 @@ def test_faq_tails_are_complete_questions_that_fit_any_company():
 
 # ---- Enter（手機鍵盤「前往」）----
 def test_first_submit_button_in_form_is_search_so_enter_runs_it(client):
-    # 瀏覽器按 Enter 會「按」表單的第一顆提交按鈕；它必須是「查」（沒有 name，不帶 pick／faq／demo／answer）
+    # 瀏覽器按 Enter 會「按」表單的第一顆提交按鈕；它必須是「查」（沒有 name，不帶 faq）。沒有 JS 的公司頁與對話頁的輸入列都適用
     _, c = client
-    form = re.search(r"<form id=f>(.*?)</form>", c.get("/").get_data(as_text=True), re.S).group(1)
+    form = re.search(r"<form id=f>(.*?)</form>", c.get("/?company=奧衍").get_data(as_text=True), re.S).group(1)
     first = re.search(r"<button(?=[\s>])([^>]*)>(.*?)</button>", form, re.S)
     assert first.group(2) == "查" and "name=" not in first.group(1) and "type=button" not in first.group(1)
+    bar = re.search(r"<form id=bar[^>]*>(.*?)</form>", c.get("/c/" + quote("奧衍")).get_data(as_text=True), re.S).group(1)
+    assert "<button class=go>" in bar  # 對話頁：Enter 送出表單，由腳本處理
 
 
 # ---- 查無示範 ----
-def test_two_demo_buttons_are_unanswerable_eval_questions(client):
+def test_two_demo_links_are_unanswerable_eval_questions(client):
     import app as appmod
     assert len(appmod.DEMOS) == 2
     for qid in appmod.DEMOS:
@@ -109,7 +112,7 @@ def test_two_demo_buttons_are_unanswerable_eval_questions(client):
     _, c = client
     html = c.get("/").get_data(as_text=True)
     for qid in appmod.DEMOS:
-        assert f'name=demo value="{qid}"' in html
+        assert f'href="/?demo={qid}"' in html
 
 
 def test_low_score_shows_notice_dimmed_hits_no_answer_button_no_api(client, monkeypatch):
@@ -169,5 +172,5 @@ def test_company_buttons_list_the_corpus_companies_when_it_has_only_some_of_the_
     monkeypatch.setenv("JOB_RAG_CORPUS", str(SAMPLE))
     import app as appmod
     html = appmod.app.test_client().get("/").get_data(as_text=True)
-    assert re.findall(r"name=pick value=\"[^\"]*\"[^>]*>([^<]+)</button>", html) == ["奧衍", "尼諾思", "遠振資訊"]  # 不含沒有的 9 家
-    assert ">台灣大哥大</button>" not in html and ">奧衍</button>" in html
+    assert re.findall(r'<a class=card href="/c/[^"]+"><b>([^<]+)</b>', html) == ["奧衍", "尼諾思", "遠振資訊"]  # 不含沒有的 9 家
+    assert "<b>台灣大哥大</b>" not in html and "<b>奧衍</b>" in html
