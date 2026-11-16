@@ -1,7 +1,7 @@
 # 18:（可選）備援公開網址
 
 **Blocked by:** 17
-**Status:** needs-triage
+**Status:** wontfix
 
 **What to build:** 只在使用者要「不靠筆電、固定網址」時才做。先做決定再動手；任何一項都需要使用者同意。
 
@@ -16,3 +16,7 @@
 ## Comments
 
 - 預備完成（259 passed）：公開版語料包 383 段、1.88 MB；排除內容檢查通過；本機模擬 2 核心：預熱後查詢中位數 0.14–0.28 秒、冷啟動 14–28 秒、記憶體約 2 GB，結論「可試」。未量：雲端模型下載時間、雲端核心速度、多人同時。尚未上傳、未使用 token。
+
+## Comments
+
+- 2026-11-16 嘗試在免費帳號建立私人 Docker Space，Hugging Face 回 HTTP 402：免費 cpu-basic 的 Gradio 與 Docker Space 需要 PRO。未訂閱、未建立、未上傳任何檔案。建置腳本留在分支 ticket/18b-space（未合併）。現場方案維持票 17（筆電＋手機熱點直連）。替代：Cloudflare 快速通道（需下載工具，先回報大小並等同意）。
