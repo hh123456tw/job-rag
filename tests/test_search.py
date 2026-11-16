@@ -44,11 +44,10 @@ def test_excluded_segments_are_not_in_the_index():
     assert not any(w in texts for w in ("刺蝟", "狐獴", "企鵝", "河馬", "海豹", "浣熊", "水獺", "珊瑚礁", "離職率"))
 
 
-def test_mode_parameter_is_gone():
-    with pytest.raises(TypeError):
-        q("鯨魚追蹤軟體", mode="query")
-    with pytest.raises(TypeError):
-        q("鯨魚追蹤軟體", mode="demo")
+def test_mode_parameter_only_knows_demo_and_self():
+    assert q("鯨魚追蹤軟體", mode="demo") == q("鯨魚追蹤軟體")  # 票 24：展示是預設
+    with pytest.raises(ValueError):
+        q("鯨魚追蹤軟體", mode="query")  # 舊的「查詢模式」已取消
 
 
 def test_company_filter_only_that_company():

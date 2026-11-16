@@ -81,14 +81,25 @@ def _corpus_dir(corpus) -> Path:
 BUNDLE_PREFIX = "bundle:"
 
 
-def _root(corpus=None) -> str:
-    """索引的鍵。沒傳 corpus 且設了 JOB_RAG_BUNDLE 時用語料包，否則用原始語料。"""
+SELF_PREFIX, SELF_SEP = "self:", "\x00"
+MODES = ("demo", "self")  # 展示（預設）、自用。伺服器只在本人 cookie 有效時才會傳 self
+
+
+def _root(corpus=None, mode: str = "demo") -> str:
+    """索引的鍵。沒傳 corpus 且設了 JOB_RAG_BUNDLE 時用語料包，否則用原始語料。自用模式的鍵另加前綴與自用資料夾，兩個索引不共用任何快取。"""
+    if mode not in MODES:
+        raise ValueError(f"未支援的模式：{mode!r}")
     b = None if corpus else os.environ.get("JOB_RAG_BUNDLE")
     if not b:
-        return str(_corpus_dir(corpus).resolve())
-    if not Path(b).is_dir():
+        key = str(_corpus_dir(corpus).resolve())
+    elif not Path(b).is_dir():
         raise RuntimeError(f"語料包路徑不存在：{b}（JOB_RAG_BUNDLE）")
-    return BUNDLE_PREFIX + str(Path(b).resolve())
+    else:
+        key = BUNDLE_PREFIX + str(Path(b).resolve())
+    if mode == "demo":
+        return key
+    from .selfdata import self_dir
+    return SELF_PREFIX + key + SELF_SEP + str(self_dir().resolve())
 
 
 def is_sample(corpus=None) -> bool:
@@ -164,15 +175,17 @@ def _parse(root: str) -> tuple:
         file_company = DEEP_PREFIX.sub("", f.stem) if deep(f) else None
         stack: list[tuple[int, str]] = []  # (level, title)，含 H1
         body: list[str] = []
+        raw: list[str] = []  # 含「面試」行的原樣內文；只有排除（私人）段落用它，公開段落一律用 body
         dropped: list[str] = []
 
         def flush():
-            text = "\n".join(body).strip()
-            body.clear()
             path = [t for lv, t in stack if lv > 1]
+            excluded = _is_excluded(path)
+            text = "\n".join(raw if excluded else body).strip()
+            body.clear(), raw.clear()
             company = file_company or _company_of(path, f.stem, names)
             if company in skip:  # 移出名單：連「面試」行的統計都不算
-                body.clear(), dropped.clear()
+                dropped.clear()
                 return
             for line in dropped:
                 drops.append({"file": f.name, "heading_path": " > ".join(path) or f.stem,
@@ -183,7 +196,7 @@ def _parse(root: str) -> tuple:
             head = " > ".join(path) or (stack[0][1] if stack else f.stem)
             for piece in _pieces(text):
                 segs.append({
-                    "company": company, "file": f.name, "heading_path": head, "excluded": _is_excluded(path),
+                    "company": company, "file": f.name, "heading_path": head, "excluded": excluded,
                     "text": piece, "_index": f"{company} {head}\n{piece}",
                     "_title": " > ".join(_norm(t) for t in path) or "(標題前言)",
                 })
@@ -198,6 +211,7 @@ def _parse(root: str) -> tuple:
                 stack.append((lv, m.group(2)))
             else:
                 kept = _strip_interview(line)
+                raw.append(line)
                 if INTERVIEW in line:
                     dropped.append(line.strip())
                 if kept:
@@ -222,9 +236,24 @@ def _tok(s: str) -> list[str]:
 @lru_cache(maxsize=4)
 def _public(root: str) -> tuple:
     """載入時就丟掉排除段落：往後的索引、快取、檢索都只看這裡。"""
+    if root.startswith(SELF_PREFIX):
+        return _self_pool(root)
     if root.startswith(BUNDLE_PREFIX):
         return _load_bundle(root)[0]
     return tuple(s for s in _segments(root) if not s["excluded"])
+
+
+def _self_pool(key: str) -> tuple:
+    """自用索引：公開事實段落＋語料中被排除的私人段落＋面經。只有自用鍵才會走到這裡。"""
+    from .selfdata import load_interviews
+    base, _, sd = key.removeprefix(SELF_PREFIX).partition(SELF_SEP)
+    pub = tuple(s | {"private": False} for s in _public(base))
+    if base.startswith(BUNDLE_PREFIX):
+        notes = ()
+    else:
+        notes = tuple(s | {"private": True, "source": "筆記"} for s in _segments(base) if s["excluded"])
+    names = {s["company"] for s in pub} - {GENERAL}
+    return pub + notes + tuple(load_interviews(sd, names))
 
 
 @lru_cache(maxsize=8)
@@ -279,7 +308,8 @@ def _passage_vectors(root: str, method: str) -> np.ndarray:
         return _load_bundle(root)[1]
     segs = _public(root)
     h = segments_hash(s["_index"] for s in segs)
-    f = Path(os.environ.get("JOB_RAG_CACHE", ".cache")) / f"{method}_{h}.npy"
+    tag = "self_" if root.startswith(SELF_PREFIX) else ""  # 展示的檔名維持原樣
+    f = Path(os.environ.get("JOB_RAG_CACHE", ".cache")) / f"{method}_{tag}{h}.npy"
     if f.is_file():
         return np.load(f)
     v = _encode(method, [s["_index"] for s in segs], is_query=False)
@@ -325,11 +355,11 @@ NOT_FOUND_THRESHOLD = 0.700
 GATED = ("bge-m3", "hybrid")
 
 
-def gate_score(question: str, method: str = "bge-m3", company: str | None = None, corpus=None) -> float | None:
+def gate_score(question: str, method: str = "bge-m3", company: str | None = None, corpus=None, mode: str = "demo") -> float | None:
     """查無判斷用的最高分：bge-m3 與混合是 bge-m3 的最高相似度；其他方式沒做門檻回 None。"""
     if method not in GATED:
         return None
-    _, ranked = _rank_vector(_root(corpus), "bge-m3", question, company)
+    _, ranked = _rank_vector(_root(corpus, mode), "bge-m3", question, company)
     return ranked[0][1] if ranked else None
 
 
@@ -346,16 +376,16 @@ def _detect(root: str, question: str) -> str | None:
     return found.pop() if len(found) == 1 else None
 
 
-def mentions_company(question: str, corpus=None) -> bool:
+def mentions_company(question: str, corpus=None, mode: str = "demo") -> bool:
     """問句含任何一家公司的名稱或別名（不論幾家）。"""
-    root = _root(corpus)
+    root = _root(corpus, mode)
     names = {s["company"] for s in _public(root)} - {GENERAL}
     return any(t in question for t in names | {a for a, n in ALIASES.items() if n in names})
 
 
-def detect_company(question: str, corpus=None) -> str | None:
+def detect_company(question: str, corpus=None, mode: str = "demo") -> str | None:
     """問句只提到一家公司時回該公司，否則（沒有、兩家以上）回 None。"""
-    return _detect(_root(corpus), question)
+    return _detect(_root(corpus, mode), question)
 
 
 def _same_text(s: str) -> str:
@@ -380,13 +410,14 @@ DEFAULT_METHOD, DEFAULT_K = "bge-m3", 3  # 預設檢索方式與取前幾段（�
 
 
 def search(question: str, method: str = DEFAULT_METHOD, company: str | None = None,
-           k: int = DEFAULT_K, corpus=None, gate: bool = True, detect: bool = False, dedupe: bool = False) -> list[dict]:
+           k: int = DEFAULT_K, corpus=None, gate: bool = True, detect: bool = False, dedupe: bool = False,
+           mode: str = "demo") -> list[dict]:
     """排序後的公開事實段落。排除段落在載入時就丟了，候選池根本沒有它們。
     查無（最高分低於 NOT_FOUND_THRESHOLD）回空串列；gate=False 不套門檻（評分用）。
     detect：沒指定 company 時，問句只含一家公司名就只搜那家。dedupe：合併重複段落，結果多一個 also_in。"""
     if method not in METHODS:
         raise ValueError(f"未支援的檢索方式：{method}")
-    root = _root(corpus)
+    root = _root(corpus, mode)
     if detect and not company:
         company = _detect(root, question)
     top = None  # 查無判斷用的分數（只有 GATED 方式有）
@@ -403,7 +434,8 @@ def search(question: str, method: str = DEFAULT_METHOD, company: str | None = No
         return []
     rows = _dedupe(pool, ranked) if dedupe else [(i, sc, None) for i, sc in ranked]
     return [{key: pool[i][key] for key in ("company", "file", "heading_path", "text")} | {"score": float(sc)}
-            | ({} if also is None else {"also_in": also}) for i, sc, also in rows[:k]]
+            | ({} if also is None else {"also_in": also}) | ({"private": pool[i]["private"]} if mode == "self" else {})
+            for i, sc, also in rows[:k]]
 
 
 def classification_table(corpus=None) -> list[dict]:
@@ -415,9 +447,9 @@ def classification_table(corpus=None) -> list[dict]:
     return [{"title": t, "excluded": e, "count": n} for (t, e), n in sorted(counts.items(), key=lambda kv: (kv[0][1], kv[0][0]))]
 
 
-def public_company_counts(corpus=None) -> dict[str, int]:
-    """公開事實段落的公司 -> 段落數（「綜合」＝無法歸屬）。"""
+def public_company_counts(corpus=None, mode: str = "demo") -> dict[str, int]:
+    """公司 -> 段落數（「綜合」＝無法歸屬）。展示模式只算公開事實段落；自用模式也算私人段落與面經。"""
     out: dict[str, int] = {}
-    for s in _public(_root(corpus)):
+    for s in _public(_root(corpus, mode)):
         out[s["company"]] = out.get(s["company"], 0) + 1
     return dict(sorted(out.items()))
