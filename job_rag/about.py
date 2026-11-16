@@ -42,7 +42,7 @@ def _table(methods: dict) -> list[dict]:
         if m not in methods:
             raise AboutDataError(f"results_methods.json 少了檢索方式 {m}；請重跑 evaluate --method all。")
         found = sum(_found(r) for r in methods[m]["ranks"].values())  # 前 3 名找到的題數（整數，不從比例反推）
-        out.append({"method": m, "found": found, **{k: methods[m][k] for k in ("hit@1", "hit@3", "mrr", "ci")}})
+        out.append({"method": m, "found": found, **{k: methods[m][k] for k in ("hit@1", "hit@3", "hit@5", "mrr", "ci")}})
     return out
 
 
@@ -122,10 +122,30 @@ def _cross_eval(root: Path):
         rows = r["per"][str(r["per_default"])]
         ans = [x for x in rows if x["answerable"]]
         ok = lambda x: (x["status"] == "ok" and x["n_correct"] > 0) if x["answerable"] else x["status"] == "low"
-        return {"n": len(rows), "passed": sum(map(ok, rows)), "n_answerable": len(ans), "answerable_ok": sum(map(ok, ans)),
+        cov = lambda rs: [x["coverage"] for x in rs if x["answerable"] and x["coverage"] is not None]
+        return {"n": len(rows), "passed": sum(map(ok, rows)),
+                "names": sorted({n for v in r.get("relevant", {}).values() for n in v}), "n_companies": r.get("n_companies"),
+                "by_per": {int(k): sum(cov(v)) / len(cov(v)) for k, v in r["per"].items() if cov(v)}, "n_answerable": len(ans), "answerable_ok": sum(map(ok, ans)),
                 "per": r["per_default"], "floor": r["floor"],
                 "coverage": sum(x["coverage"] for x in ans if x["coverage"] is not None) / sum(x["coverage"] is not None for x in ans)}
     except (OSError, ValueError, KeyError, TypeError, ZeroDivisionError):
+        return None
+
+
+SALARY_Q = "薪水多少？"  # 公司頁內只輸入這句、不含公司名：補上公司名再檢索前後的最高分（票 37 第 6 頁）
+
+
+def _salary_fix(root: Path):
+    """results_scoped.txt 寫的補丁前分數（約 0.60，文字檔）與 results_real.json 的補丁後最高分（同一句問題的第一題）。缺檔、過期、對不上都回 None。"""
+    try:
+        before = re.search(r"原本分數約 ([\d.]+)", (root / "eval/results_scoped.txt").read_text(encoding="utf-8"))
+        r = json.loads((root / "eval/results_real.json").read_text(encoding="utf-8"))
+        qs = json.loads((root / "eval/questions_real.json").read_text(encoding="utf-8"))["questions"]
+        if not before or r["digest"] != questions_digest(qs):
+            return None
+        qid = next(q["id"] for q in qs if q["question"] == SALARY_Q and q["id"] in r["scores"])
+        return {"q": SALARY_Q, "before": float(before.group(1)), "after": r["scores"][qid]}
+    except (OSError, ValueError, KeyError, TypeError, StopIteration):
         return None
 
 
@@ -165,6 +185,20 @@ def _mrr_diff(methods: dict) -> dict:
         raise AboutDataError("results_methods.json 的 bge-m3 與混合題號對不上；請重跑 evaluate --method all。")
     lo, hi = paired_diff_interval([a["ranks"][i] for i in ids], [b["ranks"][i] for i in ids])
     return {"diff": a["mrr"] - b["mrr"], "lo": lo, "hi": hi}
+
+
+def _mrr_diffs(methods: dict) -> list[dict]:
+    """bge-m3 減其他四種找法的 MRR 差與 95% 區間（同 _mrr_diff 的算法，森林圖用）。"""
+    a = methods["bge-m3"]["ranks"]
+    ids = list(a)
+    out = []
+    for m in METHODS:
+        if m == "bge-m3":
+            continue
+        b = methods[m]["ranks"]
+        lo, hi = paired_diff_interval([a[i] for i in ids], [b[i] for i in ids])
+        out.append({"method": m, "diff": methods["bge-m3"]["mrr"] - methods[m]["mrr"], "lo": lo, "hi": hi})
+    return out
 
 
 def _perf(root: Path):
@@ -220,7 +254,7 @@ def load(root=None) -> dict:
                  "unanswerable_blocked": len(gate["unanswerable_blocked"]),
                  "n_unanswerable": m["n_unanswerable"], "answerable_blocked": len(gate["answerable_blocked"]),
                  "n_answerable": m["n_answerable"]},
-        "mrr_diff": _mrr_diff(m["methods"]), "perf": _perf(root),
+        "mrr_diff": _mrr_diff(m["methods"]), "mrr_diffs": _mrr_diffs(m["methods"]), "salary_fix": _salary_fix(root), "perf": _perf(root),
         "ragas_fix": _ragas_fix(root, gen), "live_test": (root / "eval/live_test.md").exists(),
         "cases": _cases(questions, m["methods"], table),
     }

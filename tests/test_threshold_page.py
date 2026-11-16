@@ -85,13 +85,13 @@ E2E = {"n": 2, "refused": 2, "by_gate": 1, "by_answer_layer": 1, "rows": [{"refu
 
 def test_about_adds_end_to_end_context_next_to_blocked_counts(client, root):  # noqa: F811
     put(root, "eval/results_endtoend.json", E2E)
-    h = client[1].get("/about").get_data(as_text=True)
+    h = client[1].get("/about?all=1").get_data(as_text=True)
     assert h.count("（再加答案層，端到端 2/2 拒答）") >= 3 and "href=/threshold" in h
     for m in re.finditer(r"擋住 \d+/\d+", h):  # 每一個「擋住 a/b」後面都帶著這個脈絡
         assert h[m.end(): m.end() + 6] == "（再加答案層"
 
 
 def test_about_omits_it_when_file_missing_or_inconsistent(client, root):  # noqa: F811
-    assert "端到端" not in client[1].get("/about").get_data(as_text=True)
+    assert "端到端" not in client[1].get("/about?all=1").get_data(as_text=True)
     put(root, "eval/results_endtoend.json", E2E | {"refused": 1})  # 與逐題對不上：不採用
-    assert "端到端" not in client[1].get("/about").get_data(as_text=True)
+    assert "端到端" not in client[1].get("/about?all=1").get_data(as_text=True)

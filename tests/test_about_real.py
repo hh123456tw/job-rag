@@ -39,13 +39,13 @@ def test_real_eval_is_skipped_when_missing_or_stale(root):  # noqa: F811
 
 def test_page_shows_real_line_and_generation_setting_note(client, root):  # noqa: F811
     real_files(root)
-    html = client[1].get("/about").get_data(as_text=True)
+    html = client[1].get("/about?all=1").get_data(as_text=True)
     assert "另外 2 道真實問法" in html and "Hit@5 0.875" in html and "擋住 1/1" in html
     assert html.count("量測時為 K=3 設定") >= 2                # 細節與 RAGAS 說明都標註，並保留原數字
 
 
 def test_page_without_real_output_has_no_real_line_but_keeps_note(client, root):  # noqa: F811
-    html = client[1].get("/about").get_data(as_text=True)
+    html = client[1].get("/about?all=1").get_data(as_text=True)
     assert "真實問法" not in html and "量測時為 K=3 設定" in html
 
 

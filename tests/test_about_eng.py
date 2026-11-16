@@ -19,14 +19,14 @@ def client(monkeypatch, root):  # noqa: F811
 
 
 def eng(client) -> str:
-    html = client.get("/about").get_data(as_text=True)
+    html = client.get("/about?all=1").get_data(as_text=True)
     m = re.search(r"<details class=eng><summary>給工程面試官：技術細節</summary>(.*?)</details>", html, re.S)
     assert m, "找不到收合區"
     return m.group(1)
 
 
 def test_eng_details_is_collapsed_and_sits_inside_block_six(client):
-    html = client.get("/about").get_data(as_text=True)
+    html = client.get("/about?all=1").get_data(as_text=True)
     assert len(re.findall(r"<h2>", html)) == 6  # 仍只有 6 個編號區塊
     block6 = html.split("<h2>6.")[1].split("<h2 class=qa>")[0]
     assert "<details class=eng><summary>給工程面試官：技術細節</summary>" in block6
@@ -50,7 +50,7 @@ def test_architecture_diagram_boxes_match_the_code(client):
 
 def test_no_eng_details_when_output_is_missing(client, root):  # noqa: F811
     (root / "eval/results_methods.json").unlink()
-    html = client.get("/about").get_data(as_text=True)
+    html = client.get("/about?all=1").get_data(as_text=True)
     assert "給工程面試官" not in html and len(re.findall(r"<h2>", html)) == 6
 
 
@@ -159,7 +159,7 @@ def run1_rows():
 
 
 def fixes(client) -> list[str]:
-    html = client.get("/about").get_data(as_text=True)
+    html = client.get("/about?all=1").get_data(as_text=True)
     m = re.search(r"<h3>三次用數據做的修正</h3><ul class=plain>(.*?)</ul>", html, re.S)
     assert m, "找不到修正段"
     assert m.start() < html.index("<details class=eng>")  # 在找法成績旁，不在收合區裡
@@ -194,7 +194,7 @@ def test_missing_file_skips_only_that_item(client, full, rel, gone):
 
 def test_broken_run1_file_skips_the_item_not_the_page(client, full):
     put(full, RUN1, "{不是 json")
-    r = client.get("/about")
+    r = client.get("/about?all=1")
     assert r.status_code == 200 and not any("第一次" in i for i in fixes(client))
 
 
@@ -205,6 +205,6 @@ def test_no_generation_output_skips_the_ragas_fix(client, full):
 
 
 def test_fixes_have_no_forbidden_wording(client, full):
-    html = client.get("/about").get_data(as_text=True)
+    html = client.get("/about?all=1").get_data(as_text=True)
     for w in ("AI 協作", "AI協作", "協作", "私人"):
         assert w not in html
