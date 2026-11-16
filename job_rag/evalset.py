@@ -78,8 +78,8 @@ def verify(questions: list[dict], corpus=None) -> list[str]:
                     bad(f"引文不在金標標題之下：{g['file']} / {g['heading']}：{g['quote']}")
                 flags |= {s["private"] for s in segs if s["file"] == g["file"] and
                           (s["heading_path"] == g["heading"] or s["heading_path"].startswith(g["heading"] + " > "))}
-            if flags and flags != {q["private"]}:
-                bad(f"private={q['private']} 與金標段落的分類不符（分類結果 {sorted(flags)}）")
+            if True in flags:
+                bad("金標落在排除段落（金標只能是公開事實段落）")
         else:
             kws = q.get("absence_keywords") or []
             if q["gold"] or not kws:
@@ -95,7 +95,7 @@ def to_markdown(questions: list[dict]) -> str:
     esc = lambda s: s.replace("|", "｜").replace("\n", " ")
     rows = ["| 編號 | 題目 | 類型 | 金標檔案與標題 | 佐證 | 核對狀態 |", "|---|---|---|---|---|---|"]
     for q in questions:
-        kind = q["type"] + ("（私人，只在查詢模式評分）" if q["private"] else "")
+        kind = q["type"]
         if q["answerable"]:
             gold = "<br>".join(f"{g['file']} ／ {g['heading']}" for g in q["gold"])
             ev = "<br>".join(f"「{g['quote']}」" for g in q["gold"])
@@ -104,6 +104,11 @@ def to_markdown(questions: list[dict]) -> str:
             ev = "全語料搜尋查無：" + "、".join(q["absence_keywords"])
         rows.append(f"| {q['id']} | {esc(q['question'])} | {kind} | {esc(gold)} | {esc(ev)} | {q['status']} |")
     return "\n".join(rows) + "\n"
+
+
+def type_summary(questions: list[dict]) -> str:
+    from collections import Counter
+    return "、".join(f"{k} {n}" for k, n in Counter(q["type"] for q in questions).items())
 
 
 def main():

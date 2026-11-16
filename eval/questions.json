@@ -5,7 +5,6 @@
    "question": "哪一家公司是 UiPath 的認證經銷商？",
    "type": "跨公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "08_奧衍.md",
@@ -25,7 +24,6 @@
    "question": "哪一家公司在 2026 年 10 月掛牌上櫃？",
    "type": "跨公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "05_藍新資訊.md",
@@ -45,7 +43,6 @@
    "question": "哪一家公司拿到 WAN-IFRA 的數位媒體獎？",
    "type": "跨公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "02_聯合報.md",
@@ -70,7 +67,6 @@
    "question": "哪一家公司的客戶案例有良興？",
    "type": "跨公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "15_數據立.md",
@@ -90,7 +86,6 @@
    "question": "哪一家公司是安碁資訊的子公司？",
    "type": "跨公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "13_宏碁雲架構.md",
@@ -110,7 +105,6 @@
    "question": "哪一家公司有自研的語音模型？",
    "type": "跨公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "01_台灣大哥大.md",
@@ -130,7 +124,6 @@
    "question": "奧衍的資本額是多少？",
    "type": "單一公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "08_奧衍.md",
@@ -145,7 +138,6 @@
    "question": "凱基證券 2025 年的稅後純益是多少？",
    "type": "單一公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "06_凱基證券.md",
@@ -160,7 +152,6 @@
    "question": "華電聯網 2025 年得標多少政府標案？",
    "type": "單一公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "07_華電聯網.md",
@@ -175,7 +166,6 @@
    "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
    "type": "單一公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "03_叡揚資訊.md",
@@ -190,7 +180,6 @@
    "question": "數據立有哪些產品？",
    "type": "單一公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "15_數據立.md",
@@ -205,7 +194,6 @@
    "question": "聯合報的數據發展部做什麼？",
    "type": "單一公司",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "02_聯合報.md",
@@ -220,7 +208,6 @@
    "question": "典凡科技的 AI 應用工程師年薪多少？",
    "type": "職缺",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "D_典凡_遠振.md",
@@ -240,7 +227,6 @@
    "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
    "type": "職缺",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "C_宏碁雲_尼諾思.md",
@@ -255,7 +241,6 @@
    "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
    "type": "職缺",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "B_神通_聯合報.md",
@@ -270,7 +255,6 @@
    "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
    "type": "職缺",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "A_凱基_台哥大.md",
@@ -285,7 +269,6 @@
    "question": "遠振資訊目前開放幾筆職缺？",
    "type": "職缺",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "D_典凡_遠振.md",
@@ -300,7 +283,6 @@
    "question": "奧衍有沒有公開的職缺？",
    "type": "職缺",
    "answerable": true,
-   "private": false,
    "gold": [
     {
      "file": "08_奧衍.md",
@@ -311,106 +293,114 @@
    "status": "待使用者確認"
   },
   {
-   "id": "i01",
-   "question": "中華網龍的 Unity 工程師面試怎麼考？",
-   "type": "面試與評價",
+   "id": "c07",
+   "question": "哪一家公司的工程師全員通過 Red Hat 認證？",
+   "type": "跨公司",
    "answerable": true,
-   "private": true,
-   "gold": [
-    {
-     "file": "09_中華網龍.md",
-     "heading": "6. 面試流程與常見題目",
-     "quote": "先筆試，再與工程師主管、資深工程師面談"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "i02",
-   "question": "台灣大哥大全端工程師的面試會問什麼？",
-   "type": "面試與評價",
-   "answerable": true,
-   "private": true,
-   "gold": [
-    {
-     "file": "01_台灣大哥大.md",
-     "heading": "6. 面試流程與常見題目",
-     "quote": "Spring Boot 自評 1–5"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "i03",
-   "question": "叡揚資訊的面試筆試考什麼？",
-   "type": "面試與評價",
-   "answerable": true,
-   "private": true,
-   "gold": [
-    {
-     "file": "03_叡揚資訊.md",
-     "heading": "6. 面試流程與常見題目",
-     "quote": "C 語言簡單演算法、網頁題、SQL 題"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "i04",
-   "question": "遠振資訊的面試會考 Linux 指令嗎？",
-   "type": "面試與評價",
-   "answerable": true,
-   "private": true,
    "gold": [
     {
      "file": "16_遠振資訊.md",
-     "heading": "6. 面試流程與常見題目",
-     "quote": "第一次面試考 Linux 指令"
+     "heading": "5. 技術堆疊",
+     "quote": "全員通過 Red Hat 認證"
     }
    ],
    "status": "待使用者確認"
   },
   {
-   "id": "i05",
-   "question": "典凡科技的面試流程是什麼？",
-   "type": "面試與評價",
+   "id": "c08",
+   "question": "哪一家公司的 Agent Builder 企業 AI 一體機使用 AMD Ryzen AI Max+ 395？",
+   "type": "跨公司",
    "answerable": true,
-   "private": true,
-   "gold": [
-    {
-     "file": "14_典凡科技.md",
-     "heading": "6. 面試流程與常見題目",
-     "quote": "投履歷、初步面談、技術交流、Offer"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "i06",
-   "question": "奧衍寫的「責任制」是什麼意思？",
-   "type": "面試與評價",
-   "answerable": true,
-   "private": true,
-   "gold": [
-    {
-     "file": "08_奧衍.md",
-     "heading": "7. 工作評價 > 「責任制」的實際意涵",
-     "quote": "責任制（勞基法 84-1 條）"
-    }
-   ],
-   "status": "待使用者確認"
-  },
-  {
-   "id": "i07",
-   "question": "神通資訊的加班狀況如何？",
-   "type": "面試與評價",
-   "answerable": true,
-   "private": true,
    "gold": [
     {
      "file": "04_神通資訊.md",
-     "heading": "8. 工作評價 > 加班（多來源交叉）",
-     "quote": "專案趕工、客戶時程短時會被要求加班"
+     "heading": "3. 業務與財務 > 產品與業務",
+     "quote": "AMD Ryzen AI Max+ 395"
+    },
+    {
+     "file": "04_神通資訊.md",
+     "heading": "6. 技術堆疊",
+     "quote": "AMD Ryzen AI Max+ 395"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "c09",
+   "question": "哪一家公司 2025 年配息是 12 年來第一次？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "12 年來首次配息"
+    },
+    {
+     "file": "09_中華網龍.md",
+     "heading": "8. 近一年新聞",
+     "quote": "12 年來首次"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s07",
+   "question": "凱基證券的現行系統用了幾種資料庫？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "5. 技術堆疊",
+     "quote": "5 種資料庫"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s08",
+   "question": "台灣大哥大 2025 年的稅後純益是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "稅後純益 144.4 億元"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s09",
+   "question": "尼諾思的 xLink 是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "10_尼諾思科技.md",
+     "heading": "2. 業務與財務 > 2.1 產品",
+     "quote": "設備聯網與邊緣整合"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "奧衍的解決方案架構師（Junior）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "3. 奧衍股份有限公司（公司頁 4 筆；含 3 筆技術職缺） > 3-3 解決方案架構師 - Solutions Architect（Junior）",
+     "quote": "36,000~50,000"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "2. 奧衍股份有限公司（公司頁 4 筆）",
+     "quote": "36,000~50,000"
     }
    ],
    "status": "待使用者確認"
@@ -420,7 +410,6 @@
    "question": "台灣大哥大有提供員工宿舍或租屋補助嗎？",
    "type": "不可回答",
    "answerable": false,
-   "private": false,
    "gold": [],
    "absence_keywords": [
     "宿舍",
@@ -434,7 +423,6 @@
    "question": "叡揚資訊錄取後要求多益幾分？",
    "type": "不可回答",
    "answerable": false,
-   "private": false,
    "gold": [],
    "absence_keywords": [
     "多益",
@@ -449,7 +437,6 @@
    "question": "中華網龍的遊戲月活躍玩家有多少？",
    "type": "不可回答",
    "answerable": false,
-   "private": false,
    "gold": [],
    "absence_keywords": [
     "月活躍",
@@ -464,7 +451,6 @@
    "question": "聯合報有沒有開放新聞系學生的記者實習？",
    "type": "不可回答",
    "answerable": false,
-   "private": false,
    "gold": [],
    "absence_keywords": [
     "新聞系",
@@ -478,7 +464,6 @@
    "question": "華電聯網的員工持股信託比例是多少？",
    "type": "不可回答",
    "answerable": false,
-   "private": false,
    "gold": [],
    "absence_keywords": [
     "員工持股",
