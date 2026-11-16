@@ -6,7 +6,7 @@ import statistics
 from markupsafe import escape
 
 from . import METHODS, retrieval
-from .about_page import GEN_NOTE, HYBRID, SHORT, _e2e, _f, _say, _speech, hist
+from .about_page import GEN_NOTE, HYBRID, SHORT, _e2e, _f, _say, _speech, _sweep_line, hist
 from .ui import page
 
 W = 340  # 圖的 viewBox 寬；手機約 1:1，桌面等比放大
@@ -109,7 +109,7 @@ def s_chunk(d, lengths):
                  + _t(0, 8, "段數", "mu sm"))
     fig = _svg(228, "切段長度分佈：各字數區間的段數", "".join(parts))
     notes = (f"<p>先依標題切；太長的再切成約 {retrieval.CHUNK} 字、重疊 {retrieval.OVERLAP} 字。</p>"
-             f"<p>平均 {statistics.mean(lengths):.0f} 字、中位數 {statistics.median(lengths):.0f} 字、最長 {max(lengths)} 字。</p>")
+             f"<p>平均 {statistics.mean(lengths):.0f} 字、中位數 {statistics.median(lengths):.0f} 字、最長 {max(lengths)} 字。{escape(_sweep_line(d))}</p>")
     return f"{len(lengths)} 段，中位數 {statistics.median(lengths):.0f} 字", fig, notes, "chunk", None
 
 

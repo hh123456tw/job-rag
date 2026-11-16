@@ -54,6 +54,16 @@ def _held_line(d) -> str:
             f"沒答案題檢索擋住 {x['blocked_u']}/{x['n_unanswerable']}{e}")
 
 
+def _sweep_line(d) -> str:
+    """一句切段掃描結果（票 40）；沒有輸出檔回空字串。數字與結論都直接取自輸出檔。"""
+    x = d and d.get("sweep")
+    if not x:
+        return ""
+    lens = sorted(x["hit3"])
+    vals = "／".join(f"{x['hit3'][n]:.3f}" for n in lens)
+    return f"掃過 {'／'.join(map(str, lens))} 字：Hit@3（三組題合併、{x['n']} 題單一公司有答案題）依序為 {vals}，結論：{x['conclusion']}"
+
+
 def _real_line(d) -> str:
     x = d.get("real_eval")
     if not x:
@@ -515,7 +525,7 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int, len
               f"<p class=lead>答案先出現，附出處；原文收在下面，隨時可以核對。目前收 {n_companies} 家公司的公開資料。</p>"
               f"{_stats(data)}<h3>它怎麼運作</h3>{_flow(n_segments, n_companies)}", say[1])
     s2 = _seg(2, "資料與切段", "只收公開的事實，依標題切成段落。",
-              f"<p>{n_companies} 家公司，共 {n_segments} 段公開事實段落。太長的段落再切成約 {retrieval.CHUNK} 字、重疊 {retrieval.OVERLAP} 字。</p>"
+              f"<p>{n_companies} 家公司，共 {n_segments} 段公開事實段落。太長的段落再切成約 {retrieval.CHUNK} 字、重疊 {retrieval.OVERLAP} 字。{escape(_sweep_line(data))}</p>"
               + _decisions(("依標題切段，每段前面加公司名。", "這樣問句提到公司或主題時，比較容易對上。"),
                            ("只用公開事實。", "個人意見與推測在載入時就丟掉：不進索引、不送 LLM，畫面給別人看也安全。")), say[2])
     s3 = _seg(3, "怎麼找", f"我用同一批題目比了 {len(METHODS)} 種找法，網站用 {retrieval.DEFAULT_METHOD}。",
