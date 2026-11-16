@@ -14,6 +14,7 @@ from job_rag import about, cross_search, guard, is_cross, detect_company, netinf
 from job_rag.selfdata import IV_ALL, IV_COMPANY
 from job_rag.owner import COOKIE as OWNER_COOKIE, TTL as OWNER_TTL, Owner
 from job_rag.about_page import render as render_about
+from job_rag.about_slides import render as render_slides
 from job_rag import threshold_page
 from job_rag.chat_ui import CHAT_JS
 from job_rag.memory import HistoryError, clean_history, expand
@@ -228,11 +229,14 @@ def about_page():
     if _warm["state"] != "ready":  # 預熱期間與問答頁一致
         return _status_page()
     counts = public_company_counts()
-    n_company = len([c for c in counts if c != "綜合"])  # 「綜合」是無法歸屬的段落，不算公司
+    names = [c for c in counts if c != "綜合"]  # 「綜合」是無法歸屬的段落，不算公司
+    # 預設是簡報；?all=1 是原本的長頁（含全部文字說明）
+    render = render_about if request.args.get("all") == "1" else lambda *a: render_slides(*a, companies=names)
+    args = (sum(counts.values()), len(names), retrieval.public_segment_lengths())
     try:
-        return render_about(about.load(), "", sum(counts.values()), n_company, retrieval.public_segment_lengths())
+        return render(about.load(), "", *args)
     except about.AboutDataError as e:  # 輸出檔缺、壞、過期：顯示錯誤，不用舊數字
-        return render_about(None, str(e), sum(counts.values()), n_company, retrieval.public_segment_lengths()), 500
+        return render(None, str(e), *args), 500
 
 
 @app.get("/threshold")

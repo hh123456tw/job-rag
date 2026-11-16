@@ -15,7 +15,7 @@ def pages(monkeypatch, root):  # noqa: F811
     monkeypatch.setattr(about, "ROOT", root)
     import app as appmod
     c = appmod.app.test_client()
-    ok = {"問答頁": c.get("/?q=鯨魚追蹤軟體").get_data(as_text=True), "說明頁": c.get("/about").get_data(as_text=True)}
+    ok = {"問答頁": c.get("/?q=鯨魚追蹤軟體").get_data(as_text=True), "說明頁": c.get("/about?all=1").get_data(as_text=True), "簡報頁": c.get("/about").get_data(as_text=True)}
     appmod._warm["state"] = "loading"
     try:
         ok["準備中"] = c.get("/").get_data(as_text=True)

@@ -133,7 +133,7 @@ def all_entrances(c):
         out.append(c.get("/", query_string={"q": SECRET, "answer": 1} | qs).get_data(as_text=True))
         out.append(c.get("/", query_string={"q": IV, "company": "甲科技"} | qs).get_data(as_text=True))
         out.append(c.get("/c/甲科技", query_string=qs).get_data(as_text=True))
-    out += [c.get(p).get_data(as_text=True) for p in ("/", "/c/甲科技", "/c/全部公司", "/about")]
+    out += [c.get(p).get_data(as_text=True) for p in ("/", "/c/甲科技", "/c/全部公司", "/about", "/about?all=1")]
     return out
 
 
