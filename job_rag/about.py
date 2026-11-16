@@ -165,6 +165,24 @@ def _real_eval(root: Path):
         return None
 
 
+SWEEP_SETS = (("old30", "eval/questions.json"), ("real20", "eval/questions_real.json"), ("held40", "eval/questions_heldout.json"))
+
+
+def _sweep(root: Path):
+    """切段上限掃描（票 40）。輸出檔缺、讀不了、或三份題檔任一份對不上（過期）都回 None，頁面就不寫那一句。"""
+    try:
+        r = json.loads((root / "eval/results_chunk_sweep.json").read_text(encoding="utf-8"))
+        for k, rel in SWEEP_SETS:
+            qs = json.loads((root / rel).read_text(encoding="utf-8"))["questions"]
+            if r["digests"][k] != questions_digest(qs):
+                return None
+        pl = r["per_length"]
+        hit3 = {int(n): v["pooled"]["metrics"]["hit@3"] for n, v in pl.items()}
+        return {"n": next(iter(pl.values()))["pooled"]["n"], "hit3": hit3, "conclusion": str(r["conclusion"]["short"])}
+    except (OSError, ValueError, KeyError, TypeError, StopIteration):
+        return None
+
+
 def _e2e(root: Path):
     """端到端拒答檢查（票 35 追加）：真 DeepSeek、網站實際路徑。檔缺、讀不了、或數字自相矛盾都回 None，頁面就不加那半句。"""
     try:
@@ -274,7 +292,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "sweep": _sweep(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
