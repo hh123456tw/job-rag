@@ -1,7 +1,7 @@
 # 24: 自用／展示切換
 
 **Blocked by:** 23
-**Status:** ready-for-agent
+**Status:** resolved
 
 依 SPEC「修正五」。使用者需求：「我需要有一個切換自用和展示用的按鈕」。
 
