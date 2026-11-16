@@ -135,3 +135,31 @@ def test_citations_survive_reload_of_saved_chat(page):
     page.reload()
     page.locator(".answer .cite").click()  # 事件委派：還原的 innerHTML 也能點
     assert page.locator("details.raw").evaluate("d => d.open")
+
+
+# ---- 耗時與用量列（替身 usage 是假值 1234／56）----
+def test_meta_line_shows_search_answer_time_and_fake_usage(page):
+    ask(page)
+    t = page.locator(".steps .meta").text_content()
+    assert t.startswith("檢索 ") and "｜整理 " in t and t.endswith("｜輸入 1234／輸出 56 tokens")
+
+
+def test_meta_line_omits_missing_fields_and_never_invents_numbers(page):
+    page.unroute_all()
+    page.route("**/api/answer*", lambda r: r.fulfill(json={"status": "ok", "answer": "答案", "sources": []}))
+    ask(page)
+    t = page.locator(".steps .meta").text_content()
+    assert "token" not in t and "整理" not in t and t.startswith("檢索 ")  # 缺 answer_ms、usage 就不顯示
+
+
+def test_meta_line_absent_when_nothing_is_known(page):
+    page.route("**/api/search*", lambda r: r.fulfill(json={"status": "error", "message": "壞了"}))
+    ask(page)
+    assert page.locator(".meta").count() == 0
+
+
+def test_meta_partial_usage_shows_only_the_known_side(page):
+    page.route("**/api/answer*", lambda r: r.fulfill(json={"status": "ok", "answer": "答案", "sources": [],
+                                                           "answer_ms": 1500, "usage": {"completion_tokens": 9}}))
+    ask(page)
+    assert page.locator(".steps .meta").text_content().endswith("整理 1.50 秒｜輸出 9 tokens")

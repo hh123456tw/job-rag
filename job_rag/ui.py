@@ -68,6 +68,7 @@ body.chat{max-width:820px;height:100vh;height:100dvh;margin:0 auto;padding:0;dis
 .cite{display:inline;min-height:0;padding:.25em .3em;margin:-.25em -.1em;border:0;background:none;color:var(--acc);font:inherit;font-weight:600;text-decoration:underline;text-underline-offset:3px;touch-action:manipulation}
 .src .cite{font-weight:400;text-align:left;white-space:normal}
 .hit.flash{opacity:1;outline:2px solid var(--acc);outline-offset:2px}.raw .hit{transition:outline-color .3s}
+.meta{margin:2px 0 0;font-size:.8125rem;color:var(--mute);font-variant-numeric:tabular-nums}
 .typing{display:inline-flex;gap:5px;padding:6px 0}.typing i{width:8px;height:8px;border-radius:50%;background:var(--mute);animation:pulse 1.2s ease-in-out infinite}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
 #bar{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
 #bar input{flex:1}#bar .go{min-width:76px}

@@ -34,25 +34,29 @@ function srcN(s,hits){for(var i=0;i<hits.length;i++){var h=hits[i];if(h.company=
 function jump(c){var m=c.closest('.msg'),d=m&&m.querySelector('details.raw'),x=d&&d.querySelectorAll('.hit')[c.dataset.n-1];if(!x)return;
 d.open=true;x.classList.add('flash');x.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
 setTimeout(function(){x.classList.remove('flash')},1800)}
+function secs(ms){return (ms/1000).toFixed(ms<100?3:2)+' 秒'}
+function metaText(i){var p=[];if(num(i.s)&&i.s>=0)p.push('檢索 '+secs(i.s));if(num(i.a)&&i.a>=0)p.push('整理 '+secs(i.a));
+var u=i.u||{},t=[];if(num(u.prompt_tokens))t.push('輸入 '+u.prompt_tokens);if(num(u.completion_tokens))t.push('輸出 '+u.completion_tokens);
+if(t.length)p.push(t.join('／')+' tokens');return p.join('｜')}
 function run(q){
-busy=true;var HJ=hist.length?hjson():'',m=msg('bot'),steps=el('div','steps'),body=el('div','body');
+busy=true;var info={};var HJ=hist.length?hjson():'',m=msg('bot'),steps=el('div','steps'),body=el('div','body');
 function hp(p){if(HJ)p.history=HJ;return p}m.appendChild(steps);m.appendChild(body);
 var dots=el('span','typing');dots.setAttribute('aria-hidden','true');dots.innerHTML='<i></i><i></i><i></i>';body.appendChild(dots);
 function step(t){steps.appendChild(el('p','step',t));end()}
-function done(){dots.remove();busy=false;body.parentNode.appendChild(presetChips(lastKey));
+function done(){dots.remove();busy=false;var mt=metaText(info);if(mt)steps.appendChild(el('p','meta',mt));body.parentNode.appendChild(presetChips(lastKey));
 if(m.offsetHeight>T.clientHeight)T.scrollTop=m.offsetTop-T.offsetTop-8;else end();save()}
 function bad(t,box){dots.remove();body.appendChild(el('p','err',t));if(box)body.appendChild(box);done()}
 step('搜尋資料（範圍：'+LB+'）');
 api('/api/search',hp({q:q,company:scope||''})).then(function(j){
 if(stale(j))return;if(j.status!=='ok'&&j.status!=='low'){bad(j.message||'搜尋失敗',null);return}
-var hits=j.hits||[],thr=j.threshold;if(j.expanded)step('問題很短，接上一題一起搜尋');if(j.detected)step('已偵測到公司：'+j.company+'，只搜這一家');
+var hits=j.hits||[],thr=j.threshold;info.s=j.search_ms;if(j.expanded)step('問題很短，接上一題一起搜尋');if(j.detected)step('已偵測到公司：'+j.company+'，只搜這一家');
 step(hits.length?'找到 '+hits.length+' 段：'+hits.map(function(h){return sh(h.heading_path)}).join('、'):'沒有找到段落');
 if(j.status==='low'){dots.remove();body.appendChild(el('p',null,'我找不到很接近的內容，不確定有沒有答案。下面的原文僅供參考，請自己核對。'));
 if(hits.length)body.appendChild(rawBox(hits,true,true,thr));rec(q,'（沒有找到很接近的內容）');done();return}
 step('整理答案');
 var c=new AbortController(),to=setTimeout(function(){c.abort()},40000);
 api('/api/answer',hp({q:q,company:j.company||''}),c.signal).then(function(a){clearTimeout(to);if(stale(a))return;dots.remove();
-if(a.status==='ok'){
+if(a.status==='ok'){info.a=a.answer_ms;info.u=a.usage;
 if(a.answer==='查無'){body.appendChild(el('p',null,'查無：語料裡沒有明確的答案。原文在下面，請自己核對。'));body.appendChild(rawBox(hits,false,true,thr));rec(q,'（資料中沒有找到答案）');done();return}
 var p=el('p','answer');cited(p,a.answer,hits.length);body.appendChild(p);var u=el('ul','src');
 a.sources.forEach(function(s){var t=s.company+' · '+sh(s.heading_path),k=srcN(s,hits),li=el('li');li.appendChild(k?cite(k,t):document.createTextNode(t));u.appendChild(li)});body.appendChild(u);body.appendChild(rawBox(hits,false,false,thr));rec(q,a.answer);done();return}
