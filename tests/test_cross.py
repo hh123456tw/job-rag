@@ -125,3 +125,9 @@ def test_about_cross_line_omitted_when_missing_or_stale(root):
     assert load(root)["cross_eval"] is None
     _cross_out(root, digest="0" * 16)
     assert load(root)["cross_eval"] is None
+
+
+def test_cross_question_after_a_company_question_is_not_turned_into_single_company(web):
+    hist = json.dumps([{"q": "甲科技是做什麼的？", "a": "做後端 [1]", "m": "demo"}], ensure_ascii=False)
+    d = web.get("/api/search", query_string={"q": "哪間公司有後端職缺", "history": hist}).get_json()
+    assert d["cross"] is True and d["company"] == ""
