@@ -82,16 +82,49 @@ def _bars(d) -> str:
 
 
 def _terms(d) -> str:
-    """兩個評估名詞（MRR、RAGAS）的白話說明，直接顯示在成績下面，不收合。數字取自輸出檔。"""
+    """兩個評估名詞（MRR、RAGAS）用條列白話說明，直接顯示在成績下面，不收合。數字取自輸出檔。"""
     best = next(r for r in d["table"] if r["method"] == "bge-m3")
+    lo, hi = best["ci"]["mrr"]
     g = d["generation"]
-    mrr = (f"<p><b>MRR</b>（平均倒數名次）：每一題看正確段落排第幾名，取「1 ÷ 名次」（第 1 名得 1 分、第 2 名得 0.5 分、第 3 名約 0.33 分，"
-           f"前 {d['depth']} 名內沒有就是 0），再把所有題目平均。越接近 1，正確段落越常排在最前面。網站實際用的 bge-m3 是 {_f(best['mrr'])}。</p>")
+    mrr = ("<h3>MRR（平均倒數名次）</h3><ul class=plain>"
+           "<li><b>量什麼：</b>正確段落排得多前面。</li>"
+           f"<li><b>怎麼算：</b>每題取「1 ÷ 名次」（第 1 名 1 分、第 2 名 0.5 分、第 3 名約 0.33 分、前 {d['depth']} 名內沒有 0 分），再把所有題目平均。</li>"
+           "<li><b>怎麼看：</b>越接近 1 越好。</li>"
+           f"<li><b>我們的結果：</b>網站用的 bge-m3 是 {_f(best['mrr'])}（95% 區間 {_f(lo)}–{_f(hi)}）。</li></ul>")
     if g is None:
-        return mrr + "<p><b>RAGAS</b>：用另一個語言模型當評審、替答案打分的評估工具。這份輸出沒有生成層評估（需要 DeepSeek 金鑰，見 README）。</p>"
-    return (mrr + f"<p><b>RAGAS</b>：用另一個語言模型當評審、替「答案」打分的開源評估工具。我們用兩項：<b>忠實度</b>（答案的每個說法，"
-            f"在給它的段落裡找不找得到依據）{_f(g['faithfulness'])}，<b>答案相關性</b>（答案有沒有回答到問題）{_f(g['answer_relevancy'])}，"
-            f"共評分 {g['scored']} 題。評審和生成都是 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。</p>")
+        return mrr + "<h3>RAGAS</h3><ul class=plain><li>用另一個語言模型當評審、替答案打分的評估工具。這份輸出沒有生成層評估（需要 DeepSeek 金鑰，見 README）。</li></ul>"
+    return (mrr + "<h3>RAGAS</h3><ul class=plain>"
+            "<li><b>量什麼：</b>答案好不好（不是段落找得準不準）。是用另一個語言模型當評審的開源評估工具。</li>"
+            f"<li><b>忠實度 {_f(g['faithfulness'])}：</b>答案的每個說法，在給它的段落裡找得到依據。</li>"
+            f"<li><b>答案相關性 {_f(g['answer_relevancy'])}：</b>答案有回答到問題。</li>"
+            f"<li><b>範圍：</b>共評分 {g['scored']} 題。評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。</li></ul>")
+
+
+def _level(d) -> str:
+    """「RAG 程度一眼看」：做了什麼、刻意沒做什麼。數字取自輸出檔與程式常數；沒做的項目是專案實際沒有的功能。"""
+    if not d:
+        return ""
+    best = next(r for r in d["table"] if r["method"] == "bge-m3")
+    lo, hi = best["ci"]["mrr"]
+    g, c = d["generation"], d["cross"]
+    done = [
+        "依標題切段，答案附出處與引用編號",
+        f"比較 {len(METHODS)} 種找法（關鍵字、向量、混合），用同一批題目量",
+        f"檢索評估：MRR {_f(best['mrr'])}（95% 區間 {_f(lo)}–{_f(hi)}）",
+        f"沒把握就不亂答：最高相似度低於 {retrieval.NOT_FOUND_THRESHOLD:.3f} 不呼叫 LLM",
+    ]
+    if g:
+        done.append(f"答案評估：RAGAS 忠實度 {_f(g['faithfulness'])}、答案相關性 {_f(g['answer_relevancy'])}")
+    if c:
+        done.append(f"換一個 AI 獨立複查：{c['claims']} 個說法中 {c['supported']} 個有依據")
+    done.append(f"追問記憶：帶入最近 {memory.MAX_TURNS} 輪（簡單規則）")
+    undone = ["重排序模型（reranker）", "向量資料庫（資料只有數百段，在記憶體內搜尋就夠）", "微調模型",
+              "線上監控與使用者回饋", "獨立測試題（題目與語料同源）"]
+
+    def li(xs):
+        return "".join(f"<li>{escape(x)}</li>" for x in xs)
+    return (f"<div class=level><div><h3>做了</h3><ul class=plain>{li(done)}</ul></div>"
+            f"<div><h3>刻意沒做</h3><ul class=plain>{li(undone)}</ul></div></div>")
 
 
 def _scores(d) -> str:
@@ -155,7 +188,7 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int) -> 
 <h1>求職情報問答</h1>
 <section><h2>1. 這是什麼</h2>
 <p class=lead>點一家公司，直接問問題。答案先出現，附出處；原文收在下面，隨時可以核對。目前收 {n_companies} 家公司的公開資料。</p>
-{_stats(data)}</section>
+{_stats(data)}{_level(data)}</section>
 <section><h2>2. 流程</h2>
 {_flow(n_segments, n_companies)}</section>
 <section><h2>3. 五個設計決定</h2><ul class=plain>

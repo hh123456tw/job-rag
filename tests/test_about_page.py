@@ -174,16 +174,27 @@ def test_without_generation_output_third_card_says_none(client, root):  # noqa: 
     assert cards == ["4 / 4", "1 / 1", "沒有"]
 
 
-def test_mrr_and_ragas_are_explained_in_plain_words_outside_the_details(client):
+def test_mrr_and_ragas_are_explained_as_lists_outside_the_details(client):
     html = client[1].get("/about").get_data(as_text=True)
     outside = re.sub(r"<details class=more>.*?</details>", "", html, flags=re.S)
-    assert "<b>MRR</b>（平均倒數名次）" in outside and "1 ÷ 名次" in outside and "0.875" in outside  # bge-m3 的 MRR 取自輸出檔
-    assert "<b>RAGAS</b>：用另一個語言模型當評審" in outside and "忠實度" in outside and "答案相關性" in outside
+    assert "<h3>MRR（平均倒數名次）</h3><ul class=plain>" in outside and "1 ÷ 名次" in outside and "0.875" in outside  # bge-m3 的 MRR 取自輸出檔
+    assert "<h3>RAGAS</h3><ul class=plain>" in outside and "忠實度 " in outside and "答案相關性 " in outside
     assert "偏愛自己的答案" in outside and "GPT 複查" in outside
+
+
+def test_rag_level_list_has_done_and_not_done_and_numbers_match_the_outputs(client):
+    html = client[1].get("/about").get_data(as_text=True)
+    lv = re.search(r"<div class=level>(.*?)</ul></div></div>", html, re.S).group(1)
+    assert "<h3>做了</h3>" in lv and "<h3>刻意沒做</h3>" in lv
+    assert "MRR 0.875" in lv and "RAGAS 忠實度" in lv and "5 個說法中 4 個有依據" in lv  # 數字取自輸出檔
+    assert f"最高相似度低於 {retrieval.NOT_FOUND_THRESHOLD:.3f}" in lv  # 門檻取自程式常數
+    for w in ("重排序模型", "向量資料庫", "微調模型", "線上監控", "獨立測試題"):
+        assert w in lv
+    assert re.search(r"<section><h2>1\. 這是什麼</h2>.*?class=level.*?</section>", html, re.S)  # 放在第 1 塊，仍只有 6 塊
 
 
 def test_without_generation_output_ragas_says_so_but_mrr_stays(client, root):  # noqa: F811
     (root / "eval/results_generation.json").unlink()
     (root / "eval/crossjudge/judge_gpt.json").unlink()
     outside = re.sub(r"<details class=more>.*?</details>", "", client[1].get("/about").get_data(as_text=True), flags=re.S)
-    assert "<b>MRR</b>" in outside and "沒有生成層評估" in outside
+    assert "<h3>MRR（平均倒數名次）</h3>" in outside and "沒有生成層評估" in outside
