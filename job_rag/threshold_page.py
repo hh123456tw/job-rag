@@ -1,4 +1,4 @@
-"""/threshold：拖動「查無門檻」，看每一題的判斷怎麼變。只讀既有評估輸出檔與程式常數，不重算、不呼叫模型。
+"""/threshold：拖動「查無門檻」，看每一題的結果怎麼變。只讀既有評估輸出檔與程式常數，不重算、不呼叫模型。
 缺檔、過期、壞檔的來源不畫，頁面註明「缺資料」，不用舊數字。圖是伺服器畫好的 SVG；JS 只改 class 與數字。"""
 import hashlib
 import json
@@ -102,13 +102,13 @@ def thr(p, t, drop, floor):
 
 
 def verdict(p, t, drop, floor) -> tuple[bool, bool]:
-    """(系統會回答, 判斷錯)。最高分低於門檻回查無（和 retrieval 同一個比法）。"""
+    """(系統會回答, 處理錯)。最高分低於門檻回查無（和 retrieval 同一個比法）。"""
     ok = p["s"] >= thr(p, t, drop, floor)
     return ok, ok != p["a"]
 
 
 def counts(pts, t, drop=None, floor=None) -> dict:
-    """各組 {答對有答案數 a, 有答案題數 b, 拒答數 c, 沒答案題數 d, 判斷錯 n}。"""
+    """各組 {答對有答案數 a, 有答案題數 b, 拒答數 c, 沒答案題數 d, 處理錯 n}。"""
     drop = retrieval.SCOPED_DROP if drop is None else drop
     floor = retrieval.CROSS_FLOOR if floor is None else floor
     out = {g: {"a": 0, "b": 0, "c": 0, "d": 0, "n": 0} for g, _ in GROUPS}
@@ -163,9 +163,9 @@ sl=$('sl'),t=T,gray=false,pick=null,P=[].slice.call(R.querySelectorAll('.pt')).m
 function X(s){return L+(s-LO)/(HI-LO)*W}
 function th(p){return p.g==='cross'?F:(p.sc?t-D:t)}
 function line(id,s){var l=$(id);if(l){l.setAttribute('x1',X(s));l.setAttribute('x2',X(s))}}
-function show(p){var d=$('detail');if(!p){d.innerHTML='<p>點圖上的點，看題目、分數與目前的判斷。</p>';return}
+function show(p){var d=$('detail');if(!p){d.innerHTML='<p>點圖上的點，看題目、分數與目前的結果。</p>';return}
 var ok=p.s>=th(p),bad=ok!==p.a;d.innerHTML='';[['',p.q],['最高相似度 '+p.s.toFixed(3)+'；這題用的門檻 '+th(p).toFixed(3),''],
-['這題'+(p.a?'有答案':'語料沒有答案')+'；目前系統會'+(ok?'回答':'回「查無」')+'：'+(bad?'判斷錯':'判斷對'),'']].forEach(function(r,i){var e=document.createElement('p');
+['這題'+(p.a?'有答案':'語料沒有答案')+'；目前系統會'+(ok?'回答':'回「查無」')+'：'+(bad?'處理錯':'處理對'),'']].forEach(function(r,i){var e=document.createElement('p');
 if(i===0){e.style.fontWeight=600;e.textContent=p.q}else e.textContent=r[0];d.appendChild(e)})}
 function upd(){var C={main:[0,0,0,0,0],real:[0,0,0,0,0],cross:[0,0,0,0,0]};
 P.forEach(function(p){var ok=p.s>=th(p),bad=ok!==p.a,c=C[p.g];c[p.a?1:3]++;if(p.a&&ok)c[0]++;if(!p.a&&!ok)c[2]++;if(bad)c[4]++;
@@ -173,7 +173,7 @@ p.e.classList.toggle('hi',ok);p.e.classList.toggle('wrong',bad);
 p.e.classList.toggle('sel',!gray||(GZ!==null&&p.g!=='cross'&&p.s>=GZ[0]&&p.s<=GZ[1]));p.e.classList.toggle('pick',p===pick)});
 var s=[0,1,2,3,4].map(function(i){return C.main[i]+C.real[i]});
 $('ca').textContent=s[0]+'/'+s[1];$('cu').textContent=s[2]+'/'+s[3];$('cw').textContent=s[4];
-['main','real','cross'].forEach(function(g){var e=$('d-'+g);if(e){var c=C[g];e.textContent=c[1]+c[3]?'有答案 '+c[0]+'/'+c[1]+'、沒答案拒答 '+c[2]+'/'+c[3]+'、判斷錯 '+c[4]:''}});
+['main','real','cross'].forEach(function(g){var e=$('d-'+g);if(e){var c=C[g];e.textContent=c[1]+c[3]?'有答案 '+c[0]+'/'+c[1]+'、沒答案拒答 '+c[2]+'/'+c[3]+'、處理錯 '+c[4]:''}});
 $('tv').textContent=t.toFixed(3);$('ts').textContent=(t-D).toFixed(3);line('l-t',t);line('l-s',t-D);
 $('b-gray').setAttribute('aria-pressed',gray);$('gnote').textContent=gray?(GZ?'灰色地帶：最高分 '+GZ[0].toFixed(3)+' 到 '+GZ[1].toFixed(3)+' 之間的題，有答案與沒答案的分數混在一起。':'兩類題的分數沒有重疊，沒有灰色地帶。'):'';
 R.classList.toggle('gray',gray&&GZ!==null);show(pick)}
@@ -256,7 +256,7 @@ def _chart(pts, miss, lo, hi, t, drop, floor):
 
 def _line(c, g):
     o = c[g]
-    return f"有答案 {o['a']}/{o['b']}、沒答案拒答 {o['c']}/{o['d']}、判斷錯 {o['n']}" if o["b"] + o["d"] else ""
+    return f"有答案 {o['a']}/{o['b']}、沒答案拒答 {o['c']}/{o['d']}、處理錯 {o['n']}" if o["b"] + o["d"] else ""
 
 
 def _layers(e2e, c):
@@ -292,16 +292,16 @@ def render(d: dict) -> str:
 <h1>查無門檻：拖拖看</h1>
 <p class=th-lead>門檻決定多低的分數要回「找不到」。太高會誤擋有答案的題，太低會讓沒答案的題進入生成。</p>
 <div id=th class=showring data-t={T!r} data-drop={drop!r} data-floor={floor!r} data-lo={lo!r} data-hi={hi!r} data-l={PAD} data-w={VW - 2 * PAD} data-gz="{gzs}">
-<div class=cnts><div><b id=ca>{s['a']}/{s['b']}</b><span>可回答題有回答</span></div><div><b id=cu>{s['c']}/{s['d']}</b><span>語料沒有答案的題有拒答</span></div><div><b id=cw>{s['n']}</b><span>判斷錯的題數</span></div></div>
+<div class=cnts><div><b id=ca>{s['a']}/{s['b']}</b><span>可回答題有回答</span></div><div><b id=cu>{s['c']}/{s['d']}</b><span>語料沒有答案的題有拒答</span></div><div><b id=cw>{s['n']}</b><span>處理錯的題數</span></div></div>
 <div class=ctl><label for=sl>門檻</label><input id=sl type=range min={SL_LO} max={SL_HI} step={SL_STEP} value={T!r}>
 <div class=vals><span>未指定公司 <output id=tv>{T:.3f}</output></span><span>已指定公司 <output id=ts>{T - drop:.3f}</output></span></div></div>
-<div class=th-btns><button id=b-gray type=button aria-pressed=false>僅選灰色地帶</button><button id=b-ring type=button aria-pressed=true>圈出判斷錯的題</button>
+<div class=th-btns><button id=b-gray type=button aria-pressed=false>僅選灰色地帶</button><button id=b-ring type=button aria-pressed=true>圈出處理錯的題</button>
 <button id=b-clear type=button>清除選取</button><button id=b-reset type=button>門檻還原</button></div>
 <p class=mute id=gnote aria-live=polite></p>
 {_chart(pts, miss, lo, hi, T, drop, floor)}
-<div id=detail aria-live=polite><p>點圖上的點，看題目、分數與目前的判斷。</p></div>
+<div id=detail aria-live=polite><p>點圖上的點，看題目、分數與目前的結果。</p></div>
 <div class=legend><span><i class="sw on"></i>深色點：高於門檻，系統會回答</span><span><i class=sw></i>淡色點：低於門檻，回「查無」</span>
-<span><i class="sw rg"></i>紅圈：判斷錯（有答案卻被擋，或沒答案卻放行）</span><span><i class="sw fl"></i>黃色點：跨公司題，用固定的 {floor:.3f}，不跟滑桿動</span>
+<span><i class="sw rg"></i>紅圈：處理錯（有答案卻被擋，或沒答案卻放行）</span><span><i class="sw fl"></i>黃色點：跨公司題，用固定的 {floor:.3f}，不跟滑桿動</span>
 <span>灰色虛線：程式現行值 {T:.3f}（未指定公司）與 {T - drop:.3f}（已指定公司，低 {drop:.3f}）；藍色實線是你拖的門檻，已指定公司的題用較低那條。</span></div>
 {det}{miss_html}</div>
 {_layers(d.get("e2e"), c)}
