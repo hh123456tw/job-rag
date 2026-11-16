@@ -1,11 +1,42 @@
 [
  {
+  "id": "s01",
+  "claims": [
+   {
+    "text": "神通資訊的額定資本額為25億。",
+    "supported": true,
+    "evidence": "額定 25 億"
+   },
+   {
+    "text": "神通資訊的實收資本額為21億。",
+    "supported": true,
+    "evidence": "實收 21 億"
+   },
+   {
+    "text": "神通資訊的股數為2.1億股。",
+    "supported": true,
+    "evidence": "2.1 億股"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
   "id": "s03",
   "claims": [
    {
     "text": "華電聯網2025年得標政府標案110件。",
     "supported": true,
-    "evidence": "2025 得標：政府標案 110 件"
+    "evidence": "政府標案 110 件"
+   },
+   {
+    "text": "華電聯網2025年得標政府標案總額近83億。",
+    "supported": true,
+    "evidence": "總額近 83 億"
+   },
+   {
+    "text": "該得標總額約為前一年的5倍。",
+    "supported": true,
+    "evidence": "約為前一年的 5 倍"
    }
   ],
   "faithfulness": 1.0
@@ -35,7 +66,7 @@
   "id": "s05",
   "claims": [
    {
-    "text": "數據立的產品包含Alta.DI。",
+    "text": "數據立的產品包括Alta.DI。",
     "supported": true,
     "evidence": "產品：Alta.DI"
    },
@@ -45,12 +76,12 @@
     "evidence": "Alta.DI（AI 顧客互動）"
    },
    {
-    "text": "數據立的產品包含CDP。",
+    "text": "數據立的產品包括CDP。",
     "supported": true,
     "evidence": "CDP"
    },
    {
-    "text": "數據立的產品包含MA。",
+    "text": "數據立的產品包括MA。",
     "supported": true,
     "evidence": "MA"
    }
@@ -61,184 +92,184 @@
   "id": "s06",
   "claims": [
    {
-    "text": "聯合報數據發展部的職缺包含演算法工程師。",
+    "text": "聯合報數據發展部有事業發展中心數據分析師職缺。",
     "supported": true,
-    "evidence": "部門職缺（舊）：演算法工程師"
+    "evidence": "數據分析師 - 事業發展中心"
    },
    {
-    "text": "聯合報數據發展部的職缺包含資料科學資深經理。",
+    "text": "該職缺要求能在GCP上建構資料模型。",
     "supported": true,
-    "evidence": "資料科學資深經理"
+    "evidence": "能在 GCP 上建構資料模型"
    },
    {
-    "text": "聯合報數據發展部的職缺包含數據分析師。",
+    "text": "該職缺要求能在GCP上建構分析流程。",
     "supported": true,
-    "evidence": "數據分析師。見第 4 節。"
+    "evidence": "資料模型與分析流程"
    },
    {
-    "text": "徵才頁面有7筆職缺標題寫數據發展部。",
-    "supported": true,
-    "evidence": "共 7 筆標題寫【數據發展部】"
-   },
-   {
-    "text": "數據發展部職缺涵蓋在GCP上建構資料模型與分析流程。",
-    "supported": true,
-    "evidence": "能在 GCP 上建構資料模型與分析流程"
-   },
-   {
-    "text": "建構資料模型與分析流程涉及SQL。",
+    "text": "該職缺的資料模型與分析流程技能涉及SQL。",
     "supported": true,
     "evidence": "SQL／Python／LLM"
    },
    {
-    "text": "建構資料模型與分析流程涉及Python。",
+    "text": "該職缺的資料模型與分析流程技能涉及Python。",
     "supported": true,
     "evidence": "SQL／Python／LLM"
    },
    {
-    "text": "建構資料模型與分析流程涉及LLM。",
+    "text": "該職缺的資料模型與分析流程技能涉及LLM。",
     "supported": true,
     "evidence": "SQL／Python／LLM"
    },
    {
-    "text": "數據發展部職缺涵蓋指標定義。",
+    "text": "該職缺要求進行指標定義。",
     "supported": true,
     "evidence": "指標定義"
    },
    {
-    "text": "數據發展部職缺涵蓋數據驗證。",
+    "text": "該職缺要求進行數據驗證。",
     "supported": true,
     "evidence": "數據驗證"
    },
    {
-    "text": "數據發展部職缺涵蓋支援ETL。",
-    "supported": true,
-    "evidence": "支援 ETL"
-   },
-   {
-    "text": "數據發展部職缺涵蓋資料清理。",
-    "supported": true,
-    "evidence": "資料清理"
-   },
-   {
-    "text": "數據發展部職缺涵蓋跨系統欄位整併。",
-    "supported": true,
-    "evidence": "跨系統欄位整併"
-   },
-   {
-    "text": "數據發展部職缺要求SQL。",
-    "supported": true,
-    "evidence": "必要（內文）：SQL 與 Python"
-   },
-   {
-    "text": "數據發展部職缺要求Python。",
-    "supported": true,
-    "evidence": "必要（內文）：SQL 與 Python"
-   },
-   {
-    "text": "數據發展部職缺要求GCP使用經驗。",
-    "supported": true,
-    "evidence": "GCP 使用經驗"
-   },
-   {
-    "text": "數據發展部職缺將Vertex AI／LLM應用列為加分項。",
-    "supported": true,
-    "evidence": "加分：Vertex AI／LLM 應用"
-   },
-   {
-    "text": "數據發展部職缺將數位廣告指標列為加分項。",
-    "supported": true,
-    "evidence": "數位廣告指標"
-   },
-   {
-    "text": "數據發展部職缺涵蓋數據報表維護。",
-    "supported": true,
-    "evidence": "數據報表維護"
-   },
-   {
-    "text": "數據發展部職缺涵蓋建立數據處理自動化。",
-    "supported": true,
-    "evidence": "建立數據處理自動化與監控機制"
-   },
-   {
-    "text": "數據發展部職缺涵蓋建立監控機制。",
-    "supported": true,
-    "evidence": "建立數據處理自動化與監控機制"
-   },
-   {
-    "text": "數據發展部職缺涵蓋推薦系統。",
-    "supported": true,
-    "evidence": "推薦系統"
-   },
-   {
-    "text": "數據發展部職缺涵蓋精準廣告。",
-    "supported": true,
-    "evidence": "精準廣告"
-   },
-   {
-    "text": "數據發展部職缺涵蓋NLP。",
-    "supported": true,
-    "evidence": "NLP"
-   },
-   {
-    "text": "數據發展部職缺涵蓋機器學習。",
-    "supported": true,
-    "evidence": "機器學習"
-   },
-   {
-    "text": "數據發展部職缺涵蓋資料處理流程與模型自動化。",
-    "supported": true,
-    "evidence": "資料處理流程與模型自動化"
-   },
-   {
-    "text": "數據發展部職缺涵蓋系統設計。",
-    "supported": true,
-    "evidence": "系統設計建置與維運"
-   },
-   {
-    "text": "數據發展部職缺涵蓋系統建置。",
-    "supported": true,
-    "evidence": "系統設計建置與維運"
-   },
-   {
-    "text": "數據發展部職缺涵蓋系統維運。",
-    "supported": true,
-    "evidence": "系統設計建置與維運"
-   },
-   {
-    "text": "有職缺內文提到以數據模型與AI應用解決營運問題。",
+    "text": "該職缺內文提到以數據模型解決營運問題。",
     "supported": true,
     "evidence": "以數據模型與 AI 應用解決營運問題"
    },
    {
-    "text": "有職缺內文提到2024、2025連兩年獲WAN-IFRA亞洲金獎。",
+    "text": "該職缺內文提到以AI應用解決營運問題。",
     "supported": true,
-    "evidence": "獲 WAN-IFRA 亞洲與全球金獎"
+    "evidence": "以數據模型與 AI 應用解決營運問題"
    },
    {
-    "text": "有職缺內文提到2024、2025連兩年獲WAN-IFRA全球金獎。",
+    "text": "數據發展部數據分析師需具備SQL技能。",
     "supported": true,
-    "evidence": "獲 WAN-IFRA 亞洲與全球金獎"
+    "evidence": "必要（內文）：SQL 與 Python"
    },
    {
-    "text": "有職缺內文提到INMA全球第一名。",
+    "text": "數據發展部數據分析師需具備Python技能。",
     "supported": true,
-    "evidence": "INMA 全球第一名"
+    "evidence": "必要（內文）：SQL 與 Python"
    },
    {
-    "text": "段落沒有提供部門完整編制的自述。",
+    "text": "數據發展部數據分析師需具備GCP使用經驗。",
     "supported": true,
-    "evidence": "依據是上列事實，不是部門自述"
+    "evidence": "GCP 使用經驗"
    },
    {
-    "text": "段落沒有提供部門正式業務範圍的自述。",
+    "text": "數據發展部數據分析師的加分項包括Vertex AI／LLM應用。",
     "supported": true,
-    "evidence": "依據是上列事實，不是部門自述"
+    "evidence": "加分：Vertex AI／LLM 應用"
    },
    {
-    "text": "段落以職缺與推測資訊說明部門工作。",
+    "text": "數據發展部數據分析師的加分項包括數位廣告指標。",
+    "supported": true,
+    "evidence": "數位廣告指標"
+   },
+   {
+    "text": "數據發展部數據分析師的工作包括支援ETL。",
+    "supported": true,
+    "evidence": "支援 ETL"
+   },
+   {
+    "text": "數據發展部數據分析師的工作包括資料清理。",
+    "supported": true,
+    "evidence": "資料清理"
+   },
+   {
+    "text": "數據發展部數據分析師的工作包括跨系統欄位整併。",
+    "supported": true,
+    "evidence": "跨系統欄位整併"
+   },
+   {
+    "text": "聯合報數據發展部有產品分析中心助理數據分析師職缺。",
+    "supported": true,
+    "evidence": "助理數據分析師－產品分析中心"
+   },
+   {
+    "text": "助理數據分析師需具備基礎SQL技能。",
+    "supported": true,
+    "evidence": "基礎 SQL、Python"
+   },
+   {
+    "text": "助理數據分析師需具備基礎Python技能。",
+    "supported": true,
+    "evidence": "基礎 SQL、Python"
+   },
+   {
+    "text": "助理數據分析師的工作包括數據報表維護。",
+    "supported": true,
+    "evidence": "數據報表維護"
+   },
+   {
+    "text": "助理數據分析師的工作包括建立數據處理自動化。",
+    "supported": true,
+    "evidence": "建立數據處理自動化與監控機制"
+   },
+   {
+    "text": "助理數據分析師的工作包括建立監控機制。",
+    "supported": true,
+    "evidence": "建立數據處理自動化與監控機制"
+   },
+   {
+    "text": "數據發展部演算法工程師的內文提到推薦系統。",
+    "supported": true,
+    "evidence": "推薦系統"
+   },
+   {
+    "text": "該演算法工程師的內文提到精準廣告。",
+    "supported": true,
+    "evidence": "精準廣告"
+   },
+   {
+    "text": "該演算法工程師的內文提到NLP。",
+    "supported": true,
+    "evidence": "NLP"
+   },
+   {
+    "text": "該演算法工程師的內文提到機器學習。",
+    "supported": true,
+    "evidence": "機器學習"
+   },
+   {
+    "text": "該演算法工程師的內文提到資料處理流程。",
+    "supported": true,
+    "evidence": "資料處理流程與模型自動化"
+   },
+   {
+    "text": "該演算法工程師的內文提到模型自動化。",
+    "supported": true,
+    "evidence": "模型自動化"
+   },
+   {
+    "text": "該演算法工程師的內文提到系統設計。",
+    "supported": true,
+    "evidence": "系統設計建置與維運"
+   },
+   {
+    "text": "該演算法工程師的內文提到系統建置。",
+    "supported": true,
+    "evidence": "系統設計建置與維運"
+   },
+   {
+    "text": "該演算法工程師的內文提到系統維運。",
+    "supported": true,
+    "evidence": "系統設計建置與維運"
+   },
+   {
+    "text": "資料將部門分為兩塊的說法標註為推測。",
     "supported": true,
     "evidence": "【推測】部門分兩塊"
+   },
+   {
+    "text": "推測的部門分工之一為廣告／受眾資料與分析。",
+    "supported": true,
+    "evidence": "廣告／受眾資料與分析"
+   },
+   {
+    "text": "推測的部門分工之一為新聞室AI產品。",
+    "supported": true,
+    "evidence": "新聞室 AI 產品"
    }
   ],
   "faithfulness": 1.0
@@ -247,44 +278,39 @@
   "id": "s10",
   "claims": [
    {
-    "text": "叡揚資訊的AI產品包含AI智慧辨識InsAI。",
+    "text": "叡揚資訊的AI產品包括AI智慧辨識。",
+    "supported": true,
+    "evidence": "AI：AI 智慧辨識"
+   },
+   {
+    "text": "AI智慧辨識產品名為InsAI。",
     "supported": true,
     "evidence": "AI 智慧辨識（InsAI"
    },
    {
-    "text": "InsAI採用VLM。",
+    "text": "InsAI涉及VLM。",
     "supported": true,
-    "evidence": "InsAI，VLM，支援地端"
+    "evidence": "InsAI，VLM"
    },
    {
     "text": "InsAI支援地端。",
     "supported": true,
-    "evidence": "InsAI，VLM，支援地端"
+    "evidence": "VLM，支援地端"
    },
    {
-    "text": "叡揚資訊的AI產品包含AI財報辨識。",
+    "text": "叡揚資訊的AI產品包括AI財報辨識。",
     "supported": true,
     "evidence": "AI 財報辨識"
    },
    {
-    "text": "叡揚資訊的AI產品包含AI公文。",
+    "text": "叡揚資訊的AI產品包括AI公文。",
     "supported": true,
     "evidence": "AI 公文"
    },
    {
-    "text": "叡揚資訊的AI產品包含AI知識管理。",
+    "text": "叡揚資訊的AI產品包括AI知識管理。",
     "supported": true,
     "evidence": "AI 知識管理"
-   },
-   {
-    "text": "叡揚資訊的產品包含C.ai對話服務平台。",
-    "supported": true,
-    "evidence": "C.ai 對話服務平台"
-   },
-   {
-    "text": "2026年報導稱C.ai 3.0為Agentic Portal。",
-    "supported": true,
-    "evidence": "為 Agentic Portal"
    },
    {
     "text": "叡揚資訊於2026年發表InsAI。",
@@ -292,7 +318,7 @@
     "evidence": "2026：發表 InsAI"
    },
    {
-    "text": "2026年發表的InsAI為VLM。",
+    "text": "2026年發表的InsAI涉及VLM。",
     "supported": true,
     "evidence": "InsAI（VLM，地端）"
    },
@@ -307,29 +333,19 @@
     "evidence": "為 Agentic Portal"
    },
    {
-    "text": "叡揚資訊研發Agentic AI／Harness。",
+    "text": "C.ai是對話服務平台。",
     "supported": true,
-    "evidence": "研發 Agentic AI／Harness"
+    "evidence": "C.ai 對話服務平台"
    },
    {
-    "text": "Agentic AI／Harness涉及代理人身分。",
+    "text": "2026年報導稱C.ai 3.0為Agentic Portal。",
     "supported": true,
-    "evidence": "代理人身分、權限、執行環境"
-   },
-   {
-    "text": "Agentic AI／Harness涉及權限。",
-    "supported": true,
-    "evidence": "代理人身分、權限、執行環境"
-   },
-   {
-    "text": "Agentic AI／Harness涉及執行環境。",
-    "supported": true,
-    "evidence": "代理人身分、權限、執行環境"
+    "evidence": "2026 報導稱 C.ai 3.0"
    },
    {
     "text": "Vital CRM於2025年6月推出AI Copilot模組。",
     "supported": true,
-    "evidence": "推 AI Copilot 模組"
+    "evidence": "2025-06：Vital CRM 推"
    }
   ],
   "faithfulness": 1.0
@@ -363,7 +379,7 @@
     "evidence": "VMware VCF"
    },
    {
-    "text": "VMware VCF涉及虛擬化與雲端。",
+    "text": "VMware VCF屬於虛擬化與雲端。",
     "supported": true,
     "evidence": "虛擬化與雲端"
    },
@@ -396,6 +412,41 @@
     "text": "典凡科技提供資安整合。",
     "supported": true,
     "evidence": "網路與資安整合"
+   },
+   {
+    "text": "典凡科技的業務涵蓋混合雲資料中心網路。",
+    "supported": true,
+    "evidence": "混合雲資料中心網路"
+   },
+   {
+    "text": "典凡科技的業務涵蓋虛擬化。",
+    "supported": true,
+    "evidence": "虛擬化"
+   },
+   {
+    "text": "典凡科技的業務涵蓋K8S。",
+    "supported": true,
+    "evidence": "K8S"
+   },
+   {
+    "text": "典凡科技的業務涵蓋AI算力。",
+    "supported": true,
+    "evidence": "AI 算力"
+   },
+   {
+    "text": "典凡科技的業務涵蓋零信任資安。",
+    "supported": true,
+    "evidence": "零信任資安"
+   },
+   {
+    "text": "典凡科技的業務涵蓋AI資料中心。",
+    "supported": true,
+    "evidence": "AI 資料中心"
+   },
+   {
+    "text": "典凡科技的業務涵蓋MLOps中台。",
+    "supported": true,
+    "evidence": "MLOps 中台"
    }
   ],
   "faithfulness": 1.0
@@ -404,9 +455,19 @@
   "id": "s13",
   "claims": [
    {
-    "text": "宏碁雲架構服務簡稱eDC。",
+    "text": "宏碁雲架構服務的英文簡稱為eDC。",
     "supported": true,
     "evidence": "宏碁雲架構服務股份有限公司（eDC）"
+   },
+   {
+    "text": "宏碁雲架構服務的產業為電腦軟體服務業。",
+    "supported": true,
+    "evidence": "產業：電腦軟體服務業"
+   },
+   {
+    "text": "宏碁雲架構服務的產業描述為資訊服務業。",
+    "supported": true,
+    "evidence": "產業描述：資訊服務業"
    },
    {
     "text": "宏碁雲架構服務是安碁資訊的子公司。",
@@ -416,7 +477,7 @@
    {
     "text": "安碁資訊是國內首家IPO資安服務商。",
     "supported": true,
-    "evidence": "國內首家 IPO 資安服務商安碁資訊"
+    "evidence": "國內首家 IPO 資安服務商"
    },
    {
     "text": "安碁資訊的代號為6690。",
@@ -426,12 +487,12 @@
    {
     "text": "宏碁雲架構服務從事資料中心建置。",
     "supported": true,
-    "evidence": "做資料中心建置維運"
+    "evidence": "資料中心建置維運"
    },
    {
     "text": "宏碁雲架構服務從事資料中心維運。",
     "supported": true,
-    "evidence": "做資料中心建置維運"
+    "evidence": "資料中心建置維運"
    },
    {
     "text": "宏碁雲架構服務從事災難復原。",
@@ -449,39 +510,24 @@
     "evidence": "雲端整合"
    },
    {
-    "text": "宏碁雲架構服務從事資安。",
+    "text": "宏碁雲架構服務從事資安業務。",
     "supported": true,
     "evidence": "雲端整合與資安"
    },
    {
-    "text": "宏碁雲架構服務的自有產品包含CSP私有雲管理平台。",
+    "text": "宏碁雲架構服務的自有產品包括CSP私有雲管理平台。",
     "supported": true,
     "evidence": "自有產品有 CSP 私有雲管理平台"
    },
    {
-    "text": "宏碁雲架構服務的自有產品包含SAFE 3.0資安日誌保存與稽核系統。",
+    "text": "宏碁雲架構服務的自有產品包括SAFE 3.0資安日誌保存與稽核系統。",
     "supported": true,
     "evidence": "資安日誌保存與稽核系統"
    },
    {
-    "text": "宏碁雲架構服務的自有產品包含inspireOz資訊服務管理平台。",
+    "text": "宏碁雲架構服務的自有產品包括inspireOz資訊服務管理平台。",
     "supported": true,
     "evidence": "inspireOz 資訊服務管理平台"
-   },
-   {
-    "text": "宏碁雲架構服務的產業為電腦軟體服務業。",
-    "supported": true,
-    "evidence": "產業：電腦軟體服務業"
-   },
-   {
-    "text": "宏碁雲架構服務的產業描述為資訊服務業。",
-    "supported": true,
-    "evidence": "產業描述：資訊服務業"
-   },
-   {
-    "text": "宏碁雲架構服務有270名員工。",
-    "supported": true,
-    "evidence": "員工人數：270 人"
    }
   ],
   "faithfulness": 1.0
@@ -490,32 +536,32 @@
   "id": "s14",
   "claims": [
    {
-    "text": "台灣大哥大的業務包含行動電信。",
+    "text": "台灣大哥大的業務包括行動電信。",
     "supported": true,
     "evidence": "電信（行動、寬頻）"
    },
    {
-    "text": "台灣大哥大的業務包含寬頻電信。",
+    "text": "台灣大哥大的業務包括寬頻電信。",
     "supported": true,
     "evidence": "電信（行動、寬頻）"
    },
    {
-    "text": "台灣大哥大的業務包含有線電視。",
+    "text": "台灣大哥大的業務包括有線電視。",
     "supported": true,
     "evidence": "有線電視"
    },
    {
-    "text": "台灣大哥大的業務包含企業服務。",
+    "text": "台灣大哥大的業務包括企業服務。",
     "supported": true,
     "evidence": "企業服務"
    },
    {
-    "text": "台灣大哥大的業務包含新科技事業。",
+    "text": "台灣大哥大的業務包括新科技事業。",
     "supported": true,
     "evidence": "新科技事業"
    },
    {
-    "text": "台灣大哥大的業務包含電商momo。",
+    "text": "台灣大哥大的業務包括momo電商。",
     "supported": true,
     "evidence": "電商（momo）"
    }
@@ -526,9 +572,9 @@
   "id": "j01",
   "claims": [
    {
-    "text": "典凡科技「AI應用整合規劃師、AI應用工程師」職缺年薪為900,000至1,200,000元。",
+    "text": "典凡科技AI應用整合規劃師／AI應用工程師的年薪為900,000至1,200,000元。",
     "supported": true,
-    "evidence": "年薪 900,000~1,200,000"
+    "evidence": "900,000~1,200,000 元"
    }
   ],
   "faithfulness": 1.0
@@ -542,132 +588,132 @@
     "evidence": "擅長工具 Python"
    },
    {
-    "text": "該職缺其他條件列出Linux。",
+    "text": "該職缺的其他條件列出Linux。",
     "supported": true,
     "evidence": "其他條件寫 Linux"
    },
    {
-    "text": "該職缺其他條件列出Jenkins。",
+    "text": "該職缺的其他條件列出Jenkins。",
     "supported": true,
     "evidence": "Jenkins"
    },
    {
-    "text": "該職缺其他條件列出Django。",
+    "text": "該職缺的其他條件列出Django。",
     "supported": true,
     "evidence": "Django"
    },
    {
-    "text": "該職缺其他條件列出Git。",
+    "text": "該職缺的其他條件列出Git。",
     "supported": true,
     "evidence": "Git"
    },
    {
-    "text": "該職缺其他條件列出Python。",
+    "text": "該職缺的其他條件列出Python。",
     "supported": true,
-    "evidence": "Python"
+    "evidence": "Git、Python"
    },
    {
-    "text": "該職缺其他條件列出PostgreSQL。",
+    "text": "該職缺的其他條件列出PostgreSQL。",
     "supported": true,
     "evidence": "PostgreSQL"
    },
    {
-    "text": "該職缺其他條件列出MS SQL。",
+    "text": "該職缺的其他條件列出MS SQL。",
     "supported": true,
     "evidence": "MS SQL"
    },
    {
-    "text": "該職缺其他條件列出HTML。",
+    "text": "該職缺的其他條件列出HTML。",
     "supported": true,
     "evidence": "HTML"
    },
    {
-    "text": "該職缺其他條件列出JavaScript。",
+    "text": "該職缺的其他條件列出JavaScript。",
     "supported": true,
     "evidence": "JavaScript"
    },
    {
-    "text": "該職缺其他條件列出jQuery。",
+    "text": "該職缺的其他條件列出jQuery。",
     "supported": true,
     "evidence": "jQuery"
    },
    {
-    "text": "該職缺其他條件列出CSS。",
+    "text": "該職缺的其他條件列出CSS。",
     "supported": true,
     "evidence": "CSS"
    },
    {
-    "text": "該職缺其他條件列出React JS。",
+    "text": "該職缺的其他條件列出React JS。",
     "supported": true,
     "evidence": "React JS"
    },
    {
-    "text": "該職缺的工作技能包含軟體程式設計。",
+    "text": "該職缺的工作技能包括軟體程式設計。",
     "supported": true,
     "evidence": "工作技能：軟體程式設計"
    },
    {
-    "text": "該職缺的工作技能包含資料庫程式設計。",
+    "text": "該職缺的工作技能包括資料庫程式設計。",
     "supported": true,
     "evidence": "資料庫程式設計"
    },
    {
-    "text": "該職缺將React列為加分項。",
+    "text": "該職缺的加分項包括React。",
     "supported": true,
     "evidence": "加分：React"
    },
    {
-    "text": "該職缺將系統分析設計列為加分項。",
+    "text": "該職缺的加分項包括系統分析設計。",
     "supported": true,
     "evidence": "系統分析設計"
    },
    {
-    "text": "該職缺將Docker／虛擬化列為加分項。",
+    "text": "該職缺的加分項包括Docker／虛擬化。",
     "supported": true,
     "evidence": "Docker／虛擬化"
    },
    {
-    "text": "該職缺將ELK列為加分項。",
+    "text": "該職缺的加分項包括ELK。",
     "supported": true,
     "evidence": "ELK"
    },
    {
-    "text": "段落2也列出該職缺的擅長工具為Python。",
+    "text": "段落2也記載該職缺擅長工具為Python。",
     "supported": true,
     "evidence": "擅長工具 Python"
    },
    {
-    "text": "段落2也列出該職缺內文包含Linux。",
+    "text": "段落2也記載該職缺內文包含Linux。",
     "supported": true,
     "evidence": "內文 Linux"
    },
    {
-    "text": "段落2也列出該職缺內文包含Jenkins。",
+    "text": "段落2也記載該職缺內文包含Jenkins。",
     "supported": true,
     "evidence": "Jenkins"
    },
    {
-    "text": "段落2也列出該職缺內文包含Django。",
+    "text": "段落2也記載該職缺內文包含Django。",
     "supported": true,
     "evidence": "Django"
    },
    {
-    "text": "段落2也列出該職缺內文包含Git。",
+    "text": "段落2也記載該職缺內文包含Git。",
     "supported": true,
     "evidence": "Git"
    },
    {
-    "text": "段落2也列出該職缺內文包含PostgreSQL。",
+    "text": "段落2也記載該職缺內文包含PostgreSQL。",
     "supported": true,
     "evidence": "PostgreSQL"
    },
    {
-    "text": "段落2也列出該職缺內文包含MS SQL。",
+    "text": "段落2也記載該職缺內文包含MS SQL。",
     "supported": true,
     "evidence": "MS SQL"
    },
    {
-    "text": "段落2也列出該職缺內文包含React。",
+    "text": "段落2也記載該職缺內文包含React。",
     "supported": true,
     "evidence": "React"
    }
@@ -678,94 +724,64 @@
   "id": "j03",
   "claims": [
    {
-    "text": "神通資訊科技有後端工程師（Node.js）職缺。",
+    "text": "神通資訊有後端工程師（Node.js）職缺。",
     "supported": true,
     "evidence": "60076X0_後端工程師（Node.js）"
    },
    {
-    "text": "後端工程師（Node.js）要求2年以上經驗。",
+    "text": "該後端工程師職缺連結為https://www.104.com.tw/job/8y67b。",
+    "supported": true,
+    "evidence": "/job/8y67b"
+   },
+   {
+    "text": "該後端工程師職缺待遇面議。",
+    "supported": true,
+    "evidence": "薪資：待遇面議"
+   },
+   {
+    "text": "該後端工程師職缺位於台北市內湖區。",
+    "supported": true,
+    "evidence": "地點：台北市內湖區"
+   },
+   {
+    "text": "該後端工程師職缺要求2年以上經驗。",
     "supported": true,
     "evidence": "條件：2 年以上"
    },
    {
-    "text": "後端工程師（Node.js）要求大學以上學歷。",
+    "text": "該後端工程師職缺要求大學以上學歷。",
     "supported": true,
     "evidence": "大學以上"
    },
    {
-    "text": "後端工程師（Node.js）位於台北市內湖區。",
+    "text": "該後端工程師職缺的擅長工具包括JavaScript。",
     "supported": true,
-    "evidence": "地點：台北市內湖區"
+    "evidence": "擅長工具：JavaScript"
    },
    {
-    "text": "後端工程師（Node.js）薪資為待遇面議。",
+    "text": "該後端工程師職缺的擅長工具包括Node.js。",
     "supported": true,
-    "evidence": "薪資：待遇面議"
+    "evidence": "JavaScript、Node.js"
    },
    {
-    "text": "後端工程師（Node.js）工作包含RESTful API。",
-    "supported": true,
-    "evidence": "RESTful API"
-   },
-   {
-    "text": "後端工程師（Node.js）工作包含後端服務模組。",
-    "supported": true,
-    "evidence": "後端服務模組"
-   },
-   {
-    "text": "後端工程師（Node.js）工作包含與前端整合。",
-    "supported": true,
-    "evidence": "與前端／AI／資料系統整合"
-   },
-   {
-    "text": "後端工程師（Node.js）工作包含與AI整合。",
-    "supported": true,
-    "evidence": "與前端／AI／資料系統整合"
-   },
-   {
-    "text": "後端工程師（Node.js）工作包含與資料系統整合。",
-    "supported": true,
-    "evidence": "與前端／AI／資料系統整合"
-   },
-   {
-    "text": "神通資訊科技另有後端資深工程師（Node.js）職缺。",
+    "text": "神通資訊另有後端資深工程師（Node.js）職缺。",
     "supported": true,
     "evidence": "後端資深工程師（Node.js）"
    },
    {
-    "text": "後端資深工程師（Node.js）要求5年以上經驗。",
+    "text": "該資深工程師職缺連結為https://www.104.com.tw/job/8y6oq。",
+    "supported": true,
+    "evidence": "/job/8y6oq"
+   },
+   {
+    "text": "該資深工程師職缺要求5年以上經驗。",
     "supported": true,
     "evidence": "條件：5 年以上"
    },
    {
-    "text": "後端資深工程師（Node.js）要求大學以上學歷。",
+    "text": "該資深工程師職缺要求大學以上學歷。",
     "supported": true,
     "evidence": "大學以上"
-   },
-   {
-    "text": "後端資深工程師（Node.js）位於台北市內湖區。",
-    "supported": true,
-    "evidence": "地點：台北市內湖區"
-   },
-   {
-    "text": "後端資深工程師（Node.js）薪資為待遇面議。",
-    "supported": true,
-    "evidence": "薪資：待遇面議"
-   },
-   {
-    "text": "後端資深工程師（Node.js）工作包含Node.js平台後端架構。",
-    "supported": true,
-    "evidence": "Node.js 平台後端架構"
-   },
-   {
-    "text": "後端資深工程師（Node.js）工作包含重構。",
-    "supported": true,
-    "evidence": "重構"
-   },
-   {
-    "text": "後端資深工程師（Node.js）工作包含技術債評估。",
-    "supported": true,
-    "evidence": "技術債評估"
    }
   ],
   "faithfulness": 1.0
@@ -774,7 +790,7 @@
   "id": "j04",
   "claims": [
    {
-    "text": "台灣大哥大的Kubernetes平台工程師要求3年以上經驗。",
+    "text": "台灣大哥大Kubernetes平台工程師要求3年以上經驗。",
     "supported": true,
     "evidence": "經歷／學歷：3 年以上"
    },
@@ -793,16 +809,6 @@
     "text": "遠振資訊目前開放0筆職缺。",
     "supported": true,
     "evidence": "目前開放職缺：0 筆"
-   },
-   {
-    "text": "遠振資訊公司頁的工作機會區塊沒有職缺。",
-    "supported": true,
-    "evidence": "公司頁「工作機會」區塊沒有職缺"
-   },
-   {
-    "text": "關鍵字搜尋遠振資訊顯示共0筆。",
-    "supported": true,
-    "evidence": "顯示「共 0 筆」"
    }
   ],
   "faithfulness": 1.0
@@ -811,9 +817,14 @@
   "id": "j07",
   "claims": [
    {
-    "text": "奧衍解決方案架構師（Junior）的月薪範圍為36,000至50,000元。",
+    "text": "聯合報系數據優化師（數據分析）隸屬戰略部。",
     "supported": true,
-    "evidence": "月薪 36,000~50,000"
+    "evidence": "【戰略部】數據優化師（數據分析）"
+   },
+   {
+    "text": "該數據優化師（數據分析）職缺月薪為35,000以上。",
+    "supported": true,
+    "evidence": "薪資：月薪 35,000 以上"
    }
   ],
   "faithfulness": 1.0
@@ -827,9 +838,20 @@
     "evidence": "出差外派：需出差"
    },
    {
-    "text": "該職缺出差一年累積約三個月以下。",
+    "text": "該職務的出差時間為一年累積約三個月以下。",
     "supported": true,
     "evidence": "一年累積約三個月以下"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j09",
+  "claims": [
+   {
+    "text": "神通資訊C++/AI應用工程師職缺標示無需出差外派。",
+    "supported": true,
+    "evidence": "無需出差外派"
    }
   ],
   "faithfulness": 1.0
@@ -838,137 +860,157 @@
   "id": "j10",
   "claims": [
    {
-    "text": "中華網龍AI應用研發工程師必要條件包含Python、TypeScript或其他後端語言。",
+    "text": "中華網龍AI應用研發工程師的必要條件包括Python、TypeScript或其他後端語言。",
     "supported": true,
     "evidence": "或其他後端語言"
    },
    {
-    "text": "該職缺必要條件包含REST API。",
+    "text": "該職缺的必要條件包括REST API。",
     "supported": true,
     "evidence": "REST API"
    },
    {
-    "text": "該職缺必要條件包含JSON。",
+    "text": "該職缺的必要條件包括JSON。",
     "supported": true,
     "evidence": "JSON"
    },
    {
-    "text": "該職缺必要條件包含非同步。",
+    "text": "該職缺的必要條件包括非同步。",
     "supported": true,
     "evidence": "非同步"
    },
    {
-    "text": "該職缺必要條件包含服務整合。",
+    "text": "該職缺的必要條件包括服務整合。",
     "supported": true,
     "evidence": "服務整合"
    },
    {
     "text": "該職缺要求LLM、Agent、RAG或生成式AI專案經驗。",
     "supported": true,
-    "evidence": "RAG 或生成式 AI 專案經驗"
+    "evidence": "或生成式 AI 專案經驗"
    },
    {
-    "text": "該職缺必要條件包含錯誤處理。",
+    "text": "該職缺的必要條件包括錯誤處理。",
     "supported": true,
     "evidence": "錯誤處理"
    },
    {
-    "text": "該職缺必要條件包含測試。",
+    "text": "該職缺的必要條件包括測試。",
     "supported": true,
     "evidence": "測試"
    },
    {
-    "text": "該職缺必要條件包含Log。",
+    "text": "該職缺的必要條件包括Log。",
     "supported": true,
     "evidence": "Log"
    },
    {
-    "text": "該職缺必要條件包含Git。",
+    "text": "該職缺的必要條件包括Git。",
     "supported": true,
     "evidence": "Git"
    },
    {
-    "text": "該職缺加分條件包含OpenAI／Anthropic／Gemini API。",
+    "text": "該職缺的加分條件包括OpenAI／Anthropic／Gemini API。",
     "supported": true,
     "evidence": "Gemini API"
    },
    {
-    "text": "該職缺加分條件包含RAG。",
+    "text": "該職缺的加分條件包括RAG。",
     "supported": true,
-    "evidence": "加分：OpenAI／Anthropic"
+    "evidence": "RAG"
    },
    {
-    "text": "該職缺加分條件包含Embedding。",
+    "text": "該職缺的加分條件包括Embedding。",
     "supported": true,
     "evidence": "Embedding"
    },
    {
-    "text": "該職缺加分條件包含Vector DB。",
+    "text": "該職缺的加分條件包括Vector DB。",
     "supported": true,
     "evidence": "Vector DB"
    },
    {
-    "text": "該職缺加分條件包含MCP。",
+    "text": "該職缺的加分條件包括MCP。",
     "supported": true,
     "evidence": "MCP"
    },
    {
-    "text": "該職缺加分條件包含Function Calling。",
+    "text": "該職缺的加分條件包括Function Calling。",
     "supported": true,
     "evidence": "Function Calling"
    },
    {
-    "text": "該職缺加分條件包含Token成本。",
+    "text": "該職缺的加分條件包括Token成本。",
     "supported": true,
     "evidence": "Token 成本"
    },
    {
-    "text": "該職缺加分條件包含Docker。",
+    "text": "該職缺的加分條件包括Docker。",
     "supported": true,
     "evidence": "Docker"
    },
    {
-    "text": "該職缺加分條件包含雲端。",
+    "text": "該職缺的加分條件包括雲端。",
     "supported": true,
     "evidence": "雲端"
    },
    {
-    "text": "該職缺加分條件包含ComfyUI。",
+    "text": "該職缺的加分條件包括ComfyUI。",
     "supported": true,
     "evidence": "ComfyUI"
    },
    {
-    "text": "該職缺加分條件包含FLUX。",
+    "text": "該職缺的加分條件包括FLUX。",
     "supported": true,
     "evidence": "FLUX"
    },
    {
-    "text": "該職缺加分條件包含Stable Diffusion。",
+    "text": "該職缺的加分條件包括Stable Diffusion。",
     "supported": true,
     "evidence": "Stable Diffusion"
    },
    {
-    "text": "該職缺加分條件包含LoRA。",
+    "text": "該職缺的加分條件包括LoRA。",
     "supported": true,
     "evidence": "LoRA"
    },
    {
-    "text": "該職缺加分條件包含模型微調。",
+    "text": "該職缺的加分條件包括模型微調。",
     "supported": true,
     "evidence": "模型微調"
    },
    {
-    "text": "該職缺加分條件包含GPU／CUDA。",
+    "text": "該職缺的加分條件包括GPU／CUDA。",
     "supported": true,
     "evidence": "GPU／CUDA"
    },
    {
-    "text": "該職缺的擅長工具標示不拘。",
+    "text": "該職缺可提供LLM／Agent作品作為作品集。",
+    "supported": true,
+    "evidence": "作品集：可提供 LLM／Agent"
+   },
+   {
+    "text": "該職缺可提供RAG作品作為作品集。",
+    "supported": true,
+    "evidence": "RAG、MCP、ComfyUI 等作品"
+   },
+   {
+    "text": "該職缺可提供MCP作品作為作品集。",
+    "supported": true,
+    "evidence": "MCP、ComfyUI 等作品"
+   },
+   {
+    "text": "該職缺可提供ComfyUI作品作為作品集。",
+    "supported": true,
+    "evidence": "ComfyUI 等作品"
+   },
+   {
+    "text": "該職缺的擅長工具欄寫不拘。",
     "supported": true,
     "evidence": "擅長工具：不拘"
    },
    {
-    "text": "該職缺的工作技能標示不拘。",
+    "text": "該職缺的工作技能欄寫不拘。",
     "supported": true,
     "evidence": "工作技能：不拘"
    }
@@ -994,19 +1036,9 @@
     "evidence": "Workflow"
    },
    {
-    "text": "該職缺涉及GenAI技術。",
-    "supported": true,
-    "evidence": "GenAI"
-   },
-   {
     "text": "該職缺涉及MCP技術。",
     "supported": true,
     "evidence": "MCP"
-   },
-   {
-    "text": "該職缺的整合技術包含MCP。",
-    "supported": true,
-    "evidence": "MCP、API 整合"
    },
    {
     "text": "該職缺涉及API整合。",
@@ -1044,39 +1076,49 @@
     "evidence": "IaC"
    },
    {
-    "text": "該職缺涉及Docker。",
-    "supported": true,
-    "evidence": "Docker"
-   },
-   {
-    "text": "該職缺涉及K8s。",
-    "supported": true,
-    "evidence": "K8s"
-   },
-   {
-    "text": "該職缺擅長工具包含JavaScript。",
+    "text": "該職缺的程式語言工具包括JavaScript。",
     "supported": true,
     "evidence": "擅長工具 JavaScript"
    },
    {
-    "text": "該職缺擅長工具包含Python。",
+    "text": "該職缺的程式語言工具包括Python。",
     "supported": true,
     "evidence": "Python"
    },
    {
-    "text": "該職缺擅長工具包含PostgreSQL。",
+    "text": "該職缺的資料庫工具包括PostgreSQL。",
     "supported": true,
     "evidence": "PostgreSQL"
    },
    {
-    "text": "該職缺技能包含系統整合分析。",
+    "text": "該職缺的工具與平台包括Docker。",
+    "supported": true,
+    "evidence": "Docker"
+   },
+   {
+    "text": "該職缺的工具與平台包括K8s。",
+    "supported": true,
+    "evidence": "K8s"
+   },
+   {
+    "text": "該職缺的工具與平台包括n8n。",
+    "supported": true,
+    "evidence": "n8n"
+   },
+   {
+    "text": "該職缺的技能包括AI。",
+    "supported": true,
+    "evidence": "技能 AI"
+   },
+   {
+    "text": "該職缺的技能包括系統整合分析。",
     "supported": true,
     "evidence": "系統整合分析"
    },
    {
-    "text": "該職缺涉及n8n。",
+    "text": "該職缺涉及GenAI。",
     "supported": true,
-    "evidence": "n8n"
+    "evidence": "GenAI"
    }
   ],
   "faithfulness": 1.0
@@ -1085,97 +1127,97 @@
   "id": "j12",
   "claims": [
    {
-    "text": "神通資訊AI工程師（生成式AI）的技能包含Python。",
+    "text": "神通資訊AI工程師（生成式AI）的技能內文提到Python。",
     "supported": true,
     "evidence": "技能（內文）：Python"
    },
    {
-    "text": "該職缺技能包含FastAPI。",
+    "text": "該職缺的技能內文提到FastAPI。",
     "supported": true,
     "evidence": "FastAPI"
    },
    {
-    "text": "該職缺技能包含LLM API。",
+    "text": "該職缺的技能內文提到LLM API。",
     "supported": true,
     "evidence": "LLM API"
    },
    {
-    "text": "該職缺列出的LLM API例子包含OpenAI。",
+    "text": "該職缺列出的LLM API例子包括OpenAI。",
     "supported": true,
     "evidence": "OpenAI、Claude 等"
    },
    {
-    "text": "該職缺列出的LLM API例子包含Claude。",
+    "text": "該職缺列出的LLM API例子包括Claude。",
     "supported": true,
     "evidence": "OpenAI、Claude 等"
    },
    {
-    "text": "該職缺技能包含向量資料庫。",
+    "text": "該職缺的技能內文提到向量資料庫。",
     "supported": true,
     "evidence": "向量資料庫"
    },
    {
-    "text": "該職缺技能包含RAG架構。",
+    "text": "該職缺的技能內文提到RAG架構。",
     "supported": true,
     "evidence": "RAG 架構"
    },
    {
-    "text": "該職缺技能包含Pydantic／JSON Schema。",
+    "text": "該職缺的技能內文提到Pydantic／JSON Schema。",
     "supported": true,
-    "evidence": "JSON Schema"
+    "evidence": "Pydantic／JSON Schema"
    },
    {
-    "text": "該職缺技能包含Structured Outputs。",
+    "text": "該職缺的技能內文提到Structured Outputs。",
     "supported": true,
     "evidence": "Structured Outputs"
    },
    {
-    "text": "該職缺技能包含Prompt工程。",
+    "text": "該職缺的技能內文提到Prompt工程。",
     "supported": true,
     "evidence": "Prompt 工程"
    },
    {
-    "text": "該職缺技能包含工作流拆解。",
+    "text": "該職缺的技能內文提到工作流拆解。",
     "supported": true,
     "evidence": "工作流拆解"
    },
    {
-    "text": "該職缺其他條件提到電機／資工背景。",
+    "text": "該職缺的其他條件提到電機／資工背景。",
     "supported": true,
     "evidence": "其他條件：電機／資工背景"
    },
    {
-    "text": "該職缺其他條件提到熟悉Python或PyTorch。",
+    "text": "該職缺的其他條件提到熟悉Python或PyTorch。",
     "supported": true,
     "evidence": "熟悉 Python 或 PyTorch"
    },
    {
-    "text": "該職缺其他條件提到能讀論文。",
+    "text": "該職缺的其他條件提到能讀論文。",
     "supported": true,
     "evidence": "能讀論文並實作演算法"
    },
    {
-    "text": "該職缺其他條件提到能實作演算法。",
+    "text": "該職缺的其他條件提到能實作演算法。",
     "supported": true,
     "evidence": "能讀論文並實作演算法"
    },
    {
-    "text": "該職缺其他條件提到Docker佳。",
+    "text": "該職缺以具備Docker技能為佳。",
     "supported": true,
-    "evidence": "Docker、Git、Github"
+    "evidence": "Docker、Git"
    },
    {
-    "text": "該職缺其他條件提到Git佳。",
+    "text": "該職缺以具備Git技能為佳。",
     "supported": true,
     "evidence": "Git、Github、Redmine 佳"
    },
    {
-    "text": "該職缺其他條件提到Github佳。",
+    "text": "該職缺以具備Github技能為佳。",
     "supported": true,
     "evidence": "Github、Redmine 佳"
    },
    {
-    "text": "該職缺其他條件提到Redmine佳。",
+    "text": "該職缺以具備Redmine技能為佳。",
     "supported": true,
     "evidence": "Redmine 佳"
    },
@@ -1191,7 +1233,7 @@
   "id": "j13",
   "claims": [
    {
-    "text": "華電聯網資深研發工程師屬於研發一部。",
+    "text": "華電聯網該資深研發工程師職缺屬於研發一部。",
     "supported": true,
     "evidence": "部門：研發一部"
    },
@@ -1201,52 +1243,57 @@
     "evidence": "地點：新北市汐止區"
    },
    {
-    "text": "該職缺要求Python三年以上。",
+    "text": "該職缺連結識別碼為job/8zclg。",
     "supported": true,
-    "evidence": "必要：Python 三年以上"
+    "evidence": "/job/8zclg"
    },
    {
-    "text": "該職缺要求Linux。",
-    "supported": true,
-    "evidence": "但要會 Linux 和 Python"
-   },
-   {
-    "text": "該職缺要求Docker。",
-    "supported": true,
-    "evidence": "Linux、Docker"
-   },
-   {
-    "text": "該職缺具備Shell Script能力佳。",
-    "supported": true,
-    "evidence": "Shell Script 佳"
-   },
-   {
-    "text": "該職缺擅長工具包含Python。",
+    "text": "該職缺的擅長工具包括Python。",
     "supported": true,
     "evidence": "擅長工具 Python"
    },
    {
-    "text": "該職缺擅長工具包含Ubuntu。",
+    "text": "該職缺的擅長工具包括Ubuntu。",
     "supported": true,
     "evidence": "Ubuntu"
    },
    {
-    "text": "該職缺擅長工具包含Docker。",
+    "text": "該職缺的擅長工具包括Docker。",
     "supported": true,
     "evidence": "Python、Ubuntu、Docker"
    },
    {
-    "text": "該職缺將ML列為加分項。",
+    "text": "該職缺必要條件包括Python三年以上。",
+    "supported": true,
+    "evidence": "必要：Python 三年以上"
+   },
+   {
+    "text": "該職缺必要條件包括Linux。",
+    "supported": true,
+    "evidence": "Linux、Docker"
+   },
+   {
+    "text": "該職缺必要條件包括Docker。",
+    "supported": true,
+    "evidence": "Linux、Docker"
+   },
+   {
+    "text": "該職缺以具備Shell Script技能為佳。",
+    "supported": true,
+    "evidence": "Shell Script 佳"
+   },
+   {
+    "text": "該職缺加分條件包括ML。",
     "supported": true,
     "evidence": "加分：ML"
    },
    {
-    "text": "該職缺將影像辨識經驗列為加分項。",
+    "text": "該職缺加分條件包括影像辨識經驗。",
     "supported": true,
     "evidence": "影像辨識經驗"
    },
    {
-    "text": "該職缺將數學基礎列為加分項。",
+    "text": "該職缺加分條件包括數學基礎。",
     "supported": true,
     "evidence": "數學基礎"
    },
@@ -1274,6 +1321,41 @@
     "text": "該職缺工作包含系統整合開發。",
     "supported": true,
     "evidence": "系統整合開發"
+   },
+   {
+    "text": "該職缺內文提到不要求深厚的AI經驗。",
+    "supported": true,
+    "evidence": "不要求深厚的 AI 經驗"
+   },
+   {
+    "text": "該職缺內文提到要會Linux。",
+    "supported": true,
+    "evidence": "但要會 Linux 和 Python"
+   },
+   {
+    "text": "該職缺內文提到要會Python。",
+    "supported": true,
+    "evidence": "但要會 Linux 和 Python"
+   },
+   {
+    "text": "段落1的職缺列表也記載Python。",
+    "supported": true,
+    "evidence": "Python／Linux／Docker"
+   },
+   {
+    "text": "段落1的職缺列表也記載Linux。",
+    "supported": true,
+    "evidence": "Python／Linux／Docker"
+   },
+   {
+    "text": "段落1的職缺列表也記載Docker。",
+    "supported": true,
+    "evidence": "Python／Linux／Docker"
+   },
+   {
+    "text": "段落1的職缺列表也記載AI模型維護。",
+    "supported": true,
+    "evidence": "AI 模型維護"
    }
   ],
   "faithfulness": 1.0
@@ -1287,72 +1369,52 @@
     "evidence": "經歷／學歷：3 年以上"
    },
    {
-    "text": "該職缺學歷為大學、碩士。",
+    "text": "該職缺技能重點包括企業級AI系統或大型軟體架構經驗。",
     "supported": true,
-    "evidence": "大學、碩士"
+    "evidence": "企業級 AI 系統或大型軟體架構經驗"
    },
    {
-    "text": "該職缺接受資訊相關科系。",
-    "supported": true,
-    "evidence": "資訊、數理統計、財稅金融相關"
-   },
-   {
-    "text": "該職缺接受數理統計相關科系。",
-    "supported": true,
-    "evidence": "資訊、數理統計、財稅金融相關"
-   },
-   {
-    "text": "該職缺接受財稅金融相關科系。",
-    "supported": true,
-    "evidence": "資訊、數理統計、財稅金融相關"
-   },
-   {
-    "text": "該職缺技能重點包含企業級AI系統或大型軟體架構經驗。",
-    "supported": true,
-    "evidence": "AI 系統或大型軟體架構經驗"
-   },
-   {
-    "text": "該職缺技能重點包含LLM。",
+    "text": "該職缺技能重點包括LLM。",
     "supported": true,
     "evidence": "LLM 與深度學習"
    },
    {
-    "text": "該職缺技能重點包含深度學習。",
+    "text": "該職缺技能重點包括深度學習。",
     "supported": true,
     "evidence": "LLM 與深度學習"
    },
    {
-    "text": "該職缺技能重點包含AI框架。",
+    "text": "該職缺技能重點包括AI框架。",
     "supported": true,
     "evidence": "AI 框架與模型部署"
    },
    {
-    "text": "該職缺技能重點包含模型部署。",
+    "text": "該職缺技能重點包括模型部署。",
     "supported": true,
     "evidence": "AI 框架與模型部署"
    },
    {
-    "text": "該職缺技能重點包含雲端。",
+    "text": "該職缺技能重點包括雲端。",
     "supported": true,
     "evidence": "雲端與容器"
    },
    {
-    "text": "該職缺技能重點包含容器。",
+    "text": "該職缺技能重點包括容器。",
     "supported": true,
     "evidence": "雲端與容器"
    },
    {
-    "text": "該職缺技能重點包含DevOps。",
+    "text": "該職缺技能重點包括DevOps。",
     "supported": true,
     "evidence": "DevOps"
    },
    {
-    "text": "該職缺技能重點包含資安設計。",
+    "text": "該職缺技能重點包括資安設計。",
     "supported": true,
     "evidence": "資安設計"
    },
    {
-    "text": "該職缺優先考慮碩士以上者。",
+    "text": "該職缺學歷要求碩士以上。",
     "supported": true,
     "evidence": "碩士以上、金融業 AI 專案優先"
    },
@@ -1362,19 +1424,9 @@
     "evidence": "金融業 AI 專案優先"
    },
    {
-    "text": "該職缺工作技能包含專案溝通／整合管理。",
-    "supported": true,
-    "evidence": "專案溝通／整合管理"
-   },
-   {
-    "text": "該職缺工作技能包含專案規劃執行／範圍管理。",
-    "supported": true,
-    "evidence": "專案規劃執行／範圍管理"
-   },
-   {
     "text": "該職缺工作內容涉及Agentic AI系統。",
     "supported": true,
-    "evidence": "Agentic AI 系統"
+    "evidence": "工作內容：Agentic AI 系統"
    },
    {
     "text": "該職缺工作內容涉及AI與證券系統整合。",
