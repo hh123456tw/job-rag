@@ -252,6 +252,31 @@ def format_toggles(runs: dict) -> str:
     return "\n".join(out)
 
 
+def questions_digest(questions: list[dict]) -> str:
+    """題組的指紋（題號、題目、可否回答、金標）。題組一變，舊輸出檔的指紋就對不上。"""
+    import hashlib
+    import json
+    key = [[q["id"], q["question"], q["answerable"], q.get("gold", [])] for q in questions]
+    return hashlib.sha256(json.dumps(key, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+def results_json(questions: list[dict], reps: dict) -> dict:
+    """給專案說明頁讀的逐題輸出：每種方式的指標、各指標 95% 區間、逐題名次、查無結果。與 results_methods.txt 同一次執行。"""
+    from .stats import metric_interval
+    methods = {}
+    for name, rep in reps.items():
+        sc = rep["scores"]
+        m, ranks = sc["metrics"], sc["ranks"]
+        methods[name] = {
+            **{k: m[k] for k in ("hit@1", "hit@3", "mrr")},
+            "ci": {k: list(metric_interval(list(ranks.values()), k)) for k in ("hit@1", "hit@3", "mrr")},
+            "ranks": ranks, "gate": sc.get("gate"), "gate_scores": sc.get("gate_scores"),
+        }
+    return {"digest": questions_digest(questions), "depth": DEPTH, "bootstrap": BOOTSTRAP, "seed": SEED,
+            "n_answerable": sum(q["answerable"] for q in questions),
+            "n_unanswerable": sum(not q["answerable"] for q in questions), "methods": methods}
+
+
 def format_results(questions: list[dict], reps: dict, drops: list[dict]) -> str:
     return "\n\n".join([format_table(reps), format_interval_note(reps), format_gate(questions, reps), format_interview(drops)])
 
@@ -275,9 +300,11 @@ def main():
         print(text)
     elif a.method == "all":
         from . import interview_drops
-        text = format_results(qs, compare(qs), interview_drops())
+        reps = compare(qs)
+        text = format_results(qs, reps, interview_drops())
         out = Path(a.out or TABLE_OUT)
         out.write_text(text + "\n", encoding="utf-8")
+        out.with_suffix(".json").write_text(json.dumps(results_json(qs, reps), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         print(text)
         print(f"\n已寫入 {out}")
     else:

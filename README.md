@@ -90,3 +90,6 @@ python -X utf8 -m job_rag.generation
 .venv-ragas\Scripts\python -X utf8 -m job_rag.generation --run
 ```
 輸出：`eval/results_generation.txt`（逐題＋平均＋限制說明）、`eval/results_generation.json`（逐題原始資料）、`eval/review_sample.csv`（固定種子 0 抽 10 題，「是否忠於出處」欄由人工填）。
+
+## 專案說明頁（票 05）
+`/about`（主頁頂端「專案說明」連結）：給面試官 1–2 分鐘看的 6 塊說明。成績與失敗案例只讀 `eval/results_methods.json`（`python -X utf8 -m job_rag.evaluate --method all` 與 `results_methods.txt` 同次產生）、`eval/results_generation.json`、`eval/crossjudge/judge_gpt.json`，不手寫數字。輸出檔缺、讀不了或和 `eval/questions.json` 的題組對不上（指紋不同），該兩塊顯示錯誤。失敗案例的挑法見 `job_rag/about.py` 的 `_cases`。

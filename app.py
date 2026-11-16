@@ -7,7 +7,8 @@ from pathlib import Path
 from flask import Flask, request
 from markupsafe import escape
 
-from job_rag import detect_company, retrieval, search
+from job_rag import about, detect_company, public_company_counts, retrieval, search
+from job_rag.about_page import render as render_about
 from job_rag.answer import AnswerError, _post, answer
 from job_rag.evaluate import DEPTH, hit_rank
 
@@ -78,6 +79,18 @@ def _eval_panel(q):
     return " <a href='#eval'>看這題在評估裡的成績</a>", f"<div id=eval class='ans'><b>評估成績（{escape(e['id'])}）</b><p>{escape(txt)}</p></div>"
 
 
+@app.get("/about")
+def about_page():
+    if _warm["state"] != "ready":  # 預熱期間與問答頁一致
+        return _status_page()
+    counts = public_company_counts()
+    n_company = len([c for c in counts if c != "綜合"])  # 「綜合」是無法歸屬的段落，不算公司
+    try:
+        return render_about(about.load(), "", sum(counts.values()), n_company)
+    except about.AboutDataError as e:  # 輸出檔缺、壞、過期：顯示錯誤，不用舊數字
+        return render_about(None, str(e), sum(counts.values()), n_company), 500
+
+
 @app.get("/")
 def index():
     if _warm["state"] != "ready":
@@ -127,7 +140,8 @@ def index():
 .row{{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}}button{{min-height:44px;padding:6px 14px;font-size:16px}}
 .sel{{background:#1a5fb4;color:#fff}}.demo{{text-align:left}}input{{width:100%;min-height:44px;font-size:16px}}
 .hit{{border:1px solid #ccc;padding:8px;margin:8px 0}}.dim{{opacity:.45}}.ans{{background:#f3f8ff;padding:8px;margin:8px 0}}
-.warn{{background:#fff4d6;padding:8px}}.err{{color:#c00}}small{{display:block;color:#555}}pre{{white-space:pre-wrap}}h4{{margin:12px 0 0}}</style>
+.warn{{background:#fff4d6;padding:8px}}.err{{color:#c00}}small{{display:block;color:#555}}nav{{font-size:13px;margin:8px 0}}pre{{white-space:pre-wrap}}h4{{margin:12px 0 0}}</style>
+<nav><b>問答</b> · <a href="/about">專案說明</a></nav>
 <h1>求職情報問答</h1>
 <form id=f><input type=hidden name=company value="{escape(company or '')}">
 <h4>1. 選一家公司（再按一次取消，不選就查全部）</h4><div class=row>{pick}</div>
