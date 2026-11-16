@@ -145,6 +145,18 @@ def _real_eval(root: Path):
         return None
 
 
+def _e2e(root: Path):
+    """端到端拒答檢查（票 35 追加）：真 DeepSeek、網站實際路徑。檔缺、讀不了、或數字自相矛盾都回 None，頁面就不加那半句。"""
+    try:
+        r = json.loads((root / "eval/results_endtoend.json").read_text(encoding="utf-8"))
+        n, ref, rows = r["n"], r["refused"], r["rows"]
+        if n != len(rows) or ref != sum(bool(x["refused"]) for x in rows) or r["by_gate"] + r["by_answer_layer"] != ref:
+            return None
+        return {"n": n, "refused": ref, "by_gate": r["by_gate"], "by_answer_layer": r["by_answer_layer"], "date": r.get("date", "")}
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def _mrr_diff(methods: dict) -> dict:
     """bge-m3 減混合的 MRR 差與 95% 區間（同一批重抽的題目，算法與 evaluate 的 results_methods.txt 相同）。"""
     a, b = methods["bge-m3"], methods["hybrid"]
@@ -200,7 +212,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
