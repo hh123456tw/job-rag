@@ -23,8 +23,10 @@ def _flat(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
-def clean_history(raw) -> list[dict]:
-    """raw 是前端送來的 JSON 字串，內容不可信。回最近 MAX_TURNS 輪 [{"q","a"}]；不合格丟 HistoryError。"""
+def clean_history(raw, mode=None) -> list[dict]:
+    """raw 是前端送來的 JSON 字串，內容不可信。回最近 MAX_TURNS 輪 [{"q","a"}]；不合格丟 HistoryError。
+    mode 有值時（票 24）：每輪要帶 "m" 標記且等於 mode，否則丟棄。展示模式因此只收標記為展示的輪次，
+    沒標記、標記為自用或亂填的都無法確認來自展示，一律丟掉（不報錯）。先過濾再取最近 MAX_TURNS 輪。"""
     if not raw:
         return []
     if not isinstance(raw, str) or len(raw) > MAX_RAW:
@@ -36,14 +38,16 @@ def clean_history(raw) -> list[dict]:
     if not isinstance(data, list) or not all(
             isinstance(t, dict) and isinstance(t.get("q"), str) and isinstance(t.get("a"), str) for t in data):
         raise HistoryError("對話記錄格式不符。")
+    if mode is not None:
+        data = [t for t in data if t.get("m") == mode]
     turns = [{"q": _flat(t["q"])[:MAX_QUESTION], "a": _flat(t["a"])[:MAX_ANSWER]} for t in data[-MAX_TURNS:]]
     return [t for t in turns if t["q"]]
 
 
-def expand(question: str, history: list[dict], corpus=None) -> str:
+def expand(question: str, history: list[dict], corpus=None, mode: str = "demo") -> str:
     """追問補全：有上一題、問句在 SHORT 字以內、不含公司名、不含主題詞，就把上一題的使用者問句接在前面。
     只用上一題的問句，不用答案。其餘情況原樣回傳。"""
     q = question.strip()
-    if history and len(q) <= SHORT and not TOPIC.search(q) and not mentions_company(q, corpus):
+    if history and len(q) <= SHORT and not TOPIC.search(q) and not mentions_company(q, corpus, mode):
         return f"{history[-1]['q']} {q}"
     return q

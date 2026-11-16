@@ -20,7 +20,7 @@ def test_script_parses():
 
 
 def test_history_lives_in_the_per_dialog_storage_key_and_nowhere_else():
-    assert "KEY='jr_chat:'+B.dataset.key" in CHAT_JS
+    assert "KEY='jr_chat:'+MODE+':'+B.dataset.key" in CHAT_JS
     assert "JSON.stringify({html:T.innerHTML,hist:hist})" in CHAT_JS  # 與該對話框的畫面一起存
     assert "localStorage" not in CHAT_JS and "window." not in CHAT_JS and "document.cookie" not in CHAT_JS
     assert CHAT_JS.count("var hist") + CHAT_JS.count(",hist=[]") == 1  # 一個閉包變數，沒有跨頁共用的全域

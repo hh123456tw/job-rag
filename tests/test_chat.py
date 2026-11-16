@@ -165,7 +165,7 @@ def test_script_shows_hint_on_open_and_on_help_button_and_keeps_chat_per_company
     js = unescape(CHAT_JS)
     assert "getElementById('help')" in js and "function hint()" in js
     assert "function greet(){say(B.dataset.hello);hint()}" in js
-    assert "'jr_chat:'+B.dataset.key" in js  # 每家公司各存一份
+    assert "'jr_chat:'+MODE+':'+B.dataset.key" in js  # 每家公司各存一份
     assert "try{sessionStorage.setItem" in js and "try{old=JSON.parse(sessionStorage.getItem" in js  # 存取失敗不影響使用
     assert "eval(" not in js
 

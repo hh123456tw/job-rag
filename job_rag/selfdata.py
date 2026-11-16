@@ -2,6 +2,7 @@
 只收 window_ok 為真、未被鎖、內文非空的篇。內容只存在記憶體與 .cache/ 的向量，不寫進任何被追蹤的檔案。"""
 import json
 import os
+from functools import lru_cache
 from pathlib import Path
 
 from .retrieval import _pieces
@@ -94,3 +95,9 @@ def article_counts(d, names) -> dict[str, int]:
     for company, *_ in _articles(d, names):
         out[company] = out.get(company, 0) + 1
     return out
+
+
+@lru_cache(maxsize=8)
+def article_counts_cached(d: str, names: tuple) -> dict:
+    """提示卡用：每次開頁都數一次會重讀所有面經檔，所以快取（鍵含資料夾與公司清單）。"""
+    return article_counts(d, set(names))

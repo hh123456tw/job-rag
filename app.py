@@ -10,7 +10,8 @@ from pathlib import Path
 from flask import Flask, g, request
 from markupsafe import escape
 
-from job_rag import about, guard, detect_company, netinfo, public_company_counts, retrieval, search
+from job_rag import about, guard, detect_company, netinfo, owner_ui, public_company_counts, retrieval, search
+from job_rag.owner import COOKIE as OWNER_COOKIE, TTL as OWNER_TTL, Owner
 from job_rag.about_page import render as render_about
 from job_rag.chat_ui import CHAT_JS
 from job_rag.memory import HistoryError, clean_history, expand
@@ -22,9 +23,26 @@ from job_rag.ui import page
 
 app = Flask(__name__)
 _limiter = guard.RateLimit()  # 「整理成答案」的全域用量；測試可換成注入時鐘的版本
+_owner = Owner()  # 本人密碼與簽名 cookie（票 24）；金鑰每次啟動隨機產生，重啟即失效
+
+
+def _mode() -> str:
+    """這個請求的模式。只看有效的本人 cookie；查詢參數、history、表單值一律不參與判斷。沒有或無效＝展示。"""
+    if "mode" not in g:
+        g.mode = "self" if _owner.valid(request.cookies.get(OWNER_COOKIE)) else "demo"
+    return g.mode
+
+
+def _tag(d: dict) -> dict:
+    """設了本人密碼時，API 回應帶目前模式，前端據此發現模式變了（cookie 過期、別的分頁登出）而清掉自用畫面。"""
+    return d | {"mode": _mode()} if _owner.enabled else d
+
+
+def _secure() -> bool:
+    return request.is_secure or request.headers.get("X-Forwarded-Proto", "").lower() == "https"
 
 # 預熱：啟動時先載入 bge-m3 與索引。state：loading（準備中）、ready、error。測試與直接 import 時預設 ready。
-_warm = {"state": "ready", "error": ""}
+_warm = {"state": "ready", "error": "", "self": "ready", "self_error": ""}
 
 
 def _on(name):  # 兩個開關預設開；環境變數設 0 關掉（比較成績用）
@@ -37,10 +55,18 @@ def warmup():
         _warm["state"] = "ready"
     except Exception as e:  # 失敗要讓使用者看到，不假裝可用
         _warm.update(state="error", error=str(e))
+        return
+    if _owner.enabled:  # 自用索引（私人段落＋面經）也預先編碼；只在本機記憶體與 .cache/
+        try:
+            search("預熱", gate=False, mode="self")
+            _warm["self"] = "ready"
+        except Exception as e:
+            _warm.update({"self": "error", "self_error": str(e)})
 
 
 def start_warmup():
     _warm["state"] = "loading"
+    _warm["self"] = "loading" if _owner.enabled else "ready"
     threading.Thread(target=warmup, daemon=True).start()
 
 
@@ -56,7 +82,19 @@ def _phone_footer():
     return f"<small>{str(escape(netinfo.banner(cands, port))).replace(chr(10), '<br>')}</small>"
 
 
-def _status_page():
+def _self_wait(mode: str) -> str:
+    """自用模式且自用索引還沒好時的說明；好了或不是自用模式回空字串。"""
+    if mode != "self" or _warm["self"] == "ready":
+        return ""
+    if _warm["self"] == "error":
+        return f"自用索引載入失敗：{_warm['self_error']}"
+    return "自用索引準備中（第一次要編碼筆記與面經，需幾分鐘）。"
+
+
+def _status_page(mode="demo"):
+    if mode == "self" and _warm["state"] == "ready" and (msg := _self_wait(mode)):
+        refresh = "" if _warm["self"] == "error" else "<meta http-equiv=refresh content=5>"
+        return page("求職情報問答", owner_ui.chrome(mode, True) + f"<main class=status role=status><h1>求職情報問答</h1><p>{escape(msg)}</p></main>", refresh)
     if _warm["state"] == "error":
         body = f"<main class=status><h1>求職情報問答</h1><p class=err>啟動失敗：{escape(_warm['error'])}</p></main>"
         return page("求職情報問答", body)
@@ -76,10 +114,10 @@ EVAL = {q["id"]: q for q in json.loads(questions_path().read_text(encoding="utf-
 DEMOS = [i for i in ("u07", "u06") if i in EVAL] or [i for i, q in EVAL.items() if not q["answerable"]][:2]
 
 
-def _company_buttons():
+def _company_buttons(mode="demo"):
     """語料只含預設現場公司的一部分時，按鈕改列語料裡有的公司；全有或一家都沒有時用原清單。
     例外：公開範例語料（3 家都不是現場公司）直接列它的公司。"""
-    names = {n for n in public_company_counts() if n != "綜合"}
+    names = {n for n in public_company_counts(mode=mode) if n != "綜合"}
     live = {n for _, n in LIVE_COMPANIES}
     if not names & live:
         return [(n, n) for n in sorted(names)] if retrieval.is_sample() else LIVE_COMPANIES
@@ -92,7 +130,8 @@ LOW = "<p class='warn'><b>可能沒有答案。</b>語料中找不到很接近�
 
 def _hits_html(hits, dim):
     return "".join(
-        f"<div class='hit{' dim' if dim else ''}'><b>{escape(h['company'])}</b> · {escape(h['file'])} · "
+        f"<div class='hit{' dim' if dim else ''}'>{'<span class=priv>自用資料</span>' if h.get('private') else ''}"
+        f"<b>{escape(h['company'])}</b> · {escape(h['file'])} · "
         f"{escape(h['heading_path'])}<pre>{escape(h['text'])}</pre>{_also(h)}</div>" for h in hits)
 
 
@@ -103,7 +142,9 @@ def _also(h):
 
 
 def _eval_panel(q):
-    """問句與某題評估題完全相同時，顯示該題在評估裡的名次（不套門檻；公司過濾與去重開關同下面的查詢）。"""
+    """問句與某題評估題完全相同時，顯示該題在評估裡的名次（不套門檻；公司過濾與去重開關同下面的查詢）。評估只量展示索引。"""
+    if _mode() == "self":
+        return "", ""
     e = next((e for e in EVAL.values() if e["question"] == q), None)
     if not e:
         return "", ""
@@ -124,7 +165,7 @@ def _require_access_code():
     if guard.code_ok(request.args.get("k", ""), code):
         g.set_cookie = code  # 第一次帶對了：回應時存成 cookie
     elif not guard.code_ok(request.cookies.get(guard.COOKIE, ""), code):
-        if request.path in ("/answer", "/api/answer", "/api/search"):  # 頁面腳本呼叫的端點：回 JSON，不回 HTML
+        if request.path in ("/answer", "/api/answer", "/api/search", "/api/owner/login", "/api/owner/logout"):  # 頁面腳本呼叫的端點：回 JSON，不回 HTML
             return {"status": "error", "message": "需要存取碼。請用完整的分享網址重新開啟。"}, 403
         body = "<main class=status><h1>求職情報問答</h1><p>需要存取碼。請用完整的分享網址開啟。</p></main>"
         return page("求職情報問答", body), 403
@@ -134,8 +175,39 @@ def _require_access_code():
 @app.after_request
 def _remember_access_code(resp):
     if g.get("set_cookie"):
-        secure = request.is_secure or request.headers.get("X-Forwarded-Proto", "").lower() == "https"
-        resp.set_cookie(guard.COOKIE, g.set_cookie, httponly=True, samesite="Lax", secure=secure)
+        resp.set_cookie(guard.COOKIE, g.set_cookie, httponly=True, samesite="Lax", secure=_secure())
+    if _owner.enabled and not request.path.startswith("/static/"):
+        resp.headers["Vary"] = "Cookie"  # 同一網址依 cookie 有兩種內容
+        if _mode() == "self":
+            resp.headers["Cache-Control"] = "no-store"  # 登出後按上一頁不該看到自用畫面
+    return resp
+
+
+@app.post("/api/owner/login")
+def owner_login():
+    """切到自用：密碼在 JSON body（不放網址）。沒設本人密碼＝沒有這個功能（404）。錯誤次數全域計算，超過回 429。"""
+    if not _owner.enabled:
+        return {"status": "error", "message": "沒有自用模式"}, 404
+    j = request.get_json(silent=True)
+    if not isinstance(j, dict):
+        return {"status": "error", "message": "請求格式不符"}, 400
+    result, cookie = _owner.login(j.get("pin"))
+    if result == "locked":
+        return {"status": "error", "message": "錯誤次數過多，請稍後再試。"}, 429
+    if result != "ok":
+        return {"status": "error", "message": "密碼錯誤"}, 401
+    resp = app.response_class(json.dumps({"status": "ok", "mode": "self"}), mimetype="application/json")
+    resp.set_cookie(OWNER_COOKIE, cookie, max_age=OWNER_TTL, httponly=True, samesite="Lax", secure=_secure())
+    return resp
+
+
+@app.post("/api/owner/logout")
+def owner_logout():
+    """切回展示：清掉本人 cookie，立即生效。"""
+    if not _owner.enabled:
+        return {"status": "error", "message": "沒有自用模式"}, 404
+    resp = app.response_class(json.dumps({"status": "ok", "mode": "demo"}), mimetype="application/json")
+    resp.delete_cookie(OWNER_COOKIE, httponly=True, samesite="Lax", secure=_secure())
     return resp
 
 
@@ -185,26 +257,29 @@ def answer_json():
     q, company = request.args.get("q", "").strip(), request.args.get("company", "").strip() or None
     if not q:
         return {"status": "error", "message": "沒有問題"}, 400
+    mode = _mode()
     try:
-        history = clean_history(request.args.get("history", ""))  # 伺服器不存對話：每次由前端帶最近 2 輪
+        history = clean_history(request.args.get("history", ""), mode)  # 伺服器不存對話；只收標記為本模式的輪次
     except HistoryError as e:
-        return {"status": "error", "message": str(e)}, 400
+        return _tag({"status": "error", "message": str(e)}), 400
     if _warm["state"] != "ready":
-        return {"status": "error", "message": "系統準備中，請稍後再試（原文結果不受影響）。"}, 503
+        return _tag({"status": "error", "message": "系統準備中，請稍後再試（原文結果不受影響）。"}), 503
+    if msg := _self_wait(mode):
+        return _tag({"status": "error", "message": msg}), 503
     try:
-        hits = search(expand(q, history), company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"))
+        hits = search(expand(q, history, mode=mode), company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
-        return {"status": "error", "message": f"錯誤：{e}"}, 500
+        return _tag({"status": "error", "message": f"錯誤：{e}"}), 500
     if _low(hits):
-        return {"status": "low"}
+        return _tag({"status": "low"})
     if wait := _limiter.try_acquire(guard.answer_limit()):
-        return {"status": "limit", "message": f"整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
-                f"請約 {-(-wait // 60)} 分鐘後再試。原文在下面，不受影響。"}, 429
+        return _tag({"status": "limit", "message": f"整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
+                     f"請約 {-(-wait // 60)} 分鐘後再試。原文在下面，不受影響。"}), 429
     try:
         r = answer(q, hits, post=_fake_post() or _post, history=history)
     except AnswerError as e:
-        return {"status": "error", "message": f"整理失敗：{e}。原文在下面，不受影響。"}, 502
-    return {"status": "ok", "answer": r["answer"], "sources": r["sources"]}
+        return _tag({"status": "error", "message": f"整理失敗：{e}。原文在下面，不受影響。"}), 502
+    return _tag({"status": "ok", "answer": r["answer"], "sources": r["sources"]})
 
 
 @app.get("/api/search")
@@ -213,22 +288,25 @@ def api_search():
     q, company = request.args.get("q", "").strip(), request.args.get("company", "").strip() or None
     if not q:
         return {"status": "error", "message": "沒有問題"}, 400
+    mode = _mode()
     try:
-        history = clean_history(request.args.get("history", ""))
+        history = clean_history(request.args.get("history", ""), mode)
     except HistoryError as e:
-        return {"status": "error", "message": str(e)}, 400
+        return _tag({"status": "error", "message": str(e)}), 400
     if _warm["state"] != "ready":
-        return {"status": "error", "message": "系統準備中，請稍後再試。"}, 503
+        return _tag({"status": "error", "message": "系統準備中，請稍後再試。"}), 503
+    if msg := _self_wait(mode):
+        return _tag({"status": "error", "message": msg}), 503
     try:
-        detected, rq = False, expand(q, history)  # 追問補全後的問句：公司偵測與檢索都用它
-        if not company and _on("JOB_RAG_DETECT") and (d := detect_company(rq)):
+        detected, rq = False, expand(q, history, mode=mode)  # 追問補全後的問句：公司偵測與檢索都用它
+        if not company and _on("JOB_RAG_DETECT") and (d := detect_company(rq, mode=mode)):
             company, detected = d, True
-        hits = search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"))
+        hits = search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
-        return {"status": "error", "message": f"搜尋失敗：{e}"}, 500
+        return _tag({"status": "error", "message": f"搜尋失敗：{e}"}), 500
     keep = ("company", "file", "heading_path", "text", "also_in")
-    return {"status": "low" if _low(hits) else "ok", "company": company or "", "detected": detected, "expanded": rq != q.strip(),
-            "hits": [{k: h.get(k, []) for k in keep} for h in hits]}
+    return _tag({"status": "low" if _low(hits) else "ok", "company": company or "", "detected": detected, "expanded": rq != q.strip(),
+                 "hits": [{k: h.get(k, []) for k in keep} | ({"private": h["private"]} if "private" in h else {}) for h in hits]})
 
 
 # 答案卡的載入腳本：先把原文收起來（沒有 JS 時維持展開），呼叫 /answer；任何失敗都把原文展開。文字一律用 textContent。
@@ -263,19 +341,30 @@ PRESETS = json.loads((Path(__file__).parent / "job_rag" / "company_presets.json"
 ALL = "全部公司"
 
 
-def _presets(label):
-    """該公司的預設題目 [(鍵, 按鈕文字, 完整問句)]。檔案裡沒有的公司（例如範例語料）用最前面 3 個常用問題。"""
+def _presets(label, mode="demo", scope=""):
+    """該公司的預設題目 [(鍵, 按鈕文字, 完整問句)]。檔案裡沒有的公司（例如範例語料）用最前面 3 個常用問題。
+    自用模式且該範圍有面經時，多一組面試題：由載入的面經篇數動態決定，題目不存檔。"""
     if label == ALL:
-        return [(p["key"], p["label"], p["q"]) for p in PRESETS["all"]]
-    if label in PRESETS["companies"]:
-        return [(p["key"], p["label"], p["q"]) for p in PRESETS["companies"][label]["presets"]]
-    return [(k, l, f"{label}{t}") for k, (l, t) in list(FAQ.items())[:3]]
+        out = [(p["key"], p["label"], p["q"]) for p in PRESETS["all"]]
+    elif label in PRESETS["companies"]:
+        out = [(p["key"], p["label"], p["q"]) for p in PRESETS["companies"][label]["presets"]]
+    else:
+        out = [(k, l, f"{label}{t}") for k, (l, t) in list(FAQ.items())[:3]]
+    if mode == "self" and topics(scope or None, mode="self")["interviews"]:
+        out += IV_ALL if label == ALL else [(k, l, f"{label}{t}") for k, l, t in IV_COMPANY]
+    return out
 
 
-def _home_inner(note=""):
-    counts = public_company_counts()
-    cards = "".join(f'<a class=card href="/c/{quote(label)}"><b>{escape(label)}</b><span>{counts.get(name, 0)} 段公開資料</span></a>'
-                    for label, name in _company_buttons())
+# 自用模式的面試題（題目由程式動態加入，不來自 selfdata/）。scripts/check_self_presets.py 逐題驗證不被查無門檻擋住。
+IV_COMPANY = [("iv-q", "面試會問什麼", "面試會問什麼？"), ("iv-flow", "面試流程", "面試流程是什麼？")]
+IV_ALL = [("iv-all", "各家面試比較", "各家公司的面試流程有什麼不同？")]
+
+
+def _home_inner(note="", mode="demo"):
+    counts = public_company_counts(mode=mode)
+    unit = "段（含自用資料）" if mode == "self" else "段公開資料"
+    cards = "".join(f'<a class=card href="/c/{quote(label)}"><b>{escape(label)}</b><span>{counts.get(name, 0)} {unit}</span></a>'
+                    for label, name in _company_buttons(mode))
     cards += f'<a class="card all" href="/c/{quote(ALL)}"><b>{ALL}</b><span>跨公司提問</span></a>'
     demo = "".join(f'<a class=card href="/?demo={i}"><span>{escape(EVAL[i]["question"])}</span></a>' for i in DEMOS)
     return f"""<main><h1>求職情報問答</h1><p class=sub>點一家公司，直接問問題</p>{note}
@@ -283,8 +372,12 @@ def _home_inner(note=""):
 <details class=more><summary>查無示範</summary><p class=mute>語料裡沒有答案的問題，結果會顯示「可能沒有答案」。</p><div class=cards>{demo}</div></details></main>{_foot()}"""
 
 
-def _home(note=""):
-    return page("求職情報問答", _home_inner(note))
+def _chrome(mode):
+    return owner_ui.chrome(mode, _owner.enabled)
+
+
+def _home(note="", mode="demo"):
+    return page("求職情報問答", _chrome(mode) + _home_inner(note, mode))
 
 
 def _company_inner(company):
@@ -298,14 +391,19 @@ def _company_inner(company):
 THIN = 20  # 公開段落少於這個數，才在提示裡明說「公開資料較少」
 
 
-def _hint(scope, presets, thin):
-    """「我能回答什麼」提示的幾行字：主題、筆數、沒有的資料都由載入的語料算出（job_rag/topics.py）。"""
-    t = topics(scope or None)
+def _hint(scope, presets, thin, mode="demo"):
+    """「我能回答什麼」提示的幾行字：主題、筆數、沒有的資料都由載入的語料算出（job_rag/topics.py）。
+    自用模式多一行，明說這些是自用資料（你本機的筆記與面經），並列出面經篇數與私人主題。"""
+    t = topics(scope or None, mode=mode)
     ex = "你可以這樣問：" + "".join(f"「{q}」" for _, _, q in presets[:2])
+    extra = []
+    if mode == "self":
+        what = ([f"面經 {t['interviews']} 篇"] if t["interviews"] else []) + t["private_have"]
+        extra = ["自用資料（來自你本機的筆記與面經，只在自用模式可查）：" + ("、".join(what) or "目前沒有")]
     if not scope:
-        n = len([c for c in public_company_counts() if c != "綜合"])
-        return [f"這裡同時搜 {n} 家公司、共 {t['segments']} 段公開資料。", "沒有的資料：" + "、".join(t["missing"]), ex]
-    lines = ["這家有的資料：" + "、".join(t["have"]), "這家沒有的資料：" + "、".join(t["missing"]), ex]
+        n = len([c for c in public_company_counts(mode=mode) if c != "綜合"])
+        return [f"這裡同時搜 {n} 家公司、共 {t['segments']} 段公開資料。", *extra, "沒有的資料：" + "、".join(t["missing"]), ex]
+    lines = ["這家有的資料：" + "、".join(t["have"]), *extra, "這家沒有的資料：" + "、".join(t["missing"]), ex]
     if thin and t["segments"] < THIN:
         lines.insert(0, f"這家公開資料較少（只有 {t['segments']} 段），答案可能很短。")
     return lines
@@ -314,22 +412,25 @@ def _hint(scope, presets, thin):
 @app.get("/c/<label>")
 def chat(label):
     """每一家公司（與「全部公司」）各一個對話頁。沒有 JS 時顯示 noscript 裡的伺服器渲染版本。"""
-    if _warm["state"] != "ready":
-        return _status_page()
-    names = dict(_company_buttons())
+    mode = _mode()
+    if _warm["state"] != "ready" or _self_wait(mode):
+        return _status_page(mode)
+    names = dict(_company_buttons(mode))
     if label != ALL and label not in names:
         return page("找不到", "<main class=status><h1>找不到這家公司</h1><p><a href=\"/\">← 公司清單</a></p></main>"), 404
     scope = "" if label == ALL else names[label]
     hello = (f"我可以回答關於{label}的問題。你可以點下面的題目，或直接問。" if scope
              else "我可以跨公司回答問題。你可以點下面的題目，或直接問。")
-    presets = _presets(label)
-    hint = _hint(scope, presets, PRESETS["companies"].get(label, {}).get("thin"))
+    if _owner.enabled:
+        hello = f"目前是{owner_ui.LABEL[mode]}模式。" + hello
+    presets = _presets(label, mode, scope)
+    hint = _hint(scope, presets, PRESETS["companies"].get(label, {}).get("thin"), mode)
     attrs = {"presets": json.dumps(presets, ensure_ascii=False), "hint": json.dumps(hint, ensure_ascii=False), "scope": scope,
-             "label": label, "key": label, "hello": hello}
+             "label": label, "key": label, "hello": hello, "mode": mode}
     data = " ".join(f'data-{k}="{escape(v)}"' for k, v in attrs.items())
-    fallback = _company_inner(scope) if scope else _home_inner()
+    fallback = _company_inner(scope) if scope else _home_inner(mode=mode)
     return page(f"{label}｜求職情報問答", f"""<body class=chat {data}>
-<header><a href="/">← 公司清單</a><b class=app>{escape(label)}</b><button id=help type=button aria-label="可以問什麼">？</button><a href="/about">專案說明</a></header>{_phone_footer()}
+<header><a href="/">← 公司清單</a><b class=app>{escape(label)}</b><button id=help type=button aria-label="可以問什麼">？</button><a href="/about">專案說明</a></header>{_chrome(mode)}{_phone_footer()}
 <div id=thread role=log aria-live=polite></div>
 <form id=bar autocomplete=off><input id=qi name=q placeholder="{escape('例如：' + presets[0][2])}" enterkeyhint=send aria-label="輸入問題"><button class=go>送出</button></form>
 <noscript><style>#thread,#bar{{display:none}}</style>{fallback}</noscript><script>{CHAT_JS}</script>""")
@@ -337,8 +438,9 @@ def chat(label):
 
 @app.get("/")
 def index():
-    if _warm["state"] != "ready":
-        return _status_page()
+    mode = _mode()
+    if _warm["state"] != "ready" or _self_wait(mode):
+        return _status_page(mode)
     a = request.args
     company = a.get("company", "").strip() or None
     q, note = a.get("q", "").strip(), ""
@@ -351,13 +453,13 @@ def index():
         else:
             note = "<p class='warn'>請先選一家公司，再點問題；或直接輸入問題（查全部公司）。</p>"
     if not q:
-        return page("求職情報問答", _company_inner(company) if company and not note else _home_inner(note))
+        return page("求職情報問答", _chrome(mode) + (_company_inner(company) if company and not note else _home_inner(note, mode)))
     link, panel = _eval_panel(q)
     err, ans, status, card, raw, use, raw_open = "", "", 200, "", "", company, True
     try:
-        if not use and _on("JOB_RAG_DETECT") and (use := detect_company(q)):
+        if not use and _on("JOB_RAG_DETECT") and (use := detect_company(q, mode=mode)):
             note += f"<p class='warn'>已偵測到公司：{escape(use)}，只搜這一家。要查全部公司，請把問句裡的公司名拿掉。</p>"
-        hits = search(q, company=use, gate=False, dedupe=_on("JOB_RAG_DEDUPE"))  # 預設檢索方式沿用 job_rag；載入模型很慢，只搜一次
+        hits = search(q, company=use, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)  # 預設檢索方式沿用 job_rag；載入模型很慢，只搜一次
         low = _low(hits)  # 最高分低於門檻：不呼叫 DeepSeek，原文淡色並展開
         raw = (LOW if low else "") + _hits_html(hits, low)
         if hits and not low:
@@ -383,9 +485,9 @@ def index():
         err = f"<p class='err'>錯誤：{escape(e)}</p>"
     details = f"<details id=raw{' open' if raw_open else ''}><summary>看原文</summary>{raw}</details>" if raw else ""
     script = f"<script>{LOAD_JS}</script>" if card else ""
-    clabel = next((l for l, n in _company_buttons() if n == company), company)
+    clabel = next((l for l, n in _company_buttons(mode) if n == company), company)
     back = [(f"/c/{quote(clabel)}", "← 換問題"), ("/", "← 公司清單")] if company else [("/", "← 換問題")]
-    return page("求職情報問答", f"""<main>{_top(*back)}<p class=q>{escape(q)}</p>
+    return page("求職情報問答", f"""{_chrome(mode)}<main>{_top(*back)}<p class=q>{escape(q)}</p>
 <div id=results>{note}{err}{card}{ans}{details}{script}{link}{panel}</div></main>{_foot()}"""), status
 
 

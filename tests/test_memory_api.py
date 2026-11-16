@@ -7,7 +7,7 @@ from job_rag import guard, retrieval
 from tests.test_answer import MINI, FakePost  # noqa: F401
 from tests.test_vector import fake_env  # noqa: F401  (autouse fixture)
 
-HIST = json.dumps([{"q": "甲科技有哪些職缺？", "a": "徵後端工程師 [1]"}], ensure_ascii=False)
+HIST = json.dumps([{"q": "甲科技有哪些職缺？", "a": "徵後端工程師 [1]", "m": "demo"}], ensure_ascii=False)
 
 
 @pytest.fixture
@@ -74,7 +74,7 @@ def test_bad_history_is_a_json_400_and_never_reaches_deepseek(web, monkeypatch, 
 def test_oversized_history_turns_are_cut_before_the_prompt(web, monkeypatch):
     post = FakePost()
     monkeypatch.setattr(web, "_post", post)
-    big = json.dumps([{"q": f"問{i}", "a": "答" * 1000} for i in range(3)], ensure_ascii=False)
+    big = json.dumps([{"q": f"問{i}", "a": "答" * 1000, "m": "demo"} for i in range(3)], ensure_ascii=False)
     assert len(big) < 4000
     web.app.test_client().get("/api/answer", query_string={"q": "那薪水呢？", "company": "甲科技", "history": big})
     sent = post.calls[0][2]["messages"][1]["content"]
