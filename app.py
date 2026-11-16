@@ -11,6 +11,7 @@ from job_rag import about, detect_company, public_company_counts, retrieval, sea
 from job_rag.about_page import render as render_about
 from job_rag.answer import AnswerError, _post, answer
 from job_rag.evaluate import DEPTH, hit_rank
+from job_rag.ui import page
 
 app = Flask(__name__)
 
@@ -36,11 +37,13 @@ def start_warmup():
 
 
 def _status_page():
-    head = "<!doctype html><html lang=zh-Hant><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>求職情報問答</title>"
     if _warm["state"] == "error":
-        return f"{head}<h1>求職情報問答</h1><p style='color:#c00'>啟動失敗：{escape(_warm['error'])}</p>"
-    return (f"{head}<meta http-equiv=refresh content=2><h1>求職情報問答</h1>"
-            "<p><b>準備中</b>：正在載入模型與索引，完成後會自動顯示查詢頁。</p>")
+        body = f"<main class=status><h1>求職情報問答</h1><p class=err>啟動失敗：{escape(_warm['error'])}</p></main>"
+        return page("求職情報問答", body)
+    body = ("<main class=status role=status><div class=dot></div><h1>求職情報問答</h1>"
+            "<p><b>準備中</b>：正在載入模型與索引，完成後會自動顯示查詢頁。</p></main>")
+    return page("求職情報問答", body, "<meta http-equiv=refresh content=2>")
+
 
 # (按鈕文字, 語料的公司欄位)。名稱以 public_company_counts() 為準，只有尼諾思不同。
 LIVE_COMPANIES = [("台灣大哥大", "台灣大哥大"), ("聯合報", "聯合報"), ("叡揚資訊", "叡揚資訊"), ("神通資訊", "神通資訊"),
@@ -76,7 +79,15 @@ def _eval_panel(q):
         txt = f"金標段落排第 {r}（{'命中前 3' if r <= 3 else '未進前 3'}）" if r else f"前 {DEPTH} 名內沒有金標段落（未命中）"
     else:
         txt = "不可回答題：語料中沒有答案，正確結果是「可能沒有答案」。"
-    return " <a href='#eval'>看這題在評估裡的成績</a>", f"<div id=eval class='ans'><b>評估成績（{escape(e['id'])}）</b><p>{escape(txt)}</p></div>"
+    return "<p class=link><a href='#eval'>看這題在評估裡的成績</a></p>", f"<div id=eval class='ans'><b>評估成績（{escape(e['id'])}）</b><p>{escape(txt)}</p></div>"
+
+
+@app.get("/manifest.webmanifest")
+def manifest():  # 路徑都是根路徑相對，http 區網 IP 與 https 通用；預熱期間也可取得
+    icons = [{"src": f"/static/icon-{n}.png", "sizes": f"{n}x{n}", "type": "image/png", "purpose": "any maskable"} for n in (192, 512)]
+    m = {"name": "求職情報問答", "short_name": "求職問答", "start_url": "/", "scope": "/", "display": "standalone",
+         "lang": "zh-Hant", "theme_color": "#fafaf9", "background_color": "#fafaf9", "icons": icons}
+    return app.response_class(json.dumps(m, ensure_ascii=False), mimetype="application/manifest+json")
 
 
 @app.get("/about")
@@ -126,29 +137,22 @@ def index():
                     except AnswerError as e:
                         ans = f"<p class='err'>整理失敗：{escape(e)}（原文結果不受影響）</p>"
                 else:
-                    ans = "<button name=answer value=1 form=f>整理成答案</button>"
+                    ans = "<button class=go name=answer value=1 form=f>整理成答案</button>"
         except RuntimeError as e:
             err = f"<p class='err'>錯誤：{escape(e)}</p>"
     pick = "".join(
-        f"<button name=pick value=\"{'' if name == company else name}\"{' class=sel' if name == company else ''}>{label}</button>"
+        f"<button name=pick value=\"{'' if name == company else name}\" aria-pressed={'true class=sel' if name == company else 'false'}>{label}</button>"
         for label, name in LIVE_COMPANIES)
     faq = "".join(f"<button name=faq value={k}>{label}</button>" for k, (label, _) in FAQ.items())
     demo = "".join(f"<button name=demo value=\"{i}\" class=demo>{escape(EVAL[i]['question'])}</button>" for i in DEMOS)
-    return f"""<!doctype html><html lang=zh-Hant><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>求職情報問答</title>
-<style>*{{box-sizing:border-box}}body{{font-family:sans-serif;max-width:800px;margin:auto;padding:0 12px;overflow-wrap:anywhere}}
-.row{{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}}button{{min-height:44px;padding:6px 14px;font-size:16px}}
-.sel{{background:#1a5fb4;color:#fff}}.demo{{text-align:left}}input{{width:100%;min-height:44px;font-size:16px}}
-.hit{{border:1px solid #ccc;padding:8px;margin:8px 0}}.dim{{opacity:.45}}.ans{{background:#f3f8ff;padding:8px;margin:8px 0}}
-.warn{{background:#fff4d6;padding:8px}}.err{{color:#c00}}small{{display:block;color:#555}}nav{{font-size:13px;margin:8px 0}}pre{{white-space:pre-wrap}}h4{{margin:12px 0 0}}</style>
-<nav><b>問答</b> · <a href="/about">專案說明</a></nav>
+    return page("求職情報問答", f"""<nav><b>問答</b><a href="/about">專案說明</a></nav>
 <h1>求職情報問答</h1>
 <form id=f><input type=hidden name=company value="{escape(company or '')}">
-<h4>1. 選一家公司（再按一次取消，不選就查全部）</h4><div class=row>{pick}</div>
-<h4>2. 常用問題</h4><div class=row>{faq}</div>
-<h4>或自己輸入問題</h4><input name=q value="{escape(q)}" placeholder="輸入問題"><div class=row><button>查</button></div>
-<h4>查無示範（語料裡沒有答案的問題）</h4><div class=row>{demo}</div></form>
-{note}{err}{body}{ans}{link}{panel}"""
+<h3>1. 選一家公司（再按一次取消，不選就查全部）</h3><div class=grid>{pick}</div>
+<h3>2. 常用問題</h3><div class="grid faq">{faq}</div>
+<h3>或自己輸入問題</h3><div class=ask><input name=q value="{escape(q)}" placeholder="輸入問題" enterkeyhint=search><button class=go>查</button></div>
+<h3>查無示範（語料裡沒有答案的問題）</h3><div class=row>{demo}</div></form>
+{note}{err}{body}{ans}{link}{panel}""")
 
 
 if __name__ == "__main__":

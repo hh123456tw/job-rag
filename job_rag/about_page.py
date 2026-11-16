@@ -2,25 +2,11 @@
 from markupsafe import escape
 
 from . import METHODS
+from .ui import page
 
 LABEL = {"bm25": "BM25（jieba 斷詞）", "bge-small-zh": "bge-small-zh", "bge-m3": "bge-m3", "e5-large": "multilingual-e5",
          "hybrid": "混合（BM25＋bge-m3）"}
 SHORT = {"bm25": "BM25", "bge-small-zh": "bge-small-zh", "bge-m3": "bge-m3", "e5-large": "e5", "hybrid": "混合"}
-
-CSS = """:root{--bg:#fff;--fg:#1c1c1e;--mute:#5a5a60;--line:#d0d0d6;--card:#f4f6fa;--acc:#1a5fb4;--err:#b00020}
-@media(prefers-color-scheme:dark){:root{--bg:#16181d;--fg:#e8e8ec;--mute:#a4a6b0;--line:#3a3e48;--card:#222630;--acc:#7db0f5;--err:#ff8a9b}}
-*{box-sizing:border-box}html{color-scheme:light dark}
-body{font-family:sans-serif;max-width:800px;margin:auto;padding:0 16px 32px;background:var(--bg);color:var(--fg);line-height:1.6;overflow-wrap:anywhere}
-a{color:var(--acc)}nav{font-size:13px;color:var(--mute);margin:8px 0}h1{margin:8px 0}h2{font-size:18px;margin:24px 0 8px;border-bottom:1px solid var(--line)}
-.flow{display:flex;flex-wrap:wrap;gap:12px;list-style:none;padding:0;margin:0}
-.flow li{flex:1 1 100px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 8px;position:relative}
-.flow li+li::before{content:"\\2192";position:absolute;left:-12px;top:50%;transform:translateY(-50%);color:var(--mute);font-size:12px}
-.flow b{display:block}.flow small{color:var(--mute)}
-table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--line);padding:4px 3px;text-align:right}
-th:first-child,td:first-child{text-align:left}td small{display:block;color:var(--mute);font-size:11px;white-space:nowrap}
-.case{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:8px 0}
-.err{color:var(--err);font-weight:bold}.mute{color:var(--mute)}li{margin:4px 0}"""
-
 
 def _f(x):
     return f"{x:.3f}"
@@ -81,9 +67,7 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int) -> 
     n = len(METHODS)
     err = f"<p class=err>無法顯示：{escape(error)}</p>"
     counts = f"{data['n_answerable']} 題可回答、{data['n_unanswerable']} 題不可回答" if data else "題少"
-    return f"""<!doctype html><html lang=zh-Hant><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>專案說明｜求職情報問答</title><style>{CSS}</style>
-<nav><a href="/">問答</a> · <b>專案說明</b></nav>
+    return page("專案說明｜求職情報問答", f"""<nav><a href="/">問答</a><b>專案說明</b></nav>
 <h1>求職情報問答</h1>
 <section><h2>1. 這是什麼</h2>
 <p>現場快速查 {n_companies} 家公司的公開資料。輸入問題，馬上看到最相關的原文段落；需要時再請 LLM（大型語言模型）整理成答案，答案附出處。</p></section>
@@ -110,4 +94,4 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int) -> 
 <li>題目與語料同源，沒有獨立測試題。查無門檻用同一批題挑，分數可能偏樂觀。</li>
 <li>RAGAS 評審與生成同為 DeepSeek，可能偏愛自己的答案。已另用 GPT 複查，但兩者都只量「答案有沒有依據」，不量對不對。</li>
 <li>資料只有 {n_segments} 段。</li>
-</ul></section>"""
+</ul></section>""")
