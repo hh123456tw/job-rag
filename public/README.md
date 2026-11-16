@@ -1,8 +1,19 @@
-# 公司調查問答：RAG 問答與評估範例
+# 求職情報問答
 
-用公司調查筆記做的檢索問答（RAG，retrieval-augmented generation）範例。輸入問題，先看到最相關的原文段落；需要時再請 LLM 整理成附出處的答案。重點在「怎麼量」：5 種檢索方式用同一批題目比較，附信賴區間，也寫明這個評估的限制。
+用公司調查筆記做的檢索問答（RAG，retrieval-augmented generation）範例，附網頁介面。每家公司一個對話頁，點預設題目或自己輸入問題；答案先出現並附出處，原文收在「看原文」。重點在「怎麼量」：5 種檢索方式用同一批題目比較，附信賴區間，也寫明這個評估的限制。
 
-**English summary.** A small Retrieval-Augmented QA demo built on company-research notes (Traditional Chinese). It splits notes by heading, compares five retrieval methods (BM25, bge-small-zh, multilingual-e5-large, bge-m3, and BM25+bge-m3 with reciprocal rank fusion), refuses to answer when the best similarity is below a threshold, and reports Hit@1 / Hit@3 / MRR with bootstrap confidence intervals. Only a tiny sample corpus (3 companies, 32 passages) and 15 sample questions are included, so the numbers are a demonstration of the method, not a benchmark. The optional "answer" button calls the DeepSeek API and needs your own key.
+## 網頁有什麼
+
+- **公司對話頁**：首頁列出語料裡的公司，點一家進入 `/c/<公司>`；另有「全部公司」做跨公司提問。每家各有一個對話框，記錄只存在你的瀏覽器。
+- **預設題目**：每家公司 3 到 5 個可以直接點的問題（存在 `job_rag/company_presets.json`）。語料裡沒有預設的公司（例如範例語料的 3 家）改用最前面 3 個通用題。
+- **「我能回答什麼」提示**：這家有哪些資料、沒有哪些資料，由載入的語料算出，不是寫死的。
+- **追問記憶**：前端帶最近 2 輪對話；很短的追問（例如「那薪水呢？」）會依規則補上前一題的主題再檢索。伺服器不存對話，規則寫在 `job_rag/memory.py`，不用 LLM 改寫問句。
+- **答案優先**：先顯示整理好的答案與出處，原文在「看原文」裡；沒有 JavaScript 時退回伺服器渲染的結果頁。
+- **查無提示**：最高相似度低於門檻，就明說「我找不到很接近的內容，不確定有沒有答案」，原文淡色照列，不呼叫 LLM。
+- **失敗不亂答**：沒有金鑰、逾時、API 錯誤、有每小時用量上限（`JOB_RAG_ANSWER_LIMIT`）都寫明原因，不補示範答案。
+- **專案說明頁 `/about`**：白話說明做了什麼、怎麼量、哪裡不夠好；成績表與信賴區間讀自 `eval/results_methods.json`。
+
+**English summary.** A small Retrieval-Augmented QA demo with a web UI, built on company-research notes (Traditional Chinese). Each company has its own chat page with preset questions, short follow-up memory, answer-first display with sources, and a "probably no answer" notice. It splits notes by heading, compares five retrieval methods (BM25, bge-small-zh, multilingual-e5-large, bge-m3, and BM25+bge-m3 with reciprocal rank fusion), refuses to answer when the best similarity is below a threshold, and reports Hit@1 / Hit@3 / MRR with bootstrap confidence intervals. Only a tiny sample corpus (3 companies, 32 passages) and 15 sample questions are included, so the numbers are a demonstration of the method, not a benchmark. Limitations: few questions, questions written against the same corpus, a threshold tuned on the same questions, and a judge model that may favor its own answers. The optional answer generation calls the DeepSeek API and needs your own key.
 
 ## 快速開始（Windows、Python 3.11）
 
@@ -38,7 +49,7 @@ hf download intfloat/multilingual-e5-large --local-dir models/multilingual-e5-la
 | `JOB_RAG_MODELS` | 模型資料夾 | `models` |
 | `JOB_RAG_CACHE` | 段落向量快取 | `.cache`（第一次編碼約幾分鐘，之後讀快取） |
 | `JOB_RAG_PORT`、`JOB_RAG_HOST` | 網頁埠與監聽位址 | `5000`、`127.0.0.1` |
-| `DEEPSEEK_API_KEY`、`DEEPSEEK_MODEL` | 「整理成答案」按鈕；可放在 `.env`（見 `.env.example`） | 不設就不能用這個按鈕 |
+| `DEEPSEEK_API_KEY`、`DEEPSEEK_MODEL` | 把檢索到的段落整理成答案；可放在 `.env`（見 `.env.example`） | 不設就沒有整理好的答案，只看得到原文 |
 
 ### 3. 用範例語料跑起來
 
@@ -49,17 +60,17 @@ python -X utf8 -m job_rag.classify                       :: 分類表：被排�
 python -X utf8 -m job_rag.evaluate --method bm25         :: 單一檢索方式的成績
 python -X utf8 -m job_rag.evaluate --method bge-m3
 python -X utf8 -m job_rag.evaluate --method all          :: 5 種並列，寫入 eval/results_methods.txt 與 .json
-python -X utf8 app.py                                    :: 開 http://127.0.0.1:5000
+python -X utf8 app.py                                    :: 開 http://127.0.0.1:5000（首頁是公司清單，點一家進對話頁）
 ```
 
 Windows 也可以雙擊 `start.bat`（預設語料是同資料夾的 `sample_corpus`、模型是 `models`；已設環境變數就用你設的）。`start.bat phone` 或 `start_phone.bat` 會對區網開放，方便用手機開同一個頁面。
 
-網頁有兩頁：問答頁（選公司、常用問題、自己輸入問題）與 `/about`（成績表，數字讀自 `eval/results_methods.json`，要先跑上面的 `--method all`；沒有 DeepSeek 金鑰就沒有生成層評估，頁面會直接寫明）。啟動時會先載入模型，這段時間頁面顯示「準備中」。
+網頁分兩部分：公司清單與每家公司的對話頁（`/c/<公司>`），以及 `/about`（成績表，數字讀自 `eval/results_methods.json`，要先跑上面的 `--method all`；沒有 DeepSeek 金鑰就沒有生成層評估，頁面會直接寫明）。啟動時會先載入模型，這段時間頁面顯示「準備中」。
 
 ### 4. 測試
 
 ```
-python -m pytest tests
+python -X utf8 -m pytest tests
 ```
 
 用 `tests/fixtures/mini` 的假語料與假嵌入器，不需要模型也不連網。少數測試要設環境變數才會跑（沒設就顯示 skipped）：`JOB_RAG_REAL_CORPUS`（對自己的完整語料做冒煙）、`JOB_RAG_REAL_QUESTIONS`（完整題組）、`JOB_RAG_MODELS_TEST=1`（用真模型）。
@@ -70,7 +81,7 @@ python -m pytest tests
 copy .env.example .env            :: 填入自己的 DEEPSEEK_API_KEY
 ```
 
-按鈕送出的只有檢索回來的段落，不會送整份語料。沒有金鑰、逾時或 API 回錯，頁面顯示錯誤，原文結果照常顯示，不補假答案。生成層評估（RAGAS）要另外裝套件並花 API 費用，做法見 `requirements-ragas.txt` 與 `python -X utf8 -m job_rag.generation --help`；這份範例沒有附生成層結果。
+送出的只有檢索回來的段落，不會送整份語料。沒有金鑰、逾時、達用量上限或 API 回錯，頁面顯示原因，原文結果照常顯示，不補假答案。生成層評估（RAGAS）要另外裝套件並花 API 費用，做法見 `requirements-ragas.txt` 與 `python -X utf8 -m job_rag.generation --help`；這份範例沒有附生成層結果。
 
 ## 範例資料
 
@@ -82,7 +93,7 @@ copy .env.example .env            :: 填入自己的 DEEPSEEK_API_KEY
 - **依標題切段，每段帶公司名與標題路徑。** 段落是檢索與評分的最小單位；索引文字前面加上「公司 標題路徑」，問句提到公司或主題時比較容易對上。
 - **5 種檢索方式用同一批題目比較。** BM25（jieba 斷詞）、bge-small-zh、multilingual-e5、bge-m3、混合（BM25 加 bge-m3，用 RRF 合併名次，k=60，不調權重）。預設用 bge-m3。
 - **只用公開事實。** 載入語料時就按標題白名單分類：標題不在白名單的段落一律排除，不進索引、不送 LLM（白名單在 `job_rag/retrieval.py` 的 `PUBLIC`，不確定的標題預設排除）。
-- **查無門檻。** bge-m3 最高相似度低於 0.700 就顯示「可能沒有答案」，原文以淡色照列，不提供「整理成答案」，也不呼叫 LLM。
+- **查無門檻。** bge-m3 最高相似度低於 0.700 就顯示「可能沒有答案」，原文以淡色照列，也不呼叫 LLM。
 - **失敗不亂答。** 沒有金鑰、API 失敗、模型缺檔都顯示明確錯誤，不回示範資料。
 - **評估方法。** 金標用「檔名＋標題路徑」定義，命中＝前 k 個結果中有段落在金標標題之下；指標是 Hit@1、Hit@3、MRR；不可回答題另外看正確拒答率，不混入 MRR。
 - **信賴區間。** 題少，所以把題目重抽 1000 次（可重複抽、固定亂數種子 0）取 95% 範圍；兩種方式的差用同一批重抽的題目算，區間含 0 就不說有差異。
@@ -119,13 +130,15 @@ bge-m3 減混合的 MRR 差是 +0.056，區間 [+0.000, +0.167] 含 0，不能�
 3. 設 `JOB_RAG_CORPUS=<你的資料夾>`，重跑 `classify`。向量快取以段落內容的雜湊為鍵，語料改了會自動重算。
 4. 寫自己的題目，格式見 `eval/questions.sample.json`：可回答題要有金標（檔名、標題路徑、引文），不可回答題要列查過的關鍵字。用 `python -X utf8 -m job_rag.evalset` 核對（引文要真的在金標標題之下；不可回答題的關鍵字要真的搜不到）。
 5. 重跑 `evaluate --method all`。放了 `eval/questions.json` 就優先用它，沒有才用 `eval/questions.sample.json`。
-6. `app.py` 的公司按鈕在語料只含部分預設公司時，會改列語料裡有的公司；要固定自己的清單，改 `app.py` 的 `LIVE_COMPANIES`。
+6. `app.py` 的公司按鈕在語料只含部分預設公司時，會改列語料裡有的公司；要固定自己的清單，改 `app.py` 的 `LIVE_COMPANIES`；預設題目由 `job_rag/company_presets.json` 提供，沒列在裡面的公司用通用題。
+7. `job_rag/retrieval.py` 的 `EXCLUDED_COMPANIES` 是「整家公司不載入」的名單，只對 `sample_corpus/` 以外的語料生效。名單裡的名字剛好和你的公司重複時，清空或修改它。
 
 ## 目錄
 
 ```
-app.py                  Flask 網頁（問答頁、/about）
-job_rag/                載入、分類、檢索、評估、生成層評估
+app.py                  Flask 網頁（公司清單、對話頁、/about）
+job_rag/                載入、分類、檢索、評估、生成層評估、對話記憶、預設題目、用量上限、說明頁
+job_rag/company_presets.json  每家公司的預設題目
 sample_corpus/          範例語料（3 家）
 eval/questions.sample.json  範例評估題
 tests/                  測試與假語料 fixtures
