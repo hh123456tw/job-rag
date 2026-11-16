@@ -1,12 +1,12 @@
 # 11: RAGAS 生成層評估
 
-**Blocked by:** 10
+**Blocked by:** 04
 **Status:** ready-for-agent
 
 **What to build:** 對「整理成答案」的輸出做 RAGAS 評估。固定使用檢索成績最好的方式。評審與生成都用 DeepSeek（只送公開事實段落）。輸出生成層成績檔，供研究結果頁使用。
 
 - [ ] 安裝 ragas 前先查官方文件確認目前版本與接 OpenAI 相容 API（DeepSeek）的做法，不憑記憶
-- [ ] 指標：faithfulness、answer relevancy、context precision、context recall；參考答案取自評估題的佐證引文
+- [ ] 為了好解釋，只用 2 個指標：faithfulness（忠實度）、answer relevancy（答案相關性）。檢索層已有 Hit@k 與 MRR，不重複量。
 - [ ] 25 題可回答題逐題有分數與平均；5 題不可回答題只報告拒答（回「查無」的比例），不計入 faithfulness 平均
 - [ ] 送給評審與生成的內容經測試證明不含排除段落
 - [ ] API 失敗的題要標記「評估失敗」，不得補預設分數或略過不計
