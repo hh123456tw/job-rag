@@ -234,8 +234,8 @@ def _limits(d) -> str:
 
 
 def _eng(d, n_segments: int, n_companies: int, lengths=None) -> str:
-    """給工程面試官的技術細節（預設收合）。附在第 4 塊底下；沒有評估資料時整塊不顯示。"""
-    return ("<details class=eng><summary>給工程面試官：技術細節</summary>"
+    """給工程師讀者的技術細節（預設收合）。附在第 4 塊底下；沒有評估資料時整塊不顯示。"""
+    return (f"<details class=eng><summary>給{retrieval.ENG_AUDIENCE}：技術細節</summary>"
             f"<h3>系統架構</h3>{_arch(n_segments, n_companies)}{_lengths(lengths)}"
             f"{_trade(d, n_segments)}{_scale()}{_limits(d)}</details>")
 
