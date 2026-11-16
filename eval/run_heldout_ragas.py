@@ -19,6 +19,13 @@ PROG = ROOT / "dist/logs/ragas_heldout_progress.json"
 OUT = ROOT / "eval/results_heldout_generation"
 NOT_FOUND = "查無"
 METRICS = ("faithfulness", "answer_relevancy")
+# 低於 0.9 的題原因：人工讀答案與段落後寫（RAGAS 沒有輸出逐句判定，原因是推論，不是評審的原話）
+REASONS = {
+    "h23": "跨公司 8 家。神通一行寫「公司自述的產品沒有寫 AI Agent」，但段落 [2] 的【自述】就列了 MiTAC Agent Builder，這句與段落相反；"
+           "其餘多行是「資料中沒有提到」這類沒有出處可對的否定句，評審難以認定有依據。其他正面陳述（凱基、叡揚、藍新）在段落找得到。",
+    "h24": "跨公司 8 家，答案 8 行裡有 6 行是「資料沒寫」；這類否定句沒有段落可對，評審多半判無依據，分數被拉低。正面陳述（聯合報、神通）在段落 [1][2][5] 找得到。",
+    "h25": "跨公司 8 家，答案 8 行裡有 4 行是「資料沒寫」（神通、台灣大哥大、藍新、聯合報），同樣沒有段落可對。凱基、叡揚、中華網龍、華電的 C# 陳述在段落找得到（華電那行結尾是段落被截斷的「Web A…」）。",
+}
 
 
 def _get(base, path, **q):
@@ -109,7 +116,8 @@ def report(a):
     out = {"n_answerable": len(ans), "n_scored_candidates": len(todo), "gated": gated, "model_not_found": nf, "context_mismatch": mism,
            "unanswerable_given_answer": [r["id"] for r in rows if not r["answerable"] and r["answer_status"] == "ok" and r["answer"].strip() != NOT_FOUND],
            "stats": stat, "per_question": per, "low_ids": [i["id"] for i in low],
-           "note": "評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案沿用票 39（K=5、補公司名、已指定公司門檻 0.62）。"}
+           "reasons": {i["id"]: REASONS.get(i["id"]) for i in low},
+           "note": "答案相關性沒量：本機 bge-m3 嵌入模型要約 5GB 記憶體，當時可用記憶體只有約 5–7GB（主服務與其他子代理各載一個），為避免當機只量忠實度。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案沿用票 39（K=5、補公司名、已指定公司門檻 0.62）。"}
     OUT.with_suffix(".json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     f = lambda x: "-" if x is None else f"{x:.3f}"
     L = ["獨立測試題 RAGAS（現行設定：K=5、補公司名、已指定公司門檻 0.62；題組 eval/questions_heldout.json）",
@@ -120,7 +128,7 @@ def report(a):
     for m, nm in (("faithfulness", "忠實度"), ("answer_relevancy", "答案相關性")):
         s = stat[m]
         L.append(f"{nm}：平均 {f(s['mean'])}（{s['n']} 題）" + (f"；bootstrap 95% 區間 {s['ci95'][0]:.3f}–{s['ci95'][1]:.3f}" if s["ci95"] else ""))
-    L += ["", "## 低於 0.9 的題與原因（人工讀答案與段落後填寫）"] + [f"{i['id']}：（待填）" for i in low]
+    L += ["", "## 低於 0.9 的題與原因（人工讀答案與段落後寫，是推論）"] + [f"{i['id']}（忠實度 {f(i['faithfulness'])}）：{REASONS.get(i['id'], '（尚未人工檢視）')}" for i in low]
     L += ["", "## 限制", out["note"]]
     OUT.with_suffix(".txt").write_text("\n".join(L) + "\n", encoding="utf-8")
     print("\n".join(L))
