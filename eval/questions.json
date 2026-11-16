@@ -1,0 +1,490 @@
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司是 UiPath 的認證經銷商？",
+   "type": "跨公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "08_奧衍.md",
+     "heading": "1. 基本資料",
+     "quote": "2019 年成為 UiPath 認證經銷商"
+    },
+    {
+     "file": "08_奧衍.md",
+     "heading": "2. 業務與財務",
+     "quote": "代理的產品：UiPath（RPA）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "c02",
+   "question": "哪一家公司在 2026 年 10 月掛牌上櫃？",
+   "type": "跨公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "2026-10-27 掛牌，承銷價 68 元"
+    },
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "68 元掛牌上櫃"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "c03",
+   "question": "哪一家公司拿到 WAN-IFRA 的數位媒體獎？",
+   "type": "跨公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "WAN-IFRA 2026 Digital Media Awards"
+    },
+    {
+     "file": "02_聯合報.md",
+     "heading": "8. 近一年新聞",
+     "quote": "Publish X 獲 WAN-IFRA 金獎"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁）",
+     "quote": "連兩年獲 WAN-IFRA"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "c04",
+   "question": "哪一家公司的客戶案例有良興？",
+   "type": "跨公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "良興（零售）：AI 會議記錄系統"
+    },
+    {
+     "file": "15_數據立.md",
+     "heading": "8. 近一年新聞",
+     "quote": "良興合作專文"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "c05",
+   "question": "哪一家公司是安碁資訊的子公司？",
+   "type": "跨公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "1. 基本資料",
+     "quote": "安碁資訊股份有限公司（ACSI，6690）"
+    },
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "安碁資訊（6690）的子公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "c06",
+   "question": "哪一家公司有自研的語音模型？",
+   "type": "跨公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研語音模型 myVoca"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "myVoca"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "奧衍的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "08_奧衍.md",
+     "heading": "1. 基本資料",
+     "quote": "資本額 | 2000 萬"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s02",
+   "question": "凱基證券 2025 年的稅後純益是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "約 115.03～115.1 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "type": "單一公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 標案占比（重點）",
+     "quote": "政府標案 110 件，總額近 83 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "20.19 億，年增 16.33%"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "AltaBots.ai：企業級 No-Code AI Agent 平台"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "部門 2008 年成立"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "type": "職缺",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）",
+     "quote": "年薪 900,000~1,200,000"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
+     "quote": "薪資：年薪 900,000~1,200,000 元"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "type": "職缺",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "B_神通_聯合報.md",
+     "heading": "一、神通資訊科技股份有限公司（MiTAC Information） > 3. 60076X0_後端工程師（Node.js）",
+     "quote": "Node.js、JavaScript、TypeScript"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "type": "職缺",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "A_凱基_台哥大.md",
+     "heading": "二、台灣大哥大（104 公司名：台灣大哥大股份有限公司，職缺編號格式如 I97、D667、E164）",
+     "quote": "3 年以上（Kubernetes 2 年以上）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j06",
+   "question": "奧衍有沒有公開的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "private": false,
+   "gold": [
+    {
+     "file": "08_奧衍.md",
+     "heading": "4. 職缺",
+     "quote": "目前沒有招募中的職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "i01",
+   "question": "中華網龍的 Unity 工程師面試怎麼考？",
+   "type": "面試與評價",
+   "answerable": true,
+   "private": true,
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "6. 面試流程與常見題目",
+     "quote": "先筆試，再與工程師主管、資深工程師面談"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "i02",
+   "question": "台灣大哥大全端工程師的面試會問什麼？",
+   "type": "面試與評價",
+   "answerable": true,
+   "private": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "6. 面試流程與常見題目",
+     "quote": "Spring Boot 自評 1–5"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "i03",
+   "question": "叡揚資訊的面試筆試考什麼？",
+   "type": "面試與評價",
+   "answerable": true,
+   "private": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "6. 面試流程與常見題目",
+     "quote": "C 語言簡單演算法、網頁題、SQL 題"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "i04",
+   "question": "遠振資訊的面試會考 Linux 指令嗎？",
+   "type": "面試與評價",
+   "answerable": true,
+   "private": true,
+   "gold": [
+    {
+     "file": "16_遠振資訊.md",
+     "heading": "6. 面試流程與常見題目",
+     "quote": "第一次面試考 Linux 指令"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "i05",
+   "question": "典凡科技的面試流程是什麼？",
+   "type": "面試與評價",
+   "answerable": true,
+   "private": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "6. 面試流程與常見題目",
+     "quote": "投履歷、初步面談、技術交流、Offer"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "i06",
+   "question": "奧衍寫的「責任制」是什麼意思？",
+   "type": "面試與評價",
+   "answerable": true,
+   "private": true,
+   "gold": [
+    {
+     "file": "08_奧衍.md",
+     "heading": "7. 工作評價 > 「責任制」的實際意涵",
+     "quote": "責任制（勞基法 84-1 條）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "i07",
+   "question": "神通資訊的加班狀況如何？",
+   "type": "面試與評價",
+   "answerable": true,
+   "private": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "8. 工作評價 > 加班（多來源交叉）",
+     "quote": "專案趕工、客戶時程短時會被要求加班"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u01",
+   "question": "台灣大哥大有提供員工宿舍或租屋補助嗎？",
+   "type": "不可回答",
+   "answerable": false,
+   "private": false,
+   "gold": [],
+   "absence_keywords": [
+    "宿舍",
+    "租屋",
+    "住宿補助"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "type": "不可回答",
+   "answerable": false,
+   "private": false,
+   "gold": [],
+   "absence_keywords": [
+    "多益",
+    "TOEIC",
+    "英檢",
+    "英文能力"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "private": false,
+   "gold": [],
+   "absence_keywords": [
+    "月活躍",
+    "活躍玩家",
+    "MAU",
+    "DAU"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u04",
+   "question": "聯合報有沒有開放新聞系學生的記者實習？",
+   "type": "不可回答",
+   "answerable": false,
+   "private": false,
+   "gold": [],
+   "absence_keywords": [
+    "新聞系",
+    "記者實習",
+    "編輯實習"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u05",
+   "question": "華電聯網的員工持股信託比例是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "private": false,
+   "gold": [],
+   "absence_keywords": [
+    "員工持股",
+    "持股信託"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}
