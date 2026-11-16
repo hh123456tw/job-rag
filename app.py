@@ -4,10 +4,10 @@ import os
 import threading
 from pathlib import Path
 
-from flask import Flask, request
+from flask import Flask, g, request
 from markupsafe import escape
 
-from job_rag import about, detect_company, netinfo, public_company_counts, retrieval, search
+from job_rag import about, guard, detect_company, netinfo, public_company_counts, retrieval, search
 from job_rag.about_page import render as render_about
 from job_rag.answer import AnswerError, _post, answer
 from job_rag.evalset import questions_path
@@ -15,6 +15,7 @@ from job_rag.evaluate import DEPTH, hit_rank
 from job_rag.ui import page
 
 app = Flask(__name__)
+_limiter = guard.RateLimit()  # 「整理成答案」的全域用量；測試可換成注入時鐘的版本
 
 # 預熱：啟動時先載入 bge-m3 與索引。state：loading（準備中）、ready、error。測試與直接 import 時預設 ready。
 _warm = {"state": "ready", "error": ""}
@@ -106,6 +107,28 @@ def _eval_panel(q):
     return "<p class=link><a href='#eval'>看這題在評估裡的成績</a></p>", f"<div id=eval class='ans'><b>評估成績（{escape(e['id'])}）</b><p>{escape(txt)}</p></div>"
 
 
+@app.before_request
+def _require_access_code():
+    """JOB_RAG_ACCESS_CODE 有值時，除白名單外都要帶正確的 ?k= 或有效 cookie。沒設時完全不動。"""
+    code = guard.access_code()
+    if not code or request.path.startswith("/static/") or request.path == "/manifest.webmanifest":
+        return None
+    if guard.code_ok(request.args.get("k", ""), code):
+        g.set_cookie = code  # 第一次帶對了：回應時存成 cookie
+    elif not guard.code_ok(request.cookies.get(guard.COOKIE, ""), code):
+        body = "<main class=status><h1>求職情報問答</h1><p>需要存取碼。請用完整的分享網址開啟。</p></main>"
+        return page("求職情報問答", body), 403
+    return None
+
+
+@app.after_request
+def _remember_access_code(resp):
+    if g.get("set_cookie"):
+        secure = request.is_secure or request.headers.get("X-Forwarded-Proto", "").lower() == "https"
+        resp.set_cookie(guard.COOKIE, g.set_cookie, httponly=True, samesite="Lax", secure=secure)
+    return resp
+
+
 @app.get("/manifest.webmanifest")
 def manifest():  # 路徑都是根路徑相對，http 區網 IP 與 https 通用；預熱期間也可取得
     icons = [{"src": f"/static/icon-{n}.png", "sizes": f"{n}x{n}", "type": "image/png", "purpose": "any maskable"} for n in (192, 512)]
@@ -141,7 +164,7 @@ def index():
             q = f"{label}{FAQ[a['faq']][1]}"
         else:
             q, note = "", "<p class='warn'>請先選一家公司，再按常用問題；或直接在上面輸入問題（跨公司）。</p>"
-    body, err, ans, link, panel = "", "", "", "", ""
+    body, err, ans, link, panel, status = "", "", "", "", "", 200
     if q:
         link, panel = _eval_panel(q)
         try:
@@ -153,7 +176,11 @@ def index():
             low = not hits or hits[0]["score"] < retrieval.NOT_FOUND_THRESHOLD
             body = (LOW if low else "") + _hits_html(hits, low)
             if hits and not low:
-                if a.get("answer"):
+                if a.get("answer") and (wait := _limiter.try_acquire(guard.answer_limit())):
+                    status = 429
+                    ans = (f"<p class='err'>整理成答案已達每小時 {guard.answer_limit()} 次的上限，"
+                           f"請約 {-(-wait // 60)} 分鐘後再試（原文結果不受影響）。</p>")
+                elif a.get("answer"):
                     try:
                         r = answer(q, hits, post=_post)
                         src = "".join(f"<li>{escape(s['company'])} · {escape(s['file'])} · {escape(s['heading_path'])}</li>" for s in r["sources"])
@@ -176,7 +203,7 @@ def index():
 <h3>2. 常用問題</h3><div class="grid faq">{faq}</div>
 <h3>或自己輸入問題</h3><div class=ask><input name=q value="{escape(q)}" placeholder="輸入問題" enterkeyhint=search><button class=go>查</button></div>
 <h3>查無示範（語料裡沒有答案的問題）</h3><div class=row>{demo}</div></form>
-{note}{err}{body}{ans}{link}{panel}{_phone_footer()}""")
+{note}{err}{body}{ans}{link}{panel}{_phone_footer()}"""), status
 
 
 if __name__ == "__main__":
