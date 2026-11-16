@@ -22,17 +22,18 @@ FILES = {
 GLOBS = ["job_rag/*.py", "scripts/make_icons.py", "static/*.png", "tests/*.py", "tests/fixtures/mini/**/*.md", "sample_corpus/**/*.md"]
 NOT_PUBLIC = {"tests/test_export_public.py"}  # 匯出腳本的測試依賴私人 repo 的檔案
 
-FORBIDDEN_PARTS = {".git", ".scratch", "demo", "models", ".cache", "dist", "docs", ".env", "SPEC.md", "GLOSSARY.md", "CLAUDE.md"}
+FORBIDDEN_PARTS = {".git", ".scratch", "demo", "models", ".cache", "dist", "docs", ".env", "SPEC.md", "GLOSSARY.md", "CLAUDE.md", "selfdata"}  # selfdata：自用資料（票 24）
 ALLOWED_EVAL = {"eval/questions.sample.json"}
 # 這些字眼只准出現在「分類與過濾私人段落」的程式與它的測試、假語料裡（它們必須叫得出被排除的類別）
 WORDS = re.compile("履歷|面試|評價|風險|判斷|作戰|媒合|廠商深查|求職策略")
-WORD_OK = ("job_rag/retrieval.py", "job_rag/evaluate.py", "job_rag/classify.py", "tests/")
+WORD_OK = ("job_rag/retrieval.py", "job_rag/evaluate.py", "job_rag/classify.py", "job_rag/selfdata.py", "tests/")
 PATTERNS = {
     "hf 金鑰": re.compile(r"\bhf_\w+"), "sk 金鑰": re.compile(r"\bsk-\w+"),
     "電子郵件": re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+"),
     "手機": re.compile(r"(?<![\w.-])09\d{2}[- ]?\d{3}[- ]?\d{3}(?!\d)"),
     "市話": re.compile(r"(?<![\w.-])\(?0\d{1,2}\)?[- ]?\d{3,4}[- ]?\d{4}(?!\d)"),
     "私人路徑或帳號": re.compile(r"C:\\claude|cygnu|hh123456|henry6655", re.I),
+    "本人密碼被賦值": re.compile(r"OWNER_PIN\s*[=:]\s*[^\s\"'#]"),  # 只准寫變數名稱，不准寫值（空值的範例可以）
 }
 SURVEY_NAME = re.compile(r"(?<![\w])(?:0[0-9]|1[0-6])_[^\s\"'`,)\]/\\<>|]+?\.md")
 # 假語料用的檔名（測試與 fixtures）：樣式像完整語料，但不是真檔名
@@ -64,8 +65,8 @@ def _read(p: Path):
         return None
 
 
-def scan(out, real_names=()) -> list[str]:
-    """回傳發現清單，空串列＝乾淨。"""
+def scan(out, real_names=(), secrets=()) -> list[str]:
+    """回傳發現清單，空串列＝乾淨。secrets：絕不能出現在任何檔案內容裡的字串（本人密碼的值、面經內文片段）；只回報檔名，不回報內容。"""
     out, found = Path(out), []
     for p in sorted(out.rglob("*")):
         rel = p.relative_to(out).as_posix()
@@ -88,6 +89,7 @@ def scan(out, real_names=()) -> list[str]:
             found += [f"{rel}：私人用語：{m.group(0)}" for m in WORDS.finditer(txt)]
         found += [f"{rel}：完整語料的檔名：{m.group(0)}" for m in SURVEY_NAME.finditer(txt) if m.group(0) not in FAKE_NAMES]
         found += [f"{rel}：真語料檔名：{n}" for n in real_names if n.endswith(".md") and (n in txt or n in rel)]
+        found += [f"{rel}：含自用資料或本人密碼的值" for v in secrets if v and v in txt]
     return found
 
 
@@ -106,12 +108,34 @@ def export(root, out) -> list[tuple[str, str]]:
     return copies
 
 
+def self_secrets() -> list[str]:
+    """本機才有的東西：本人密碼的值，以及面經每段內文開頭 24 字（逐字比對公開輸出）。沒設或沒有就是空的。"""
+    import json
+    out = [v for v in (os.environ.get("JOB_RAG_OWNER_PIN", ""),) if v]
+    sys.path.insert(0, str(ROOT))
+    from job_rag.selfdata import self_dir
+    root = Path(self_dir(), "面經")
+    for f in root.rglob("*.jsonl") if root.is_dir() else []:
+        for line in f.read_text(encoding="utf-8").splitlines():
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            if not isinstance(r, dict):
+                continue
+            secs = r.get("sections") if isinstance(r.get("sections"), list) else []
+            for t in [x.get("content") for x in secs if isinstance(x, dict)] + [r.get("process_text")]:
+                if isinstance(t, str) and len(t.strip()) >= 24:
+                    out.append(t.strip()[:24])
+    return out
+
+
 def main():
     out = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "dist" / "public_repo"
     corpus = os.environ.get("JOB_RAG_REAL_CORPUS")
     names = [f.name for f in Path(corpus).rglob("*.md")] if corpus and Path(corpus).is_dir() else []
     copies = export(ROOT, out)
-    found = scan(out, real_names=names)
+    found = scan(out, real_names=names, secrets=self_secrets())
     if found:
         shutil.rmtree(out)
         print(f"掃描發現 {len(found)} 項，已刪除輸出：", *found, sep="\n  ")

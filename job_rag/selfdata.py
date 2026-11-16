@@ -8,6 +8,14 @@ from pathlib import Path
 from .retrieval import _pieces
 
 LABEL = {"goodjob.life": "GoodJob", "interview.tw": "面試趣"}
+# 這個檔案是自用模式字眼的家（scripts/export_public_repo.py 的私人用語檢查只放行它與 retrieval.py）。
+# 自用模式才有的主題：標題含關鍵字的私人筆記段落。順序即顯示順序。
+PRIVATE_TOPICS = [("面談作戰卡", ("作戰",)), ("你的對應", ("對應",)), ("風險與判斷", ("風險", "判斷", "推測", "限制", "未查到")),
+                  ("面試與評價", ("面試", "評價"))]
+# 自用模式的面試題（題目由程式動態加入，不來自 selfdata/）。scripts/check_self_presets.py 逐題驗證不被查無門檻擋住。
+IV_COMPANY = [("iv-q", "面試會問什麼", "面試會問什麼？"), ("iv-flow", "面試流程", "面試流程是什麼？")]
+IV_ALL = [("iv-all", "各家面試比較", "各家公司的面試流程有什麼不同？")]
+NOT_LISTED_MISSING = "面試與評價"  # 自用模式的「沒有的資料」不再列它
 
 
 def self_dir() -> Path:

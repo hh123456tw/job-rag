@@ -11,6 +11,7 @@ from flask import Flask, g, request
 from markupsafe import escape
 
 from job_rag import about, guard, detect_company, netinfo, owner_ui, public_company_counts, retrieval, search
+from job_rag.selfdata import IV_ALL, IV_COMPANY
 from job_rag.owner import COOKIE as OWNER_COOKIE, TTL as OWNER_TTL, Owner
 from job_rag.about_page import render as render_about
 from job_rag.chat_ui import CHAT_JS
@@ -27,7 +28,7 @@ _owner = Owner()  # 本人密碼與簽名 cookie（票 24）；金鑰每次啟�
 
 
 def _mode() -> str:
-    """這個請求的模式。只看有效的本人 cookie；查詢參數、history、表單值一律不參與判斷。沒有或無效＝展示。"""
+    """這個請求的模式。只看有效的本人 cookie；查詢參數、history、表單值一律不參與決定。沒有或無效＝展示。"""
     if "mode" not in g:
         g.mode = "self" if _owner.valid(request.cookies.get(OWNER_COOKIE)) else "demo"
     return g.mode
@@ -343,7 +344,7 @@ ALL = "全部公司"
 
 def _presets(label, mode="demo", scope=""):
     """該公司的預設題目 [(鍵, 按鈕文字, 完整問句)]。檔案裡沒有的公司（例如範例語料）用最前面 3 個常用問題。
-    自用模式且該範圍有面經時，多一組面試題：由載入的面經篇數動態決定，題目不存檔。"""
+    自用模式且該範圍有面經時，多一組面經相關題：由載入的面經篇數動態決定，題目不存檔。"""
     if label == ALL:
         out = [(p["key"], p["label"], p["q"]) for p in PRESETS["all"]]
     elif label in PRESETS["companies"]:
@@ -353,11 +354,6 @@ def _presets(label, mode="demo", scope=""):
     if mode == "self" and topics(scope or None, mode="self")["interviews"]:
         out += IV_ALL if label == ALL else [(k, l, f"{label}{t}") for k, l, t in IV_COMPANY]
     return out
-
-
-# 自用模式的面試題（題目由程式動態加入，不來自 selfdata/）。scripts/check_self_presets.py 逐題驗證不被查無門檻擋住。
-IV_COMPANY = [("iv-q", "面試會問什麼", "面試會問什麼？"), ("iv-flow", "面試流程", "面試流程是什麼？")]
-IV_ALL = [("iv-all", "各家面試比較", "各家公司的面試流程有什麼不同？")]
 
 
 def _home_inner(note="", mode="demo"):

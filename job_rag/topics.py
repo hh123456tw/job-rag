@@ -2,6 +2,7 @@
 import re
 
 from .retrieval import NOT_COLLECTED, _public, _root
+from .selfdata import PRIVATE_TOPICS
 
 # 白話主題 -> 標題路徑要含的關鍵字之一（任何一層標題含關鍵字即算）。順序即顯示順序。
 JOB = "職缺資料"  # 標題含「職缺」，或來自跨公司的 104 職缺檔（檔名不是「兩位數字_」開頭）；None 是佔位，筆數另算
@@ -16,14 +17,9 @@ def _is_job(s) -> bool:
     return "職缺" in s["heading_path"] or not re.match(r"\d\d_", s["file"])
 
 
-# 自用模式才有的主題：標題含關鍵字的私人筆記段落。順序即顯示順序。
-PRIVATE_TOPICS = [("面談作戰卡", ("作戰",)), ("你的對應", ("對應",)), ("風險與判斷", ("風險", "判斷", "推測", "限制", "未查到")),
-                  ("面試與評價", ("面試", "評價"))]
-
-
 def topics(company: str | None = None, corpus=None, mode: str = "demo") -> dict:
     """company 為 None 時統計全部公司。回 {"segments", "have": [文字], "missing": [文字]}。
-    mode="self" 時多回 "private_have"（私人筆記主題）與 "interviews"（面經篇數）；公開主題的統計不變，不再把「面試與評價」列為沒有。"""
+    mode="self" 時多回 "private_have"（私人筆記主題）與 "interviews"（面經篇數）；公開主題的統計不變，不再列出「專案不收」的那一項。"""
     allsegs = [s for s in _public(_root(corpus, mode)) if company is None or s["company"] == company]
     segs = [s for s in allsegs if not s.get("private")]
     jobs = sum(_is_job(s) for s in segs)

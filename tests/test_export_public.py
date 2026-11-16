@@ -85,6 +85,31 @@ def test_scan_allows_filter_words_only_in_the_filter_code_and_its_tests(tmp_path
     assert _scan(tmp_path / "f", "job_rag/retrieval.py", "cygnu\n")  # 帳號、路徑、金鑰類沒有例外
 
 
+def test_scan_blocks_self_data_folder_and_pin_values_but_allows_variable_names(tmp_path):  # 票 24
+    assert _scan(tmp_path / "a", "selfdata/面經/goodjob/甲.jsonl", "x\n")  # 路徑本身就禁止
+    assert _scan(tmp_path / "b", "tests/fixtures/selfdata/a.md", "x\n")
+    assert _scan(tmp_path / "c", "app.py", "x = 'fake-pin-value-9'\n", secrets=["fake-pin-value-9"])  # 密碼的值出現在任何檔案
+    assert _scan(tmp_path / "d", ".env.example", "JOB_RAG_OWNER_PIN=abc123\n")  # 賦值
+    assert _scan(tmp_path / "e", "README.md", "OWNER_PIN: abc123\n")
+    assert _scan(tmp_path / "f", ".env.example", "JOB_RAG_OWNER_PIN=\n# JOB_RAG_SELF_DIR=\n") == []  # 空值與只寫名稱可以
+    assert _scan(tmp_path / "g", "app.py", "os.environ.get('JOB_RAG_OWNER_PIN', '')\n") == []
+    assert _scan(tmp_path / "h", "tests/test_a.py", "monkeypatch.setenv('JOB_RAG_OWNER_PIN', PIN)\n") == []
+    assert _scan(tmp_path / "i", "app.py", "面經內文開頭二十四個字的片段在這裡出現了\n", secrets=["面經內文開頭二十四個字的片段在這裡出現了"])
+    assert _scan(tmp_path / "j", "app.py", "完全不相干\n", secrets=["", "面經內文"]) == []  # 空字串不算，沒出現不算
+
+
+def test_self_mode_words_are_allowed_only_in_the_self_data_module(tmp_path):
+    assert _scan(tmp_path / "a", "job_rag/selfdata.py", "面試 作戰 風險 評價\n") == []
+    assert _scan(tmp_path / "b", "job_rag/owner_ui.py", "面試\n") and _scan(tmp_path / "c", "app.py", "風險\n")
+
+
+def test_export_whitelist_never_copies_self_data_even_if_present(tmp_path):
+    for rel in ("app.py", "selfdata/面經/goodjob/甲.jsonl", "job_rag/selfdata/x.jsonl", "tests/selfdata/a.jsonl", ".env.local"):
+        _touch(tmp_path, rel)
+    got = {dst for _, dst in ex.collect(tmp_path)[0]}
+    assert got == {"app.py"}
+
+
 # ---- 真的匯出 ----
 @pytest.fixture(scope="module")
 def exported(tmp_path_factory):
@@ -96,7 +121,8 @@ def exported(tmp_path_factory):
 def test_real_export_passes_scan_and_has_no_git_history(exported):
     real = os.environ.get("JOB_RAG_REAL_CORPUS")
     names = [f.name for f in Path(real).rglob("*.md")] if real and Path(real).is_dir() else []
-    assert ex.scan(exported, real_names=names) == []
+    assert ex.scan(exported, real_names=names, secrets=ex.self_secrets()) == []  # 票 24：本機的密碼值與面經片段也不能在裡面
+    assert not (exported / "selfdata").exists() and not list(exported.rglob("*.jsonl"))
     assert not list(exported.rglob(".git*")) or [p.name for p in exported.rglob(".git*")] == [".gitignore"]
 
 
