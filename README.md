@@ -19,3 +19,10 @@ python -X utf8 -m job_rag.evaluate             # 對 BM25 評分（演示模式�
 ```
 題目在 `eval/questions.json`（程式讀）與 `eval/questions.md`（人讀）。核對狀態一律是「待使用者確認」，只有使用者能改。
 金標用「檔名＋標題路徑」；命中＝前 k 個結果中有段落在金標標題之下。正確拒答率要等查無門檻（之後的票）才算，現在輸出「尚未實作門檻」。
+
+## 整理成答案（DeepSeek）
+```
+copy .env.example .env               # 填入 DEEPSEEK_API_KEY；.env 不進 git
+python -X utf8 smoke_deepseek.py "問題"   # 手動冒煙，會呼叫真 API
+```
+模型代號預設 `deepseek-flash`（官方文件：由 DeepSeek-V4.1-Flash-1017 提供），可用 `DEEPSEEK_MODEL` 覆寫。只送公開事實段落；私人段落永不送出。

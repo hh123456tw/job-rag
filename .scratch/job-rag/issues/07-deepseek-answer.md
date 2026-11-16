@@ -1,7 +1,7 @@
 # 07: DeepSeek「整理成答案」
 
 **Blocked by:** 01
-**Status:** ready-for-agent
+**Status:** resolved
 
 **What to build:** 原文結果旁的按鈕，按下才呼叫 DeepSeek（V4.1 Flash），把公開事實段落整理成附出處的白話答案。
 
@@ -11,3 +11,7 @@
 - [ ] API 失敗、逾時、無網路、金鑰錯誤時顯示明確錯誤，原文結果不受影響，不回假答案
 - [ ] 金鑰由使用者填入不進 git 的設定檔（需要使用者；金鑰不貼到對話）
 - [ ] 沒有可引用內容時回查無
+
+## Comments
+
+- 程式與替身測試完成（37 passed）。真實 API 未驗證：使用者填入金鑰後要跑 `smoke_deepseek.py` 一次，確認回應格式。
