@@ -161,7 +161,7 @@ def hist(lengths) -> list[tuple[str, int]]:
     counts = [0] * BINS
     for n in lengths:
         counts[min(max(n - 1, 0) // w, BINS - 1)] += 1
-    labels = [f"{i * w + 1}–{(i + 1) * w}" for i in range(BINS - 1)] + [f"{(BINS - 1) * w + 1} 以上"]
+    labels = [f"{i * w + 1}–{(i + 1) * w} 字" for i in range(BINS - 1)] + [f"{(BINS - 1) * w + 1} 字以上"]
     return list(zip(labels, counts))
 
 
@@ -172,7 +172,7 @@ def _lengths(lengths) -> str:
     bins = hist(lengths)
     top = max(n for _, n in bins) or 1
     bars = "<ul class=bars>" + "".join(
-        f"<li><span class=lab>{escape(lab)} 字</span><span class=track><i style='width:{100 * n / top:.1f}%'></i></span><b>{n}</b></li>"
+        f"<li><span class=lab>{escape(lab)}</span><span class=track><i style='width:{100 * n / top:.1f}%'></i></span><b>{n}</b></li>"
         for lab, n in bins) + "</ul>"
     return (f"<h3>切段長度</h3><p>共 {len(lengths)} 段；平均 {statistics.mean(lengths):.0f} 字、中位數 {statistics.median(lengths):.0f} 字、"
             f"最長 {max(lengths)} 字（字數不含前面加的公司名與標題）。每格是落在該長度的段數。</p>{bars}"

@@ -60,7 +60,7 @@ def test_histogram_bins_cover_every_length_and_sum_to_segment_count():
     lens = [1, 100, 101, 250, 599, 600, 601, 900]  # 超過切塊上限的也要有地方放（最後一格開放）
     bins = hist(lens)
     assert [n for _, n in bins] == [2, 1, 1, 0, 0, 4] and sum(n for _, n in bins) == len(lens)
-    assert [lab for lab, _ in bins][0] == "1–100" and [lab for lab, _ in bins][-1] == "501 以上"
+    assert [lab for lab, _ in bins][0] == "1–100 字" and [lab for lab, _ in bins][-1] == "501 字以上"
     assert sum(n for _, n in hist([])) == 0
 
 
