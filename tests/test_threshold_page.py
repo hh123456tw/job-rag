@@ -95,3 +95,71 @@ def test_about_omits_it_when_file_missing_or_inconsistent(client, root):  # noqa
     assert "端到端" not in client[1].get("/about").get_data(as_text=True)
     put(root, "eval/results_endtoend.json", E2E | {"refused": 1})  # 與逐題對不上：不採用
     assert "端到端" not in client[1].get("/about").get_data(as_text=True)
+
+
+# ---- 票 38：題目卡（問了什麼、答了什麼） ----
+import json  # noqa: E402
+
+ANS = {"deepseek_calls": 3, "rows": [
+    {"id": "a1", "set": "questions", "question": "甲的資本額？", "company": None, "answerable": True, "top_score": 0.9, "threshold_used": 0.7, "search_status": "ok",
+     "detected_company": "甲", "answer": "資本額是 1 億 </script><b>x</b>", "answer_status": "ok", "sources": [{"company": "甲", "title": "1. 基本資料"}], "date": "2026-11-16", "run": 1},
+    {"id": "u1", "set": "questions", "question": "戊的董事長喜歡什麼？", "company": None, "answerable": False, "top_score": 0.5, "threshold_used": 0.7, "search_status": "low",
+     "answer": None, "answer_status": "skipped_low", "sources": [], "date": "2026-11-16", "run": 1},
+    {"id": "a2", "set": "questions", "question": "舊題目文字", "search_status": "ok", "answer": "不該出現", "answer_status": "ok", "sources": []},  # 題目對不上：不採用
+]}
+
+
+def cards_of(h):
+    return json.loads(re.search(r"<script type=application/json id=pd>(.*?)</script>", h, re.S).group(1))
+
+
+def test_cards_match_answers_file_and_stale_rows_are_dropped(root):  # noqa: F811
+    put(root, "eval/results_answers.json", ANS)
+    c = tp.load(root)["cards"]
+    assert c["main:a1"]["run"]["answer"].startswith("資本額是") and c["main:a1"]["run"]["sources"][0]["title"] == "1. 基本資料"
+    assert c["main:a1"]["gold"] == [{"company": "甲", "title": "1. 基本資料"}]  # 檔名只留公司名
+    assert outcome_of(c["main:u1"]) == "擋住" and c["main:u1"]["gold"] == []
+    assert c["main:a2"]["run"] is None  # 問題文字改了就不用舊答案
+    assert c["main:a3"]["run"] is None  # 沒記錄：卡片會寫「這題沒有記錄答案」
+
+
+def outcome_of(card):
+    return tp.outcome(card["run"])
+
+
+def test_page_embeds_cards_safely_and_lists_every_point(client, root, monkeypatch):  # noqa: F811
+    put(root, "eval/results_answers.json", ANS)
+    monkeypatch.setattr(tp, "ROOT", root)
+    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 0.7)
+    h = client[1].get("/threshold").get_data(as_text=True)
+    assert cards_of(h)["main:a1"]["run"]["answer"] == "資本額是 1 億 </script><b>x</b>"  # </script> 不會提早結束資料區
+    assert h.count("class=t-r ") == 5 and "<b>x</b>" not in h.replace("\u003c", "")
+    assert not any(w in h for w in BAD)
+
+
+def test_page_without_answers_file_still_renders_cards_as_missing(client, root, monkeypatch):  # noqa: F811
+    monkeypatch.setattr(tp, "ROOT", root)
+    r = client[1].get("/threshold")
+    assert r.status_code == 200
+    c = cards_of(r.get_data(as_text=True))
+    assert c and all(v["run"] is None for v in c.values())
+    assert "這題沒有記錄答案" in r.get_data(as_text=True)  # 卡片腳本裡的缺資料說明
+
+
+def test_same_id_in_two_question_sets_gets_two_cards(root):  # noqa: F811
+    put(root, "eval/questions_cross.json", {"questions": [{"id": "a1", "question": "跨公司的 a1", "answerable": True, "keywords": ["x"]}]})
+    import hashlib
+    put(root, "eval/results_cross.json", {"digest": hashlib.sha1((root / "eval/questions_cross.json").read_bytes()).hexdigest()[:16],
+                                          "per_default": 3, "per": {"3": [{"id": "a1", "top": 0.6, "answerable": True}]}})
+    d = tp.load(root)
+    assert {p["k"] for p in d["pts"] if p["id"] == "a1"} == {"main:a1", "cross:a1"}
+    assert len(d["cards"]) == len(d["pts"])
+
+
+def test_badge_blocked_pass_and_no_record():
+    p = pt("a", 0.8, True)
+    ran = {"run": {"search": "ok", "ans_status": "ok", "answer": "查無"}}
+    assert tp.badge(p, ran, 0.7, 0.08, 0.5) == "查無" and tp.badge(p, {"run": None}, 0.7, 0.08, 0.5) == "放行"
+    assert tp.badge(p, ran, 0.85, 0.08, 0.5) == "擋住"  # 拖高門檻後被擋，不管實跑結果
+    assert tp.badge(p, {"run": {"search": "ok", "ans_status": "ok", "answer": "查無，因為…"}}, 0.7, 0.08, 0.5) == "回答"  # 只有整句剛好是「查無」才算查無
+    assert tp.badge(p, {"run": {"search": "ok", "ans_status": "error", "answer": None}}, 0.7, 0.08, 0.5) == "失敗"

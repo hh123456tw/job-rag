@@ -18,6 +18,7 @@ ROOT = Path(__file__).parent.parent
 SL_LO, SL_HI, SL_STEP = 0.40, 0.90, 0.005  # 滑桿範圍（票 35 規格）
 # 圖的幾何（viewBox 單位；SVG 寬度 100%，等比縮放）
 VW, PAD, R, PITCH, DX = 320, 14, 6, 15, 13
+SETS = {"questions": "main", "questions_real": "real", "questions_cross": "cross"}  # results_answers.json 的題組名 → 頁面的題組鍵
 GROUPS = [("main", "評估題組"), ("real", "真實問法"), ("cross", "跨公司（獨立尺度，固定門檻）")]  # 資料分組（計數用）
 
 
@@ -34,8 +35,9 @@ def _json(root: Path, rel: str):
         raise Miss(f"{rel} 讀不了或格式不對") from e
 
 
-def _pt(id_, q, s, a, g, sc=False):
-    return {"id": id_, "q": q, "s": float(s), "a": bool(a), "g": g, "sc": bool(sc)}
+def _pt(id_, q, s, a, g, sc=False, src=None):
+    """k 是頁面用的唯一鍵「題組:題號」（題號在不同題組會重複，例如 u02）。"""
+    return {"id": id_, "k": f"{src or g}:{id_}", "q": q, "s": float(s), "a": bool(a), "g": g, "sc": bool(sc)}
 
 
 def _main(root):
@@ -64,8 +66,8 @@ def _real(root):
         if r["digest"] != questions_digest(qs):
             raise Miss("eval/results_real.json 和現在的題檔對不上（過期）")
         by = {q["id"]: q for q in qs}
-        plain = [_pt(i, by[i]["question"], s, by[i]["answerable"], "real", r["routes"][i] != "跨公司") for i, s in r["scores"].items()]
-        cross = [_pt(x["id"], by[x["id"]]["question"], x["top"], x["answerable"], "cross") for x in r["cross"]]
+        plain = [_pt(i, by[i]["question"], s, by[i]["answerable"], "real", r["routes"][i] != "跨公司", "real") for i, s in r["scores"].items()]
+        cross = [_pt(x["id"], by[x["id"]]["question"], x["top"], x["answerable"], "cross", src="real") for x in r["cross"]]
         return plain, cross
     except (KeyError, TypeError) as e:
         raise Miss("eval/results_real.json 格式不對") from e
@@ -105,31 +107,31 @@ def _gold_name(g):
 
 
 def cards(root, pts) -> dict:
-    """題目卡資料 {題號: {...}}：問題、指定公司、金標準來源，加上實跑記錄（若有且題目文字對得上）。任何來源壞掉只少那一部分。"""
-    gold, comp, rels = {}, {}, ["eval/questions_real.json", "eval/questions_cross.json"]
+    """題目卡資料 {題組:題號: {...}}：問題、指定公司、金標準來源，加上實跑記錄（若有且題目文字對得上）。任何來源壞掉只少那一部分。"""
+    gold, comp, rels = {}, {}, {"real": "eval/questions_real.json", "cross": "eval/questions_cross.json"}
     try:
-        rels.insert(0, str(questions_path(root).relative_to(root)))
+        rels["main"] = str(questions_path(root).relative_to(root))
     except FileNotFoundError:
         pass
-    for rel in rels:
+    for src, rel in rels.items():
         try:
             for q in _json(root, rel)["questions"]:
-                gold[q["id"]] = [_gold_name(g) for g in q.get("gold", []) if isinstance(g, dict)]
-                comp[q["id"]] = q.get("company")
+                gold[f"{src}:{q['id']}"] = [_gold_name(g) for g in q.get("gold", []) if isinstance(g, dict)]
+                comp[f"{src}:{q['id']}"] = q.get("company")
         except (Miss, KeyError, TypeError):
             pass
     try:
-        rows = {r["id"]: r for r in _json(root, "eval/results_answers.json")["rows"]}
+        rows = {f"{SETS.get(r['set'])}:{r['id']}": r for r in _json(root, "eval/results_answers.json")["rows"]}
     except (Miss, KeyError, TypeError):
         rows = {}
     out = {}
     for p in pts:
-        r = rows.get(p["id"])
+        r = rows.get(p["k"])
         if not isinstance(r, dict) or r.get("question") != p["q"]:
             r = None  # 題目對不上（過期）就不用
-        out[p["id"]] = {"q": p["q"], "co": comp.get(p["id"]), "gold": gold.get(p["id"], []) if p["a"] else [],
-                        "run": r and {"search": r.get("search_status"), "ans_status": r.get("answer_status"), "answer": r.get("answer"),
-                                      "det": r.get("detected_company"), "sources": r.get("sources") or [], "date": r.get("date", "")}}
+        out[p["k"]] = {"q": p["q"], "co": comp.get(p["k"]), "gold": gold.get(p["k"], []) if p["a"] else [],
+                       "run": r and {"search": r.get("search_status"), "ans_status": r.get("answer_status"), "answer": r.get("answer"),
+                                     "det": r.get("detected_company"), "sources": r.get("sources") or [], "date": r.get("date", "")}}
     return out
 
 
@@ -307,7 +309,7 @@ def _dot(p, x, y, t, drop, floor):
     ok, wrong = verdict(p, t, drop, floor)
     cls = "pt on" + (" hi" if ok else "") + (" wrong" if wrong else "")
     lab = f"{p['id']} 最高分 {p['s']:.3f}"
-    return (f'<g class="{cls}" tabindex=0 role=button aria-label="{escape(lab)}" data-id="{escape(p["id"])}" data-s="{p["s"]!r}" '
+    return (f'<g class="{cls}" tabindex=0 role=button aria-label="{escape(lab)}" data-id="{escape(p["k"])}" data-s="{p["s"]!r}" '
             f'data-a={int(p["a"])} data-g={p["g"]} data-sc={int(p["sc"])} transform="translate({x:.1f} {y:.1f})">'
             f'<circle class=hz r=9 /><circle class=ring r=9.5 /><circle class=d r={R} /></g>')
 
@@ -356,8 +358,8 @@ def _rows(pts, cd, t, drop, floor):
     out = []
     for p in sorted(pts, key=lambda p: -p["s"]):
         wrong = verdict(p, t, drop, floor)[1]
-        out.append(f'<li><button type=button class=t-r data-id="{escape(p["id"])}"><span class=t-top><span class=sc>{p["s"]:.3f}</span>'
-                   f'{_bd(badge(p, cd.get(p["id"]), t, drop, floor))}<span class="ok{" bad" if wrong else ""}">{"處理錯" if wrong else "處理對"}</span></span>'
+        out.append(f'<li><button type=button class=t-r data-id="{escape(p["k"])}"><span class=t-top><span class=sc>{p["s"]:.3f}</span>'
+                   f'{_bd(badge(p, cd.get(p["k"]), t, drop, floor))}<span class="ok{" bad" if wrong else ""}">{"處理錯" if wrong else "處理對"}</span></span>'
                    f'<span class=qt>{escape(p["q"])}</span></button></li>')
     return "".join(out)
 
