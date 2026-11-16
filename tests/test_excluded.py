@@ -100,6 +100,19 @@ def test_sample_corpus_is_not_affected():
     assert set(public_company_counts(ROOT / "sample_corpus")) == {"奧衍", "尼諾思科技", "遠振資訊"}
 
 
+def test_sample_corpus_exemption_is_by_location_and_search_finds_the_sample_companies(tmp_path):
+    # 名單只對「不是 sample_corpus/」的語料生效；範例檔 S1_奧衍、S2_尼諾思科技是名單內的公司名，卻必須照常載入與檢索
+    import shutil
+    sample = ROOT / "sample_corpus"
+    assert {"S1_奧衍.md", "S2_尼諾思科技.md"} <= {f.name for f in sample.glob("*.md")}
+    for name in ("奧衍", "尼諾思科技"):
+        hits = search(f"{name}是做什麼的？", method="bm25", corpus=sample, k=5, gate=False)
+        assert name in {h["company"] for h in hits}
+    copy = tmp_path / "elsewhere"
+    shutil.copytree(sample, copy)
+    assert set(public_company_counts(copy)) == {"遠振資訊"}  # 負向對照：搬到別處就是普通語料，三家名單生效
+
+
 @pytest.mark.skipif(not os.environ.get("JOB_RAG_REAL_CORPUS"), reason="需要完整語料（JOB_RAG_REAL_CORPUS）")
 def test_real_corpus_has_none_of_the_three():
     real = os.environ["JOB_RAG_REAL_CORPUS"]
@@ -119,6 +132,8 @@ def test_no_shipped_data_names_an_excluded_company():
     text = json.dumps(presets, ensure_ascii=False)
     assert not [n for n in ALIAS if n in text]
     for rel in ("eval/questions.json", "eval/followups.json"):
+        if not (ROOT / rel).exists():
+            continue  # 公開版沒有完整題組與追問題
         for q in json.loads((ROOT / rel).read_text(encoding="utf-8"))["questions"]:
             flat = " ".join([q["question"], q.get("company", ""), q.get("previous", "")] +
                             [g["heading"] + g["quote"] for g in q["gold"]])

@@ -98,7 +98,7 @@ def test_logout_returns_to_demo_immediately(web):
     assert SECRET not in json.dumps(c.get("/api/search", query_string={"q": SECRET}).get_json(), ensure_ascii=False)
 
 
-def test_without_owner_pin_there_is_no_owner_mode_and_pages_are_unchanged(web, monkeypatch):
+def test_without_owner_password_there_is_no_owner_mode_and_pages_are_unchanged(web, monkeypatch):
     monkeypatch.delenv("JOB_RAG_OWNER_PIN")
     c = web.app.test_client()
     assert login(c).status_code == 404 and c.post("/api/owner/logout").status_code == 404

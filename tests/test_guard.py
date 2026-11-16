@@ -116,6 +116,8 @@ def test_answer_requests_over_limit_get_429_but_raw_results_and_plain_search_una
 
 # ---- 啟動檔 ----
 def test_start_public_listens_locally_only_and_never_touches_secrets():
+    if not (ROOT / "start_public.bat").exists():
+        pytest.skip("公開版不含通道啟動檔")
     bat = (ROOT / "start_public.bat").read_text(encoding="utf-8")
     ps = (ROOT / "scripts" / "start_public.ps1").read_text(encoding="utf-8")
     both = (bat + ps).lower()
