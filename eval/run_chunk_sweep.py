@@ -65,6 +65,7 @@ def chunk_size(n: int, overlap: int | None = None):
 # ---- 段落統計（估計值：用簡單規則，不是人工逐段檢查）----
 URL = re.compile(r"https?://\S+")
 ROW = re.compile(r"^[ \t]*\|[^\n]*", re.M)
+URL_PREFIX = re.compile(r"h(?:t(?:t(?:ps?(?::/?)?)?)?)?")  # 切在「http」還沒寫完的地方
 URL_END = ")）|,，。、；;"  # 緊接在網址後的這些字不算網址的一部分
 
 
@@ -81,8 +82,10 @@ def boundary_cuts(segs, chunk: int, overlap: int) -> dict:
         c["boundaries"] += 1
         nxt = nt[overlap] if len(nt) > overlap else None  # 上一段結尾後面的那個字；沒有＝標題段落剛好在此結束
         for kind, rx in (("url", URL), ("row", ROW)):
-            for m in rx.finditer(pt):
-                s, e = m.span()
+            spans = [m.span() for m in rx.finditer(pt)]
+            if kind == "url" and (tail := re.search(r"\S+$", pt)) and URL_PREFIX.fullmatch(tail.group()):
+                spans.append(tail.span())
+            for s, e in spans:
                 if e == len(pt) and nxt is not None and (nxt not in URL_END and not nxt.isspace() if kind == "url" else nxt != "\n"):
                     c[f"{kind}_end_cut"] += 1
                     c[f"{kind}_lost"] += s < step
@@ -210,7 +213,7 @@ def _ci(ranks, k):
 def summarize(runs: dict) -> dict:
     """runs: 長度 -> 子程序輸出。回傳 results_chunk_sweep.json 的內容。"""
     from job_rag.stats import paired_metric_interval
-    res = {"date": max(r["date"] for r in runs.values()), "lengths": list(runs), "overlap": {n: r["overlap"] for n, r in runs.items()},
+    res = {"date": max(r["date"] for r in runs.values()), "lengths": list(runs), "overlap": {str(n): r["overlap"] for n, r in runs.items()},
            "ratio": RATIO, "settings": {"detect": True, "dedupe": True, "k": 5, "method": "bge-m3"},
            "digests": {k: next(iter(runs.values()))["groups"][k]["digest"] for k, _, _ in GROUPS}, "per_length": {}}
     for n, r in runs.items():
@@ -260,6 +263,8 @@ def summarize(runs: dict) -> dict:
         res["paired_vs_base"] = {str(n): {k: {"diff": (_m([pooled[n][i] for i in ids])[k] - _m([pooled[BASE][i] for i in ids])[k]),
                                               "ci": list(paired_metric_interval([pooled[n][i] for i in ids], [pooled[BASE][i] for i in ids], k))}
                                           for k in ("hit@1", "hit@3", "mrr")} for n in runs if n != BASE}
+    qfiles = [json.loads((ROOT / "eval" / f).read_bytes().decode("utf-8"))["questions"] for _, f, _ in GROUPS]
+    res["max_quote_chars"] = max(len(_squash(g["quote"])) for qs in qfiles for q in qs for g in q.get("gold", []))
     res["conclusion"] = conclude(res)
     return res
 
@@ -330,10 +335,14 @@ def render(res, qd) -> str:
         for n, ks in res["paired_vs_base"].items():
             L.append(f"  {n}：" + "　".join(f"{k} {d['diff']:+.3f} [{d['ci'][0]:+.3f}, {d['ci'][1]:+.3f}]" for k, d in ks.items()))
     c = res["conclusion"]
-    L += ["", "== 四、結論 ==", f"Hit@3 的四個 95% 區間{'互相重疊' if c['intervals_overlap'] else '有不重疊的'}；點估計最高的是 {c['best_hit3']} 字（同分取較短）。", c["short"] + "。",
+    pts = {pl[n]["pooled"]["metrics"]["hit@3"] for n in ns}
+    best = "四個長度的 Hit@3 點估計完全相同" if len(pts) == 1 else f"點估計最高的是 {c['best_hit3']} 字（同分取較短）"
+    L += ["", "== 四、結論 ==", f"Hit@3 的四個 95% 區間{'互相重疊' if c['intervals_overlap'] else '有不重疊的'}；{best}。", c["short"] + "。",
           "沒有改 CHUNK／OVERLAP，也沒有重算既有結果檔。若要採用別的長度，需要重跑全部評估與端到端結果，另開一張票。",
           "金標被切斷題數的算法：金標引文（去空白）要完整出現在金標標題之下的某一段內；不切段時就找不到的（引文被「面試」行過濾或表格欄位清空等原因改過）不算被切斷。"
-          "全部金標都找不到＝該題一定找不到完整答案句；任一金標被切斷＝至少有一條金標的引文被切在兩段之間。"]
+          "全部金標都找不到＝該題一定找不到完整答案句；任一金標被切斷＝至少有一條金標的引文被切在兩段之間。",
+          f"金標引文最長 {res['max_quote_chars']} 字（去空白後）；重疊區 ≥ 引文長度時，引文至少會完整落在相鄰兩段之一，所以金標很難被切斷（最短的重疊是 {res['overlap'][ns[0]]} 字）。"
+          "這是這批金標引文很短的結果，不代表較長的答案句也不會被切斷。"]
     return "\n".join(L) + "\n"
 
 
