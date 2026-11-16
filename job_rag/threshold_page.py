@@ -1,8 +1,10 @@
-"""/threshold：拖動「查無門檻」，看每一題的結果怎麼變。只讀既有評估輸出檔與程式常數，不重算、不呼叫模型。
-缺檔、過期、壞檔的來源不畫，頁面註明「缺資料」，不用舊數字。圖是伺服器畫好的 SVG；JS 只改 class 與數字。"""
+"""/threshold：每一題問了什麼、系統答了什麼，以及拖動「查無門檻」後結果怎麼變。只讀既有評估輸出檔與程式常數，不重算、不呼叫模型。
+缺檔、過期、壞檔的來源不畫，頁面註明「缺資料」，不用舊數字。實際答案來自 eval/results_answers.json（eval/run_answers.py 實跑一次的記錄）；
+缺檔或題目對不上，卡片就顯示「這題沒有記錄答案」。圖是伺服器畫好的 SVG；JS 只改 class 與文字（一律 textContent）。"""
 import hashlib
 import json
 import math
+import re
 from pathlib import Path
 
 from markupsafe import escape
@@ -15,8 +17,9 @@ from .ui import page
 ROOT = Path(__file__).parent.parent
 SL_LO, SL_HI, SL_STEP = 0.40, 0.90, 0.005  # 滑桿範圍（票 35 規格）
 # 圖的幾何（viewBox 單位；SVG 寬度 100%，等比縮放）
-VW, PAD, R, PITCH, DX = 360, 14, 5.5, 14, 12
-GROUPS = [("main", "評估題組"), ("real", "真實問法"), ("cross", "跨公司（獨立尺度，固定門檻）")]
+VW, PAD, R, PITCH, DX = 320, 14, 6, 15, 13
+SETS = {"questions": "main", "questions_real": "real", "questions_cross": "cross"}  # results_answers.json 的題組名 → 頁面的題組鍵
+GROUPS = [("main", "評估題組"), ("real", "真實問法"), ("cross", "跨公司（獨立尺度，固定門檻）")]  # 資料分組（計數用）
 
 
 class Miss(Exception):
@@ -32,8 +35,9 @@ def _json(root: Path, rel: str):
         raise Miss(f"{rel} 讀不了或格式不對") from e
 
 
-def _pt(id_, q, s, a, g, sc=False):
-    return {"id": id_, "q": q, "s": float(s), "a": bool(a), "g": g, "sc": bool(sc)}
+def _pt(id_, q, s, a, g, sc=False, src=None):
+    """k 是頁面用的唯一鍵「題組:題號」（題號在不同題組會重複，例如 u02）。"""
+    return {"id": id_, "k": f"{src or g}:{id_}", "q": q, "s": float(s), "a": bool(a), "g": g, "sc": bool(sc)}
 
 
 def _main(root):
@@ -62,8 +66,8 @@ def _real(root):
         if r["digest"] != questions_digest(qs):
             raise Miss("eval/results_real.json 和現在的題檔對不上（過期）")
         by = {q["id"]: q for q in qs}
-        plain = [_pt(i, by[i]["question"], s, by[i]["answerable"], "real", r["routes"][i] != "跨公司") for i, s in r["scores"].items()]
-        cross = [_pt(x["id"], by[x["id"]]["question"], x["top"], x["answerable"], "cross") for x in r["cross"]]
+        plain = [_pt(i, by[i]["question"], s, by[i]["answerable"], "real", r["routes"][i] != "跨公司", "real") for i, s in r["scores"].items()]
+        cross = [_pt(x["id"], by[x["id"]]["question"], x["top"], x["answerable"], "cross", src="real") for x in r["cross"]]
         return plain, cross
     except (KeyError, TypeError) as e:
         raise Miss("eval/results_real.json 格式不對") from e
@@ -93,7 +97,42 @@ def load(root=None) -> dict:
             continue
         for part in (got if isinstance(got, tuple) else (got,)):
             pts += part
-    return {"pts": pts, "miss": miss, "e2e": about._e2e(root)}
+    return {"pts": pts, "miss": miss, "e2e": about._e2e(root), "cards": cards(root, pts)}
+
+
+def _gold_name(g):
+    """金標準來源：公司（檔名去掉編號與副檔名）＋標題。"""
+    stem = re.sub(r"^[0-9A-Za-z]{1,2}_", "", g.get("file", "").removesuffix(".md")).replace("_", "／")
+    return {"company": stem, "title": g.get("heading", "")}
+
+
+def cards(root, pts) -> dict:
+    """題目卡資料 {題組:題號: {...}}：問題、指定公司、金標準來源，加上實跑記錄（若有且題目文字對得上）。任何來源壞掉只少那一部分。"""
+    gold, comp, rels = {}, {}, {"real": "eval/questions_real.json", "cross": "eval/questions_cross.json"}
+    try:
+        rels["main"] = str(questions_path(root).relative_to(root))
+    except FileNotFoundError:
+        pass
+    for src, rel in rels.items():
+        try:
+            for q in _json(root, rel)["questions"]:
+                gold[f"{src}:{q['id']}"] = [_gold_name(g) for g in q.get("gold", []) if isinstance(g, dict)]
+                comp[f"{src}:{q['id']}"] = q.get("company")
+        except (Miss, KeyError, TypeError):
+            pass
+    try:
+        rows = {f"{SETS.get(r['set'])}:{r['id']}": r for r in _json(root, "eval/results_answers.json")["rows"]}
+    except (Miss, KeyError, TypeError):
+        rows = {}
+    out = {}
+    for p in pts:
+        r = rows.get(p["k"])
+        if not isinstance(r, dict) or r.get("question") != p["q"]:
+            r = None  # 題目對不上（過期）就不用
+        out[p["k"]] = {"q": p["q"], "co": comp.get(p["k"]), "gold": gold.get(p["k"], []) if p["a"] else [],
+                       "run": r and {"search": r.get("search_status"), "ans_status": r.get("answer_status"), "answer": r.get("answer"),
+                                     "det": r.get("detected_company"), "sources": r.get("sources") or [], "date": r.get("date", "")}}
+    return out
 
 
 def thr(p, t, drop, floor):
@@ -136,53 +175,115 @@ def gray_zone(pts):
     return (min(a), max(u)) if a and u and min(a) <= max(u) else None
 
 
-CSS = """.th-lead{font-size:1.0625rem}
-.cnts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}.cnts div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center}
-.cnts b{display:block;font-size:1.5rem;line-height:1.2;color:var(--acc);font-variant-numeric:tabular-nums}.cnts span{display:block;font-size:.8125rem;line-height:1.4;color:var(--mute)}
-.ctl{margin:8px 0 4px}.ctl .vals{display:flex;flex-wrap:wrap;gap:4px 16px;font-variant-numeric:tabular-nums}.ctl output{font-weight:650;color:var(--acc)}
+
+
+def outcome(run):
+    """實跑最後結果：擋住（檢索門檻）／查無（答案層）／回答／失敗；沒有記錄回 None。"""
+    if not run:
+        return None
+    if run["search"] == "low":
+        return "擋住"
+    if run["ans_status"] != "ok":
+        return "失敗"
+    return "查無" if (run["answer"] or "").strip() == "查無" else "回答"
+
+
+def badge(p, card, t, drop, floor) -> str:
+    """清單用的結果徽章。門檻擋住就是「擋住」；放行後看實跑記錄，沒有記錄就只能說「放行」。"""
+    if not verdict(p, t, drop, floor)[0]:
+        return "擋住"
+    o = outcome((card or {}).get("run"))
+    return o if o in ("查無", "回答", "失敗") else "放行"
+
+
+def _bd(b):
+    return f'<span class="t-bd{" b0" if b == "回答" else "" if b in ("擋住", "查無") else " b1"}">{b}</span>'
+
+
+CSS = """.t-lead{font-size:1.0625rem;margin:0 0 8px}
+.t-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}.t-nums div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.t-nums b{display:block;font-size:1.75rem;line-height:1.2;color:var(--acc);font-variant-numeric:tabular-nums}.t-nums span{display:block;font-size:.9375rem;line-height:1.4;color:var(--fg)}
+.t-ctl{margin:4px 0}.t-ctl .t-vals{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;font-variant-numeric:tabular-nums}.t-ctl output{font-weight:650;color:var(--acc)}
 input[type=range]{padding:0;border:0;background:none;accent-color:var(--acc);min-height:56px;cursor:pointer;touch-action:pan-y}
 input[type=range]::-webkit-slider-thumb{height:32px;width:32px}input[type=range]::-moz-range-thumb{height:32px;width:32px}
-.th-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.th-btns button{white-space:normal;line-height:1.3;padding:6px 8px}
-.th-btns button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:600}
-#chart{width:100%;height:auto;display:block;margin:8px 0;-webkit-user-select:none;user-select:none}
-#chart text{font:11px system-ui,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;fill:var(--mute)}#chart .rl{fill:var(--fg);font-weight:600}
+.t-btn{min-height:48px;padding:6px 14px;white-space:normal;line-height:1.3}.t-btn[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:600}
+.t-leg{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.9375rem;margin:12px 0 0}.t-leg i{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid var(--acc);vertical-align:-2px;margin-right:6px}
+.t-leg .on{background:var(--acc)}.t-leg .rg{background:none;border-color:var(--err);width:18px;height:18px;vertical-align:-4px;margin-right:4px}
+#chart{width:100%;height:auto;display:block;margin:4px 0 8px;-webkit-user-select:none;user-select:none}
+#chart text{font:14px system-ui,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;fill:var(--mute)}#chart .rl{fill:var(--fg);font-weight:650}#chart .rl,#chart .lb{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+#chart .tk{font-size:13px}#chart .lb{font-weight:650}#chart .lbt,#chart .lbs{fill:var(--acc)}#chart .lbf{fill:var(--fg)}
 #chart .miss{font-style:italic}#chart .ax{stroke:var(--line)}#chart .bl{stroke:var(--line);stroke-dasharray:2 3}
-#chart .cur{stroke:var(--mute);stroke-dasharray:4 3}#chart .mv{stroke:var(--acc);stroke-width:2}#chart .mvs{stroke:var(--acc);stroke-width:1.5;stroke-opacity:.6}
-#chart .fl{stroke:var(--warn);stroke-width:1.5;stroke-dasharray:4 3}#chart .gz{fill:var(--warn);fill-opacity:.12;display:none}.gray #chart .gz{display:block}
-.pt{cursor:pointer;outline:none}.pt .hit{fill:transparent}.pt .d{fill:var(--acc);stroke:var(--acc);stroke-width:1.5;fill-opacity:.18}.pt.hi .d{fill-opacity:1}
-.pt.cross .d{fill:var(--warn);stroke:var(--warn)}.pt .ring{fill:none;stroke:var(--err);stroke-width:2;display:none}.showring .pt.wrong .ring{display:inline}
-.gray .pt:not(.sel){opacity:.2}.pt.pick .d{stroke:var(--fg);stroke-width:3}.pt:focus-visible .d{stroke:var(--fg);stroke-width:3}
-#detail{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-height:5.5em;margin:8px 0}#detail p{margin:4px 0}
-.legend{font-size:.875rem;color:var(--mute);display:grid;gap:4px;margin:8px 0}
-.sw{display:inline-block;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--acc);vertical-align:-1px;margin-right:6px}.sw.on{background:var(--acc)}.sw.fl{border-color:var(--warn);background:var(--warn)}.sw.rg{border:2px solid var(--err)}
+#chart .mv{stroke:var(--acc);stroke-width:2}#chart .mvs{stroke:var(--acc);stroke-width:2;stroke-dasharray:5 3}
+#chart .fl{stroke:var(--fg);stroke-width:2;stroke-dasharray:2 3}
+.pt{cursor:pointer;outline:none}.pt .hz{fill:transparent}.pt .d{fill:var(--acc);stroke:var(--acc);stroke-width:1.5;fill-opacity:.15}.pt.hi .d{fill-opacity:1}
+.pt .ring{fill:none;stroke:var(--err);stroke-width:2.5;display:none}.pt.wrong .ring{display:inline}
+.gray .pt:not(.on){opacity:.2}.pt.pick .d{stroke:var(--fg);stroke-width:3.5}.pt:focus-visible .d{stroke:var(--fg);stroke-width:3.5}
+#card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:8px 0;scroll-margin-top:12px}#card p{margin:6px 0}
+#card .cq{font-size:1.125rem;font-weight:650;line-height:1.5}#card .kv{font-size:.9375rem;color:var(--mute)}#card .kv b{color:var(--fg)}
+#card .t-ans{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;white-space:pre-wrap;line-height:1.65}
+#card .t-none{color:var(--mute);font-style:italic}#card ul{margin:4px 0;padding-left:20px;color:var(--mute);font-size:.9375rem}
+.t-bd{display:inline-block;border-radius:999px;padding:0 10px;font-size:.9375rem;font-weight:650;border:1.5px solid var(--acc);color:var(--acc);white-space:nowrap}
+.t-bd.b0{background:var(--acc);color:var(--on-acc)}.t-bd.b1{border-style:dashed}
+#lst>summary{min-height:52px;border:1px solid var(--line);border-radius:10px;padding:0 14px;background:var(--card)}
+.t-tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.t-rows{list-style:none;padding:0;margin:0}
+.t-r{display:block;width:100%;text-align:left;white-space:normal;padding:8px 12px;margin:0;min-height:56px;line-height:1.4}.t-rows li{margin:0 0 8px}.t-r[aria-current=true]{border-color:var(--acc);border-width:2px}
+.t-r .t-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.t-r .sc{font-variant-numeric:tabular-nums;font-weight:650;min-width:3.2em}
+.t-r .qt{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute);margin-top:2px}.t-r .ok{font-size:.9375rem;color:var(--mute)}.t-r .ok.bad{color:var(--err);font-weight:650}
+.t-pipe{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;list-style:none;padding:0;margin:8px 0}.t-pipe li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 12px}
 .miss-note{color:var(--err);font-size:.9375rem}"""
 
 JS = """<script>(function(){var R=document.getElementById('th'),$=function(x){return document.getElementById(x)},
-T=+R.dataset.t,D=+R.dataset.drop,F=+R.dataset.floor,LO=+R.dataset.lo,HI=+R.dataset.hi,L=+R.dataset.l,W=+R.dataset.w,GZ=R.dataset.gz?R.dataset.gz.split(',').map(Number):null,
-sl=$('sl'),t=T,gray=false,pick=null,P=[].slice.call(R.querySelectorAll('.pt')).map(function(e){return{e:e,s:+e.dataset.s,a:e.dataset.a==='1',g:e.dataset.g,sc:e.dataset.sc==='1',q:e.dataset.q,id:e.dataset.id}});
+T=+R.dataset.t,D=+R.dataset.drop,F=+R.dataset.floor,LO=+R.dataset.lo,HI=+R.dataset.hi,L=+R.dataset.l,W=+R.dataset.w,VW=+R.dataset.vw,GZ=R.dataset.gz?R.dataset.gz.split(',').map(Number):null,
+C=JSON.parse($('pd').textContent),sl=$('sl'),t=T,filt='all',desc=true,pick=null,
+P=[].slice.call(R.querySelectorAll('.pt')).map(function(e){return{e:e,id:e.dataset.id,s:+e.dataset.s,a:e.dataset.a==='1',g:e.dataset.g,sc:e.dataset.sc==='1'}}),B={};
+P.forEach(function(p){B[p.id]=p});
 function X(s){return L+(s-LO)/(HI-LO)*W}
 function th(p){return p.g==='cross'?F:(p.sc?t-D:t)}
-function line(id,s){var l=$(id);if(l){l.setAttribute('x1',X(s));l.setAttribute('x2',X(s))}}
-function show(p){var d=$('detail');if(!p){d.innerHTML='<p>點圖上的點，看題目、分數與目前的結果。</p>';return}
-var ok=p.s>=th(p),bad=ok!==p.a;d.innerHTML='';[['',p.q],['最高相似度 '+p.s.toFixed(3)+'；這題用的門檻 '+th(p).toFixed(3),''],
-['這題'+(p.a?'有答案':'語料沒有答案')+'；目前系統會'+(ok?'回答':'回「查無」')+'：'+(bad?'處理錯':'處理對'),'']].forEach(function(r,i){var e=document.createElement('p');
-if(i===0){e.style.fontWeight=600;e.textContent=p.q}else e.textContent=r[0];d.appendChild(e)})}
-function upd(){var C={main:[0,0,0,0,0],real:[0,0,0,0,0],cross:[0,0,0,0,0]};
-P.forEach(function(p){var ok=p.s>=th(p),bad=ok!==p.a,c=C[p.g];c[p.a?1:3]++;if(p.a&&ok)c[0]++;if(!p.a&&!ok)c[2]++;if(bad)c[4]++;
-p.e.classList.toggle('hi',ok);p.e.classList.toggle('wrong',bad);
-p.e.classList.toggle('sel',!gray||(GZ!==null&&p.g!=='cross'&&p.s>=GZ[0]&&p.s<=GZ[1]));p.e.classList.toggle('pick',p===pick)});
-var s=[0,1,2,3,4].map(function(i){return C.main[i]+C.real[i]});
-$('ca').textContent=s[0]+'/'+s[1];$('cu').textContent=s[2]+'/'+s[3];$('cw').textContent=s[4];
-['main','real','cross'].forEach(function(g){var e=$('d-'+g);if(e){var c=C[g];e.textContent=c[1]+c[3]?'有答案 '+c[0]+'/'+c[1]+'、沒答案拒答 '+c[2]+'/'+c[3]+'、處理錯 '+c[4]:''}});
+function oc(r){if(!r)return null;if(r.search==='low')return'擋住';if(r.ans_status!=='ok')return'失敗';return(r.answer||'').trim()==='查無'?'查無':'回答'}
+function bd(p){if(p.s<th(p))return'擋住';var o=oc((C[p.id]||{}).run);return o==='查無'||o==='回答'||o==='失敗'?o:'放行'}
+function gz(p){return GZ!==null&&p.g!=='cross'&&p.s>=GZ[0]&&p.s<=GZ[1]}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
+function line(id,s){var l=$(id);l.setAttribute('x1',X(s));l.setAttribute('x2',X(s))}
+function lab(id,s,txt){var e=$(id),x=X(s),end=x>=VW*.4;e.textContent=txt;e.setAttribute('x',end?x-4:x+4);e.setAttribute('text-anchor',end?'end':'start')}
+function badge(p){var b=bd(p);return el('span','t-bd'+(b==='回答'?' b0':b==='擋住'||b==='查無'?'':' b1'),b)}
+function show(p){var c=$('card');c.textContent='';if(!p){c.appendChild(el('p','kv','點圖上的點，或打開下面的題目清單，看這題問了什麼、系統答了什麼。'));return}
+var d=C[p.id]||{},r=d.run,ok=p.s>=th(p),bad=ok!==p.a;
+c.appendChild(el('p','cq',d.q||p.id));
+var co=d.co||(r&&r.det)||'',k=el('p','kv');k.appendChild(el('b','',p.a?'語料有答案':'語料沒有答案'));k.appendChild(document.createTextNode('　'+(p.g==='cross'?'跨公司提問':co?'公司：'+co:'沒有指定公司')));c.appendChild(k);
+k=el('p','kv');k.appendChild(document.createTextNode('最高相似度 '));k.appendChild(el('b','',p.s.toFixed(3)));k.appendChild(document.createTextNode('　這題的門檻 '));k.appendChild(el('b','',th(p).toFixed(3)));
+k.appendChild(document.createTextNode(' → 門檻這一關'+(ok?'放行':'擋住')+'，'));k.appendChild(el('b','',bad?'處理錯':'處理對'));c.appendChild(k);
+c.appendChild(el('p','kv','實際答案（'+(r&&r.date?r.date+' 實跑一次，現行門檻':'沒有實跑記錄')+'）'));
+if(!r)c.appendChild(el('p','t-none','這題沒有記錄答案。'));
+else if(r.search==='low')c.appendChild(el('p','t-none','實跑時檢索門檻就擋住了，沒有產生答案，系統回「查無」。'));
+else if(r.ans_status!=='ok')c.appendChild(el('p','t-none','實跑時答案產生失敗（'+(r.ans_status||'無回應')+'），沒有答案可看。'));
+else{c.appendChild(el('div','t-ans',r.answer||''));
+if((r.answer||'').trim()==='查無')c.appendChild(el('p','kv','檢索放行了，答案層看過段落後回「查無」。'));
+else if(r.sources.length){c.appendChild(el('p','kv','答案引用的來源'));var u=el('ul');r.sources.forEach(function(s){u.appendChild(el('li','',s.company+'・'+s.title))});c.appendChild(u)}}
+if(d.gold&&d.gold.length){c.appendChild(el('p','kv','題庫標明的答案來源（金標準）'));var g=el('ul');d.gold.forEach(function(s){g.appendChild(el('li','',s.company+'・'+s.title))});c.appendChild(g)}
+if(!ok&&r&&r.search!=='low')c.appendChild(el('p','kv','注意：現行門檻下這題會放行；你拖的門檻讓它變成擋住。'))}
+function upd(){var S=[0,0,0,0,0];
+P.forEach(function(p){var ok=p.s>=th(p),bad=ok!==p.a;if(p.g!=='cross'){S[p.a?1:3]++;if(p.a&&ok)S[0]++;if(!p.a&&!ok)S[2]++;if(bad)S[4]++}
+p.e.classList.toggle('hi',ok);p.e.classList.toggle('wrong',bad);p.e.classList.toggle('on',filt!=='gray'||gz(p));p.e.classList.toggle('pick',p===pick)});
+$('ca').textContent=S[0]+'/'+S[1];$('cu').textContent=S[2]+'/'+S[3];$('cw').textContent=S[4];
 $('tv').textContent=t.toFixed(3);$('ts').textContent=(t-D).toFixed(3);line('l-t',t);line('l-s',t-D);
-$('b-gray').setAttribute('aria-pressed',gray);$('gnote').textContent=gray?(GZ?'灰色地帶：最高分 '+GZ[0].toFixed(3)+' 到 '+GZ[1].toFixed(3)+' 之間的題，有答案與沒答案的分數混在一起。':'兩類題的分數沒有重疊，沒有灰色地帶。'):'';
-R.classList.toggle('gray',gray&&GZ!==null);show(pick)}
+lab('lb-t',t,'未指定 '+t.toFixed(3));lab('lb-s',t-D,'已指定公司 '+(t-D).toFixed(3));
+R.classList.toggle('gray',filt==='gray'&&GZ!==null);
+var rows=[].slice.call(R.querySelectorAll('.t-r')),n=0;
+rows.sort(function(a,b){return desc?B[b.dataset.id].s-B[a.dataset.id].s:B[a.dataset.id].s-B[b.dataset.id].s});
+rows.forEach(function(r){var p=B[r.dataset.id],ok=p.s>=th(p),bad=ok!==p.a,v=filt==='all'||(filt==='wrong'&&bad)||(filt==='gray'&&gz(p)),li=r.parentNode;
+li.hidden=!v;if(v)n++;li.parentNode.appendChild(li);
+r.querySelector('.t-bd').replaceWith(badge(p));var o=r.querySelector('.ok');o.textContent=bad?'處理錯':'處理對';o.className='ok'+(bad?' bad':'');
+r.setAttribute('aria-current',p===pick)});
+['all','wrong','gray'].forEach(function(f){$('f-'+f).setAttribute('aria-pressed',filt===f)});$('f-sort').textContent='分數：'+(desc?'高到低':'低到高');
+$('lnote').textContent=filt==='gray'?(GZ?'灰色地帶：最高分 '+GZ[0].toFixed(3)+' 到 '+GZ[1].toFixed(3)+' 之間，有答案與沒答案的題混在一起。共 '+n+' 題。':'兩類題的分數沒有重疊，沒有灰色地帶。'):'顯示 '+n+' 題';
+show(pick)}
+function go(p,list){pick=p;upd();var c=$('card'),b=c.getBoundingClientRect();if(list||b.bottom>innerHeight||b.top<0)c.scrollIntoView({block:list?'start':'nearest',behavior:'smooth'})}
 sl.oninput=function(){t=+sl.value;upd()};
-$('b-ring').onclick=function(){var on=!R.classList.contains('showring');R.classList.toggle('showring',on);this.setAttribute('aria-pressed',on)};
-$('b-gray').onclick=function(){gray=!gray;upd()};
-$('b-clear').onclick=function(){gray=false;pick=null;upd()};
 $('b-reset').onclick=function(){t=T;sl.value=T;upd()};
-P.forEach(function(p){function go(){pick=p;upd()}p.e.onclick=go;p.e.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}});
+['all','wrong','gray'].forEach(function(f){$('f-'+f).onclick=function(){filt=f;upd()}});
+$('f-sort').onclick=function(){desc=!desc;upd()};
+P.forEach(function(p){function h(){go(p,false)}p.e.onclick=h;p.e.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();h()}}});
+[].slice.call(R.querySelectorAll('.t-r')).forEach(function(r){r.onclick=function(){go(B[r.dataset.id],true)}});
 upd()})();</script>"""
 
 
@@ -206,67 +307,68 @@ def _lanes(row, lo, hi):
 
 def _dot(p, x, y, t, drop, floor):
     ok, wrong = verdict(p, t, drop, floor)
-    cls = "pt" + (" cross" if p["g"] == "cross" else "") + (" hi" if ok else "") + (" wrong" if wrong else "") + " sel"
+    cls = "pt on" + (" hi" if ok else "") + (" wrong" if wrong else "")
     lab = f"{p['id']} 最高分 {p['s']:.3f}"
-    return (f'<g class="{cls}" tabindex=0 role=button aria-label="{escape(lab)}" data-id="{escape(p["id"])}" data-s="{p["s"]!r}" '
-            f'data-a={int(p["a"])} data-g={p["g"]} data-sc={int(p["sc"])} data-q="{escape(p["q"])}" transform="translate({x:.1f} {y:.1f})">'
-            f'<circle class=hit r=8 /><circle class=ring r=9 /><circle class=d r={R} /></g>')
+    return (f'<g class="{cls}" tabindex=0 role=button aria-label="{escape(lab)}" data-id="{escape(p["k"])}" data-s="{p["s"]!r}" '
+            f'data-a={int(p["a"])} data-g={p["g"]} data-sc={int(p["sc"])} transform="translate({x:.1f} {y:.1f})">'
+            f'<circle class=hz r=9 /><circle class=ring r=9.5 /><circle class=d r={R} /></g>')
 
 
-MISS_OF = {"main": ("評估題組",), "real": ("真實問法",), "cross": ("跨公司題", "真實問法")}  # 各組的點來自哪些來源
+MISS_OF = {"top": ("評估題組", "真實問法"), "cross": ("跨公司題", "真實問法")}  # 各列的點來自哪些來源
+ROWS = (("有答案的題", "top", lambda p: p["g"] != "cross" and p["a"]), ("語料沒有答案的題", "top", lambda p: p["g"] != "cross" and not p["a"]),
+        ("跨公司題", "cross", lambda p: p["g"] == "cross"))
+HEAD = 38  # 圖頂留給門檻文字的高度
 
 
 def _chart(pts, miss, lo, hi, t, drop, floor):
-    parts, y, span = [], 4.0, {}
-    for g, title in GROUPS:
-        top = y
-        if g == "cross":
-            parts.append(f'<text x={PAD} y={y + 12} class=rl>{escape(title)}</text>')
-            y += 18
-        for ans, name in ((True, "有答案的題"), (False, "語料沒有答案的題")):
-            row = [p for p in pts if p["g"] == g and p["a"] == ans]
-            lane, n = _lanes(row, lo, hi)
-            label = f"{name}（{len(row)} 題）" if g == "cross" else f"{title}・{name}（{len(row)} 題）"
-            parts.append(f'<text x={PAD} y={y + 12} class=rl>{escape(label)}</text>')
-            y += 18
-            if not row:
-                why = [f"{k}：{v}" for k, v in miss.items() if k in MISS_OF[g]]
-                parts.append(f'<text x={PAD} y={y + 8} class=miss>{escape("缺資料：" + "；".join(why) if why else "沒有這類題")}</text>')
-                y += 20
-            else:
-                for p, x, k in lane:
-                    parts.append(_dot(p, x, y + R + 2 + k * PITCH, t, drop, floor))
-                y += 2 * R + 4 + (n - 1) * PITCH
-            parts.append(f'<line class=bl x1={PAD} x2={VW - PAD} y1={y + 3} y2={y + 3} />')
-            y += 8
-        span[g] = (top, y)
-    top, bot = span["main"][0], span["real"][1]
+    parts, y, ends = [], float(HEAD), []
+    for title, src, f in ROWS:
+        row = [p for p in pts if f(p)]
+        lane, n = _lanes(row, lo, hi)
+        parts.append(f'<text x={PAD} y={y + 14} class=rl>{escape(f"{title}（{len(row)} 題）")}</text>')
+        y += 22 + (18 if src == "cross" else 0)  # 跨公司列多放一行固定門檻的文字
+        if not row:
+            why = [f"{k}：{v}" for k, v in miss.items() if k in MISS_OF[src]]
+            parts.append(f'<text x={PAD} y={y + 10} class=miss>{escape("缺資料：" + "；".join(why) if why else "沒有這類題")}</text>')
+            y += 24
+        else:
+            for p, x, k in lane:
+                parts.append(_dot(p, x, y + R + 3 + k * PITCH, t, drop, floor))
+            y += 2 * R + 6 + (n - 1) * PITCH
+        ends.append(y)
+        parts.append(f'<line class=bl x1={PAD} x2={VW - PAD} y1={y + 3} y2={y + 3} />')
+        y += 10
+    cross_top = ends[1] + 32  # 跨公司列標題下方
     vl = lambda cls, v, a, b, id_="": f'<line {id_} class={cls} x1={_x(v, lo, hi):.1f} x2={_x(v, lo, hi):.1f} y1={a} y2={b} />'
-    cur = retrieval.NOT_FOUND_THRESHOLD
-    lines = (f'<rect class=gz id=gz x=0 y={top} width=0 height={bot - top} />' + vl("cur", cur, top, bot) + vl("cur", cur - drop, top, bot)
-             + vl("mv", t, top, bot, "id=l-t") + vl("mvs", t - drop, top, bot, "id=l-s") + vl("fl", floor, *span["cross"]))
+    fx = _x(floor, lo, hi)
+    side = f"x={fx + 4:.1f}" if fx < VW - 120 else f"text-anchor=end x={fx - 4:.1f}"
+    lines = (vl("mv", t, HEAD - 4, ends[1], "id=l-t") + vl("mvs", t - drop, HEAD - 4, ends[1], "id=l-s")
+             + vl("fl", floor, cross_top, ends[2]) + f'<text class="lb lbf" {side} y={cross_top + 12:.1f}>跨公司 {floor:.3f}</text>'
+             + '<text class="lb lbt" id=lb-t y=14 /><text class="lb lbs" id=lb-s y=30 />')
     ticks = "".join(f'<line class=ax x1={_x(v, lo, hi):.1f} x2={_x(v, lo, hi):.1f} y1={y} y2={y + 4} />'
-                    f'<text x={_x(v, lo, hi):.1f} y={y + 15} text-anchor=middle>{v:.1f}</text>'
+                    f'<text class=tk x={_x(v, lo, hi):.1f} y={y + 18} text-anchor=middle>{v:.1f}</text>'
                     for v in [round(lo + 0.1 * i, 1) for i in range(int((hi - lo) / 0.1 + 1e-9) + 1)])
-    h = y + 32
-    return (f'<svg id=chart viewBox="0 0 {VW} {h:.0f}" role=img aria-label="每題最高相似度，依題型分列">{lines}{"".join(parts)}'
+    h = y + 40
+    return (f'<svg id=chart viewBox="0 0 {VW} {h:.0f}" role=img aria-label="每題最高相似度，依題型分三列">{lines}{"".join(parts)}'
             f'<line class=ax x1={PAD} x2={VW - PAD} y1={y} y2={y} />{ticks}'
-            f'<text x={VW / 2} y={h - 3:.0f} text-anchor=middle>bge-m3 第 1 名相似度</text></svg>')
+            f'<text class=tk x={VW / 2} y={h - 4:.0f} text-anchor=middle>檢索第 1 名的相似度（越右越像）</text></svg>')
 
 
-def _line(c, g):
-    o = c[g]
-    return f"有答案 {o['a']}/{o['b']}、沒答案拒答 {o['c']}/{o['d']}、處理錯 {o['n']}" if o["b"] + o["d"] else ""
+def _rows(pts, cd, t, drop, floor):
+    out = []
+    for p in sorted(pts, key=lambda p: -p["s"]):
+        wrong = verdict(p, t, drop, floor)[1]
+        out.append(f'<li><button type=button class=t-r data-id="{escape(p["k"])}"><span class=t-top><span class=sc>{p["s"]:.3f}</span>'
+                   f'{_bd(badge(p, cd.get(p["k"]), t, drop, floor))}<span class="ok{" bad" if wrong else ""}">{"處理錯" if wrong else "處理對"}</span></span>'
+                   f'<span class=qt>{escape(p["q"])}</span></button></li>')
+    return "".join(out)
 
 
 def _layers(e2e, c):
-    """第二段：兩層把關。端到端數字取自 results_endtoend.json；檢索門檻單獨的拒答數由現行常數算。"""
-    flow = ("<ol class=pipe><li class=box><b>問題</b><small>使用者問一句</small></li>"
-            "<li class=box><b>① 檢索門檻</b><small>最高相似度太低就直接回「查無」，不呼叫生成</small></li>"
-            "<li class=box><b>② 答案層</b><small>段落裡沒寫，答案就回「查無」</small></li>"
-            "<li class=box><b>回答或查無</b><small>任一層擋下，都是拒答</small></li></ol>")
+    """兩層把關：3 步一行；端到端數字取自 results_endtoend.json；檢索門檻單獨的拒答數由現行常數算。"""
+    flow = "<ol class=t-pipe><li>① 檢索門檻：分數太低就回「查無」</li><li>② 答案層：段落沒寫就回「查無」</li><li>回答或查無</li></ol>"
     t = total(c)
-    alone = f"<p>只看第 ① 層（現行門檻）：評估題組與真實問法中，語料沒有答案的 {t['d']} 題只擋住 {t['c']} 題。單獨靠門檻擋不乾淨。</p>"
+    alone = f"<p>只靠第 ① 層（現行門檻）：語料沒有答案的 {t['d']} 題只擋住 {t['c']} 題，擋不乾淨。</p>"
     if e2e:
         end = (f"<p>兩層一起，真 DeepSeek 端到端跑 {e2e['n']} 道沒有答案的題：<b>{e2e['refused']}/{e2e['n']} 拒答</b>"
                f"（{e2e['by_gate']} 題由檢索門檻擋下，{e2e['by_answer_layer']} 題由答案層回「查無」）。"
@@ -277,7 +379,7 @@ def _layers(e2e, c):
 
 
 def render(d: dict) -> str:
-    pts, miss = d["pts"], d["miss"]
+    pts, miss, cd = d["pts"], d["miss"], d.get("cards") or {}
     T, drop, floor = retrieval.NOT_FOUND_THRESHOLD, retrieval.SCOPED_DROP, retrieval.CROSS_FLOOR
     lo = min([SL_LO] + [math.floor(p["s"] * 20) / 20 for p in pts])
     hi = max([SL_HI] + [math.ceil(p["s"] * 20) / 20 for p in pts])
@@ -286,25 +388,22 @@ def render(d: dict) -> str:
     gz = gray_zone(pts)
     gzs = ",".join(repr(x) for x in gz) if gz else ""
     miss_html = "".join(f"<p class=miss-note>缺資料：{escape(k)}（{escape(v)}）。這一列不畫，也不用舊數字。</p>" for k, v in miss.items())
-    names = {"main": "評估題組", "real": "真實問法", "cross": f"跨公司（固定門檻 {floor:.3f}）"}
-    det = "".join(f"<p class=mute>{names[g]}：<span id=d-{g}>{escape(_line(c, g))}</span></p>" for g, _ in GROUPS)
+    pd = json.dumps(cd, ensure_ascii=False).replace("<", "\\u003c")  # 放進 <script type=application/json>，不讓 </script> 提前結束
     body = f"""<nav><a href="/">問答</a><a href="/about">專案說明</a><b>查無門檻</b></nav>
-<h1>查無門檻：拖拖看</h1>
-<p class=th-lead>門檻決定多低的分數要回「找不到」。太高會誤擋有答案的題，太低會讓沒答案的題進入生成。</p>
-<div id=th class=showring data-t={T!r} data-drop={drop!r} data-floor={floor!r} data-lo={lo!r} data-hi={hi!r} data-l={PAD} data-w={VW - 2 * PAD} data-gz="{gzs}">
-<div class=cnts><div><b id=ca>{s['a']}/{s['b']}</b><span>可回答題有回答</span></div><div><b id=cu>{s['c']}/{s['d']}</b><span>語料沒有答案的題有拒答</span></div><div><b id=cw>{s['n']}</b><span>處理錯的題數</span></div></div>
-<div class=ctl><label for=sl>門檻</label><input id=sl type=range min={SL_LO} max={SL_HI} step={SL_STEP} value={T!r}>
-<div class=vals><span>未指定公司 <output id=tv>{T:.3f}</output></span><span>已指定公司 <output id=ts>{T - drop:.3f}</output></span></div></div>
-<div class=th-btns><button id=b-gray type=button aria-pressed=false>僅選灰色地帶</button><button id=b-ring type=button aria-pressed=true>圈出處理錯的題</button>
-<button id=b-clear type=button>清除選取</button><button id=b-reset type=button>門檻還原</button></div>
-<p class=mute id=gnote aria-live=polite></p>
+<h1>查無門檻：每題問了什麼，系統答了什麼</h1>
+<p class=t-lead>系統先看問題和語料像不像；分數低於「門檻」就直接回「查無」。點圖上的點，看那一題的問題和實際答案。</p>
+<div id=th data-t={T!r} data-drop={drop!r} data-floor={floor!r} data-lo={lo!r} data-hi={hi!r} data-l={PAD} data-w={VW - 2 * PAD} data-vw={VW} data-gz="{gzs}">
+<div class=t-nums><div><b id=ca>{s['a']}/{s['b']}</b><span>可回答的題，有回答</span></div><div><b id=cu>{s['c']}/{s['d']}</b><span>沒答案的題，有拒答</span></div><div><b id=cw>{s['n']}</b><span>處理錯的題</span></div></div>
+<div class=t-ctl><label for=sl>拖拖看：門檻</label><input id=sl type=range min={SL_LO} max={SL_HI} step={SL_STEP} value={T!r}>
+<div class=t-vals><span>未指定公司 <output id=tv>{T:.3f}</output></span><span>已指定公司 <output id=ts>{T - drop:.3f}</output></span><button id=b-reset class=t-btn type=button>還原</button></div></div>
+<div class=t-leg><span><i class=on></i>深色：放行</span><span><i></i>淡色：擋住</span><span><i class=rg></i>紅圈：處理錯</span></div>
 {_chart(pts, miss, lo, hi, T, drop, floor)}
-<div id=detail aria-live=polite><p>點圖上的點，看題目、分數與目前的結果。</p></div>
-<div class=legend><span><i class="sw on"></i>深色點：高於門檻，系統會回答</span><span><i class=sw></i>淡色點：低於門檻，回「查無」</span>
-<span><i class="sw rg"></i>紅圈：處理錯（有答案卻被擋，或沒答案卻放行）</span><span><i class="sw fl"></i>黃色點：跨公司題，用固定的 {floor:.3f}，不跟滑桿動</span>
-<span>灰色虛線：程式現行值 {T:.3f}（未指定公司）與 {T - drop:.3f}（已指定公司，低 {drop:.3f}）；藍色實線是你拖的門檻，已指定公司的題用較低那條。</span></div>
-{det}{miss_html}</div>
+<div id=card aria-live=polite><p class=kv>點圖上的點，或打開下面的題目清單，看這題問了什麼、系統答了什麼。</p></div>
+<details id=lst class=more><summary>題目清單（{len(pts)} 題）</summary>
+<div class=t-tools><button id=f-all class=t-btn type=button aria-pressed=true>全部</button><button id=f-wrong class=t-btn type=button aria-pressed=false>處理錯的</button><button id=f-gray class=t-btn type=button aria-pressed=false>灰色地帶</button><button id=f-sort class=t-btn type=button>分數：高到低</button></div>
+<p class=mute>「處理錯」只看第 ① 層門檻；放行後答案層回「查無」的題，最後仍會拒答。</p><p class=mute id=lnote aria-live=polite></p><ul class=t-rows>{_rows(pts, cd, T, drop, floor)}</ul></details>
+{miss_html}<script type=application/json id=pd>{pd}</script></div>
 {_layers(d.get("e2e"), c)}
-<h2>讀這張圖要小心</h2><p class=mute>題目很少，門檻又是用同一批題調的，圖只是讓人看到取捨，不是最佳解。分數是 bge-m3 的第 1 名相似度。</p>
+<h2>讀這張圖要小心</h2><p class=mute>題目很少，門檻又是用同一批題調的，圖只是讓人看到取捨，不是最佳解。答案是各題實跑一次的結果（單次執行，DeepSeek 可能隨機，再跑一次文字會不同）。</p>
 <footer><a href="/about">回專案說明</a></footer>{JS}"""
     return page("查無門檻｜求職情報問答", body, head=f"<style>{CSS}</style>")
