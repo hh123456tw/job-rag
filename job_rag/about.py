@@ -267,6 +267,20 @@ def _ragas_fix(root: Path, gen):
         return None
 
 
+def _heldout_gen(root: Path):
+    """獨立題 RAGAS（票 41，現行設定）。輸出檔缺、讀不了、或沒有任何有效忠實度回 None；答案相關性沒量就是 None。"""
+    try:
+        r = json.loads((root / "eval/results_heldout_generation.json").read_text(encoding="utf-8"))
+        f, a = r["stats"]["faithfulness"], r["stats"]["answer_relevancy"]
+        if not f["n"] or not isinstance(f["mean"], (int, float)):
+            return None
+        return {"n": f["n"], "faithfulness": f["mean"], "ci": f["ci95"],
+                "answer_relevancy": a["mean"] if a["n"] and isinstance(a["mean"], (int, float)) else None, "n_ar": a["n"],
+                "gated": len(r["gated"]), "not_found": len(r["model_not_found"])}
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def load(root=None) -> dict:
     root = Path(root or ROOT)
     questions = _read(root, questions_path(root))["questions"]
@@ -289,7 +303,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "held_gen": _heldout_gen(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
