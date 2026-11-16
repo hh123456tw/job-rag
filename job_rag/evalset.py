@@ -70,7 +70,13 @@ def verify(questions: list[dict], corpus=None) -> list[str]:
         seen.add(qid)
         if q.get("status") != PENDING:
             bad(f"核對狀態必須是「{PENDING}」（只有使用者能確認）")
-        if q["answerable"]:
+        if q["answerable"] and q.get("keywords") and not q["gold"]:
+            # 跨公司關鍵字題（沒有單一金標）：每個關鍵字都要真的出現在公開段落，否則等於沒有答案
+            pub = [_squash(s["text"]) for s in segs if not s["excluded"]]
+            for kw in q["keywords"]:
+                if not any(_squash(kw) in t for t in pub):
+                    bad(f"關鍵字「{kw}」沒有出現在任何公開段落")
+        elif q["answerable"]:
             if not q["gold"]:
                 bad("可回答題沒有金標")
             flags = set()

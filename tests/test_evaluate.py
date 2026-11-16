@@ -150,13 +150,13 @@ def test_compare_runs_all_five_methods_and_table_lists_each(monkeypatch, tmp_pat
     t = format_table(reps)
     for m in reps:
         assert m in t
-    for head in ("Hit@1", "Hit@3", "MRR"):
+    for head in ("Hit@1", "Hit@3", "Hit@5", "MRR"):
         assert head in t
     assert "私人" not in t and "查詢模式" not in t
 
 
 def _rep(h1, h3, mrr):
-    g = {"ranks": {}, "metrics": {"n": 10, "hit@1": h1, "hit@3": h3, "mrr": mrr}, "unanswerable": {"n": 0, "refusal_rate": None}}
+    g = {"ranks": {}, "metrics": {"n": 10, "hit@1": h1, "hit@3": h3, "hit@5": h3, "mrr": mrr}, "unanswerable": {"n": 0, "refusal_rate": None}}
     return {"method": "x", "scores": g}
 
 
@@ -229,3 +229,49 @@ def test_gate_report_shows_how_close_the_nearest_questions_are(monkeypatch):
     out = format_gate(qs, rep)
     # 擋住的不可回答題最高分 .400；放行的可回答題最低分 .500（.8 離得遠，不列）
     assert "貼線" in out and "0.4000" in out and "0.5000" in out and "0.8000" not in out
+
+
+# ---- 票 33：已指定公司的門檻、補公司名、Hit@5 ----
+def test_hit_at_5_is_counted_by_hand():
+    m = metrics([1, 5, 6, None])  # 第 5 名算、第 6 名不算
+    assert m["hit@5"] == 0.5 and m["hit@3"] == 0.25
+
+
+def test_asked_prepends_company_only_when_missing():
+    from job_rag.evaluate import _asked
+    assert _asked("薪水多少？", "甲科技") == "甲科技 薪水多少？"
+    assert _asked("甲科技薪水多少？", "甲科技") == "甲科技薪水多少？"  # 已有公司名不重複補
+    assert _asked("薪水多少？", None) == "薪水多少？"
+
+
+def test_scoped_questions_use_the_lower_threshold(monkeypatch, tmp_path):
+    _fake_models(monkeypatch, tmp_path)
+    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 10.0)
+    monkeypatch.setattr(retrieval, "SCOPED_DROP", 20.0)  # 已指定公司的門檻變 -10：全放行
+    qs = [dict(QS[0], company="甲科技"), QS[1], QS[2]]    # q1 已指定公司；q2、q3 沒有
+    g = evaluate(qs, method="bge-m3", corpus=MINI)["scores"]
+    assert g["gate"]["scoped_ids"] == ["q1"] and g["scoped"] == {"q1": "甲科技"}
+    assert g["gate"]["answerable_blocked"] == ["q2"]            # q1 放行；沒指定公司的 q2 仍被 10.0 擋住
+    assert g["gate"]["unanswerable_blocked"] == ["q3"]
+    assert g["gate"]["thresholds"] == {"q1": -10.0, "q2": 10.0, "q3": 10.0}
+
+
+def test_detect_scopes_questions_that_name_one_company(monkeypatch, tmp_path):
+    _fake_models(monkeypatch, tmp_path)
+    qs = [Q("a", "甲科技的鯨魚追蹤軟體", [("01_甲科技.md", "1. 基本資料")]), Q("b", "鯨魚追蹤軟體", [("01_甲科技.md", "1. 基本資料")])]
+    assert evaluate(qs, method="bge-m3", corpus=MINI, detect=True)["scores"]["scoped"] == {"a": "甲科技"}
+    assert evaluate(qs, method="bge-m3", corpus=MINI)["scores"]["scoped"] == {}  # 沒開偵測：全部未指定公司
+
+
+def test_gate_report_lists_each_threshold_group_separately():
+    from job_rag.evaluate import format_gate
+    qs = [Q("a", "x", [("f", "h")]), Q("b", "x", [("f", "h")]), Q("u", "x"), Q("v", "x")]
+    gt = {"threshold": 0.70, "scoped_threshold": 0.62, "scoped_ids": ["b", "v"],
+          "unanswerable_blocked": ["u"], "unanswerable_passed": ["v"], "answerable_blocked": []}
+    rep = {"bge-m3": {"scores": {"gate_scores": {"a": 0.8, "b": 0.65, "u": 0.5, "v": 0.63}, "metrics": {"n": 2},
+                                 "unanswerable": {"n": 2}, "gate": gt}}}
+    out = format_gate(qs, rep)
+    assert "未指定公司" in out and "已指定公司" in out and "0.620" in out
+    unscoped, scoped = out.split("結果：已指定公司")[0], out.split("結果：已指定公司")[1]
+    assert "不可回答題擋住 1/1：u" in unscoped and "沒擋住：無" in unscoped
+    assert "不可回答題擋住 0/1：無；沒擋住：v" in scoped   # v 分數 0.63 高於 0.62，沒被擋住

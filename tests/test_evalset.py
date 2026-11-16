@@ -82,6 +82,14 @@ def test_duplicate_ids_rejected():
     assert verify([ok, dict(ok)], MINI)
 
 
+def test_cross_keyword_question_needs_keyword_in_a_public_segment():
+    ok = A("x", [], type="跨公司", keywords=["FastAPI"])  # 乙資訊 4. 職缺（公開）
+    assert verify([ok], MINI) == []
+    assert any("沒有出現" in p for p in verify([A("x", [], keywords=["麥克風陣列"])], MINI))   # 語料沒有
+    assert any("沒有出現" in p for p in verify([A("x", [], keywords=["刺蝟密語"])], MINI))     # 只在排除段落
+    assert verify([A("x", [])], MINI)                                                       # 沒金標也沒關鍵字
+
+
 def test_markdown_table_has_required_columns_and_pending_status():
     qs = [A("a", [g("01_甲科技.md", "1. 基本資料", "鯨魚追蹤軟體")]), U("u", ["量子麵包"])]
     md = to_markdown(qs)
