@@ -20,7 +20,7 @@ FAQ = {"what": ("這家做什麼", "是做什麼的？"), "jobs": ("有哪些職
        "tech": ("用什麼技術", "用什麼技術？"), "fin": ("財務與新聞", "的營收和近期新聞是什麼？")}
 DEMOS = ["u07", "u06"]  # 查無示範：不可回答題的題號
 EVAL = {q["id"]: q for q in json.loads((Path(__file__).parent / "eval" / "questions.json").read_text(encoding="utf-8"))["questions"]}
-LOW = "<p class='warn'><b>可能沒有答案。</b>語料中找不到很接近的內容，下面的原文只供參考。</p>"
+LOW = "<p class='warn'><b>可能沒有答案。</b>語料中找不到很接近的內容，也可能只是問法太籠統。下面的原文仍可參考，請自己核對。</p>"
 
 
 def _hits_html(hits, dim):
