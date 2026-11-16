@@ -178,6 +178,25 @@ python -X utf8 -m job_rag.generation
 - https（通道或雲端）：兩者都可用，Android 才有安裝選項。
 - 依據：[Chrome 安裝條件](https://web.dev/articles/install-criteria)、[MDN](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable)（安裝不需要 service worker；localhost 例外）。
 
+## 自用／展示切換（票 24）
+
+預設是**展示模式**：只有公開事實段落，行為與以前完全相同。要查私人資料時才切到**自用模式**。
+
+**設定（只寫變數名稱，值自己決定）**
+- `JOB_RAG_OWNER_PIN`：本人密碼。沒設＝沒有自用模式，頁面沒有切換鈕，`/api/owner/*` 回 404。
+- `JOB_RAG_SELF_DIR`：自用資料夾，預設專案根目錄的 `selfdata/`（已被 `.gitignore` 擋住）。沒有這個資料夾時，自用模式仍可用，只是只有語料裡被排除的私人段落。面經檔放在 `面經/**/*.jsonl`。
+
+**怎麼用**：頁首有「展示｜自用」切換鈕。按「自用」會出現密碼欄，密碼用 POST 的 JSON body 送出，不會進網址。通過後頁面顯示橘色橫幅「自用模式：資料會送到 DeepSeek，請勿給別人看」。按「展示」立即切回，並清掉自用的對話記錄與畫面。
+
+**機制**
+- 模式只由伺服器簽名的 cookie 決定（`jr_owner`；HttpOnly、SameSite=Lax、https 時 Secure、效期 8 小時、簽章金鑰每次啟動隨機產生，重啟即失效）。查詢參數、history、直接呼叫 API 都不能切到自用；沒有有效 cookie 一律當展示。
+- 密碼以 `hmac.compare_digest` 比對。錯誤次數全域計算（10 分鐘 5 次；通道後面的請求都來自 127.0.0.1，所以不用 IP），超過回 429，鎖定期間連正確密碼也不收。
+- 兩個索引分開建：展示索引的程式路徑與向量快取檔名不變；自用索引的快取檔名多 `self_`（都在 `.cache/`）。啟動時（有設密碼）會在背景預先編碼自用索引；沒好之前，自用模式的請求回「準備中」，展示不受影響。
+- 對話記錄（sessionStorage 的鍵）與 history 都帶模式。伺服器在展示模式只收標記為展示的輪次，沒標記或標記為自用的直接丟掉（不報錯）。
+- 自用面經載入器：只收 `window_ok` 為真、未被鎖住、內文非空的篇；欄位缺、壞行一律略過。
+- 自用模式的提示卡會寫出面經篇數與私人主題，並註明來源是自用資料；有面經的公司多兩個預設題。`python -X utf8 scripts/check_self_presets.py` 逐題驗證沒被查無門檻擋住。
+- 查無門檻、每小時用量上限、存取碼、預熱頁、PWA 都不變。持有存取碼的人預設是展示；沒有本人密碼進不了自用。
+
 ## 公開版匯出（票 09）
 ```
 set JOB_RAG_REAL_CORPUS=<完整語料>   # 有設才會逐字比對真語料檔名；真語料相關測試也靠它
