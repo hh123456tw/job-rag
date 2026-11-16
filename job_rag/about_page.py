@@ -38,11 +38,26 @@ def _e2e(d) -> str:
     return f"（再加答案層，端到端 {x['refused']}/{x['n']} 拒答）" if x else ""
 
 
+def _held_p(d) -> str:
+    return f"<p><b>獨立測試題</b>：{escape(_held_line(d))}。題少，同一人出題，只能當方向。</p>" if _held_line(d) else ""
+
+
+def _held_line(d) -> str:
+    """一句獨立測試題成績（票 39）；沒有輸出檔回空字串，呼叫端就維持原句。"""
+    x = d and d.get("held")
+    if not x:
+        return ""
+    e = f"、端到端拒答 {x['e2e']['refused']}/{x['e2e']['n']}" if x["e2e"] else ""
+    return (f"另有 {x['n']} 題獨立測試題（沒用來調參）：Hit@3 ＝ {_f(x['hit3'])}（95% 區間 {_f(x['hit3_ci'][0])}–{_f(x['hit3_ci'][1])}）、"
+            f"MRR ＝ {_f(x['mrr'])}（95% 區間 {_f(x['mrr_ci'][0])}–{_f(x['mrr_ci'][1])}）（Hit@3 與 MRR 只算 {x['n_plain_answerable']} 題單一公司的有答案題）、"
+            f"沒答案題檢索擋住 {x['blocked_u']}/{x['n_unanswerable']}{e}")
+
+
 def _real_line(d) -> str:
     x = d.get("real_eval")
     if not x:
-        return ""
-    return (f"<p><b>另外 {x['n']} 道真實問法</b>（公司頁內短問句、單一公司、跨公司、語料沒有答案；同一人出題，題少，只能當方向）："
+        return _held_p(d)
+    return _held_p(d) + (f"<p><b>另外 {x['n']} 道真實問法</b>（公司頁內短問句、單一公司、跨公司、語料沒有答案；同一人出題，題少，只能當方向）："
             f"非跨公司的有答案題 Hit@1 {_f(x['hit1'])}、Hit@3 {_f(x['hit3'])}、Hit@5 {_f(x['hit5'])}、MRR {_f(x['mrr'])}；"
             f"非跨公司的沒有答案題擋住 {x['blocked_u']}/{x['n_unanswerable']}{_e2e(d)}，有答案題誤擋 {x['blocked_a']}/{x['n_answerable']}；"
             f"跨公司題 {x['cross_passed']}/{x['cross_n']} 結果正確。</p>")
@@ -151,7 +166,7 @@ def _level(d) -> str:
         done.append(f"跨公司提問：每家公司各找 {x['per']} 段再逐家整理；{x['n']} 題中 {x['passed']} 題結果正確（各家涵蓋率平均 {x['coverage']:.2f}）")
     done.append(f"追問記憶：帶入最近 {memory.MAX_TURNS} 輪（簡單規則）")
     undone = ["重排序模型（reranker）", "向量資料庫（資料只有數百段，在記憶體內搜尋就夠）", "微調模型",
-              "線上監控與使用者回饋", "獨立測試題（題目與語料同源）"]
+              "線上監控與使用者回饋"] + ([] if d.get("held") else ["獨立測試題（題目與語料同源）"])
 
     def li(xs):
         return "".join(f"<li>{escape(x)}</li>" for x in xs)
@@ -259,7 +274,7 @@ def _scale() -> str:
 
 def _limits(d) -> str:
     items = ["單機：一台電腦、一個行程。", "存取碼與本人密碼是唯一的權限控管。",
-             f"題少：只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案。", "沒有獨立測試題：題目與語料同源。"]
+             f"題少：只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案。", (_held_line(d) + "。其餘題目與語料同源。") if _held_line(d) else "沒有獨立測試題：題目與語料同源。"]
     if x := d.get("cross_eval"):
         items.append(f"跨公司題的查無常數 {x['floor']} 用同一批 {x['n']} 題挑的，偏樂觀；可回答題有 {x['n_answerable'] - x['answerable_ok']} 題被誤擋。")
     return "<h3>目前限制</h3><ul class=plain>" + "".join(f"<li>{escape(x)}</li>" for x in items) + "</ul>"
@@ -438,7 +453,7 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             "下面兩個失敗案例，是程式從輸出檔自動挑的，不是我挑好看的。" if d else None],
         6: ["最後講限制。我不想講得太滿。",
             f"題目只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案，只能當方向。" if d else "題目很少，只能當方向。",
-            "題目和資料同源，沒有獨立測試題。",
+            (_held_line(d) + "。其餘題目與資料同源。") if _held_line(d) else "題目和資料同源，沒有獨立測試題。",
             f"跨公司題 {x['n']} 題中 {x['passed']} 題結果正確。但它的門檻也用同一批題挑，偏樂觀。" if x else None,
             "我刻意沒做：重排序模型、向量資料庫、微調模型、線上監控。沒做就是沒做。",
             "放大 100 倍會怎麼改，只是設計想法，我還沒有做。"],
@@ -506,8 +521,8 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int, len
               ((_fixes(data) + "<h3>兩個失敗案例</h3>" + _cases(data)) if data else err), say[5])
     s6 = _seg(6, "限制與下一步", "這是小規模的驗證，數字只能當方向。",
               f"<ul class=plain><li>{counts}</li>"
-              "<li>題目與語料同源，沒有獨立測試題。「可能沒有答案」的門檻用同一批題挑，分數可能偏樂觀。</li>"
-              f"{gen_limit}<li>資料只有 {n_segments} 段。</li></ul>{_memory(data)}{_level(data)}{_library(n_segments)}"
+              + (f"<li>{escape(_held_line(data))}。其餘題目與語料同源，「可能沒有答案」的門檻用它們挑，分數可能偏樂觀。</li>" if _held_line(data) else "<li>題目與語料同源，沒有獨立測試題。「可能沒有答案」的門檻用同一批題挑，分數可能偏樂觀。</li>")
+              + f"{gen_limit}<li>資料只有 {n_segments} 段。</li></ul>{_memory(data)}{_level(data)}{_library(n_segments)}"
               + (_eng(data, n_segments, n_companies, lengths) if data else ""), say[6])
     order = ("<div class=order><b>講解順序</b><ol>"
              + "".join(f"<li><a href=#s{i}>{i}</a></li>" for i in range(1, 7)) + "<li><a href=#qa>問答</a></li></ol>"

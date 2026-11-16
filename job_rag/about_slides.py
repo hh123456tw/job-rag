@@ -317,8 +317,8 @@ ICONS = {"warn": _icon('<path d="M12 3 2.5 20h19z"/><path d="M12 10v5M12 17.5v.5
 
 def s_limits(d):
     na, nu = (d["n_answerable"], d["n_unanswerable"]) if d else (None, None)
-    lim = [f"題少：{na} 題有答案、{nu} 題沒答案" if d else "題少", "題目與語料同源", "門檻用同批題挑，偏樂觀", "單機、單一存取碼"]
-    undone = ["重排序模型", "向量資料庫", "微調模型", "線上監控", "獨立測試題"]
+    lim = [f"題少：{na} 題有答案、{nu} 題沒答案" if d else "題少", "題目與語料同源" if not (d and d.get("held")) else "原題與語料同源；另有 40 題獨立測試題", "門檻用同批題挑，偏樂觀", "單機、單一存取碼"]
+    undone = ["重排序模型", "向量資料庫", "微調模型", "線上監控"] + ([] if d and d.get("held") else ["獨立測試題"])
     nxt = ["近似索引，只編新段落", "PDF 與掃描檔解析", "改動後自動重考"]
     col = lambda ic, t, items, tag="": (f'<div class="col"><div class="ch">{ICONS[ic]}<h3>{escape(t)}</h3></div>{f"<em>{escape(tag)}</em>" if tag else ""}'
                                          + "<ul>" + "".join(f"<li>{escape(i)}</li>" for i in items) + "</ul></div>")

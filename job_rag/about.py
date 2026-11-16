@@ -177,6 +177,34 @@ def _e2e(root: Path):
         return None
 
 
+def _heldout(root: Path):
+    """獨立測試題 40 題（票 39）。檢索輸出檔缺、讀不了、或和題檔對不上（過期）回 None；端到端拒答另看答案檔，缺或對不上只少那一項。
+    拒答＝被檢索門檻擋下，或答案恰為「查無」（與 results_endtoend.json 同一個算法）。"""
+    try:
+        r = json.loads((root / "eval/results_heldout.json").read_text(encoding="utf-8"))
+        qs = json.loads((root / "eval/questions_heldout.json").read_text(encoding="utf-8"))["questions"]
+        if r["digest"] != questions_digest(qs):
+            return None
+        m, ci = r["metrics"], r["ci"]
+        out = {"n": r["n"], "n_plain_answerable": r["n_answerable"], "hit3": m["hit@3"], "hit3_ci": ci["hit@3"], "mrr": m["mrr"], "mrr_ci": ci["mrr"],
+               "blocked_u": r["unanswerable_blocked_total"], "n_unanswerable": r["unanswerable_total"], "e2e": None}
+        if out["n_unanswerable"] != sum(not q["answerable"] for q in qs):
+            return None
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    try:
+        rows = {x["id"]: x for x in json.loads((root / "eval/results_heldout_answers.json").read_text(encoding="utf-8"))["rows"]}
+        by = {q["id"]: q for q in qs}
+        un = [q["id"] for q in qs if not q["answerable"]]
+        if set(rows) != set(by) or any(rows[i]["question"] != by[i]["question"] for i in rows):
+            return out
+        ref = sum(rows[i]["answer_status"] == "skipped_low" or (rows[i]["answer_status"] == "ok" and (rows[i]["answer"] or "").strip() == "查無") for i in un)
+        out["e2e"] = {"refused": ref, "n": len(un)}
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    return out
+
+
 def _mrr_diff(methods: dict) -> dict:
     """bge-m3 減混合的 MRR 差與 95% 區間（同一批重抽的題目，算法與 evaluate 的 results_methods.txt 相同）。"""
     a, b = methods["bge-m3"], methods["hybrid"]
@@ -246,7 +274,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
