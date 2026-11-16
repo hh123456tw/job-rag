@@ -75,6 +75,8 @@ body.chat{max-width:820px;height:100vh;height:100dvh;margin:0 auto;padding:0;dis
 .bars b{font-variant-numeric:tabular-nums}.bars em{font-style:normal;color:var(--acc);font-weight:600}
 .eng{margin-top:24px;border:1px solid var(--line);border-radius:12px;padding:0 16px 8px}.eng summary{color:var(--acc)}.eng h3{margin:24px 0 8px}
 .arch .lab{margin:16px 0 6px;font-size:.875rem;font-weight:600;color:var(--mute)}
+.trade{list-style:none;padding:0;margin:0}.trade li{border-top:1px solid var(--line);padding:10px 0;margin:0}.trade b,.trade span{display:block}.trade span{color:var(--mute);font-size:.9375rem}
+.note{border-left:3px solid var(--acc);padding:2px 0 2px 12px}
 .pipe{list-style:none;padding:0;margin:0;display:grid;gap:22px}.pipe .box{position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:0}
 .pipe .box:not(:last-child)::after{content:"\\2193";position:absolute;left:50%;bottom:-21px;transform:translateX(-50%);color:var(--acc);font-weight:700;line-height:1}
 .pipe b{display:block;font-size:.95rem}.pipe small{margin-top:2px;font-size:.8125rem;line-height:1.45}

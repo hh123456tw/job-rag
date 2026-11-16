@@ -1,12 +1,14 @@
 """專案說明頁的資料層：只讀既有評估輸出檔，不重算、不呼叫外部 API。
 檔缺、解析失敗、或和現在的題組對不上（輸出檔過期），一律丟 AboutDataError，不回舊數字或預設值。"""
 import json
+import re
 from pathlib import Path
 
 from . import METHODS
 from .evaluate import questions_digest
 from .evalset import questions_path
 from .generation import FAILED, GATED, SCORED, summarize
+from .stats import paired_diff_interval
 
 ROOT = Path(__file__).parent.parent
 FOUND = 3  # Hit@3：前 3 名內有金標段落才算找到
@@ -106,6 +108,27 @@ def _followup(root: Path):
         raise AboutDataError(f"results_followups.json 格式不對：{e}") from e
 
 
+def _mrr_diff(methods: dict) -> dict:
+    """bge-m3 減混合的 MRR 差與 95% 區間（同一批重抽的題目，算法與 evaluate 的 results_methods.txt 相同）。"""
+    a, b = methods["bge-m3"], methods["hybrid"]
+    ids = list(a["ranks"])
+    if set(ids) != set(b["ranks"]):
+        raise AboutDataError("results_methods.json 的 bge-m3 與混合題號對不上；請重跑 evaluate --method all。")
+    lo, hi = paired_diff_interval([a["ranks"][i] for i in ids], [b["ranks"][i] for i in ids])
+    return {"diff": a["mrr"] - b["mrr"], "lo": lo, "hi": hi}
+
+
+def _perf(root: Path):
+    """bge-m3 載入與查詢時間：只引用 eval/spaces_feasibility.md（本機模擬，較快的那組核心）。檔缺或格式對不上就回 None，不猜。"""
+    try:
+        t = (root / "eval/spaces_feasibility.md").read_text(encoding="utf-8")
+    except OSError:
+        return None
+    load = re.search(r"\|\s*載入 bge-m3\s*\|\s*([\d.]+) 秒", t)
+    query = re.search(r"\|\s*預熱後單次查詢，bge-m3，中位數（\d+ 次）\s*\|\s*([\d.]+) 秒", t)
+    return {"load": load.group(1), "query": query.group(1)} if load and query else None
+
+
 def load(root=None) -> dict:
     root = Path(root or ROOT)
     questions = _read(root, questions_path(root))["questions"]
@@ -135,5 +158,6 @@ def load(root=None) -> dict:
         "gate": {"threshold": gate["threshold"], "unanswerable_blocked": len(gate["unanswerable_blocked"]),
                  "n_unanswerable": m["n_unanswerable"], "answerable_blocked": len(gate["answerable_blocked"]),
                  "n_answerable": m["n_answerable"]},
+        "mrr_diff": _mrr_diff(m["methods"]), "perf": _perf(root),
         "cases": _cases(questions, m["methods"], table),
     }

@@ -180,10 +180,64 @@ def _lengths(lengths) -> str:
             "為什麼先依標題切：一個標題底下通常就是一個主題（例如「職缺」「技術堆疊」），整段一起找，答案不會被切在兩半；只有太長的才再切。</p>")
 
 
+def _ci(r) -> str:
+    return f"{_f(r['mrr'])}（95% 區間 {_f(r['ci']['mrr'][0])}–{_f(r['ci']['mrr'][1])}）"
+
+
+def _trade(d, n_segments: int) -> str:
+    """取捨表：一列一個決定。數字取自輸出檔與載入結果；沒有紀錄的數字不寫（reranker 沒量過就直說）。"""
+    by = {r["method"]: r for r in d["table"]}
+    m3, sm, e5 = by["bge-m3"], by["bge-small-zh"], by["e5-large"]
+    overlap = all(m3["ci"]["mrr"][0] <= r["ci"]["mrr"][1] for r in (sm, e5))
+    perf = d["perf"]
+    speed = (f"bge-m3 載入約 {perf['load']} 秒、預熱後單次查詢中位數約 {perf['query']} 秒（本機模擬，不是雲端實測，見 eval/spaces_feasibility.md）；"
+             if perf else "")
+    df = d["mrr_diff"]
+    gen = d["cross"]
+    check = f"GPT 複查 {gen['claims']} 個說法中 {gen['supported']} 個有依據；" if gen else ""
+    rows = [
+        ("選 FAISS，不選 Qdrant／Milvus",
+         f"資料只有 {n_segments} 段，在記憶體內搜尋就夠，不必另外架一個資料庫服務。資料大很多時再換（見下方放大 100 倍）。"),
+        ("選 bge-m3，不選 bge-small-zh／multilingual-e5",
+         f"MRR：bge-m3 {_ci(m3)}，bge-small-zh {_ci(sm)}，multilingual-e5 {_ci(e5)}。"
+         + ("區間有重疊，差距只能當方向。" if overlap else "") + speed + "bge-small-zh 與 e5 沒量過載入與編碼時間。"),
+        ("不加重排序模型（reranker）",
+         f"沒量過。資料少，單獨 bge-m3 的 MRR 已有 {_f(m3['mrr'])}；沒有試過加 reranker 會不會更好。"),
+        ("不用混合檢索",
+         f"原本預期混合（關鍵字加向量）會贏。bge-m3 減混合的 MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
+         + ("：區間含 0，數據沒有支持混合比較好，所以用較簡單的單一向量找法。" if df["lo"] <= 0 <= df["hi"]
+            else "：區間不含 0，單一向量找法與混合的差異可信。")),
+        ("DeepSeek 生成與評審，另請 GPT 複查",
+         f"{check}評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查；兩者都只量答案有沒有依據，不量對不對。"
+         if gen else "評審和生成同為 DeepSeek，可能偏愛自己的答案；兩者都只量答案有沒有依據，不量對不對。這份輸出沒有複查結果。"),
+    ]
+    return ("<h3>為什麼選這個，不選那個</h3><ul class=trade>"
+            + "".join(f"<li><b>{escape(t)}</b><span>{escape(x)}</span></li>" for t, x in rows) + "</ul>")
+
+
+def _scale() -> str:
+    """設計說明，不是已實作：寫死的文字，頁面明確標示。"""
+    items = ["向量庫換成近似最近鄰索引（例如 HNSW），並支援增量索引：新增資料只編碼新段落。",
+             "解析管線：支援 PDF，掃描檔加 OCR，再進現有的切段。",
+             "快取與成本控制：相同問題的答案快取，LLM 用量按使用者計量。",
+             "權限與多使用者：帳號、角色，取代單一存取碼。",
+             "評估集擴充與持續回歸：題目增加後每次改動自動重跑，成績掉了就擋下。",
+             "觀測與追蹤：記錄每次查詢的找到段落、延遲與失敗原因。"]
+    return ("<h3>資料放大 100 倍會怎麼改</h3><p class=note><b>設計說明，不是已實作。</b>下面每一項目前都沒有做。</p><ul class=plain>"
+            + "".join(f"<li>{escape(x)}</li>" for x in items) + "</ul>")
+
+
+def _limits(d) -> str:
+    items = ["單機：一台電腦、一個行程。", "存取碼與本人密碼是唯一的權限控管。",
+             f"題少：只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案。", "沒有獨立測試題：題目與語料同源。"]
+    return "<h3>目前限制</h3><ul class=plain>" + "".join(f"<li>{escape(x)}</li>" for x in items) + "</ul>"
+
+
 def _eng(d, n_segments: int, n_companies: int, lengths=None) -> str:
     """給工程面試官的技術細節（預設收合）。附在第 4 塊底下；沒有評估資料時整塊不顯示。"""
     return ("<details class=eng><summary>給工程面試官：技術細節</summary>"
-            f"<h3>系統架構</h3>{_arch(n_segments, n_companies)}{_lengths(lengths)}</details>")
+            f"<h3>系統架構</h3>{_arch(n_segments, n_companies)}{_lengths(lengths)}"
+            f"{_trade(d, n_segments)}{_scale()}{_limits(d)}</details>")
 
 
 def _scores(d) -> str:

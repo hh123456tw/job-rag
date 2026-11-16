@@ -75,3 +75,72 @@ def test_length_section_numbers_come_from_the_loaded_segments(client):
     assert f"共 {len(lens)} 段" in sec and f"平均 {statistics.mean(lens):.0f} 字" in sec
     assert f"中位數 {statistics.median(lens):.0f} 字" in sec and f"最長 {max(lens)} 字" in sec
     assert f"約 {retrieval.CHUNK} 字、重疊 {retrieval.OVERLAP} 字" in sec and "先依標題切" in sec
+
+
+# ---- 取捨、放大 100 倍、限制 ----
+SPACES = """| 項目 | 核心 0、1（較快） | 核心 16、17（較慢） |
+|---|---|---|
+| 載入 bge-m3 | 9.3 秒 | 18.6 秒 |
+| 預熱後單次查詢，bge-m3，中位數（20 次） | 0.14 秒 | 0.28 秒 |
+"""
+
+
+def trade_rows(client) -> dict:
+    sec = re.search(r"<h3>為什麼選這個，不選那個</h3><ul class=trade>(.*?)</ul>", eng(client), re.S).group(1)
+    return dict(re.findall(r"<li><b>([^<]+)</b><span>([^<]+)</span></li>", sec))
+
+
+def test_tradeoff_rows_exist_and_numbers_come_from_the_output_files(client):
+    rows = trade_rows(client)
+    assert list(rows) == ["選 FAISS，不選 Qdrant／Milvus", "選 bge-m3，不選 bge-small-zh／multilingual-e5", "不加重排序模型（reranker）",
+                          "不用混合檢索", "DeepSeek 生成與評審，另請 GPT 複查"]
+    n = sum(retrieval.public_company_counts().values())
+    assert f"只有 {n} 段" in rows["選 FAISS，不選 Qdrant／Milvus"]
+    m3 = rows["選 bge-m3，不選 bge-small-zh／multilingual-e5"]
+    assert "0.875" in m3 and "0.833" not in m3  # 夾具：bge-m3 MRR 手算 0.875
+    assert "沒量過載入與編碼時間" in m3  # 沒有紀錄的數字不寫
+    rr = rows["不加重排序模型（reranker）"]
+    assert "沒量過" in rr and "0.875" in rr and "有量" not in rr and "證明" not in rr
+    hy = rows["不用混合檢索"]
+    assert re.search(r"MRR 差 [+-]0\.\d{3}，95% 區間 \[[+-]0\.\d{3}, [+-]0\.\d{3}\]", hy) and "數據沒有支持" in hy
+    assert "自我偏好" in rows["DeepSeek 生成與評審，另請 GPT 複查"] or "偏愛自己" in rows["DeepSeek 生成與評審，另請 GPT 複查"]
+
+
+def test_performance_numbers_only_when_the_record_file_exists(client, root):  # noqa: F811
+    assert "9.3" not in trade_rows(client)["選 bge-m3，不選 bge-small-zh／multilingual-e5"]  # 沒有紀錄檔就不寫
+    put(root, "eval/spaces_feasibility.md", SPACES)
+    m3 = trade_rows(client)["選 bge-m3，不選 bge-small-zh／multilingual-e5"]
+    assert "載入約 9.3 秒" in m3 and "中位數約 0.14 秒" in m3 and "不是雲端實測" in m3 and "eval/spaces_feasibility.md" in m3
+    put(root, "eval/spaces_feasibility.md", "沒有表格")  # 對不上格式也不寫，不猜
+    assert "9.3" not in trade_rows(client)["選 bge-m3，不選 bge-small-zh／multilingual-e5"]
+
+
+def test_hybrid_difference_matches_the_committed_output_text():
+    d = about.load()  # 真的輸出檔（repo 內已有）
+    txt = (about.ROOT / "eval/results_methods.txt").read_text(encoding="utf-8")
+    want = re.search(r"bge-m3 減 hybrid 的 MRR 差：([+-]\d\.\d{3})，95% 區間 \[([+-]\d\.\d{3}), ([+-]\d\.\d{3})\]", txt).groups()
+    got = d["mrr_diff"]
+    assert (f"{got['diff']:+.3f}", f"{got['lo']:+.3f}", f"{got['hi']:+.3f}") == want
+
+
+def test_scale_up_is_labeled_design_note_and_lists_six_items(client):
+    sec = re.search(r"<h3>資料放大 100 倍會怎麼改</h3>(.*?)(?=<h3>|$)", eng(client), re.S).group(1)
+    assert "設計說明，不是已實作" in sec
+    assert len(re.findall(r"<li>", sec)) == 6
+    for w in ("HNSW", "增量索引", "PDF", "OCR", "快取", "權限", "多使用者", "評估集", "觀測"):
+        assert w in sec
+
+
+def test_not_done_claims_are_really_absent_in_the_code():
+    import pathlib
+    src = "\n".join(p.read_text(encoding="utf-8") for p in pathlib.Path("job_rag").glob("*.py") if p.name != "about_page.py")
+    src += pathlib.Path("app.py").read_text(encoding="utf-8")
+    for w in ("CrossEncoder", "qdrant", "milvus", "hnsw", "langfuse", "langsmith", "opentelemetry", "pdfplumber", "pytesseract"):
+        assert w.lower() not in src.lower(), w
+
+
+def test_limits_section_has_four_lines(client):
+    sec = re.search(r"<h3>目前限制</h3>(.*?)(?=<h3>|$)", eng(client), re.S).group(1)
+    items = re.findall(r"<li>([^<]+)</li>", sec)
+    assert len(items) == 4 and "單機" in items[0] and "存取碼" in items[1] and "本人密碼" in items[1]
+    assert "4 題" in items[2] and "獨立測試題" in items[3]
