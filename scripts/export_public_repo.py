@@ -1,7 +1,7 @@
 """白名單匯出：python -X utf8 scripts/export_public_repo.py [輸出資料夾，預設 dist/public_repo]
 預設拒絕：只複製下面 FILES／GLOBS 明列的檔案，其他一律不碰。匯出後再掃一遍（私人字串、金鑰、電話、信箱、禁止的路徑），
 有任何發現就刪掉輸出並以非 0 結束。輸出資料夾沒有 git 歷史；要公開時由使用者自己在那裡 git init。
-真語料的檔名清單來自環境變數 JOB_RAG_CORPUS（有設才逐字比對）。這個腳本與它的測試不會被複製到公開版。"""
+真語料的檔名清單來自環境變數 JOB_RAG_REAL_CORPUS（有設才逐字比對）。這個腳本與它的測試不會被複製到公開版。"""
 import os
 import re
 import shutil
@@ -108,7 +108,7 @@ def export(root, out) -> list[tuple[str, str]]:
 
 def main():
     out = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "dist" / "public_repo"
-    corpus = os.environ.get("JOB_RAG_CORPUS")
+    corpus = os.environ.get("JOB_RAG_REAL_CORPUS")
     names = [f.name for f in Path(corpus).rglob("*.md")] if corpus and Path(corpus).is_dir() else []
     copies = export(ROOT, out)
     found = scan(out, real_names=names)
@@ -122,7 +122,7 @@ def main():
         total += size
         print(f"{size:>9,}  {dst}")
     print(f"\n匯出 {len(copies)} 個檔案、{total / 1e3:.1f} KB 到 {out}；掃描乾淨"
-          + ("" if names else "（沒設 JOB_RAG_CORPUS：略過真語料檔名逐字比對）"))
+          + ("" if names else "（沒設 JOB_RAG_REAL_CORPUS：略過真語料檔名逐字比對）"))
 
 
 if __name__ == "__main__":

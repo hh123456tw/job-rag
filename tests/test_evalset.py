@@ -135,6 +135,6 @@ def test_no_interview_or_review_questions_remain():
 
 
 @needs_real
-@pytest.mark.skipif(not os.environ.get("JOB_RAG_CORPUS"), reason="需要完整語料")
+@pytest.mark.skipif(not os.environ.get("JOB_RAG_REAL_CORPUS"), reason="需要完整語料（JOB_RAG_REAL_CORPUS）")
 def test_real_question_set_verifies_against_real_corpus():
-    assert verify(_real()) == []
+    assert verify(_real(), os.environ["JOB_RAG_REAL_CORPUS"]) == []

@@ -134,3 +134,11 @@ python -X utf8 -m job_rag.generation
 - http 區網 IP：iOS Safari 的「加到主畫面」可用，不需要 https；Android Chrome 的安裝提示（安裝為 App）需要 https，http 下最多是瀏覽器標示的主畫面捷徑，是否全螢幕未驗證。
 - https（通道或雲端）：兩者都可用，Android 才有安裝選項。
 - 依據：[Chrome 安裝條件](https://web.dev/articles/install-criteria)、[MDN](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable)（安裝不需要 service worker；localhost 例外）。
+
+## 公開版匯出（票 09）
+```
+set JOB_RAG_REAL_CORPUS=<完整語料>   # 有設才會逐字比對真語料檔名；真語料相關測試也靠它
+python -X utf8 scripts/export_public_repo.py    # 輸出到 dist/public_repo/（不進 git）
+```
+預設拒絕：只複製 `scripts/export_public_repo.py` 的 `FILES`／`GLOBS` 明列的檔案；公開版 README、`start.bat`、`.gitignore` 來自 `public/`。匯出後自動掃描（金鑰、信箱、電話、私人路徑與帳號、私人用語、完整語料檔名、禁止的路徑），有發現就刪掉輸出並失敗。輸出資料夾沒有 git 歷史；要公開時另建新 repo，從該資料夾 `git init`。
+範例語料在 `sample_corpus/`（3 家、只含公開事實段落），範例題在 `eval/questions.sample.json`（`source` 欄標明來源）。依賴完整題組或完整輸出的測試要設 `JOB_RAG_REAL_QUESTIONS=<eval/questions.json 的路徑>`、`JOB_RAG_REAL_CORPUS=<完整語料>` 才跑。

@@ -62,7 +62,7 @@ Windows 也可以雙擊 `start.bat`（預設語料是同資料夾的 `sample_cor
 python -m pytest tests
 ```
 
-用 `tests/fixtures/mini` 的假語料與假嵌入器，不需要模型也不連網。少數測試要設環境變數才會跑（沒設就顯示 skipped）：`JOB_RAG_CORPUS`／`JOB_RAG_REAL_CORPUS`（對自己的完整語料做冒煙）、`JOB_RAG_REAL_QUESTIONS`（完整題組）、`JOB_RAG_MODELS_TEST=1`（用真模型）。
+用 `tests/fixtures/mini` 的假語料與假嵌入器，不需要模型也不連網。少數測試要設環境變數才會跑（沒設就顯示 skipped）：`JOB_RAG_REAL_CORPUS`（對自己的完整語料做冒煙）、`JOB_RAG_REAL_QUESTIONS`（完整題組）、`JOB_RAG_MODELS_TEST=1`（用真模型）。
 
 ### 5. 整理成答案（選用，會呼叫外部 API）
 

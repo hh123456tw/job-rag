@@ -146,7 +146,8 @@ def test_ambiguous_file_and_no_company_in_title_stays_general(mixed_corpus):
         assert not any("海龜" in x["text"] for x in q("海龜職缺", company=c, corpus=mixed_corpus, k=50))
 
 
-@pytest.mark.skipif(not os.environ.get("JOB_RAG_CORPUS"), reason="需要完整語料")
+@pytest.mark.skipif(not os.environ.get("JOB_RAG_REAL_CORPUS"), reason="需要完整語料（JOB_RAG_REAL_CORPUS）")
 def test_real_corpus_smoke():
-    assert search("FastAPI", method="bm25")
-    assert "綜合" not in public_company_counts()  # 公開段落都歸得到公司
+    real = os.environ["JOB_RAG_REAL_CORPUS"]
+    assert search("FastAPI", method="bm25", corpus=real)
+    assert "綜合" not in public_company_counts(real)  # 公開段落都歸得到公司

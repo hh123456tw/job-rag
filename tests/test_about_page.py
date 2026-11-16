@@ -1,4 +1,5 @@
 """專案說明頁（/about）：Flask test client，假嵌入器，假輸出檔。"""
+import os
 import re
 
 import pytest
@@ -109,6 +110,7 @@ def test_each_passage_is_indexed_with_company_and_heading_prefix():
     assert any(t.startswith("甲科技 1. 基本資料\n") for t in texts)
 
 
+@pytest.mark.skipif(not os.environ.get("JOB_RAG_REAL_QUESTIONS"), reason="需要私人 repo 的完整題組與評估輸出（JOB_RAG_REAL_QUESTIONS）")
 def test_committed_output_files_match_the_current_question_set():
     d = about.load()  # 真的輸出檔；題組改了卻沒重跑評估，這裡會失敗
     assert d["n_answerable"] == 25 and d["n_unanswerable"] == 5 and len(d["table"]) == 5

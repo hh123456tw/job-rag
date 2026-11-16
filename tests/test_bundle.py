@@ -121,10 +121,10 @@ def test_bundle_has_only_bge_m3_vectors(bundle, monkeypatch):
         search("鯨魚", method="e5-large")
 
 
-# ---- 真語料：全文比對（沒設 JOB_RAG_CORPUS 就跳過）----
-@pytest.mark.skipif(not os.environ.get("JOB_RAG_CORPUS"), reason="需要完整語料")
+# ---- 真語料：全文比對（沒設 JOB_RAG_REAL_CORPUS 就跳過）----
+@pytest.mark.skipif(not os.environ.get("JOB_RAG_REAL_CORPUS"), reason="需要完整語料（JOB_RAG_REAL_CORPUS）")
 def test_real_bundle_contains_no_excluded_text(tmp_path):
-    corpus = os.environ["JOB_RAG_CORPUS"]
+    corpus = os.environ["JOB_RAG_REAL_CORPUS"]
     out = tmp_path / "b"
     export_bundle(corpus, out)
     root = str(Path(corpus).resolve())
@@ -143,12 +143,12 @@ def test_real_bundle_contains_no_excluded_text(tmp_path):
     assert not [s for s in excluded if len(s["text"]) >= 12 and s["text"] not in public_blob and s["text"] in blob]
 
 
-@pytest.mark.skipif(not (os.environ.get("JOB_RAG_MODELS_TEST") and os.environ.get("JOB_RAG_CORPUS")), reason="需要真模型與真語料")
+@pytest.mark.skipif(not (os.environ.get("JOB_RAG_MODELS_TEST") and os.environ.get("JOB_RAG_REAL_CORPUS")), reason="需要真模型與真語料（JOB_RAG_REAL_CORPUS）")
 def test_real_model_bundle_ranks_equal_corpus_ranks(tmp_path, monkeypatch):
     monkeypatch.undo()  # 用真模型：移除假嵌入器
     _clear()
     out = tmp_path / "b"
-    export_bundle(os.environ["JOB_RAG_CORPUS"], out)
+    export_bundle(os.environ["JOB_RAG_REAL_CORPUS"], out)
     qs = [e["question"] for e in json.loads(questions_path().read_text(encoding="utf-8"))["questions"]][:8]
     assert len(qs) >= 5
     want = [search(x, method=m, k=5, gate=False) for x in qs for m in ("bge-m3", "hybrid")]

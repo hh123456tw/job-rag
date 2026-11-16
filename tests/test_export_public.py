@@ -94,8 +94,8 @@ def exported(tmp_path_factory):
 
 
 def test_real_export_passes_scan_and_has_no_git_history(exported):
-    real = os.environ.get("JOB_RAG_CORPUS")
-    names = [f.name for f in Path(real).rglob("*.md")] if real and Path(real).is_dir() and "sample_corpus" not in real else []
+    real = os.environ.get("JOB_RAG_REAL_CORPUS")
+    names = [f.name for f in Path(real).rglob("*.md")] if real and Path(real).is_dir() else []
     assert ex.scan(exported, real_names=names) == []
     assert not list(exported.rglob(".git*")) or [p.name for p in exported.rglob(".git*")] == [".gitignore"]
 
