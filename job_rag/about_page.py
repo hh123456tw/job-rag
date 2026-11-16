@@ -119,6 +119,8 @@ def _level(d) -> str:
         done.append(f"答案評估：RAGAS 忠實度 {_f(g['faithfulness'])}、答案相關性 {_f(g['answer_relevancy'])}")
     if c:
         done.append(f"換一個 AI 獨立複查：{c['claims']} 個說法中 {c['supported']} 個有依據")
+    if x := d.get("cross_eval"):
+        done.append(f"跨公司提問：每家公司各找 {x['per']} 段再逐家整理；{x['n']} 題中 {x['passed']} 題結果正確（各家涵蓋率平均 {x['coverage']:.2f}）")
     done.append(f"追問記憶：帶入最近 {memory.MAX_TURNS} 輪（簡單規則）")
     undone = ["重排序模型（reranker）", "向量資料庫（資料只有數百段，在記憶體內搜尋就夠）", "微調模型",
               "線上監控與使用者回饋", "獨立測試題（題目與語料同源）"]
@@ -230,6 +232,8 @@ def _scale() -> str:
 def _limits(d) -> str:
     items = ["單機：一台電腦、一個行程。", "存取碼與本人密碼是唯一的權限控管。",
              f"題少：只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案。", "沒有獨立測試題：題目與語料同源。"]
+    if x := d.get("cross_eval"):
+        items.append(f"跨公司題的查無常數 {x['floor']} 用同一批 {x['n']} 題挑的，偏樂觀；可回答題有 {x['n_answerable'] - x['answerable_ok']} 題被誤擋。")
     return "<h3>目前限制</h3><ul class=plain>" + "".join(f"<li>{escape(x)}</li>" for x in items) + "</ul>"
 
 

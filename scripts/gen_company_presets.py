@@ -35,6 +35,20 @@ ALL_BANK = [
     ("ai", "AI 平台職缺", "AI 平台架構師的職缺有哪些？", ("AI",)),
     ("java", "Java 職缺", "Java 工程師的職缺有哪些？", ("Java", "JAVA")),
 ]
+# 票 31：跨公司預設題（走跨公司路徑）。要求被偵測為跨公司、最高分不低於 CROSS_FLOOR；放在「全部公司」的最前面。
+# 「面試」題不放這裡：展示索引不收面試內容（自用模式的面經題另有 IV_ALL）；第三題改用出差或外派。
+CROSS_BANK = [
+    ("x_salary", "哪間薪水好", "哪一間薪水比較好？"),
+    ("x_tech", "哪些用 Python", "哪些公司用 Python？"),
+    ("x_travel", "哪家要出差", "哪一家的職缺需要出差或外派？"),
+]
+
+
+def ok_cross(q):
+    if not retrieval.is_cross(q):
+        return False
+    hits = retrieval.cross_search(q, companies={n for _, n in __import__("app")._company_buttons()})
+    return bool(hits) and max(h["score"] for h in hits) >= retrieval.CROSS_FLOOR
 
 
 def ok_company(label, name, tail, kws):
@@ -62,7 +76,8 @@ def build():
             fill = (gated_ok + [x for x in rest if x not in gated_ok])[: 3 - len(passed)]
             passed += [(k, b, f"{label}{t}") for k, b, t in fill]
         out["companies"][label] = {"thin": thin, "presets": [{"key": k, "label": b, "q": q} for k, b, q in passed[:5]]}
-    out["all"] = [{"key": k, "label": b, "q": q} for k, b, q, kws in ALL_BANK if ok_all(q, kws)][:4]
+    out["all"] = ([{"key": k, "label": b, "q": q} for k, b, q in CROSS_BANK if ok_cross(q)]
+                  + [{"key": k, "label": b, "q": q} for k, b, q, kws in ALL_BANK if ok_all(q, kws)][:2])
     return out
 
 

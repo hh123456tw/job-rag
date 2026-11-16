@@ -6,6 +6,7 @@ import pytest
 from job_rag import cross_search, guard, is_cross, retrieval
 from job_rag.answer import CROSS_RULES, SYSTEM, answer
 from tests.test_answer import FakePost, MINI  # noqa: F401
+from tests.test_about_data import root  # noqa: F401
 from tests.test_vector import fake_env  # noqa: F401  (autouse fixture)
 
 YES = ["哪一間薪水比較好？", "哪些公司用 Python？", "哪家公司有後端職缺", "哪間公司值得優先投", "各家的技術堆疊有什麼不同",
@@ -98,3 +99,29 @@ def test_cross_rules_only_in_cross_prompt(monkeypatch):
 def test_cross_search_companies_filter_limits_to_listed_companies():
     hits = cross_search("哪間公司有後端職缺", per=3, corpus=MINI, companies={"甲科技"})
     assert hits and {h["company"] for h in hits} == {"甲科技"}
+
+
+# ---- /about 的跨公司一行：數字取自輸出檔，過期或缺檔就不寫 ----
+def _cross_out(root, digest=None):
+    import hashlib
+    from tests.test_about_data import put
+    q = '{"questions": []}'
+    put(root, "eval/questions_cross.json", q)
+    d = digest or hashlib.sha1(q.encode("utf-8")).hexdigest()[:16]
+    row = lambda i, a, st, n: {"id": i, "answerable": a, "status": st, "n_correct": n, "coverage": (0.5 if a else None)}
+    put(root, "eval/results_cross.json", {"digest": d, "floor": 0.534, "per_default": 2,
+        "per": {"2": [row("x1", True, "ok", 2), row("x2", True, "low", 0), row("u1", False, "low", 0)]}})
+
+
+def test_about_cross_line_comes_from_output_file(root):
+    from job_rag.about import load
+    _cross_out(root)
+    x = load(root)["cross_eval"]
+    assert (x["n"], x["passed"], x["n_answerable"], x["answerable_ok"], x["floor"], x["per"]) == (3, 2, 2, 1, 0.534, 2)
+
+
+def test_about_cross_line_omitted_when_missing_or_stale(root):
+    from job_rag.about import load
+    assert load(root)["cross_eval"] is None
+    _cross_out(root, digest="0" * 16)
+    assert load(root)["cross_eval"] is None

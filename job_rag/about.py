@@ -111,6 +111,24 @@ def _followup(root: Path):
         raise AboutDataError(f"results_followups.json 格式不對：{e}") from e
 
 
+def _cross_eval(root: Path):
+    """跨公司題評估（票 31）。輸出檔不存在、讀不了、或和題檔對不上（過期）都回 None，頁面就不寫這一行，不用舊數字。"""
+    import hashlib
+    try:
+        r = json.loads((root / "eval/results_cross.json").read_text(encoding="utf-8"))
+        raw = (root / "eval/questions_cross.json").read_bytes()
+        if r["digest"] != hashlib.sha1(raw).hexdigest()[:16]:
+            return None
+        rows = r["per"][str(r["per_default"])]
+        ans = [x for x in rows if x["answerable"]]
+        ok = lambda x: (x["status"] == "ok" and x["n_correct"] > 0) if x["answerable"] else x["status"] == "low"
+        return {"n": len(rows), "passed": sum(map(ok, rows)), "n_answerable": len(ans), "answerable_ok": sum(map(ok, ans)),
+                "per": r["per_default"], "floor": r["floor"],
+                "coverage": sum(x["coverage"] for x in ans if x["coverage"] is not None) / sum(x["coverage"] is not None for x in ans)}
+    except (OSError, ValueError, KeyError, TypeError, ZeroDivisionError):
+        return None
+
+
 def _mrr_diff(methods: dict) -> dict:
     """bge-m3 減混合的 MRR 差與 95% 區間（同一批重抽的題目，算法與 evaluate 的 results_methods.txt 相同）。"""
     a, b = methods["bge-m3"], methods["hybrid"]
@@ -166,7 +184,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error,
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,

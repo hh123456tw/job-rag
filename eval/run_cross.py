@@ -78,6 +78,10 @@ def render(qs, out):
     ans = [r for r in r1 if r["answerable"]]
     un = [r for r in r1 if not r["answerable"]]
     L.append(f"每題最高分（與每家段數無關）：可回答題最低 {min(r['top'] for r in ans):.3f}，不可回答題最高 {max(r['top'] for r in un):.3f}")
+    tops = sorted((r["top"], r["id"]) for r in ans)
+    L.append(f"CROSS_FLOOR 挑法：不可回答題最高 {max(r['top'] for r in un):.3f}；可回答題最低兩題 {tops[0][1]} {tops[0][0]:.3f}、{tops[1][1]} {tops[1][0]:.3f}。"
+             "兩組分數有重疊（最低的可回答題低於最高的不可回答題），不能全部分開；取不可回答題最高分與其上一題可回答題的中點，"
+             "寧可誤擋一題可回答題，也不對語料沒有的主題硬答。挑選用的就是這 15 題，偏樂觀：新題不保證分得開。")
     for per, rows in out["per"].items():
         L += ["", f"== 每家取 {per} 段 ==",
               "題號 通過 公司數 段數 相關家數 含關鍵字家數 涵蓋率 字數 估token 毫秒 最高分 問句"]

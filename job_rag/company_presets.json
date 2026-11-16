@@ -183,6 +183,21 @@
  },
  "all": [
   {
+   "key": "x_salary",
+   "label": "哪間薪水好",
+   "q": "哪一間薪水比較好？"
+  },
+  {
+   "key": "x_tech",
+   "label": "哪些用 Python",
+   "q": "哪些公司用 Python？"
+  },
+  {
+   "key": "x_travel",
+   "label": "哪家要出差",
+   "q": "哪一家的職缺需要出差或外派？"
+  },
+  {
    "key": "py",
    "label": "Python 後端職缺",
    "q": "Python 後端工程師的職缺有哪些？"
@@ -191,16 +206,6 @@
    "key": "fullstack",
    "label": "Python 全端職缺",
    "q": "Python 全端工程師的職缺有哪些？"
-  },
-  {
-   "key": "cloud",
-   "label": "雲端職缺",
-   "q": "雲端工程師的職缺有哪些？"
-  },
-  {
-   "key": "front",
-   "label": "前端職缺",
-   "q": "前端工程師的職缺有哪些？"
   }
  ]
 }
