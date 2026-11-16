@@ -63,6 +63,8 @@ body.chat{max-width:820px;height:100vh;height:100dvh;margin:0 auto;padding:0;dis
 .steps{margin-bottom:6px}.step{font-size:.9375rem;color:var(--mute);line-height:1.5}.step::before{content:"\\203A  "}
 .body .answer{white-space:pre-wrap;margin:4px 0 0}.src{margin:8px 0 0;padding-left:20px;color:var(--mute);font-size:.9375rem}
 .raw{margin-top:10px}.raw .hit{background:var(--bg);margin:8px 0}.raw pre{font:inherit;white-space:pre-wrap;margin:6px 0 0;line-height:1.6}
+.hh{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:4px;font-size:.8125rem;color:var(--mute)}
+.sc{padding:0 8px;border:1px solid var(--line);border-radius:999px;font-variant-numeric:tabular-nums;white-space:nowrap}.sc.lo{border-style:dashed;color:var(--err)}
 .typing{display:inline-flex;gap:5px;padding:6px 0}.typing i{width:8px;height:8px;border-radius:50%;background:var(--mute);animation:pulse 1.2s ease-in-out infinite}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
 #bar{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
 #bar input{flex:1}#bar .go{min-width:76px}

@@ -20,8 +20,12 @@ function say(text,ch){var m=msg('bot');m.appendChild(el('p',null,text));if(ch)m.
 function hint(){noChips();var m=msg('bot'),L=JSON.parse(B.dataset.hint);L.forEach(function(t){m.appendChild(el('p','hl',t))});m.appendChild(presetChips(''));end();save()}
 function greet(){say(B.dataset.hello);hint()}
 function api(url,p,sig){return fetch(url+'?'+new URLSearchParams(p),{signal:sig}).then(function(r){return r.json().catch(function(){return{status:'error',message:'回應格式不符'}})})}
-function rawBox(hits,dim,open){var d=el('details','raw');if(open)d.open=true;d.appendChild(el('summary',null,'看原文（'+hits.length+'）'));
-hits.forEach(function(h){var x=el('div','hit'+(dim?' dim':''));if(h.private)x.appendChild(el('span','priv','自用資料'));x.appendChild(el('b',null,h.company+' · '+h.file+' · '+h.heading_path));x.appendChild(el('pre',null,h.text));
+function num(x){return typeof x==='number'&&isFinite(x)}
+function scoreTag(s,t){if(!num(s)||!num(t))return null;var lo=s<t,d=3;while(d<8&&s!==t&&s.toFixed(d)===t.toFixed(d))d++;
+var g=el('span','sc'+(lo?' lo':''),s.toFixed(d)+(lo?' < ':' ≥ ')+t.toFixed(d)+(lo?' 低於門檻':''));g.title='相似度分數／查無門檻（bge-m3）';return g}
+function rawBox(hits,dim,open,thr){var d=el('details','raw');if(open)d.open=true;d.appendChild(el('summary',null,'看原文（'+hits.length+'）'));
+hits.forEach(function(h,i){var g=scoreTag(h.score,thr),x=el('div','hit'+(dim||(g&&g.className.indexOf('lo')>0)?' dim':''));
+var r=el('div','hh');r.appendChild(el('span','no','['+(i+1)+']'));if(g)r.appendChild(g);x.appendChild(r);if(h.private)x.appendChild(el('span','priv','自用資料'));x.appendChild(el('b',null,h.company+' · '+h.file+' · '+h.heading_path));x.appendChild(el('pre',null,h.text));
 if(h.also_in&&h.also_in.length)x.appendChild(el('small',null,'也出現於：'+h.also_in.map(function(a){return a.file+' · '+a.heading_path}).join('；')));d.appendChild(x)});return d}
 function run(q){
 busy=true;var HJ=hist.length?hjson():'',m=msg('bot'),steps=el('div','steps'),body=el('div','body');
@@ -34,20 +38,20 @@ function bad(t,box){dots.remove();body.appendChild(el('p','err',t));if(box)body.
 step('搜尋資料（範圍：'+LB+'）');
 api('/api/search',hp({q:q,company:scope||''})).then(function(j){
 if(stale(j))return;if(j.status!=='ok'&&j.status!=='low'){bad(j.message||'搜尋失敗',null);return}
-var hits=j.hits||[];if(j.expanded)step('問題很短，接上一題一起搜尋');if(j.detected)step('已偵測到公司：'+j.company+'，只搜這一家');
+var hits=j.hits||[],thr=j.threshold;if(j.expanded)step('問題很短，接上一題一起搜尋');if(j.detected)step('已偵測到公司：'+j.company+'，只搜這一家');
 step(hits.length?'找到 '+hits.length+' 段：'+hits.map(function(h){return sh(h.heading_path)}).join('、'):'沒有找到段落');
 if(j.status==='low'){dots.remove();body.appendChild(el('p',null,'我找不到很接近的內容，不確定有沒有答案。下面的原文僅供參考，請自己核對。'));
-if(hits.length)body.appendChild(rawBox(hits,true,true));rec(q,'（沒有找到很接近的內容）');done();return}
+if(hits.length)body.appendChild(rawBox(hits,true,true,thr));rec(q,'（沒有找到很接近的內容）');done();return}
 step('整理答案');
 var c=new AbortController(),to=setTimeout(function(){c.abort()},40000);
 api('/api/answer',hp({q:q,company:j.company||''}),c.signal).then(function(a){clearTimeout(to);if(stale(a))return;dots.remove();
 if(a.status==='ok'){
-if(a.answer==='查無'){body.appendChild(el('p',null,'查無：語料裡沒有明確的答案。原文在下面，請自己核對。'));body.appendChild(rawBox(hits,false,true));rec(q,'（資料中沒有找到答案）');done();return}
+if(a.answer==='查無'){body.appendChild(el('p',null,'查無：語料裡沒有明確的答案。原文在下面，請自己核對。'));body.appendChild(rawBox(hits,false,true,thr));rec(q,'（資料中沒有找到答案）');done();return}
 var p=el('p','answer',a.answer);body.appendChild(p);var u=el('ul','src');
-a.sources.forEach(function(s){u.appendChild(el('li',null,s.company+' · '+sh(s.heading_path)))});body.appendChild(u);body.appendChild(rawBox(hits,false,false));rec(q,a.answer);done();return}
-if(a.status==='low'){body.appendChild(el('p',null,'我找不到很接近的內容，不確定有沒有答案。'));body.appendChild(rawBox(hits,true,true));rec(q,'（沒有找到很接近的內容）');done();return}
-body.appendChild(el('p','err',a.message||'整理失敗。原文在下面。'));body.appendChild(rawBox(hits,false,true));done()
-}).catch(function(){clearTimeout(to);dots.remove();body.appendChild(el('p','err','整理失敗：逾時或無法連線。原文在下面。'));body.appendChild(rawBox(hits,false,true));done()})
+a.sources.forEach(function(s){u.appendChild(el('li',null,s.company+' · '+sh(s.heading_path)))});body.appendChild(u);body.appendChild(rawBox(hits,false,false,thr));rec(q,a.answer);done();return}
+if(a.status==='low'){body.appendChild(el('p',null,'我找不到很接近的內容，不確定有沒有答案。'));body.appendChild(rawBox(hits,true,true,thr));rec(q,'（沒有找到很接近的內容）');done();return}
+body.appendChild(el('p','err',a.message||'整理失敗。原文在下面。'));body.appendChild(rawBox(hits,false,true,thr));done()
+}).catch(function(){clearTimeout(to);dots.remove();body.appendChild(el('p','err','整理失敗：逾時或無法連線。原文在下面。'));body.appendChild(rawBox(hits,false,true,thr));done()})
 }).catch(function(){bad('搜尋失敗：無法連線。',null)})}
 function ask(q,key){if(busy)return;lastKey=key||'';noChips();say(q).className='msg me';run(q)}
 T.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b||busy)return;ask(b.dataset.q,b.dataset.k)});

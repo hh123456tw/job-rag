@@ -1,0 +1,89 @@
+"""票 28：白盒化畫面。用 Playwright 驅動系統 Chrome 打開本機測試伺服器（假嵌入器、DeepSeek 替身）。
+替身的 usage（1234／56）是假值，只驗證畫面會顯示；沒有 Chrome 或 Playwright 時整檔略過。"""
+import threading
+from urllib.parse import quote
+
+import pytest
+
+from job_rag import guard, retrieval, search
+from tests.test_answer import MINI
+from tests.test_vector import fake_env  # noqa: F401  (autouse fixture)
+
+sync_api = pytest.importorskip("playwright.sync_api")
+Q = "鯨魚追蹤軟體"
+PAGE = "/c/" + quote("全部公司")
+
+
+@pytest.fixture
+def live(monkeypatch):
+    from werkzeug.serving import make_server
+    monkeypatch.setenv("JOB_RAG_CORPUS", str(MINI))
+    for k in ("JOB_RAG_ACCESS_CODE", "JOB_RAG_ANSWER_LIMIT", "JOB_RAG_OWNER_PIN"):
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("JOB_RAG_FAKE_ANSWER", "usage")
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")  # 假的
+    import app as appmod
+    monkeypatch.setattr(appmod, "_limiter", guard.RateLimit())
+    srv = make_server("127.0.0.1", 0, appmod.app, threaded=True)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    yield f"http://127.0.0.1:{srv.server_port}"
+    srv.shutdown()
+
+
+@pytest.fixture
+def page(live):
+    with sync_api.sync_playwright() as p:
+        try:
+            b = p.chromium.launch(channel="chrome")
+        except Exception as e:  # noqa: BLE001
+            pytest.skip(f"沒有可用的 Chrome：{e}")
+        pg = b.new_page()
+        pg.goto(live + PAGE)
+        yield pg
+        b.close()
+
+
+def ask(pg, q=Q):
+    pg.fill("#qi", q)
+    pg.click("#bar .go")
+    pg.wait_for_selector(".msg.bot .chips >> nth=-1")  # 一輪結束（done 會放常用題按鈕）
+
+
+def scores(question=Q):
+    return [h["score"] for h in search(question, corpus=MINI, gate=False, dedupe=True)]
+
+
+def mid_threshold(monkeypatch):
+    """把門檻設在第 1 與第 2 段分數之間：第 1 段高於、之後低於。"""
+    s = scores()
+    assert s[0] > s[1]
+    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", (s[0] + s[1]) / 2)
+    return s
+
+
+def test_every_hit_shows_its_score_and_threshold_and_marks_low_ones(page, monkeypatch):
+    s = mid_threshold(monkeypatch)
+    thr = retrieval.NOT_FOUND_THRESHOLD
+    ask(page)
+    tags = page.locator(".hit .sc")
+    assert tags.count() == len(s)
+    first = tags.nth(0).text_content()
+    assert f"{s[0]:.3f}" in first and f"{thr:.3f}" in first and "≥" in first and "低於門檻" not in first
+    assert "低於門檻" in tags.nth(1).text_content() and "<" in tags.nth(1).text_content()
+    assert page.locator(".hit").nth(0).get_attribute("class") == "hit"  # 高於門檻的不淡色
+    assert "dim" in page.locator(".hit").nth(1).get_attribute("class")
+
+
+def test_score_exactly_at_threshold_counts_as_above(page, monkeypatch):
+    s = scores()
+    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", s[0])
+    ask(page)
+    t = page.locator(".hit .sc").nth(0)
+    assert "≥" in t.text_content() and "低於" not in t.text_content()
+
+
+def test_no_score_label_when_server_sends_no_score(page):
+    page.route("**/api/search*", lambda r: r.fulfill(json={"status": "ok", "company": "", "detected": False, "expanded": False,
+                                                           "hits": [{"company": "甲", "file": "f", "heading_path": "h", "text": "t"}]}))
+    ask(page)
+    assert page.locator(".hit").count() == 1 and page.locator(".sc").count() == 0
