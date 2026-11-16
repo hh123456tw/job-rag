@@ -1,4 +1,6 @@
 """專案說明頁的 HTML。數字全部來自 about.load() 的輸出；純 HTML/CSS，不用圖表庫。"""
+import statistics
+
 from markupsafe import escape
 
 from . import METHODS, memory, retrieval
@@ -150,10 +152,38 @@ def _arch(n_segments: int, n_companies: int) -> str:
             f"<p class=lab>模式隔離</p>{chain(mode)}</div>")
 
 
-def _eng(d, n_segments: int, n_companies: int) -> str:
+BINS = 6  # 直方圖格數；每格寬度由切塊上限算出，最後一格開放（>= 上限的都放進去）
+
+
+def hist(lengths) -> list[tuple[str, int]]:
+    """(區間標籤, 段數)。每個長度恰好落在一格，所以段數總和等於 len(lengths)。"""
+    w = retrieval.CHUNK // BINS
+    counts = [0] * BINS
+    for n in lengths:
+        counts[min(max(n - 1, 0) // w, BINS - 1)] += 1
+    labels = [f"{i * w + 1}–{(i + 1) * w}" for i in range(BINS - 1)] + [f"{(BINS - 1) * w + 1} 以上"]
+    return list(zip(labels, counts))
+
+
+def _lengths(lengths) -> str:
+    """切段長度分佈：文字條直方圖＋統計。字數是 len(text)，和切塊常數同口徑。"""
+    if not lengths:
+        return ""
+    bins = hist(lengths)
+    top = max(n for _, n in bins) or 1
+    bars = "<ul class=bars>" + "".join(
+        f"<li><span class=lab>{escape(lab)} 字</span><span class=track><i style='width:{100 * n / top:.1f}%'></i></span><b>{n}</b></li>"
+        for lab, n in bins) + "</ul>"
+    return (f"<h3>切段長度</h3><p>共 {len(lengths)} 段；平均 {statistics.mean(lengths):.0f} 字、中位數 {statistics.median(lengths):.0f} 字、"
+            f"最長 {max(lengths)} 字（字數不含前面加的公司名與標題）。每格是落在該長度的段數。</p>{bars}"
+            f"<p>切塊常數：太長的段落再切成約 {retrieval.CHUNK} 字、重疊 {retrieval.OVERLAP} 字。"
+            "為什麼先依標題切：一個標題底下通常就是一個主題（例如「職缺」「技術堆疊」），整段一起找，答案不會被切在兩半；只有太長的才再切。</p>")
+
+
+def _eng(d, n_segments: int, n_companies: int, lengths=None) -> str:
     """給工程面試官的技術細節（預設收合）。附在第 4 塊底下；沒有評估資料時整塊不顯示。"""
     return ("<details class=eng><summary>給工程面試官：技術細節</summary>"
-            f"<h3>系統架構</h3>{_arch(n_segments, n_companies)}</details>")
+            f"<h3>系統架構</h3>{_arch(n_segments, n_companies)}{_lengths(lengths)}</details>")
 
 
 def _scores(d) -> str:
@@ -207,7 +237,7 @@ def _memory(data) -> str:
             f"只量了檢索，沒有量多輪答案品質；題少，只能當方向。</p>")
 
 
-def render(data: dict | None, error: str, n_segments: int, n_companies: int) -> str:
+def render(data: dict | None, error: str, n_segments: int, n_companies: int, lengths=None) -> str:
     """data 為 None 時（輸出檔缺或過期），成績與失敗案例改顯示明確錯誤，不用舊數字。"""
     err = f"<p class=err>無法顯示：{escape(error)}</p>"
     gen_limit = ("<li>評審與生成同為 DeepSeek，可能偏愛自己的答案。已另用 GPT 複查，但兩者都只量「答案有沒有依據」，不量對不對。</li>"
@@ -227,7 +257,7 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int) -> 
 <li><b>答案優先，失敗時回到原文。</b>先立刻顯示原文，再請 LLM 整理答案；失敗、逾時或達用量上限時，直接展開原文。</li>
 <li><b>沒把握就說「可能沒有答案」。</b>最高相似度低於門檻就提示，並且不呼叫 LLM，不亂答。</li>
 </ul>{_memory(data)}</section>
-<section><h2>4. 我比較了 5 種找法</h2>{(_scores(data) + _eng(data, n_segments, n_companies)) if data else err}</section>
+<section><h2>4. 我比較了 5 種找法</h2>{(_scores(data) + _eng(data, n_segments, n_companies, lengths)) if data else err}</section>
 <section><h2>5. 兩個失敗案例</h2>{_cases(data) if data else err}</section>
 <section><h2>6. 限制</h2><ul class=plain>
 <li>{counts}</li>

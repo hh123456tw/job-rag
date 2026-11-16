@@ -227,9 +227,9 @@ def about_page():
     counts = public_company_counts()
     n_company = len([c for c in counts if c != "綜合"])  # 「綜合」是無法歸屬的段落，不算公司
     try:
-        return render_about(about.load(), "", sum(counts.values()), n_company)
+        return render_about(about.load(), "", sum(counts.values()), n_company, retrieval.public_segment_lengths())
     except about.AboutDataError as e:  # 輸出檔缺、壞、過期：顯示錯誤，不用舊數字
-        return render_about(None, str(e), sum(counts.values()), n_company), 500
+        return render_about(None, str(e), sum(counts.values()), n_company, retrieval.public_segment_lengths()), 500
 
 
 def _low(hits):

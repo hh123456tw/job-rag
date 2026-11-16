@@ -52,3 +52,26 @@ def test_no_eng_details_when_output_is_missing(client, root):  # noqa: F811
     (root / "eval/results_methods.json").unlink()
     html = client.get("/about").get_data(as_text=True)
     assert "給工程面試官" not in html and len(re.findall(r"<h2>", html)) == 6
+
+
+# ---- 切段長度分佈 ----
+def test_histogram_bins_cover_every_length_and_sum_to_segment_count():
+    from job_rag.about_page import hist
+    lens = [1, 100, 101, 250, 599, 600, 601, 900]  # 超過切塊上限的也要有地方放（最後一格開放）
+    bins = hist(lens)
+    assert [n for _, n in bins] == [2, 1, 1, 0, 0, 4] and sum(n for _, n in bins) == len(lens)
+    assert [lab for lab, _ in bins][0] == "1–100" and [lab for lab, _ in bins][-1] == "501 以上"
+    assert sum(n for _, n in hist([])) == 0
+
+
+def test_length_section_numbers_come_from_the_loaded_segments(client):
+    import statistics
+    text = eng(client)
+    lens = retrieval.public_segment_lengths()
+    assert lens and len(lens) == sum(retrieval.public_company_counts().values())
+    sec = re.search(r"<h3>切段長度</h3>(.*?)(?=<h3>|$)", text, re.S).group(1)
+    rows = re.findall(r"<li><span class=lab>([^<]+)</span><span class=track><i style='width:[\d.]+%'></i></span><b>(\d+)</b></li>", sec)
+    assert len(rows) == 6 and sum(int(n) for _, n in rows) == len(lens)  # 區間總和等於段數
+    assert f"共 {len(lens)} 段" in sec and f"平均 {statistics.mean(lens):.0f} 字" in sec
+    assert f"中位數 {statistics.median(lens):.0f} 字" in sec and f"最長 {max(lens)} 字" in sec
+    assert f"約 {retrieval.CHUNK} 字、重疊 {retrieval.OVERLAP} 字" in sec and "先依標題切" in sec

@@ -453,3 +453,8 @@ def public_company_counts(corpus=None, mode: str = "demo") -> dict[str, int]:
     for s in _public(_root(corpus, mode)):
         out[s["company"]] = out.get(s["company"], 0) + 1
     return dict(sorted(out.items()))
+
+
+def public_segment_lengths(corpus=None, mode: str = "demo") -> list[int]:
+    """每個公開事實段落的字數（len(text)，不含公司名前綴；與切塊常數 CHUNK 同口徑）。"""
+    return [len(s["text"]) for s in _public(_root(corpus, mode))]
