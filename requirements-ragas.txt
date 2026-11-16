@@ -1,0 +1,5 @@
+# 生成層評估（票 11）。與主環境的 openai 3.x 衝突，所以裝在獨立 venv：
+#   python -m venv --system-site-packages .venv-ragas
+#   .venv-ragas\Scripts\python -m pip install -r requirements-ragas.txt
+ragas==0.4.4
+huggingface_hub==1.27.0

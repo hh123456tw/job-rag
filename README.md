@@ -51,3 +51,29 @@ copy .env.example .env               # 填入 DEEPSEEK_API_KEY；.env 不進 git
 python -X utf8 smoke_deepseek.py "問題"   # 手動冒煙，會呼叫真 API
 ```
 模型代號預設 `deepseek-flash`（官方文件：由 DeepSeek-V4.1-Flash-1017 提供），可用 `DEEPSEEK_MODEL` 覆寫。送出的只可能是 `search()` 回傳的公開事實段落；沒有原文結果時回「查無」，不呼叫 API。
+
+## 生成層評估（票 11，RAGAS）
+指標只有 2 個：faithfulness（忠實度：答案的每個陳述，段落裡找不找得到依據）、answer relevancy（答案相關性：從答案反推問題，和原問題像不像）。檢索固定用 `search()` 預設（bge-m3）。
+流程：每題 `search()` → 被查無門檻擋住就記「被查無門檻擋住」、不呼叫 LLM → 否則用 `answer.py` 生成 → RAGAS 評審。送進生成與評審的只有檢索回來的公開事實段落。
+- 25 題可回答題逐題有分數；平均只算「已評分」的題，評估失敗的題數與題號明列。被查無門檻擋住的可回答題沒有被打分，也不補預設分數，單獨列出。
+- 5 題不可回答題只報「回查無」的比例（含被門檻擋住），不計入平均。
+- API 失敗標「評估失敗」，不補分、不略過。
+
+安裝（ragas 0.4.4 要求 `openai<2`，和主環境的 openai 3.x 衝突，所以裝在獨立 venv）：
+```
+python -m venv --system-site-packages .venv-ragas
+.venv-ragas\Scripts\python -m pip install -r requirements-ragas.txt
+```
+接法：`AsyncOpenAI(base_url="https://api.deepseek.com")` → `ragas.llms.llm_factory(model, client=..., mode=instructor.Mode.JSON)`；DeepSeek 只支援 `json_object`，所以用 JSON 模式。嵌入模型用本機 bge-m3（`job_rag/ragas_judge.py`），不連網。評審模型與生成模型相同（`answer.py` 的設定）。
+
+乾跑（不打 API，只用本機 bge-m3 檢索，結果寫 `eval/estimate_generation.txt`）：
+```
+set JOB_RAG_CORPUS=<語料資料夾>
+set JOB_RAG_MODELS=<models 資料夾>
+python -X utf8 -m job_rag.generation
+```
+正式執行（會呼叫 DeepSeek 並花錢；需要 `.env` 的金鑰）：
+```
+.venv-ragas\Scripts\python -X utf8 -m job_rag.generation --run
+```
+輸出：`eval/results_generation.txt`（逐題＋平均＋限制說明）、`eval/results_generation.json`（逐題原始資料）、`eval/review_sample.csv`（固定種子 0 抽 10 題，「是否忠於出處」欄由人工填）。
