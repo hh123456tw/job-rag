@@ -1,0 +1,1436 @@
+[
+ {
+  "id": "N01",
+  "claims": [
+   {
+    "text": "台灣大哥大的業務包括行動電信。",
+    "supported": true,
+    "evidence": "電信（行動、寬頻）"
+   },
+   {
+    "text": "台灣大哥大的業務包括寬頻電信。",
+    "supported": true,
+    "evidence": "電信（行動、寬頻）"
+   },
+   {
+    "text": "台灣大哥大的業務包括有線電視。",
+    "supported": true,
+    "evidence": "有線電視"
+   },
+   {
+    "text": "台灣大哥大的業務包括企業服務。",
+    "supported": true,
+    "evidence": "企業服務"
+   },
+   {
+    "text": "台灣大哥大的業務包括新科技事業。",
+    "supported": true,
+    "evidence": "新科技事業"
+   },
+   {
+    "text": "台灣大哥大的業務包括電商 momo。",
+    "supported": true,
+    "evidence": "電商（momo）"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N02",
+  "claims": [
+   {
+    "text": "台灣大哥大自述的技術包括自研 GenAIus。",
+    "supported": true,
+    "evidence": "【自述】：自研 GenAIus"
+   },
+   {
+    "text": "台灣大哥大自述的技術包括 MCP。",
+    "supported": true,
+    "evidence": "MCP"
+   },
+   {
+    "text": "台灣大哥大自述的技術包括向量檢索 RAG。",
+    "supported": true,
+    "evidence": "向量檢索 RAG"
+   },
+   {
+    "text": "台灣大哥大自述的技術包括 NVIDIA GB300 算力。",
+    "supported": true,
+    "evidence": "NVIDIA GB300 算力"
+   },
+   {
+    "text": "台灣大哥大自述的技術包括自研語音模型 myVoca。",
+    "supported": true,
+    "evidence": "自研語音模型 myVoca"
+   },
+   {
+    "text": "段落未查台灣大哥大的 GitHub。",
+    "supported": true,
+    "evidence": "GitHub、技術部落格：未查。"
+   },
+   {
+    "text": "段落未查台灣大哥大的技術部落格。",
+    "supported": true,
+    "evidence": "GitHub、技術部落格：未查。"
+   },
+   {
+    "text": "段落推測企業端偏 Java。",
+    "supported": true,
+    "evidence": "【推測】企業端偏 Java／.NET"
+   },
+   {
+    "text": "段落推測企業端偏 .NET。",
+    "supported": true,
+    "evidence": "【推測】企業端偏 Java／.NET"
+   },
+   {
+    "text": "段落推測企業端涉及資料倉儲。",
+    "supported": true,
+    "evidence": "與資料倉儲"
+   },
+   {
+    "text": "段落推測 AI 端有 Python。",
+    "supported": true,
+    "evidence": "AI 端有 Python"
+   },
+   {
+    "text": "企業服務應用部實際使用語言查無。",
+    "supported": true,
+    "evidence": "企業服務應用部實際語言查無。"
+   },
+   {
+    "text": "Java 全端工程師職缺技能重點包括 Java。",
+    "supported": true,
+    "evidence": "技能重點：Java"
+   },
+   {
+    "text": "Java 全端工程師職缺技能重點包括 SQL。",
+    "supported": true,
+    "evidence": "SQL"
+   },
+   {
+    "text": "Java 全端工程師職缺技能重點包括 JS。",
+    "supported": true,
+    "evidence": "JS／HTML5／CSS"
+   },
+   {
+    "text": "Java 全端工程師職缺技能重點包括 HTML5。",
+    "supported": true,
+    "evidence": "JS／HTML5／CSS"
+   },
+   {
+    "text": "Java 全端工程師職缺技能重點包括 CSS。",
+    "supported": true,
+    "evidence": "JS／HTML5／CSS"
+   },
+   {
+    "text": "Java 全端工程師職缺技能重點包括 SA。",
+    "supported": true,
+    "evidence": "SA／SD"
+   },
+   {
+    "text": "Java 全端工程師職缺技能重點包括 SD。",
+    "supported": true,
+    "evidence": "SA／SD"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 Spring Boot。",
+    "supported": true,
+    "evidence": "加分 Spring Boot"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 Python。",
+    "supported": true,
+    "evidence": "Python／Shell"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 Shell。",
+    "supported": true,
+    "evidence": "Python／Shell"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 Redis。",
+    "supported": true,
+    "evidence": "Redis"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 PostgreSQL。",
+    "supported": true,
+    "evidence": "PostgreSQL"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 Docker。",
+    "supported": true,
+    "evidence": "Docker"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 CI/CD。",
+    "supported": true,
+    "evidence": "CI/CD"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 AWS。",
+    "supported": true,
+    "evidence": "AWS／Azure／GCP"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 Azure。",
+    "supported": true,
+    "evidence": "AWS／Azure／GCP"
+   },
+   {
+    "text": "Java 全端工程師職缺加分項目包括 GCP。",
+    "supported": true,
+    "evidence": "AWS／Azure／GCP"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N03",
+  "claims": [
+   {
+    "text": "聯合報雲端採用 Google Cloud。",
+    "supported": true,
+    "evidence": "雲：Google Cloud"
+   },
+   {
+    "text": "聯合報使用的 Google Cloud 服務包括 BigQuery。",
+    "supported": true,
+    "evidence": "BigQuery"
+   },
+   {
+    "text": "聯合報使用的 Google Cloud 服務包括 Vertex AI。",
+    "supported": true,
+    "evidence": "Vertex AI"
+   },
+   {
+    "text": "聯合報使用的 Google Cloud 服務包括 GKE。",
+    "supported": true,
+    "evidence": "GKE"
+   },
+   {
+    "text": "聯合報使用的 Google Cloud 服務包括 Compute Engine。",
+    "supported": true,
+    "evidence": "Compute Engine"
+   },
+   {
+    "text": "聯合報使用的 Google Cloud 服務包括 Cloud Functions。",
+    "supported": true,
+    "evidence": "Cloud Functions"
+   },
+   {
+    "text": "聯合報自 2013 年起使用 Google Ad Manager。",
+    "supported": true,
+    "evidence": "Manager（2013 起）"
+   },
+   {
+    "text": "聯合報使用 Google Analytics。",
+    "supported": true,
+    "evidence": "Google Analytics"
+   },
+   {
+    "text": "語言與框架的筆試線索只見 SQL 與 Python。",
+    "supported": true,
+    "evidence": "筆試線索只見 SQL 與 Python"
+   },
+   {
+    "text": "其餘語言與框架查無。",
+    "supported": true,
+    "evidence": "其餘【查無】"
+   },
+   {
+    "text": "GitHub、技術部落格與技術分享搜尋過一次。",
+    "supported": true,
+    "evidence": "搜尋一次"
+   },
+   {
+    "text": "未找到數據發展部的公開技術文章。",
+    "supported": true,
+    "evidence": "未找到數據發展部的公開技術文章"
+   },
+   {
+    "text": "Publish X 的底層模型查無。",
+    "supported": true,
+    "evidence": "底層（模型、RAG、框架）：【查無】"
+   },
+   {
+    "text": "Publish X 的底層 RAG 查無。",
+    "supported": true,
+    "evidence": "底層（模型、RAG、框架）：【查無】"
+   },
+   {
+    "text": "Publish X 的底層框架查無。",
+    "supported": true,
+    "evidence": "底層（模型、RAG、框架）：【查無】"
+   },
+   {
+    "text": "A3 助理數據分析師要求基礎 SQL。",
+    "supported": true,
+    "evidence": "必要（內文）：基礎 SQL、Python"
+   },
+   {
+    "text": "A3 助理數據分析師要求 Python。",
+    "supported": true,
+    "evidence": "必要（內文）：基礎 SQL、Python"
+   },
+   {
+    "text": "A4 演算法工程師擅長工具欄位包括 Python。",
+    "supported": true,
+    "evidence": "擅長工具（欄位）：Python"
+   },
+   {
+    "text": "A4 演算法工程師擅長工具欄位包括 PostgreSQL。",
+    "supported": true,
+    "evidence": "Python、PostgreSQL"
+   },
+   {
+    "text": "A8 前端開發工程師內文提到 Vue3。",
+    "supported": true,
+    "evidence": "內文：Vue3"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N04",
+  "claims": [],
+  "faithfulness": null
+ },
+ {
+  "id": "N05",
+  "claims": [
+   {
+    "text": "叡揚資訊後端技術包括 Java。",
+    "supported": true,
+    "evidence": "後端：Java"
+   },
+   {
+    "text": "叡揚資訊後端技術包括 Spring Boot。",
+    "supported": true,
+    "evidence": "Spring Boot"
+   },
+   {
+    "text": "叡揚資訊後端技術包括 Spring MVC。",
+    "supported": true,
+    "evidence": "Spring MVC"
+   },
+   {
+    "text": "叡揚資訊後端技術包括 MyBatis。",
+    "supported": true,
+    "evidence": "MyBatis"
+   },
+   {
+    "text": "叡揚資訊後端技術包括 Hibernate。",
+    "supported": true,
+    "evidence": "Hibernate"
+   },
+   {
+    "text": "叡揚資訊後端技術包括 JPA。",
+    "supported": true,
+    "evidence": "JPA"
+   },
+   {
+    "text": "Python 為叡揚資訊職缺加分項目。",
+    "supported": true,
+    "evidence": "Python 為加分"
+   },
+   {
+    "text": "叡揚資訊前端技術包括 React。",
+    "supported": true,
+    "evidence": "前端：React"
+   },
+   {
+    "text": "叡揚資訊前端技術包括 jQuery。",
+    "supported": true,
+    "evidence": "jQuery"
+   },
+   {
+    "text": "叡揚資訊前端技術包括 AJAX。",
+    "supported": true,
+    "evidence": "AJAX"
+   },
+   {
+    "text": "叡揚資訊前端技術包括 Webpack。",
+    "supported": true,
+    "evidence": "Webpack"
+   },
+   {
+    "text": "叡揚資訊資料庫包括 MS SQL Server。",
+    "supported": true,
+    "evidence": "資料庫：MS SQL Server"
+   },
+   {
+    "text": "叡揚資訊資料庫包括 Oracle。",
+    "supported": true,
+    "evidence": "Oracle"
+   },
+   {
+    "text": "叡揚資訊開發流程包括 DevSecOps。",
+    "supported": true,
+    "evidence": "開發流程：DevSecOps"
+   },
+   {
+    "text": "叡揚資訊開發流程包括 Code Review。",
+    "supported": true,
+    "evidence": "Code Review"
+   },
+   {
+    "text": "叡揚資訊筆試包括 C 語言演算法。",
+    "supported": true,
+    "evidence": "筆試：C 語言演算法"
+   },
+   {
+    "text": "叡揚資訊筆試包括網頁。",
+    "supported": true,
+    "evidence": "筆試：C 語言演算法、網頁、SQL"
+   },
+   {
+    "text": "叡揚資訊筆試包括 SQL。",
+    "supported": true,
+    "evidence": "筆試：C 語言演算法、網頁、SQL"
+   },
+   {
+    "text": "叡揚資訊 AI 技術包括 LLM。",
+    "supported": true,
+    "evidence": "AI：LLM"
+   },
+   {
+    "text": "叡揚資訊 AI 技術包括 VLM。",
+    "supported": true,
+    "evidence": "VLM"
+   },
+   {
+    "text": "叡揚資訊 AI 技術包括電腦視覺。",
+    "supported": true,
+    "evidence": "電腦視覺"
+   },
+   {
+    "text": "叡揚資訊 AI 技術包括 ServiceNow AI 平台。",
+    "supported": true,
+    "evidence": "ServiceNow AI 平台"
+   },
+   {
+    "text": "InsAI 支援地端部署。",
+    "supported": true,
+    "evidence": "InsAI 支援地端部署"
+   },
+   {
+    "text": "叡揚資訊雲端技術查無。",
+    "supported": true,
+    "evidence": "雲：查無"
+   },
+   {
+    "text": "叡揚資訊 GitHub 查無。",
+    "supported": true,
+    "evidence": "GitHub、技術部落格：沒有查。查無"
+   },
+   {
+    "text": "叡揚資訊技術部落格查無。",
+    "supported": true,
+    "evidence": "GitHub、技術部落格：沒有查。查無"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N06",
+  "claims": [
+   {
+    "text": "神通資訊的法人全名為神通資訊科技股份有限公司。",
+    "supported": true,
+    "evidence": "法人全名 | 神通資訊科技股份有限公司"
+   },
+   {
+    "text": "神通資訊主要從事電腦系統整合服務業。",
+    "supported": true,
+    "evidence": "公司：電腦系統整合服務業"
+   },
+   {
+    "text": "神通資訊的前身是神通電腦。",
+    "supported": true,
+    "evidence": "前身 | 1974 年成立的神通電腦"
+   },
+   {
+    "text": "神通電腦成立於 1974 年。",
+    "supported": true,
+    "evidence": "1974 年成立的神通電腦"
+   },
+   {
+    "text": "104 公司頁將神通資訊產業列為電腦系統整合服務業。",
+    "supported": true,
+    "evidence": "公司：電腦系統整合服務業"
+   },
+   {
+    "text": "神通資訊總部位於台北市內湖區堤頂大道二段 187 號。",
+    "supported": true,
+    "evidence": "台北市內湖區堤頂大道二段 187 號"
+   },
+   {
+    "text": "神通資訊員工約 1,000 人。",
+    "supported": true,
+    "evidence": "員工數 | 約 1,000 人"
+   },
+   {
+    "text": "神通資訊不是神達。",
+    "supported": true,
+    "evidence": "已確認不是神達、神雲"
+   },
+   {
+    "text": "神通資訊不是神雲。",
+    "supported": true,
+    "evidence": "已確認不是神達、神雲"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N07",
+  "claims": [
+   {
+    "text": "神通資訊技術堆疊的公開可信資料很少。",
+    "supported": true,
+    "evidence": "公開、可信的資料很少"
+   },
+   {
+    "text": "第三方報導 Agent Builder 硬體包括 AMD Ryzen AI Max+ 395。",
+    "supported": true,
+    "evidence": "Ryzen AI Max+ 395"
+   },
+   {
+    "text": "第三方報導 Agent Builder 硬體包括 Radeon AI PRO R9700。",
+    "supported": true,
+    "evidence": "Radeon AI PRO R9700"
+   },
+   {
+    "text": "第三方報導伺服器版使用神雲 TN85-B8261。",
+    "supported": true,
+    "evidence": "伺服器版為神雲 TN85-B8261"
+   },
+   {
+    "text": "伺服器版搭配 EPYC。",
+    "supported": true,
+    "evidence": "搭 EPYC"
+   },
+   {
+    "text": "伺服器版搭配 Instinct MI350P。",
+    "supported": true,
+    "evidence": "Instinct MI350P"
+   },
+   {
+    "text": "兩篇報導的硬體不同。",
+    "supported": true,
+    "evidence": "兩篇報導的硬體不同"
+   },
+   {
+    "text": "硬體不同可能是因為機型不同。",
+    "supported": true,
+    "evidence": "可能是不同機型"
+   },
+   {
+    "text": "使用哪個 LLM 查無。",
+    "supported": true,
+    "evidence": "LLM、LangChain 或自研）：查無"
+   },
+   {
+    "text": "是否使用 LangChain 查無。",
+    "supported": true,
+    "evidence": "LLM、LangChain 或自研）：查無"
+   },
+   {
+    "text": "是否使用自研模型或框架查無。",
+    "supported": true,
+    "evidence": "LLM、LangChain 或自研）：查無"
+   },
+   {
+    "text": "報導明確表示文中未提及模型與框架。",
+    "supported": true,
+    "evidence": "報導明確「文中未提及」"
+   },
+   {
+    "text": "第三方資料顯示 Java 型職缺居多。",
+    "supported": true,
+    "evidence": "Java 型職缺（全端、Java 工程師）居多"
+   },
+   {
+    "text": "未查到公司官方技術部落格。",
+    "supported": true,
+    "evidence": "沒查到公司官方技術部落格"
+   },
+   {
+    "text": "未查到公司官方 GitHub 組織。",
+    "supported": true,
+    "evidence": "或 GitHub 組織"
+   },
+   {
+    "text": "段落推測新興應用部可能偏 AI 應用整合。",
+    "supported": true,
+    "evidence": "【推測】新興應用部可能偏 AI 應用整合"
+   },
+   {
+    "text": "新興應用部的使用語言是否為 Python 不確定。",
+    "supported": true,
+    "evidence": "語言（Python？）不確定"
+   },
+   {
+    "text": "MiTAC Agent Builder 主打零程式碼建 Agent。",
+    "supported": true,
+    "evidence": "零程式碼建 Agent"
+   },
+   {
+    "text": "MiTAC Agent Builder 主打低程式碼拖拉介面。",
+    "supported": true,
+    "evidence": "低程式碼拖拉介面"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N08",
+  "claims": [
+   {
+    "text": "藍新資訊從事資訊軟硬體整合。",
+    "supported": true,
+    "evidence": "核心：資訊軟硬體整合"
+   },
+   {
+    "text": "藍新資訊提供顧問服務。",
+    "supported": true,
+    "evidence": "顧問"
+   },
+   {
+    "text": "藍新資訊提供導入服務。",
+    "supported": true,
+    "evidence": "導入"
+   },
+   {
+    "text": "藍新資訊提供雲端建置服務。",
+    "supported": true,
+    "evidence": "雲端建置"
+   },
+   {
+    "text": "藍新資訊提供維運服務。",
+    "supported": true,
+    "evidence": "維運"
+   },
+   {
+    "text": "藍新資訊平台涵蓋 UNIX。",
+    "supported": true,
+    "evidence": "平台：UNIX"
+   },
+   {
+    "text": "藍新資訊平台涵蓋 AIX。",
+    "supported": true,
+    "evidence": "AIX"
+   },
+   {
+    "text": "藍新資訊平台涵蓋 Linux。",
+    "supported": true,
+    "evidence": "Linux"
+   },
+   {
+    "text": "藍新資訊平台涵蓋 NT。",
+    "supported": true,
+    "evidence": "NT"
+   },
+   {
+    "text": "藍新資訊平台涵蓋虛擬化。",
+    "supported": true,
+    "evidence": "虛擬化"
+   },
+   {
+    "text": "藍新資訊平台涵蓋資料庫。",
+    "supported": true,
+    "evidence": "資料庫"
+   },
+   {
+    "text": "藍新資訊平台涵蓋儲存。",
+    "supported": true,
+    "evidence": "儲存"
+   },
+   {
+    "text": "藍新資訊平台涵蓋備份。",
+    "supported": true,
+    "evidence": "備份"
+   },
+   {
+    "text": "藍新資訊平台涵蓋網路資安。",
+    "supported": true,
+    "evidence": "網路資安"
+   },
+   {
+    "text": "藍新資訊產品線包括全面資安。",
+    "supported": true,
+    "evidence": "產品線：全面資安"
+   },
+   {
+    "text": "藍新資訊產品線包括網路基礎架構。",
+    "supported": true,
+    "evidence": "網路基礎架構"
+   },
+   {
+    "text": "藍新資訊產品線包括 AI 應用。",
+    "supported": true,
+    "evidence": "AI 應用"
+   },
+   {
+    "text": "藍新資訊產品線包括混合雲。",
+    "supported": true,
+    "evidence": "混合雲"
+   },
+   {
+    "text": "藍新資訊產品線包括儲存備份。",
+    "supported": true,
+    "evidence": "儲存備份"
+   },
+   {
+    "text": "藍新資訊代理 Cisco。",
+    "supported": true,
+    "evidence": "代理品牌：Cisco"
+   },
+   {
+    "text": "藍新資訊代理 HPE。",
+    "supported": true,
+    "evidence": "HPE"
+   },
+   {
+    "text": "藍新資訊代理 Palo Alto。",
+    "supported": true,
+    "evidence": "Palo Alto"
+   },
+   {
+    "text": "藍新資訊代理 Fortinet。",
+    "supported": true,
+    "evidence": "Fortinet"
+   },
+   {
+    "text": "藍新資訊代理 NetApp。",
+    "supported": true,
+    "evidence": "NetApp"
+   },
+   {
+    "text": "藍新資訊代理 Dell EMC。",
+    "supported": true,
+    "evidence": "Dell EMC"
+   },
+   {
+    "text": "藍新資訊代理 IBM。",
+    "supported": true,
+    "evidence": "IBM"
+   },
+   {
+    "text": "藍新資訊代理 VMware。",
+    "supported": true,
+    "evidence": "VMware"
+   },
+   {
+    "text": "藍新資訊代理 Veeam。",
+    "supported": true,
+    "evidence": "Veeam"
+   },
+   {
+    "text": "藍新資訊代理 F5。",
+    "supported": true,
+    "evidence": "F5"
+   },
+   {
+    "text": "藍新資訊目標客戶包括政府。",
+    "supported": true,
+    "evidence": "目標客戶：政府"
+   },
+   {
+    "text": "藍新資訊目標客戶包括金融業。",
+    "supported": true,
+    "evidence": "金融"
+   },
+   {
+    "text": "藍新資訊目標客戶包括大型企業。",
+    "supported": true,
+    "evidence": "大型企業"
+   },
+   {
+    "text": "段落推測藍新資訊是賣硬體加維運的系統整合商。",
+    "supported": true,
+    "evidence": "這是「賣硬體加維運」的系統整合商"
+   },
+   {
+    "text": "段落推測軟體開發不是藍新資訊的主體。",
+    "supported": true,
+    "evidence": "軟體開發不是主體"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N09",
+  "claims": [
+   {
+    "text": "凱基證券現行系統環境包括 Windows。",
+    "supported": true,
+    "evidence": "Windows 與 Linux"
+   },
+   {
+    "text": "凱基證券現行系統環境包括 Linux。",
+    "supported": true,
+    "evidence": "Windows 與 Linux"
+   },
+   {
+    "text": "凱基證券有 2 個 APP。",
+    "supported": true,
+    "evidence": "2 個 APP"
+   },
+   {
+    "text": "凱基證券有 4 種開發語言。",
+    "supported": true,
+    "evidence": "4 種開發語言"
+   },
+   {
+    "text": "凱基證券有 5 種資料庫。",
+    "supported": true,
+    "evidence": "5 種資料庫"
+   },
+   {
+    "text": "凱基證券新核心系統方向為模組化平台。",
+    "supported": true,
+    "evidence": "新核心系統方向 | 模組化平台"
+   },
+   {
+    "text": "凱基證券新核心系統方向採用 Kubernetes。",
+    "supported": true,
+    "evidence": "Kubernetes"
+   },
+   {
+    "text": "凱基證券新核心系統方向採用微服務。",
+    "supported": true,
+    "evidence": "微服務"
+   },
+   {
+    "text": "凱基證券新核心系統方向採用 DevOps。",
+    "supported": true,
+    "evidence": "DevOps"
+   },
+   {
+    "text": "凱基證券新核心系統方向具 Cloud Ready 特性。",
+    "supported": true,
+    "evidence": "Cloud Ready"
+   },
+   {
+    "text": "4 種開發語言的具體名稱查無。",
+    "supported": true,
+    "evidence": "語言名稱 | 查無"
+   },
+   {
+    "text": "專訪只說有 4 種語言，未列出名稱。",
+    "supported": true,
+    "evidence": "專訪只說 4 種，沒寫是哪四種"
+   },
+   {
+    "text": "凱基證券招募職缺工具包括 C#。",
+    "supported": true,
+    "evidence": "工具：C#、COBOL、MS SQL"
+   },
+   {
+    "text": "凱基證券招募職缺工具包括 COBOL。",
+    "supported": true,
+    "evidence": "工具：C#、COBOL、MS SQL"
+   },
+   {
+    "text": "凱基證券招募職缺工具包括 MS SQL。",
+    "supported": true,
+    "evidence": "工具：C#、COBOL、MS SQL"
+   },
+   {
+    "text": "凱基證券招募職缺列有願接受 COBOL 培訓的條件。",
+    "supported": true,
+    "evidence": "願接受 COBOL 培訓"
+   },
+   {
+    "text": "凱基證券另有職缺提到 Linux。",
+    "supported": true,
+    "evidence": "工具：Linux、Python、Git"
+   },
+   {
+    "text": "凱基證券另有職缺提到 Python。",
+    "supported": true,
+    "evidence": "工具：Linux、Python、Git"
+   },
+   {
+    "text": "凱基證券另有職缺提到 Git。",
+    "supported": true,
+    "evidence": "工具：Linux、Python、Git"
+   },
+   {
+    "text": "凱基證券雲供應商查無。",
+    "supported": true,
+    "evidence": "Azure／AWS）：查無"
+   },
+   {
+    "text": "凱基證券官方技術部落格帳號與技術分享查無。",
+    "supported": true,
+    "evidence": "查無凱基證券官方帳號與技術分享"
+   },
+   {
+    "text": "凱基證券官方 GitHub 帳號與技術分享查無。",
+    "supported": true,
+    "evidence": "查無凱基證券官方帳號與技術分享"
+   },
+   {
+    "text": "段落推測證券核心交易系統偏傳統的 C#、Java、Windows。",
+    "supported": true,
+    "evidence": "核心交易系統偏傳統（C#／Java／Windows）"
+   },
+   {
+    "text": "段落推測 Python 較可能出現在 AI 團隊與數位創新部。",
+    "supported": true,
+    "evidence": "Python 與 LLM 較可能出現在 AI"
+   },
+   {
+    "text": "段落推測 LLM 較可能出現在 AI 團隊與數位創新部。",
+    "supported": true,
+    "evidence": "與數位創新部"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N10",
+  "claims": [
+   {
+    "text": "凱基證券職缺列表包含資訊部 C# 全端技術工程師。",
+    "supported": true,
+    "evidence": "【資訊部】C# 全端技術工程師"
+   },
+   {
+    "text": "C# 全端技術工程師要求 2 年以上經驗。",
+    "supported": true,
+    "evidence": "2 年以上"
+   },
+   {
+    "text": "C# 全端技術工程師待遇面議。",
+    "supported": true,
+    "evidence": "待遇面議"
+   },
+   {
+    "text": "凱基證券職缺列表包含標示凱基金控的資料庫管理工程師。",
+    "supported": true,
+    "evidence": "【凱基金控】資料庫管理工程師"
+   },
+   {
+    "text": "凱基證券職缺列表包含標示凱基金控的網路整合工程師（雲端）。",
+    "supported": true,
+    "evidence": "網路整合工程師（雲端）"
+   },
+   {
+    "text": "凱基證券職缺列表包含標示凱基金控的創新金融管理師。",
+    "supported": true,
+    "evidence": "【凱基金控】創新金融管理師"
+   },
+   {
+    "text": "凱基證券職缺列表包含標示凱基金控的新興科技發展人員。",
+    "supported": true,
+    "evidence": "新興科技發展人員"
+   },
+   {
+    "text": "新興科技發展人員涉及 Agentic AI 研究與 PoC。",
+    "supported": true,
+    "evidence": "Agentic AI／數位資產／RWA"
+   },
+   {
+    "text": "新興科技發展人員涉及數位資產研究與 PoC。",
+    "supported": true,
+    "evidence": "數位資產／RWA 研究與 PoC"
+   },
+   {
+    "text": "新興科技發展人員涉及 RWA 研究與 PoC。",
+    "supported": true,
+    "evidence": "RWA 研究與 PoC"
+   },
+   {
+    "text": "凱基證券有數位創新部 AI Solution 工程師／架構師職缺。",
+    "supported": true,
+    "evidence": "AI Solution 工程師／架構師"
+   },
+   {
+    "text": "AI Solution 工程師／架構師要求 3 年以上經驗。",
+    "supported": true,
+    "evidence": "經歷／學歷：3 年以上"
+   },
+   {
+    "text": "AI Solution 工程師／架構師待遇面議。",
+    "supported": true,
+    "evidence": "薪資：待遇面議"
+   },
+   {
+    "text": "AI Solution 工程師／架構師工作地點在台北市中正區。",
+    "supported": true,
+    "evidence": "地點：台北市中正區忠孝西路"
+   },
+   {
+    "text": "凱基證券有量化策略部量化策略研究員（含 Python）職缺。",
+    "supported": true,
+    "evidence": "量化策略研究員（含 Python）"
+   },
+   {
+    "text": "量化策略研究員經歷不拘。",
+    "supported": true,
+    "evidence": "經歷／學歷：不拘"
+   },
+   {
+    "text": "量化策略研究員待遇面議。",
+    "supported": true,
+    "evidence": "薪資：待遇面議"
+   },
+   {
+    "text": "量化策略研究員工作地點在台北市中山區。",
+    "supported": true,
+    "evidence": "地點：台北市中山區"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N11",
+  "claims": [
+   {
+    "text": "華電聯網主要從事電腦系統整合服務業。",
+    "supported": true,
+    "evidence": "公司概況：電腦系統整合服務業"
+   },
+   {
+    "text": "華電聯網法人全名為華電聯網股份有限公司。",
+    "supported": true,
+    "evidence": "法人全名 | 華電聯網股份有限公司"
+   },
+   {
+    "text": "華電聯網英文名稱為 Hwacom Systems Inc.。",
+    "supported": true,
+    "evidence": "Hwacom Systems Inc."
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N12",
+  "claims": [
+   {
+    "text": "華電聯網公開資料查無使用的語言。",
+    "supported": true,
+    "evidence": "公開資料查無語言、框架、雲、資料庫"
+   },
+   {
+    "text": "華電聯網公開資料查無使用的框架。",
+    "supported": true,
+    "evidence": "公開資料查無語言、框架、雲、資料庫"
+   },
+   {
+    "text": "華電聯網公開資料查無使用的雲端平台。",
+    "supported": true,
+    "evidence": "公開資料查無語言、框架、雲、資料庫"
+   },
+   {
+    "text": "華電聯網公開資料查無使用的資料庫。",
+    "supported": true,
+    "evidence": "公開資料查無語言、框架、雲、資料庫"
+   },
+   {
+    "text": "官網沒有找到華電聯網公司帳號。",
+    "supported": false,
+    "evidence": "段落只說查過官網，未說官網沒有公司帳號。"
+   },
+   {
+    "text": "職缺平台沒有找到華電聯網公司帳號。",
+    "supported": false,
+    "evidence": "段落只說查過職缺平台，未說職缺平台沒有公司帳號。"
+   },
+   {
+    "text": "GitHub 沒有找到華電聯網公司帳號。",
+    "supported": true,
+    "evidence": "搜尋 GitHub 與技術部落格"
+   },
+   {
+    "text": "技術部落格沒有找到華電聯網公司帳號。",
+    "supported": true,
+    "evidence": "技術部落格（沒有找到公司帳號）"
+   },
+   {
+    "text": "華電聯網可確認的技術主題包括生成式 AI。",
+    "supported": true,
+    "evidence": "生成式 AI"
+   },
+   {
+    "text": "華電聯網可確認的技術主題包括 AI 影像辨識。",
+    "supported": true,
+    "evidence": "AI 影像辨識"
+   },
+   {
+    "text": "華電聯網可確認的技術主題包括 5G 專網。",
+    "supported": true,
+    "evidence": "5G 專網"
+   },
+   {
+    "text": "華電聯網可確認的技術主題包括 C-V2X。",
+    "supported": true,
+    "evidence": "C-V2X"
+   },
+   {
+    "text": "華電聯網可確認的技術主題包括 AIoT。",
+    "supported": true,
+    "evidence": "AIoT"
+   },
+   {
+    "text": "華電聯網可確認的技術主題包括數位孿生。",
+    "supported": true,
+    "evidence": "數位孿生"
+   },
+   {
+    "text": "段落推測華電聯網主體是網路整合。",
+    "supported": true,
+    "evidence": "【推測】主體是網路"
+   },
+   {
+    "text": "段落推測華電聯網主體是資通訊整合。",
+    "supported": true,
+    "evidence": "資通訊、雲端基礎建設整合"
+   },
+   {
+    "text": "段落推測華電聯網主體是雲端基礎建設整合。",
+    "supported": true,
+    "evidence": "雲端基礎建設整合"
+   },
+   {
+    "text": "段落推測華電聯網軟體多為自有產品。",
+    "supported": true,
+    "evidence": "軟體多為自有產品與專案客製"
+   },
+   {
+    "text": "段落推測華電聯網軟體多為專案客製。",
+    "supported": true,
+    "evidence": "軟體多為自有產品與專案客製"
+   },
+   {
+    "text": "華電聯網 Python 比重不明。",
+    "supported": true,
+    "evidence": "Python 比重不明"
+   },
+   {
+    "text": "華電聯網自研或自有產品包括 SmartQ LAS 企業專屬生成式 AI 平台。",
+    "supported": true,
+    "evidence": "企業專屬生成式 AI 平台"
+   },
+   {
+    "text": "華電聯網自研或自有產品包括 FaceKey 人臉辨識整合系統。",
+    "supported": true,
+    "evidence": "FaceKey 人臉辨識整合系統"
+   },
+   {
+    "text": "華電聯網自研或自有產品包括 Cyber Monitor 智慧網管系統。",
+    "supported": true,
+    "evidence": "智慧網管系統"
+   },
+   {
+    "text": "華電聯網自研或自有產品包括 PMS 旅客運輸系統。",
+    "supported": true,
+    "evidence": "PMS 旅客運輸系統"
+   },
+   {
+    "text": "華電聯網自研或自有產品包括 D-City 驗測平台。",
+    "supported": true,
+    "evidence": "D-City 驗測平台"
+   },
+   {
+    "text": "華電聯網技術主題包括 AR。",
+    "supported": true,
+    "evidence": "AIoT、AR"
+   },
+   {
+    "text": "華電聯網 AI 專案包括機房設備預測性維護。",
+    "supported": true,
+    "evidence": "機房設備預測性維護"
+   },
+   {
+    "text": "華電聯網 AI 專案包括與 Palo Alto 合作 AI 輔助 MDR。",
+    "supported": true,
+    "evidence": "合作 AI 輔助 MDR"
+   },
+   {
+    "text": "華電聯網 AI 專案包括國道 AI 事故影像偵測。",
+    "supported": true,
+    "evidence": "國道／雪隧 AI 事故影像偵測"
+   },
+   {
+    "text": "華電聯網 AI 專案包括雪隧 AI 事故影像偵測。",
+    "supported": true,
+    "evidence": "國道／雪隧 AI 事故影像偵測"
+   },
+   {
+    "text": "華電聯網 AI 專案包括 AI 冰機節能。",
+    "supported": true,
+    "evidence": "AI 冰機節能"
+   }
+  ],
+  "faithfulness": 0.9354838709677419
+ },
+ {
+  "id": "N13",
+  "claims": [
+   {
+    "text": "中華網龍開發網路連線平台。",
+    "supported": true,
+    "evidence": "開發網路連線平台與應用軟體"
+   },
+   {
+    "text": "中華網龍開發應用軟體。",
+    "supported": true,
+    "evidence": "開發網路連線平台與應用軟體"
+   },
+   {
+    "text": "中華網龍提供網路遊戲服務。",
+    "supported": true,
+    "evidence": "提供網路遊戲與手機遊戲服務"
+   },
+   {
+    "text": "中華網龍提供手機遊戲服務。",
+    "supported": true,
+    "evidence": "提供網路遊戲與手機遊戲服務"
+   },
+   {
+    "text": "中華網龍官網列出多款線上遊戲。",
+    "supported": true,
+    "evidence": "官網列出多款線上遊戲"
+   },
+   {
+    "text": "中華網龍官網列出台灣地區入口。",
+    "supported": true,
+    "evidence": "台、港、中、美等地區入口"
+   },
+   {
+    "text": "中華網龍官網列出香港地區入口。",
+    "supported": true,
+    "evidence": "台、港、中、美等地區入口"
+   },
+   {
+    "text": "中華網龍官網列出中國地區入口。",
+    "supported": true,
+    "evidence": "台、港、中、美等地區入口"
+   },
+   {
+    "text": "中華網龍官網列出美國地區入口。",
+    "supported": true,
+    "evidence": "台、港、中、美等地區入口"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N14",
+  "claims": [
+   {
+    "text": "中華網龍近年工程師題目以 Unity 為主要內容之一。",
+    "supported": true,
+    "evidence": "近年工程師題目以 Unity"
+   },
+   {
+    "text": "中華網龍近年工程師題目以 C# 為主要內容之一。",
+    "supported": true,
+    "evidence": "C#、物件導向、演算法為主"
+   },
+   {
+    "text": "中華網龍近年工程師題目以物件導向為主要內容之一。",
+    "supported": true,
+    "evidence": "物件導向、演算法為主"
+   },
+   {
+    "text": "中華網龍近年工程師題目以演算法為主要內容之一。",
+    "supported": true,
+    "evidence": "演算法為主"
+   },
+   {
+    "text": "中華網龍遊戲後端語言查無。",
+    "supported": true,
+    "evidence": "遊戲後端語言：查無"
+   },
+   {
+    "text": "中華網龍雲平台查無。",
+    "supported": true,
+    "evidence": "雲平台、資料庫、框架：查無"
+   },
+   {
+    "text": "中華網龍資料庫查無。",
+    "supported": true,
+    "evidence": "雲平台、資料庫、框架：查無"
+   },
+   {
+    "text": "中華網龍框架查無。",
+    "supported": true,
+    "evidence": "雲平台、資料庫、框架：查無"
+   },
+   {
+    "text": "中華網龍 GitHub 查無。",
+    "supported": true,
+    "evidence": "搜尋沒找到網龍的。查無"
+   },
+   {
+    "text": "中華網龍技術部落格查無。",
+    "supported": true,
+    "evidence": "搜尋沒找到網龍的。查無"
+   },
+   {
+    "text": "中華網龍技術分享活動查無。",
+    "supported": true,
+    "evidence": "搜尋沒找到網龍的。查無"
+   },
+   {
+    "text": "MyCard 系統語言查無。",
+    "supported": true,
+    "evidence": "MyCard 系統語言：查無"
+   },
+   {
+    "text": "段落推測中華網龍技術偏遊戲 client，涉及 Unity 與 C#。",
+    "supported": true,
+    "evidence": "遊戲 client（Unity／C#）"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "N15",
+  "claims": [
+   {
+    "text": "尼諾思自述使用 ROS 2。",
+    "supported": true,
+    "evidence": "【自述】ROS 2"
+   },
+   {
+    "text": "尼諾思自述使用 MoveIt。",
+    "supported": true,
+    "evidence": "MoveIt"
+   },
+   {
+    "text": "尼諾思自述使用 Gazebo。",
+    "supported": true,
+    "evidence": "Gazebo"
+   },
+   {
+    "text": "尼諾思自述使用 NVIDIA Omniverse。",
+    "supported": true,
+    "evidence": "NVIDIA Omniverse"
+   },
+   {
+    "text": "尼諾思自述使用 NoSQL 資料庫。",
+    "supported": true,
+    "evidence": "【自述】NoSQL 資料庫"
+   },
+   {
+    "text": "尼諾思自述使用微服務。",
+    "supported": true,
+    "evidence": "微服務"
+   },
+   {
+    "text": "尼諾思自述使用網頁儀表板。",
+    "supported": true,
+    "evidence": "網頁儀表板"
+   },
+   {
+    "text": "尼諾思自述使用 API。",
+    "supported": true,
+    "evidence": "API"
+   },
+   {
+    "text": "尼諾思使用的具體資料庫產品查無。",
+    "supported": true,
+    "evidence": "Cassandra、Mongo 等）查無"
+   },
+   {
+    "text": "尼諾思有介紹 AMD Vitis AI 的頁面。",
+    "supported": true,
+    "evidence": "AMD Vitis AI／FPGA／DPU"
+   },
+   {
+    "text": "尼諾思有涉及 FPGA 的頁面。",
+    "supported": true,
+    "evidence": "FPGA／DPU 的頁面"
+   },
+   {
+    "text": "尼諾思有涉及 DPU 的頁面。",
+    "supported": true,
+    "evidence": "FPGA／DPU 的頁面"
+   },
+   {
+    "text": "尼諾思自述涉及模仿學習。",
+    "supported": true,
+    "evidence": "【自述】模仿學習、影像辨識"
+   },
+   {
+    "text": "尼諾思自述涉及影像辨識。",
+    "supported": true,
+    "evidence": "【自述】模仿學習、影像辨識"
+   },
+   {
+    "text": "尼諾思使用的語言查無。",
+    "supported": true,
+    "evidence": "語言、雲端、框架：查無"
+   },
+   {
+    "text": "尼諾思使用的雲端查無。",
+    "supported": true,
+    "evidence": "語言、雲端、框架：查無"
+   },
+   {
+    "text": "尼諾思使用的框架查無。",
+    "supported": true,
+    "evidence": "語言、雲端、框架：查無"
+   },
+   {
+    "text": "尼諾思夥伴 logo 包含 ROS 2。",
+    "supported": true,
+    "evidence": "夥伴 logo：ROS 2"
+   },
+   {
+    "text": "尼諾思夥伴 logo 包含 MoveIt。",
+    "supported": true,
+    "evidence": "MoveIt"
+   },
+   {
+    "text": "尼諾思夥伴 logo 包含 Gazebo。",
+    "supported": true,
+    "evidence": "Gazebo"
+   },
+   {
+    "text": "尼諾思夥伴 logo 包含 NVIDIA Omniverse。",
+    "supported": true,
+    "evidence": "NVIDIA Omniverse"
+   },
+   {
+    "text": "這些夥伴 logo 代表使用的開源或工具生態。",
+    "supported": true,
+    "evidence": "這是「使用的開源或工具生態」"
+   },
+   {
+    "text": "這些夥伴 logo 不是簽約客戶。",
+    "supported": true,
+    "evidence": "不是簽約客戶"
+   },
+   {
+    "text": "PerformX 是 Sim2Real 智慧機器人部署平台。",
+    "supported": true,
+    "evidence": "Sim2Real 智慧機器人部署平台"
+   },
+   {
+    "text": "PerformX 整合 Gazebo。",
+    "supported": true,
+    "evidence": "整合 Gazebo"
+   },
+   {
+    "text": "PerformX 整合 CoppeliaSim。",
+    "supported": true,
+    "evidence": "CoppeliaSim"
+   },
+   {
+    "text": "PerformX 整合 NVIDIA Isaac Sim。",
+    "supported": true,
+    "evidence": "NVIDIA Isaac Sim"
+   }
+  ],
+  "faithfulness": 1.0
+ }
+]

@@ -1,0 +1,1476 @@
+[
+ {
+  "company": "台灣大哥大",
+  "question": "台灣大哥大是做什麼的？",
+  "kind": "faq1",
+  "search_status": "ok",
+  "search_sec": 0.26,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "1. 基本資料",
+    "text": "- 法人全名：台灣大哥大股份有限公司（英文簡稱 TWM）【第三方】\n  - https://info.technews.tw/company/97176270-台灣大哥大股份有限公司\n- 統編：97176270【第三方】同上\n- 資本額：資本總額 600 億元；實收資本額約 372.33 億元【第三方】\n  - https://ww2.money-link.com.tw/TWStock/StockBasic.aspx?SymId=3045\n- 成立（核准設立）日：1997-02-25【第三方】同 technews 頁\n- 上市：股票代號 3045；上市日 2002-08-26【第三方】同 technews 頁\n- 員工數：查無。\n  - 查了：搜尋「員工人數／永續報告書」，未取得數字。永續報告書與年報 PDF 未開啟。\n- 母公司／集團：查無明確母公司。\n  - 第三方報導顯示董事長為蔡明忠，富邦集團蔡家為主要經營者。持股比例未驗證。\n  - 台灣大經大富媒體科技持有 momo 富邦媒約 45.01%（舊報導，需以年報為準）。\n  - https://www.ctee.com.tw/news/20250425700186-430502（搜尋結果摘要，未逐篇驗證）"
+   },
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "2. 業務與財務",
+    "text": "- 業務【第三方】：電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）。\n  - https://info.technews.tw/company/97176270-台灣大哥大股份有限公司\n- 2025 全年【第三方】：\n  - 合併營收 1,987.6 億元，年減 0.31%。\n  - EBITDA 431.7 億元，年增 1.53%。\n  - 稅後純益 144.4 億元，年增 4%；EPS 4.77 元，7 年新高。\n  - 來源：https://uanalyze.com.tw/articles/5466548988\n- 2025 分項【第三方，引述公司法說】：\n  - Telco＋企業服務營收年增 26%。\n  - 新科技事業營收年增 12%。\n  - momo 會員年增 3%。\n  - 同上來源。\n- 2026 展望【自述，經第三方轉述】：營收成長 5%–7%，營業利益成長 1%–2%。同上來源。\n- 2024 年【第三方】：營收、EBITDA 創歷史新高；EPS 4.57 元。\n  - https://cna.com.tw/business/chinese/403363（只讀到標題摘要）\n- 近 3 年營收趨勢：只確認 2024 創高、2025 持平略減（主因 momo 影響，富果研究說法）。2023 數字與三年完整表：查無。\n  - https://b"
+   },
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "8. 近一年新聞（2025-11 至 2026-11）",
+    "text": "- 2026-04-29：公司發布 2025 企業客戶營收年增 26%、AI 算力服務、AI Coding 超過 50%【自述】。https://www.cna.com.tw/business/chinese/432126\n- 2026-04-27：推 AI 算力服務（GMI Cloud）。https://newtalk.tw/news/view/2026-04-29/1032433\n- 2026-03：2025 財報，EPS 4.77 元，營收年減 0.31%【第三方】。https://uanalyze.com.tw/articles/5466548988\n- 2026-06：Computex 公布桃園 AIDC 預售 100% 完售【自述，經第三方轉述】。https://newtalk.tw/news/view/2026-06-02/1038847（只讀到搜尋摘要）\n- 2026-08-03：MyAgent、AIDC 7,000 顆 GB300、myVoca、「超人計畫」培訓近 2,500 名非 IT 同仁。https://www.ctee.com.tw/news/20260803701567-430502\n- 2026-09：D.E.E.P. Tech Day 發表 MyAgent。https://finance.technews.tw/2026/09/08/deep-tec"
+   }
+  ],
+  "answer": "台灣大哥大的業務包括電信（行動、寬頻）、有線電視、企業服務、新科技事業，以及電商（momo）[2]。",
+  "answer_status": "ok",
+  "answer_sec": 1.28,
+  "sources": [
+   {
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "2. 業務與財務"
+   },
+   {
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "8. 近一年新聞（2025-11 至 2026-11）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "台灣大哥大",
+  "question": "台灣大哥大的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "ok",
+  "search_sec": 0.23,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "- 來自公司發表【自述】：自研 GenAIus、MCP、向量檢索 RAG、NVIDIA GB300 算力、自研語音模型 myVoca。\n  - https://www.ctee.com.tw/news/20260803701567-430502\n- GitHub、技術部落格：未查。\n- 【推測】企業端偏 Java／.NET 與資料倉儲；AI 端有 Python。企業服務應用部實際語言查無。"
+   },
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "補1_台哥大.md",
+    "heading_path": "三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > C. 平台／雲端／基礎架構類 > I91 中介軟體平台技術課主管、I96 資深基礎架構整合工程師、I100 IT基礎架構工程師、I202 資料庫平台工程師、I94 資深系統工程師",
+    "text": "- 連結：皆未取得；基礎架構／DBA／管理職，與 Python 後端關聯低。\n- I91：8 年以上，帶 7–8 人 K8S 平台團隊；內文有「企業級中介軟體平台」（【企業】，但指內部企業 IT）。"
+   },
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "補1_台哥大.md",
+    "heading_path": "三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > B. 後端／全端／軟體類 > I102 Java全端軟體工程師（台北、高雄）",
+    "text": "- 連結：連結未取得；未開內頁\n- 薪資：面議；年薪約 81~108 萬；經歷不拘；11/10 更新；11~30 人\n- 技能重點：Java、SQL、JS／HTML5／CSS、SA／SD；加分 Spring Boot、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP\n- 內文系統範例：MyCharge CPO 平台、物聯網企業客戶平台、電商代運營平台、企業創新整合開發\n- 企業字樣：有（「物聯網企業客戶平台」「企業創新服務」「企業創新整合開發」）"
+   }
+  ],
+  "answer": "根據 [1]，台灣大哥大來自公司自述的技術堆疊包括：自研 GenAIus、MCP、向量檢索 RAG、NVIDIA GB300 算力、自研語音模型 myVoca [1]。GitHub 與技術部落格未查；推測企業端偏 Java／.NET 與資料倉儲，AI 端有 Python，但企業服務應用部實際使用語言查無 [1]。\n\n另外，[3] 的 Java 全端工程師職缺技能重點提到 Java、SQL、JS／HTML5／CSS、SA／SD，加分項目包括 Spring Boot、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP [3]。",
+  "answer_status": "ok",
+  "answer_sec": 1.75,
+  "sources": [
+   {
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "台灣大哥大",
+    "file": "補1_台哥大.md",
+    "heading_path": "三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > C. 平台／雲端／基礎架構類 > I91 中介軟體平台技術課主管、I96 資深基礎架構整合工程師、I100 IT基礎架構工程師、I202 資料庫平台工程師、I94 資深系統工程師"
+   },
+   {
+    "company": "台灣大哥大",
+    "file": "補1_台哥大.md",
+    "heading_path": "三、全部 8 頁列表中的 AI／Python／後端／資料／軟體／全端／平台／雲端相關職缺 > B. 後端／全端／軟體類 > I102 Java全端軟體工程師（台北、高雄）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "台灣大哥大",
+  "question": "台灣大哥大是做什麼的？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.21,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "1. 基本資料",
+    "text": "- 法人全名：台灣大哥大股份有限公司（英文簡稱 TWM）【第三方】\n  - https://info.technews.tw/company/97176270-台灣大哥大股份有限公司\n- 統編：97176270【第三方】同上\n- 資本額：資本總額 600 億元；實收資本額約 372.33 億元【第三方】\n  - https://ww2.money-link.com.tw/TWStock/StockBasic.aspx?SymId=3045\n- 成立（核准設立）日：1997-02-25【第三方】同 technews 頁\n- 上市：股票代號 3045；上市日 2002-08-26【第三方】同 technews 頁\n- 員工數：查無。\n  - 查了：搜尋「員工人數／永續報告書」，未取得數字。永續報告書與年報 PDF 未開啟。\n- 母公司／集團：查無明確母公司。\n  - 第三方報導顯示董事長為蔡明忠，富邦集團蔡家為主要經營者。持股比例未驗證。\n  - 台灣大經大富媒體科技持有 momo 富邦媒約 45.01%（舊報導，需以年報為準）。\n  - https://www.ctee.com.tw/news/20250425700186-430502（搜尋結果摘要，未逐篇驗證）"
+   },
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "2. 業務與財務",
+    "text": "- 業務【第三方】：電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）。\n  - https://info.technews.tw/company/97176270-台灣大哥大股份有限公司\n- 2025 全年【第三方】：\n  - 合併營收 1,987.6 億元，年減 0.31%。\n  - EBITDA 431.7 億元，年增 1.53%。\n  - 稅後純益 144.4 億元，年增 4%；EPS 4.77 元，7 年新高。\n  - 來源：https://uanalyze.com.tw/articles/5466548988\n- 2025 分項【第三方，引述公司法說】：\n  - Telco＋企業服務營收年增 26%。\n  - 新科技事業營收年增 12%。\n  - momo 會員年增 3%。\n  - 同上來源。\n- 2026 展望【自述，經第三方轉述】：營收成長 5%–7%，營業利益成長 1%–2%。同上來源。\n- 2024 年【第三方】：營收、EBITDA 創歷史新高；EPS 4.57 元。\n  - https://cna.com.tw/business/chinese/403363（只讀到標題摘要）\n- 近 3 年營收趨勢：只確認 2024 創高、2025 持平略減（主因 momo 影響，富果研究說法）。2023 數字與三年完整表：查無。\n  - https://b"
+   },
+   {
+    "also_in": [],
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "8. 近一年新聞（2025-11 至 2026-11）",
+    "text": "- 2026-04-29：公司發布 2025 企業客戶營收年增 26%、AI 算力服務、AI Coding 超過 50%【自述】。https://www.cna.com.tw/business/chinese/432126\n- 2026-04-27：推 AI 算力服務（GMI Cloud）。https://newtalk.tw/news/view/2026-04-29/1032433\n- 2026-03：2025 財報，EPS 4.77 元，營收年減 0.31%【第三方】。https://uanalyze.com.tw/articles/5466548988\n- 2026-06：Computex 公布桃園 AIDC 預售 100% 完售【自述，經第三方轉述】。https://newtalk.tw/news/view/2026-06-02/1038847（只讀到搜尋摘要）\n- 2026-08-03：MyAgent、AIDC 7,000 顆 GB300、myVoca、「超人計畫」培訓近 2,500 名非 IT 同仁。https://www.ctee.com.tw/news/20260803701567-430502\n- 2026-09：D.E.E.P. Tech Day 發表 MyAgent。https://finance.technews.tw/2026/09/08/deep-tec"
+   }
+  ],
+  "answer": "台灣大哥大主要從事電信（行動、寬頻）、有線電視、企業服務、新科技事業與電商（momo）等業務 [2]。",
+  "answer_status": "ok",
+  "answer_sec": 1.36,
+  "sources": [
+   {
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "2. 業務與財務"
+   },
+   {
+    "company": "台灣大哥大",
+    "file": "01_台灣大哥大.md",
+    "heading_path": "8. 近一年新聞（2025-11 至 2026-11）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "聯合報",
+  "question": "聯合報是做什麼的？",
+  "kind": "faq1",
+  "search_status": "low",
+  "search_sec": 0.21,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "02_聯合報.md",
+    "heading_path": "1. 基本資料 > 1.2 聯合報股份有限公司",
+    "text": "- 統編：03799802。\n- 資本額：30.9 億元（已發行 309,000,000 股，面額 10 元）。\n- 成立：1973-12-29。登記狀態：核准設立。\n- 代表人：王文杉（董事長）。地址：新北市汐止區大同路1段369號。\n- 營業項目：報紙業、雜誌出版業、會議及展覽服務業。\n- 法人股東：杉怡實業、文怡投資、金南實業、沛盛實業、愛和實業、聯經資訊。\n- 以上全部【第三方】：https://lawplayer.com/company/03799802\n- 母公司：查無單一母公司。為家族／法人股東持股結構。\n- 上市櫃：聯合報本身查無上市櫃紀錄。\n- 員工數：查無。"
+   },
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "02_聯合報.md",
+    "heading_path": "1. 基本資料 > 1.1 法人關係（重點）",
+    "text": "- 「聯合報」「聯合報系」「聯合線上」是不同層級。\n  - 聯合報系：集團名稱，不是單一法人。含聯合報、經濟日報、世界日報、聯合新聞網。【自述】https://udngroup.com/\n  - 聯合報股份有限公司：報紙法人。【第三方】https://lawplayer.com/company/03799802\n  - 聯合線上股份有限公司：經營聯合新聞網（udn.com）與聯合知識庫。【第三方】https://www.businesstoday.com.tw/article/category/183015/post/200609210041/\n  - 聯經數位：2025-01 發表 Streamlined Newsroom 的開發方，另一個法人。【第三方】https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710\n- 數據發展部屬哪個法人：【查無】公開資料只寫「聯合報系數據發展部」，沒寫法人。\n  - 證據 A：Publish X 報導只寫「聯合報系數據發展部」。https://udn.com/news/story/7314/9544347\n  - 證據 B：interview.tw 把數據分析師心得放在「聯合報股份有限公司」頁下。https://interview.tw/c/4OUi\n  - 證據 C：GoodJ"
+   },
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "02_聯合報.md",
+    "heading_path": "1. 基本資料 > 1.4 集團（公司自述）",
+    "text": "- 聯合報創刊 1951-09-16。官網稱 16 million 月不重複訪客、860 萬會員、680 萬粉絲專頁追蹤。數字是自述，未驗證。https://udngroup.com/\n- 自稱「內容加科技」公司。同上來源。"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "聯合報",
+  "question": "聯合報的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "ok",
+  "search_sec": 0.23,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "02_聯合報.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "- 雲：Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）；廣告：Google Ad Manager（2013 起）、Google Analytics。【自述】https://cloud.google.com/customers/udn?hl=zh-TW\n- 語言／框架：筆試線索只見 SQL 與 Python。其餘【查無】。\n- GitHub、技術部落格、技術分享：搜尋一次，未找到數據發展部的公開技術文章。【查無】\n- Streamlined Newsroom（錯字偵測、圖片推薦、提示詞平台、跨通路發布）由聯經數位開發，不是數據發展部。https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710\n- Publish X 底層（模型、RAG、框架）：【查無】。"
+   },
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "補5_典凡_聯合報系.md",
+    "heading_path": "二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。",
+    "text": "I／LLM 應用、數位廣告指標\n- 內文：支援 ETL、資料清理、跨系統欄位整併\n- 狀態：1 小時前聯絡過求職者，徵才行為活躍\n**A3. 【數據發展部】助理數據分析師－產品分析中心**\n- 連結：https://www.104.com.tw/job/70mim\n- 薪資：待遇面議；地點：新北市汐止區；經歷：不拘；學歷：大學\n- 更新日：8/03；應徵人數：6~10 人\n- 必要（內文）：基礎 SQL、Python\n- 工作：數據報表維護、建立數據處理自動化與監控機制\n- 狀態：6 天內聯絡過求職者，徵才行為活躍\n- 擅長工具欄位：未開內頁，查無\n**A4. 【數據發展部】演算法工程師**\n- 連結：https://www.104.com.tw/job/4u5lb\n- 薪資：待遇面議；地點：台北市信義區；經歷：不拘；學歷：大學以上\n- 更新日：8/03；應徵人數：6~10 人\n- 擅長工具（欄位）：Python、PostgreSQL\n- 內文：推薦系統、精準廣告、NLP；機器學習；資料處理流程與模型自動化、系統設計建置與維運\n- 狀態：4 天內處理過履歷\n**A5. 【數據發展部】專案經理**\n- 連結：https://www.104.com.tw/job/71sct\n- 薪資：待遇面議；地點：新北市汐止區；經歷：6 年以上；學歷：碩士以上\n- 更新日：8/03；應徵人數：0~5"
+   },
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "補5_典凡_聯合報系.md",
+    "heading_path": "二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。",
+    "text": "止區；經歷：5 年以上；學歷：大學\n- 更新日：8/10；應徵人數：0~5 人\n- 內文：向數據發展部總經理報告；跨事業群數據應用專案管理與策略分析。非工程職\n**A8. 【新聞部數據中心】前端開發工程師**\n- 連結：https://www.104.com.tw/job/6i2tp\n- 薪資：月薪 35,000~50,000 元；地點：新北市汐止區；經歷：不拘；學歷：專科\n- 更新日：8/03；應徵人數：6~10 人\n- 內文：Vue3；數位專題前端；與後端 API 串接；付費內容網站頁面\n- 備註：部門寫「新聞部數據中心」，不是「數據發展部」。\n**A9. 【新聞部數據中心】行銷企畫（會員與訂閱成長）**\n- 連結：https://www.104.com.tw/job/6nxx3\n- 薪資：待遇面議；地點：新北市汐止區；經歷：3 年以上；學歷：不拘\n- 更新日：8/03；應徵人數：0~5 人\n- 內文：GA4、Meta Ads／Google Ads、UTM、漏斗分析；加分 Looker Studio、GTM、A/B Test、AI 輔助分析。有每年 12 天遠端工作日。非工程職\n- 狀態：2 天內處理過履歷，徵才行為活躍\n**A10. 【行動發展部】Android行動軟體開發工程師**\n- 連結：https://www.104.com.tw/job/8eulh\n- 薪資：待遇面"
+   }
+  ],
+  "answer": "根據段落內容，聯合報的技術堆疊與開發工具如下：\n\n- 雲端採用 Google Cloud，包含 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions；廣告與分析使用 Google Ad Manager（2013 起）與 Google Analytics [1]。\n- 語言／框架方面，筆試線索只見 SQL 與 Python，其餘查無 [1]。\n- GitHub、技術部落格、技術分享：搜尋一次，未找到數據發展部的公開技術文章，查無 [1]。\n- Publish X 底層（模型、RAG、框架）：查無 [1]。\n- 徵才職缺另有線索：A3 助理數據分析師要求基礎 SQL、Python [2]；A4 演算法工程師擅長工具欄位為 Python、PostgreSQL [2]；A8 前端開發工程師內文提到 Vue3 [3]。",
+  "answer_status": "ok",
+  "answer_sec": 2.01,
+  "sources": [
+   {
+    "company": "聯合報",
+    "file": "02_聯合報.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "聯合報",
+    "file": "補5_典凡_聯合報系.md",
+    "heading_path": "二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "聯合報",
+  "question": "聯合報的技術堆疊與開發工具有哪些？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "02_聯合報.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "- 雲：Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）；廣告：Google Ad Manager（2013 起）、Google Analytics。【自述】https://cloud.google.com/customers/udn?hl=zh-TW\n- 語言／框架：筆試線索只見 SQL 與 Python。其餘【查無】。\n- GitHub、技術部落格、技術分享：搜尋一次，未找到數據發展部的公開技術文章。【查無】\n- Streamlined Newsroom（錯字偵測、圖片推薦、提示詞平台、跨通路發布）由聯經數位開發，不是數據發展部。https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710\n- Publish X 底層（模型、RAG、框架）：【查無】。"
+   },
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "補5_典凡_聯合報系.md",
+    "heading_path": "二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。",
+    "text": "I／LLM 應用、數位廣告指標\n- 內文：支援 ETL、資料清理、跨系統欄位整併\n- 狀態：1 小時前聯絡過求職者，徵才行為活躍\n**A3. 【數據發展部】助理數據分析師－產品分析中心**\n- 連結：https://www.104.com.tw/job/70mim\n- 薪資：待遇面議；地點：新北市汐止區；經歷：不拘；學歷：大學\n- 更新日：8/03；應徵人數：6~10 人\n- 必要（內文）：基礎 SQL、Python\n- 工作：數據報表維護、建立數據處理自動化與監控機制\n- 狀態：6 天內聯絡過求職者，徵才行為活躍\n- 擅長工具欄位：未開內頁，查無\n**A4. 【數據發展部】演算法工程師**\n- 連結：https://www.104.com.tw/job/4u5lb\n- 薪資：待遇面議；地點：台北市信義區；經歷：不拘；學歷：大學以上\n- 更新日：8/03；應徵人數：6~10 人\n- 擅長工具（欄位）：Python、PostgreSQL\n- 內文：推薦系統、精準廣告、NLP；機器學習；資料處理流程與模型自動化、系統設計建置與維運\n- 狀態：4 天內處理過履歷\n**A5. 【數據發展部】專案經理**\n- 連結：https://www.104.com.tw/job/71sct\n- 薪資：待遇面議；地點：新北市汐止區；經歷：6 年以上；學歷：碩士以上\n- 更新日：8/03；應徵人數：0~5"
+   },
+   {
+    "also_in": [],
+    "company": "聯合報",
+    "file": "補5_典凡_聯合報系.md",
+    "heading_path": "二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。",
+    "text": "止區；經歷：5 年以上；學歷：大學\n- 更新日：8/10；應徵人數：0~5 人\n- 內文：向數據發展部總經理報告；跨事業群數據應用專案管理與策略分析。非工程職\n**A8. 【新聞部數據中心】前端開發工程師**\n- 連結：https://www.104.com.tw/job/6i2tp\n- 薪資：月薪 35,000~50,000 元；地點：新北市汐止區；經歷：不拘；學歷：專科\n- 更新日：8/03；應徵人數：6~10 人\n- 內文：Vue3；數位專題前端；與後端 API 串接；付費內容網站頁面\n- 備註：部門寫「新聞部數據中心」，不是「數據發展部」。\n**A9. 【新聞部數據中心】行銷企畫（會員與訂閱成長）**\n- 連結：https://www.104.com.tw/job/6nxx3\n- 薪資：待遇面議；地點：新北市汐止區；經歷：3 年以上；學歷：不拘\n- 更新日：8/03；應徵人數：0~5 人\n- 內文：GA4、Meta Ads／Google Ads、UTM、漏斗分析；加分 Looker Studio、GTM、A/B Test、AI 輔助分析。有每年 12 天遠端工作日。非工程職\n- 狀態：2 天內處理過履歷，徵才行為活躍\n**A10. 【行動發展部】Android行動軟體開發工程師**\n- 連結：https://www.104.com.tw/job/8eulh\n- 薪資：待遇面"
+   }
+  ],
+  "answer": "根據段落內容，聯合報的技術堆疊與開發工具如下：\n\n- **雲端與廣告工具**：雲端採用 Google Cloud，包含 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions；廣告使用 Google Ad Manager（2013 起）與 Google Analytics [1]。\n- **語言／框架**：筆試線索只見 SQL 與 Python，其餘查無 [1]。\n- **其他**：GitHub、技術部落格、技術分享搜尋一次未找到數據發展部的公開技術文章，查無 [1]；Publish X 底層的模型、RAG、框架查無 [1]。\n\n另外，徵才職缺中提到的工具包括：A4 演算法工程師擅長工具為 Python、PostgreSQL [2]；A8 前端開發工程師使用 Vue3 [3]；A9 行銷企畫提到 GA4、Meta Ads／Google Ads、UTM，加分 Looker Studio、GTM、A/B Test [3]。",
+  "answer_status": "ok",
+  "answer_sec": 2.06,
+  "sources": [
+   {
+    "company": "聯合報",
+    "file": "02_聯合報.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "聯合報",
+    "file": "補5_典凡_聯合報系.md",
+    "heading_path": "二、聯合報系 > A. 聯合報股份有限公司（公司頁 https://www.104.com.tw/company/1quaxzk，工作機會 71，共 4 頁） > 重點：「數據發展部」字樣有出現。共 7 筆標題寫【數據發展部】（A1~A7），另有 2 筆【新聞部數據中心】（A8、A9）。"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "叡揚資訊",
+  "question": "叡揚資訊是做什麼的？",
+  "kind": "faq1",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 類型與來源 |\n|---|---|---|\n| 公司名 | 叡揚資訊股份有限公司（Galaxy Software Services，GSS） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| 統編 | 22425662 | 【第三方】同上 |\n| 成立日 | 1987-03-16（核准設立） | 【第三方】同上 |\n| 登記地址 | 臺北市中山區德惠街 9 號 5 樓 | 【第三方】同上；職缺頁亦同 https://www.yourator.co/companies/gss/jobs/36883 |\n| 資本額 | 數字不一致。登記實收 371,441,470 元（登記資本總額 10 億） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| | Yourator 寫 3.53 億 | 【第三方】https://www.yourator.co/companies/gss |\n| | interview.tw 寫 4 億 | 【第三方】https://interview.tw/c/DSV9/info |\n| 董事長／總經理 | 張培鏞（代表人）／陳世安 | 【第三方】https://info.technews."
+   },
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "】https://interview.tw/c/DSV9/info |\n| 董事長／總經理 | 張培鏞（代表人）／陳世安 | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| 上市櫃 | 上櫃，代號 6752。上櫃日有兩種說法（2020/01/10 或 2020/12/10），未驗證 | 【第三方】同上 |\n| 員工數 | 800（Yourator）；簡報較新版寫 600+，較舊版寫 700+ | 【第三方】https://www.yourator.co/companies/gss ；【自述】https://www.im.tku.edu.tw/wp-content/uploads/2025/11/叡揚資訊_實習生招募資訊.pdf ；https://www.im.fju.edu.tw/wp-content/uploads/2024/11/叡揚資訊_實習生招募資訊.pdf |\n| 母公司／集團 | 查無 | 查了 technews 公司資料、Yourator、interview.tw（寫「無股東資料」） |\n| 據點 | 台北總部、北投創富研發中心、高雄研發中心；簡報另列上海 | 【自述】https://www.gss.com.tw ；實習簡報同上 |\n查無：經濟部商工登記公示資料與公開資訊觀測站的原始頁面。我沒"
+   },
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "2. 業務與財務 > 主要客戶",
+    "text": "- 公司簡報【自述】：金融、醫學中心、政府。雲端服務客戶數「超過 40,000」。https://www.im.fju.edu.tw/wp-content/uploads/2024/11/叡揚資訊_實習生招募資訊.pdf\n- 具名客戶：查無。（technews AI Agent 報導未提具名客戶。）"
+   }
+  ],
+  "answer": "查無",
+  "answer_status": "ok",
+  "answer_sec": 1.24,
+  "sources": [],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "叡揚資訊",
+  "question": "叡揚資訊的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "ok",
+  "search_sec": 0.23,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "- 後端：Java、Spring Boot、Spring MVC、MyBatis、Hibernate、JPA。Python 為加分。【第三方，職缺】https://www.yourator.co/companies/gss/jobs/36883\n- 前端：React、jQuery、AJAX、Webpack。同上。\n- 資料庫：MS SQL Server、Oracle。同上。\n- 開發流程：DevSecOps、Code Review。同上。\n- 筆試：C 語言演算法、網頁、SQL。【第三方，單一心得】https://www.goodjob.life/experiences/65b367ba3729c6fca6db6c05\n- AI：LLM、VLM、電腦視覺、ServiceNow AI 平台；InsAI 支援地端部署。【自述／第三方】https://finance.technews.tw/2026/09/21/ai-agent-specialist-gss/ 、https://wantrich.chinatimes.com/news/20261106900297-420101\n- 雲：查無。（只看到 SaaS 服務，沒看到雲廠商名稱。）\n- GitHub、技術部落格：沒有查。查無。"
+   },
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "補4_凱基_叡揚.md",
+    "heading_path": "二、叡揚資訊（公司頁 https://www.104.com.tw/company/aavnrjk ，78 筆，共 4 頁） > 1~2 年經歷",
+    "text": "礎架構（最接近「資料」）\n- 資深.NET專案工程師(21042301)：2 年以上（內文要求 3 年 .NET）；面議；中山區\n- [校園專區-台北]Java程式設計師：2 年以上；大學；面議；北投區；0~5 人；JAVA、API 設計、**機器學習**（列表寫在工作內容）\n- [校園專區-台北]資安工程師：2 年以上；中山區；面議\n- 系統分析師(24070407)：2 年以上；系統分析師(26031701)：2 年以上；系統分析工程師(23020201)：3 年以上；系統分析師(24030101)：5 年以上\n- 專案經理(26060401)：5 年以上；大數據平台、AI 加值應用；專案經理(24070406)：4 年以上\n- 其他非技術：業務、會計、行銷、總務、MIS 工程師（3 年以上）等，略。"
+   },
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 類型與來源 |\n|---|---|---|\n| 公司名 | 叡揚資訊股份有限公司（Galaxy Software Services，GSS） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| 統編 | 22425662 | 【第三方】同上 |\n| 成立日 | 1987-03-16（核准設立） | 【第三方】同上 |\n| 登記地址 | 臺北市中山區德惠街 9 號 5 樓 | 【第三方】同上；職缺頁亦同 https://www.yourator.co/companies/gss/jobs/36883 |\n| 資本額 | 數字不一致。登記實收 371,441,470 元（登記資本總額 10 億） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| | Yourator 寫 3.53 億 | 【第三方】https://www.yourator.co/companies/gss |\n| | interview.tw 寫 4 億 | 【第三方】https://interview.tw/c/DSV9/info |\n| 董事長／總經理 | 張培鏞（代表人）／陳世安 | 【第三方】https://info.technews."
+   }
+  ],
+  "answer": "叡揚資訊的技術堆疊與開發工具包括：\n\n- **後端**：Java、Spring Boot、Spring MVC、MyBatis、Hibernate、JPA；Python 為加分 [1]。\n- **前端**：React、jQuery、AJAX、Webpack [1]。\n- **資料庫**：MS SQL Server、Oracle [1]。\n- **開發流程**：DevSecOps、Code Review [1]。\n- **筆試**：C 語言演算法、網頁、SQL [1]。\n- **AI**：LLM、VLM、電腦視覺、ServiceNow AI 平台；InsAI 支援地端部署 [1]。\n- **雲**：查無 [1]。\n- **GitHub、技術部落格**：查無 [1]。",
+  "answer_status": "ok",
+  "answer_sec": 1.93,
+  "sources": [
+   {
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "叡揚資訊",
+    "file": "補4_凱基_叡揚.md",
+    "heading_path": "二、叡揚資訊（公司頁 https://www.104.com.tw/company/aavnrjk ，78 筆，共 4 頁） > 1~2 年經歷"
+   },
+   {
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "1. 基本資料"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "叡揚資訊",
+  "question": "叡揚資訊是做什麼的？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.26,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 類型與來源 |\n|---|---|---|\n| 公司名 | 叡揚資訊股份有限公司（Galaxy Software Services，GSS） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| 統編 | 22425662 | 【第三方】同上 |\n| 成立日 | 1987-03-16（核准設立） | 【第三方】同上 |\n| 登記地址 | 臺北市中山區德惠街 9 號 5 樓 | 【第三方】同上；職缺頁亦同 https://www.yourator.co/companies/gss/jobs/36883 |\n| 資本額 | 數字不一致。登記實收 371,441,470 元（登記資本總額 10 億） | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| | Yourator 寫 3.53 億 | 【第三方】https://www.yourator.co/companies/gss |\n| | interview.tw 寫 4 億 | 【第三方】https://interview.tw/c/DSV9/info |\n| 董事長／總經理 | 張培鏞（代表人）／陳世安 | 【第三方】https://info.technews."
+   },
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "】https://interview.tw/c/DSV9/info |\n| 董事長／總經理 | 張培鏞（代表人）／陳世安 | 【第三方】https://info.technews.tw/company/22425662-叡揚資訊股份有限公司 |\n| 上市櫃 | 上櫃，代號 6752。上櫃日有兩種說法（2020/01/10 或 2020/12/10），未驗證 | 【第三方】同上 |\n| 員工數 | 800（Yourator）；簡報較新版寫 600+，較舊版寫 700+ | 【第三方】https://www.yourator.co/companies/gss ；【自述】https://www.im.tku.edu.tw/wp-content/uploads/2025/11/叡揚資訊_實習生招募資訊.pdf ；https://www.im.fju.edu.tw/wp-content/uploads/2024/11/叡揚資訊_實習生招募資訊.pdf |\n| 母公司／集團 | 查無 | 查了 technews 公司資料、Yourator、interview.tw（寫「無股東資料」） |\n| 據點 | 台北總部、北投創富研發中心、高雄研發中心；簡報另列上海 | 【自述】https://www.gss.com.tw ；實習簡報同上 |\n查無：經濟部商工登記公示資料與公開資訊觀測站的原始頁面。我沒"
+   },
+   {
+    "also_in": [],
+    "company": "叡揚資訊",
+    "file": "03_叡揚資訊.md",
+    "heading_path": "2. 業務與財務 > 主要客戶",
+    "text": "- 公司簡報【自述】：金融、醫學中心、政府。雲端服務客戶數「超過 40,000」。https://www.im.fju.edu.tw/wp-content/uploads/2024/11/叡揚資訊_實習生招募資訊.pdf\n- 具名客戶：查無。（technews AI Agent 報導未提具名客戶。）"
+   }
+  ],
+  "answer": "查無",
+  "answer_status": "ok",
+  "answer_sec": 0.98,
+  "sources": [],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "神通資訊",
+  "question": "神通資訊是做什麼的？",
+  "kind": "faq1",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 法人全名 | 神通資訊科技股份有限公司 | https://company.g0v.ronny.tw/api/show/53000774 | 第三方（經濟部登記的轉載） |\n| 統編 | 53000774 | https://ehrweb.104.com.tw/job.do?uno=53000774 、 https://info.technews.tw/searchPatent/53000774 | 第三方（兩處一致） |\n| 資本額 | 額定 25 億；實收 21 億（2.1 億股） | https://company.g0v.ronny.tw/api/show/53000774 | 第三方 |\n| 設立／核准日 | 2010-10-07 | 同上 | 第三方 |\n| 登記狀態 | 核准設立 | 同上 | 第三方 |\n| 員工數 | 約 1,000 人，技術人員約 80% | https://www.mitac.com.tw | 自述 |\n| 總部 | 台北市內湖區堤頂大道二段 187 號 | https://www.mitac.com.tw | 自述 |\n| 前身 | 1974 年成立的神通電腦 | https://www.mitac.com.tw 、 https://blog.104.com."
+   },
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "B_神通_聯合報.md",
+    "heading_path": "一、神通資訊科技股份有限公司（MiTAC Information）",
+    "text": "- 公司頁：https://www.104.com.tw/company/ocjaiy8\n- 公司：電腦系統整合服務業，內湖區堤頂大道二段187號，員工 1000 人。\n- 104 顯示「工作機會 99+」，共 6 頁（每頁 20 筆）。本次只讀第 1 頁（前 20 筆）。\n- 已確認不是神達、神雲。\n- 新興應用部：職缺頁全部沒有出現「新興應用部」字樣。以「神通資訊科技 新興應用」搜尋，104 回傳 0 筆。查無。\n- 注意：下列 AI／後端職缺（編號 6003～6013 系列）的描述寫「AI、數據、平台、Agent」，但頁面沒寫部門名，不能直接認定屬於新興應用部。\n- 注意：這批職缺的更新日都是 09/14（約兩個月前），但頁面仍列為開放中。"
+   },
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "4. 報名部門：新興應用部",
+    "text": "- 公開資料：查無「新興應用部」。查了：官網、Google 搜尋「神通資訊 新興應用部／新興應用事業」、104 案例文、GoodJob、新聞。\n- 【推測】依公開線索，該部可能做這幾類事（不確定）：\n  - 把 AI 產品（Agent Builder、MiEcoMatrix）做成行業應用或 PoC。\n  - 無人機、AIoT、地端 AI 這類新技術試點。\n  - 這個推測根據：「新興」一詞＋公司 2023 年入選無人機國家隊＋2026 年主推地端 AI。\n- 【自述】公司採「各部門主管自己刊登職缺、自己篩履歷」。所以面談的 2 位經理就是用人主管。https://blog.104.com.tw/mitac-information-e-system/"
+   }
+  ],
+  "answer": "神通資訊科技股份有限公司主要從事電腦系統整合服務業 [2]，前身是 1974 年成立的神通電腦 [1]。104 公司頁將其產業類別列為電腦系統整合服務業，總部位於台北市內湖區堤頂大道二段 187 號，員工約 1,000 人 [2]。另要注意，神通資訊不是神達、神雲 [2]。",
+  "answer_status": "ok",
+  "answer_sec": 1.72,
+  "sources": [
+   {
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "神通資訊",
+    "file": "B_神通_聯合報.md",
+    "heading_path": "一、神通資訊科技股份有限公司（MiTAC Information）"
+   },
+   {
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "4. 報名部門：新興應用部"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "神通資訊",
+  "question": "神通資訊的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "ok",
+  "search_sec": 0.24,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "6. 技術堆疊",
+    "text": "公開、可信的資料很少。\n- 【第三方】Agent Builder 硬體：AMD Ryzen AI Max+ 395、Radeon AI PRO R9700；伺服器版為神雲 TN85-B8261 搭 EPYC 與 Instinct MI350P。https://www.ctee.com.tw/news/20260423701330-431202 、 https://www.ctee.com.tw/news/20260730701527-431202\n- 兩篇報導的硬體不同，可能是不同機型。以官方為準。\n- 模型、框架（用哪個 LLM、LangChain 或自研）：查無。報導明確「文中未提及」。\n- 【第三方】技術 Java 型職缺（全端、Java 工程師）居多。https://www.goodjob.life/companies/神通資訊科技股份有限公司\n- 技術部落格、GitHub：沒查到公司官方技術部落格或 GitHub 組織。\n- 【推測】新興應用部可能偏 AI 應用整合，但語言（Python？）不確定。要在面談確認。"
+   },
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "3. 業務與財務 > 產品與業務",
+    "text": "- 【自述】系統整合商，提供「雲」與「端」的 AIoT 解決方案。應用：智慧交通、製造、安防、政府、教育、企業、金融。https://www.mitac.com.tw\n- 【自述】三個核心：MiTAC Agent Builder 企業 AI 一體機、MiAIOT 平台、MiEcoMatrix 永續平台。https://www.mitac.com.tw\n- 【自述】代理產品：Google Cloud、Microsoft、VMware、SugarCRM、Avaya、Cisco 等。https://www.mitac.com.tw\n- 【第三方】交通系統：高鐵行動購票、捷運悠遊卡、公車驗票、輕軌收費。另有智慧教室、智慧圖書館、路口監視與中央監控。2023 入選無人機國家隊。https://blog.104.com.tw/mitac-information-e-system/\n- 【第三方】MiTAC Agent Builder：2026-04-23 與 AMD、撼訊科技共同發表。零程式碼建 Agent、決策可稽核。硬體為 AMD Ryzen AI Max+ 395 與 Radeon AI PRO R9700。https://www.ctee.com.tw/news/20260423701330-431202\n- 【第三方】6 月 COMPUTEX 展出；7 月 AI WAVE 展出，主打"
+   },
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "3. 業務與財務 > 產品與業務",
+    "text": "ttps://www.ctee.com.tw/news/20260423701330-431202\n- 【第三方】6 月 COMPUTEX 展出；7 月 AI WAVE 展出，主打「產、銷、人、發、財」通用型 Agent、低程式碼拖拉介面。https://www.ctee.com.tw/news/20260730701527-431202\n- 【第三方】MiEcoMatrix：ESG／能源管理，含溫室氣體盤查、AI 永續報告書、智慧能源管理。2026-01 入選商周「AI 創新百強」。https://www.ctee.com.tw/news/20260122701190-431202\n- 【第三方】2026-08-06 高階主管論壇：Context Engine、AI 治理、四階段導入路徑。https://www.ctee.com.tw/news/20260806701085-431202"
+   }
+  ],
+  "answer": "神通資訊的技術堆疊與開發工具，公開可信資料很少，整理如下：\n\n- **硬體（第三方報導）**：Agent Builder 硬體為 AMD Ryzen AI Max+ 395、Radeon AI PRO R9700；伺服器版為神雲 TN85-B8261 搭 EPYC 與 Instinct MI350P。兩篇報導硬體不同，可能是不同機型，以官方為準 [1]。\n- **模型與框架**：用哪個 LLM、LangChain 或自研，查無；報導明確「文中未提及」 [1]。\n- **職缺技術**：第三方資料顯示 Java 型職缺（全端、Java 工程師）居多 [1]。\n- **技術部落格、GitHub**：沒查到公司官方技術部落格或 GitHub 組織 [1]。\n- **推測**：新興應用部可能偏 AI 應用整合，但語言（Python？）不確定，需面談確認 [1]。\n- **產品面**：MiTAC Agent Builder 主打零程式碼建 Agent、低程式碼拖拉介面 [2][3]。",
+  "answer_status": "ok",
+  "answer_sec": 1.83,
+  "sources": [
+   {
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "6. 技術堆疊"
+   },
+   {
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "3. 業務與財務 > 產品與業務"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "神通資訊",
+  "question": "神通資訊是做什麼的？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 法人全名 | 神通資訊科技股份有限公司 | https://company.g0v.ronny.tw/api/show/53000774 | 第三方（經濟部登記的轉載） |\n| 統編 | 53000774 | https://ehrweb.104.com.tw/job.do?uno=53000774 、 https://info.technews.tw/searchPatent/53000774 | 第三方（兩處一致） |\n| 資本額 | 額定 25 億；實收 21 億（2.1 億股） | https://company.g0v.ronny.tw/api/show/53000774 | 第三方 |\n| 設立／核准日 | 2010-10-07 | 同上 | 第三方 |\n| 登記狀態 | 核准設立 | 同上 | 第三方 |\n| 員工數 | 約 1,000 人，技術人員約 80% | https://www.mitac.com.tw | 自述 |\n| 總部 | 台北市內湖區堤頂大道二段 187 號 | https://www.mitac.com.tw | 自述 |\n| 前身 | 1974 年成立的神通電腦 | https://www.mitac.com.tw 、 https://blog.104.com."
+   },
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "B_神通_聯合報.md",
+    "heading_path": "一、神通資訊科技股份有限公司（MiTAC Information）",
+    "text": "- 公司頁：https://www.104.com.tw/company/ocjaiy8\n- 公司：電腦系統整合服務業，內湖區堤頂大道二段187號，員工 1000 人。\n- 104 顯示「工作機會 99+」，共 6 頁（每頁 20 筆）。本次只讀第 1 頁（前 20 筆）。\n- 已確認不是神達、神雲。\n- 新興應用部：職缺頁全部沒有出現「新興應用部」字樣。以「神通資訊科技 新興應用」搜尋，104 回傳 0 筆。查無。\n- 注意：下列 AI／後端職缺（編號 6003～6013 系列）的描述寫「AI、數據、平台、Agent」，但頁面沒寫部門名，不能直接認定屬於新興應用部。\n- 注意：這批職缺的更新日都是 09/14（約兩個月前），但頁面仍列為開放中。"
+   },
+   {
+    "also_in": [],
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "4. 報名部門：新興應用部",
+    "text": "- 公開資料：查無「新興應用部」。查了：官網、Google 搜尋「神通資訊 新興應用部／新興應用事業」、104 案例文、GoodJob、新聞。\n- 【推測】依公開線索，該部可能做這幾類事（不確定）：\n  - 把 AI 產品（Agent Builder、MiEcoMatrix）做成行業應用或 PoC。\n  - 無人機、AIoT、地端 AI 這類新技術試點。\n  - 這個推測根據：「新興」一詞＋公司 2023 年入選無人機國家隊＋2026 年主推地端 AI。\n- 【自述】公司採「各部門主管自己刊登職缺、自己篩履歷」。所以面談的 2 位經理就是用人主管。https://blog.104.com.tw/mitac-information-e-system/"
+   }
+  ],
+  "answer": "神通資訊科技股份有限公司主要從事電腦系統整合服務業 [2]。公司前身是 1974 年成立的神通電腦 [1]。",
+  "answer_status": "ok",
+  "answer_sec": 1.14,
+  "sources": [
+   {
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "神通資訊",
+    "file": "B_神通_聯合報.md",
+    "heading_path": "一、神通資訊科技股份有限公司（MiTAC Information）"
+   },
+   {
+    "company": "神通資訊",
+    "file": "04_神通資訊.md",
+    "heading_path": "4. 報名部門：新興應用部"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "藍新資訊",
+  "question": "藍新資訊是做什麼的？",
+  "kind": "faq1",
+  "search_status": "ok",
+  "search_sec": 0.21,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 全名 | 藍新資訊股份有限公司（NEWEB INFORMATION CO., LTD.） | https://www.cnyes.com/twstock/6938/company/profile | 第三方 |\n| 統編 | 24540267 | https://ww2.money-link.com.tw/TWStock/StockBasic.aspx?SymId=6938 | 第三方，單一來源，未經商工登記核對 |\n| 成立日 | 2014-04-23 | https://www.cnyes.com/twstock/6938/company/profile | 第三方 |\n| 地址 | 台北市內湖區行忠路 42 號 2 樓 | 同上 | 第三方 |\n| 資本額 | 約 1.46 億（現增後，發行 1,464 萬股）。現增前約 1.25–1.26 億 | cnyes 同上；PTT 文寫 1.26 億 | 第三方，各站不一 |\n| 董事長／總經理 | 郭廷群／楊璦如 | cnyes 同上 | 第三方 |\n| 興櫃 | 2024-01-23，參考價 41 元，國票證券輔導 | https://www.ctee.com.tw/news/20240123700202-439901 | 第三方 |\n| 上櫃 "
+   },
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "2. 業務與財務 > 業務【公司自述】",
+    "text": "- 核心：資訊軟硬體整合、顧問、導入、雲端建置、維運。https://www.newebinfo.com.tw\n- 平台：UNIX、AIX、Linux、NT；虛擬化、資料庫、儲存、備份、網路資安。\n- 產品線：全面資安、網路基礎架構、AI 應用、混合雲、儲存備份。\n- 代理品牌：Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5。\n- 近期獎項：HPE FY25 Best Partner、NetApp FY25 夥伴獎（2025-12）。同官網。\n- 目標客戶：政府、金融、大型企業。業務類型接近 ERP、MES、HIS、金融交易系統的底層平台。\n- 【推測】這是「賣硬體加維運」的系統整合商。軟體開發不是主體。"
+   },
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "網址5_宏碁雲_藍新_網龍.md",
+    "heading_path": "2. 藍新資訊（公司頁 14 筆，全部有網址；不是藍新金流／藍新科技）",
+    "text": " 11/12 | 0~5 人 | 未開單頁 | 列表；新竹縣竹北市 |\n| 藍新資訊 | 資訊行政專員(中正區；正職，非約聘人員) | https://www.104.com.tw/job/93qc1 | 不拘 | 專科 | 待遇面議 | 11/12 | 6~10 人 | 未開單頁（派駐政府單位） | 列表；專案管理類 |\n| 藍新資訊 | 專案工程師-網路(大安區；正職，非約聘人員) | https://www.104.com.tw/job/96vha | 2 年以上 | 大學 | 月薪 40,000~50,000 | 11/11 | 0~5 人 | 未開單頁（派駐政府單位） | 列表；大安區 |\n| 藍新資訊 | 專案工程師-網路(中正區；正職，非約聘人員) | https://www.104.com.tw/job/9793u | 2 年以上 | 專科 | 月薪 40,000~60,000 | 11/11 | 0~5 人 | 未開單頁（派駐政府單位） | 列表；中正區 |\n| 藍新資訊 | 專案工程師-MIS(楠梓科技園區；正職，非約聘) | https://www.104.com.tw/job/97ftl | 2 年以上 | 專科 | 月薪 45,000~50,000 | 11/09 | 0~5 人 | 未開單頁（派駐客戶端） | 列表；高雄楠梓 |"
+   }
+  ],
+  "answer": "藍新資訊主要從事資訊軟硬體整合、顧問、導入、雲端建置與維運，平台涵蓋 UNIX、AIX、Linux、NT，以及虛擬化、資料庫、儲存、備份、網路資安；產品線包括全面資安、網路基礎架構、AI 應用、混合雲、儲存備份 [2]。代理品牌有 Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5，目標客戶為政府、金融、大型企業 [2]。段落另推測其為「賣硬體加維運」的系統整合商，軟體開發不是主體 [2]。",
+  "answer_status": "ok",
+  "answer_sec": 1.67,
+  "sources": [
+   {
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "2. 業務與財務 > 業務【公司自述】"
+   },
+   {
+    "company": "藍新資訊",
+    "file": "網址5_宏碁雲_藍新_網龍.md",
+    "heading_path": "2. 藍新資訊（公司頁 14 筆，全部有網址；不是藍新金流／藍新科技）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "藍新資訊",
+  "question": "藍新資訊的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "low",
+  "search_sec": 0.21,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "2. 業務與財務 > 業務【公司自述】",
+    "text": "- 核心：資訊軟硬體整合、顧問、導入、雲端建置、維運。https://www.newebinfo.com.tw\n- 平台：UNIX、AIX、Linux、NT；虛擬化、資料庫、儲存、備份、網路資安。\n- 產品線：全面資安、網路基礎架構、AI 應用、混合雲、儲存備份。\n- 代理品牌：Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5。\n- 近期獎項：HPE FY25 Best Partner、NetApp FY25 夥伴獎（2025-12）。同官網。\n- 目標客戶：政府、金融、大型企業。業務類型接近 ERP、MES、HIS、金融交易系統的底層平台。\n- 【推測】這是「賣硬體加維運」的系統整合商。軟體開發不是主體。"
+   },
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "- 公開可見【第三方／自述】：\n  - 平台：UNIX、AIX、Linux、Windows Server、VMware 虛擬化。\n  - 儲存備份：NetApp、Dell EMC、HPE、Veeam。\n  - 網路資安：Cisco、Palo Alto、Fortinet、F5、Checkpoint。\n  - 104 網路工程師標籤有 Python、MySQL、PostgreSQL（見第 4 節）。\n- AI 端：GPU 伺服器、私有化 LLM、Agent。具體模型、框架、雲：查無。\n- 技術部落格、GitHub、活動分享：搜尋未發現。查無。\n- 【推測】AI 部門技術用 Python、Docker、vLLM／Ollama 一類推論工具。這是我的猜測，沒有來源。"
+   },
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "3. 智能應用發展部在做什麼",
+    "text": "- 公開事實【公司自述】：\n  - 2025 年成立，並引進關鍵技術人才。https://uanalyze.com.tw/articles/3620757735\n  - 已有 AI 伺服器、高階 GPU 運算平台、企業 AI 應用整合建置實績。\n  - 服務範圍：AI 基礎設施與推論環境規劃、企業 LLM 私有化部署、AI Agent 整合、資料治理。https://wantrich.chinatimes.com/news/20260930900472-420101 （摘要自搜尋結果，頁面我打不開）\n  - 方向：零信任、IAM、資料治理、AI 驅動資安。\n- 部門人數、主管姓名、產品名稱、具名案例：查無。\n- 【推測】\n  - 工作多半是「客戶現場導入」：評估硬體、裝 LLM 推論環境、串企業系統。\n  - 可能重視 on-prem、RAG、Agent、權限與資料治理，少做 SaaS 產品。\n  - 部門剛成立一年，業務還在摸索。處長可能同時要賣方案、帶技術。\n- 標題提到「AI 維運平台」。內文沒有說明內容。https://uanalyze.com.tw/articles/9353956242"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "藍新資訊",
+  "question": "藍新資訊是做什麼的？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.23,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 全名 | 藍新資訊股份有限公司（NEWEB INFORMATION CO., LTD.） | https://www.cnyes.com/twstock/6938/company/profile | 第三方 |\n| 統編 | 24540267 | https://ww2.money-link.com.tw/TWStock/StockBasic.aspx?SymId=6938 | 第三方，單一來源，未經商工登記核對 |\n| 成立日 | 2014-04-23 | https://www.cnyes.com/twstock/6938/company/profile | 第三方 |\n| 地址 | 台北市內湖區行忠路 42 號 2 樓 | 同上 | 第三方 |\n| 資本額 | 約 1.46 億（現增後，發行 1,464 萬股）。現增前約 1.25–1.26 億 | cnyes 同上；PTT 文寫 1.26 億 | 第三方，各站不一 |\n| 董事長／總經理 | 郭廷群／楊璦如 | cnyes 同上 | 第三方 |\n| 興櫃 | 2024-01-23，參考價 41 元，國票證券輔導 | https://www.ctee.com.tw/news/20240123700202-439901 | 第三方 |\n| 上櫃 "
+   },
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "2. 業務與財務 > 業務【公司自述】",
+    "text": "- 核心：資訊軟硬體整合、顧問、導入、雲端建置、維運。https://www.newebinfo.com.tw\n- 平台：UNIX、AIX、Linux、NT；虛擬化、資料庫、儲存、備份、網路資安。\n- 產品線：全面資安、網路基礎架構、AI 應用、混合雲、儲存備份。\n- 代理品牌：Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5。\n- 近期獎項：HPE FY25 Best Partner、NetApp FY25 夥伴獎（2025-12）。同官網。\n- 目標客戶：政府、金融、大型企業。業務類型接近 ERP、MES、HIS、金融交易系統的底層平台。\n- 【推測】這是「賣硬體加維運」的系統整合商。軟體開發不是主體。"
+   },
+   {
+    "also_in": [],
+    "company": "藍新資訊",
+    "file": "網址5_宏碁雲_藍新_網龍.md",
+    "heading_path": "2. 藍新資訊（公司頁 14 筆，全部有網址；不是藍新金流／藍新科技）",
+    "text": " 11/12 | 0~5 人 | 未開單頁 | 列表；新竹縣竹北市 |\n| 藍新資訊 | 資訊行政專員(中正區；正職，非約聘人員) | https://www.104.com.tw/job/93qc1 | 不拘 | 專科 | 待遇面議 | 11/12 | 6~10 人 | 未開單頁（派駐政府單位） | 列表；專案管理類 |\n| 藍新資訊 | 專案工程師-網路(大安區；正職，非約聘人員) | https://www.104.com.tw/job/96vha | 2 年以上 | 大學 | 月薪 40,000~50,000 | 11/11 | 0~5 人 | 未開單頁（派駐政府單位） | 列表；大安區 |\n| 藍新資訊 | 專案工程師-網路(中正區；正職，非約聘人員) | https://www.104.com.tw/job/9793u | 2 年以上 | 專科 | 月薪 40,000~60,000 | 11/11 | 0~5 人 | 未開單頁（派駐政府單位） | 列表；中正區 |\n| 藍新資訊 | 專案工程師-MIS(楠梓科技園區；正職，非約聘) | https://www.104.com.tw/job/97ftl | 2 年以上 | 專科 | 月薪 45,000~50,000 | 11/09 | 0~5 人 | 未開單頁（派駐客戶端） | 列表；高雄楠梓 |"
+   }
+  ],
+  "answer": "藍新資訊主要做資訊軟硬體整合、顧問、導入、雲端建置與維運 [2]。平台涵蓋 UNIX、AIX、Linux、NT，以及虛擬化、資料庫、儲存、備份、網路資安；產品線包括全面資安、網路基礎架構、AI 應用、混合雲、儲存備份，並代理 Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5 等品牌 [2]。目標客戶為政府、金融、大型企業，業務類型接近 ERP、MES、HIS、金融交易系統的底層平台 [2]。段落另推測其為「賣硬體加維運」的系統整合商，軟體開發不是主體 [2]。",
+  "answer_status": "ok",
+  "answer_sec": 1.75,
+  "sources": [
+   {
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "藍新資訊",
+    "file": "05_藍新資訊.md",
+    "heading_path": "2. 業務與財務 > 業務【公司自述】"
+   },
+   {
+    "company": "藍新資訊",
+    "file": "網址5_宏碁雲_藍新_網龍.md",
+    "heading_path": "2. 藍新資訊（公司頁 14 筆，全部有網址；不是藍新金流／藍新科技）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "凱基證券",
+  "question": "凱基證券是做什麼的？",
+  "kind": "faq1",
+  "search_status": "low",
+  "search_sec": 0.23,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "06_凱基證券.md",
+    "heading_path": "2. 業務與財務 > 業務",
+    "text": "- 產品線：經紀、自營、承銷、債券、衍生性商品、財富管理。【自述，Cake 公司簡介】https://www.cake.me/companies/kgi-securities\n- 海外據點：香港、泰國、新加坡、印尼、中國大陸。【自述，同上】\n- 2026 上半年：股權承銷主辦案件 477 億元，市占 41%；資產管理規模 4,144 億元。【第三方】https://uanalyze.com.tw/articles/9706754376\n- 主要客戶：查無明確揭露。【推測】零售投資人（經紀、財管）加企業客戶（承銷）。"
+   },
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "06_凱基證券.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 法人全名 | 凱基證券股份有限公司 | https://lawplayer.com/company/23111915 | 第三方 |\n| 統一編號 | 23111915 | https://lawplayer.com/company/23111915 | 第三方 |\n| 成立日期 | 1988-09-14 | https://lawplayer.com/company/23111915 | 第三方 |\n| 資本額（章程授權） | 460 億元 | https://lawplayer.com/company/23111915 | 第三方 |\n| 實收資本額 | 181.7 億元 | https://lawplayer.com/company/23111915 | 第三方 |\n| 登記狀態 | 核准設立 | https://lawplayer.com/company/23111915 | 第三方 |\n| 地址 | 台北市中山區明水路 698／700 號 | https://lawplayer.com/company/23111915 ；https://www.cake.me/companies/kgi-securities | 第三方 |\n| 母公司 | 凱基金融控股（統編 70827383；股票代號 "
+   },
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "06_凱基證券.md",
+    "heading_path": "1. 基本資料",
+    "text": "915 ；https://www.cake.me/companies/kgi-securities | 第三方 |\n| 母公司 | 凱基金融控股（統編 70827383；股票代號 2883） | https://info.technews.tw/company/70827383-%E4%B8%AD%E8%8F%AF%E9%96%8B%E7%99%BC%E9%87%91%E8%9E%8D%E6%8E%A7%E8%82%A1%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8 | 第三方 |\n| 集團 | 凱基金控下有凱基銀行、凱基人壽、凱基證券、凱基投信、中華開發資本 | https://uanalyze.com.tw/articles/1830144148 | 第三方（轉載鉅亨網） |\n| 上市櫃狀態 | 凱基證券本身未見上市櫃資料（查無）；母公司凱基金控為上市公司 | 同上 | 推測（依母公司為上市公司推得） |\n| 員工數 | 查無確切數字。Cake 顯示規模區間 1,001～5,000 人 | https://www.cake.me/companies/kgi-securities | 第三方 |\n注意：\n- Cake 頁面寫「中華開發金控的全資子公司」。這是舊名稱。現行母公司名稱以凱基金控為準。\n- 金控數字不要和證券"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "凱基證券",
+  "question": "凱基證券的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "ok",
+  "search_sec": 0.23,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "06_凱基證券.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "| 項目 | 內容 | 來源 | 類型 |\n|---|---|---|---|\n| 現行系統 | Windows 與 Linux；2 個 APP；4 種開發語言；5 種資料庫 | https://www.cio.com.tw/interview-huang-ronglin-cio-cio-asia-pacific-region-kaki-securities/ | 自述（亞太區資訊長專訪，2024-06） |\n| 新核心系統方向 | 模組化平台；Kubernetes、微服務、DevOps；Cloud Ready | 同上 | 自述 |\n| 語言名稱 | 查無。專訪只說 4 種，沒寫是哪四種 | 同上 | — |\n| AI 應用 | 內部流程優化、KYC 信用額度（逾八成線上開戶客戶；違規事件減約七成）；評估用 AI 輔助開發 | 同上 | 自述 |\n| 內部 GenAI | 集團打造內部 ChatGPT 類工具 | https://money.udn.com/money/story/5613/9099187 （搜尋摘要；我後來打開該頁回 404，未能再驗證） | 第三方（未驗證） |\n| AI 資料平台 | 已建 AI 資料平台與資料中台，數據已結構化 | https://money.udn.com/money/amp/story/5607/9600778 | 自述（總經理，202"
+   },
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "06_凱基證券.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "| 已建 AI 資料平台與資料中台，數據已結構化 | https://money.udn.com/money/amp/story/5607/9600778 | 自述（總經理，2026-07-01） |\n| AI 組織 | AI 團隊改由資訊長直轄，不放在資訊部下 | 同上 | 自述 |\n| 智慧牧羊犬 | AI Agent 加 RPA，做監控、異常偵測、處理建議；模型與平台未揭露 | https://money.udn.com/money/amp/story/5607/9594126 | 自述（2026-06-28） |\n| 對外 API | 搜尋摘要稱凱基證券提供 Python API 與量化課程。我沒有取得原始網址 | 查無可驗證網址 | 未驗證 |\n- 雲供應商（GCP／Azure／AWS）：查無。\n- 技術部落格、GitHub：查無凱基證券官方帳號與技術分享。\n- 重點【推測】：證券核心交易系統偏傳統（C#／Java／Windows）。Python 與 LLM 較可能出現在 AI 團隊（直屬資訊長）與數位創新部。\n---"
+   },
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "網址3_凱基_叡揚.md",
+    "heading_path": "一、凱基證券（共 13 筆網址）",
+    "text": "| 公司 | 職稱 | 網址 | 經歷 | 學歷 | 薪資 | 更新日 | 應徵人數 | 出差外派 | 備註 |\n|---|---|---|---|---|---|---|---|---|---|\n| 凱基證券 | 【資訊部】軟體開發工程師 | https://www.104.com.tw/job/8sf0e | 不拘 | 專科、大學 | 面議（4 萬以上） | 11/13 | 0~5 人 | 無需出差外派 | 內頁。工具：C#、COBOL、MS SQL；願接受 COBOL 培訓；歡迎應屆畢業生 |\n| 凱基證券 | 【2026 數位科技人才培育計畫】軟體開發專才養成 | https://www.104.com.tw/job/911o4 | 不拘 | 大學、碩士 | 面議（4 萬以上） | 11/13 | 6~10 人 | 無需出差外派 | 內頁。工具不拘；對象為應屆生、0~2 年轉職者、上過程式培訓班者；有 Mentor |\n| 凱基證券 | 【資訊部】Python 系統程式設計師 | https://www.104.com.tw/job/7f0ui | 1 年以上 | 大學、碩士 | 面議（4 萬以上） | 11/13 | 0~5 人 | 無需出差外派 | 內頁。工具：Linux、Python、Git；Python 與網站系統各 1 年以上 |\n| 凱基證券 | 【量化策略部】"
+   }
+  ],
+  "answer": "根據段落內容，凱基證券的技術堆疊與開發工具如下：\n\n- 現行系統環境為 Windows 與 Linux，有 2 個 APP、4 種開發語言、5 種資料庫 [1]。\n- 新核心系統方向為模組化平台，採用 Kubernetes、微服務、DevOps，並具 Cloud Ready 特性 [1]。\n- 4 種開發語言的具體名稱查無，專訪只說 4 種，沒寫是哪四種 [1]。\n- 招募職缺提到的工具包括：C#、COBOL、MS SQL，並願意接受 COBOL 培訓 [3]；另有職缺提到 Linux、Python、Git [3]。\n- 雲供應商（GCP／Azure／AWS）查無 [2]；技術部落格、GitHub 也查無凱基證券官方帳號與技術分享 [2]。\n- 段落中的重點【推測】指出：證券核心交易系統偏傳統（C#／Java／Windows），Python 與 LLM 較可能出現在 AI 團隊與數位創新部 [2]。",
+  "answer_status": "ok",
+  "answer_sec": 1.95,
+  "sources": [
+   {
+    "company": "凱基證券",
+    "file": "06_凱基證券.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "凱基證券",
+    "file": "網址3_凱基_叡揚.md",
+    "heading_path": "一、凱基證券（共 13 筆網址）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "凱基證券",
+  "question": "凱基證券有哪些職缺？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "A_凱基_台哥大.md",
+    "heading_path": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 其他（只在搜尋列表看到，未開啟內頁，故無連結與技能細節）",
+    "text": "- 【資訊部】C# 全端技術工程師：2 年以上，待遇面議，11/13 更新，11~30 人應徵（列表頁，無單筆連結）\n- 【凱基金控】資料庫管理工程師、網路整合工程師（雲端）：待遇面議，11/06 更新，列表頁可見，未開內頁\n- 【凱基金控】創新金融管理師、新興科技發展人員（Agentic AI／數位資產／RWA 研究與 PoC）：待遇面議，10/30 更新，列表頁可見，未開內頁"
+   },
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "A_凱基_台哥大.md",
+    "heading_path": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 2. 【數位創新部】AI Solution 工程師／架構師",
+    "text": "- 連結：https://www.104.com.tw/job/91qox\n- 薪資：待遇面議\n- 地點：台北市中正區忠孝西路\n- 更新日：11/13；應徵人數：6~10 人\n- 經歷／學歷：3 年以上；大學、碩士；資訊、數理統計、財稅金融相關\n- 擅長工具：不拘；工作技能：專案溝通／整合管理、專案規劃執行／範圍管理\n- 技能重點：企業級 AI 系統或大型軟體架構經驗；LLM 與深度學習；AI 框架與模型部署；雲端與容器；DevOps；資安設計；碩士以上、金融業 AI 專案優先\n- 工作內容：Agentic AI 系統、AI 與證券系統整合（API、資料源、身分驗證）、AI Guardrail、地端／雲端／Hybrid 架構評估"
+   },
+   {
+    "also_in": [],
+    "company": "凱基證券",
+    "file": "A_凱基_台哥大.md",
+    "heading_path": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 4. 【量化策略部】量化策略研究員（含 Python）",
+    "text": "- 連結：https://www.104.com.tw/job/8ugm5\n- 薪資：待遇面議\n- 地點：台北市中山區\n- 更新日：11/06；應徵人數：11~30 人\n- 經歷／學歷：不拘；大學、碩士\n- 擅長工具／工作技能：不拘／不拘\n- 技能重點：Python、SQL；時間序列、特徵工程、因子建模；爬蟲與資料清理；需投信投顧業務證照（可後補）"
+   }
+  ],
+  "answer": "根據段落內容，凱基證券的職缺如下：\n\n1. 【資訊部】C# 全端技術工程師（2 年以上經驗，待遇面議）[1]\n2. 【凱基金控】資料庫管理工程師 [1]\n3. 【凱基金控】網路整合工程師（雲端）[1]\n4. 【凱基金控】創新金融管理師 [1]\n5. 【凱基金控】新興科技發展人員（Agentic AI／數位資產／RWA 研究與 PoC）[1]\n6. 【數位創新部】AI Solution 工程師／架構師（3 年以上經驗，待遇面議，台北市中正區）[2]\n7. 【量化策略部】量化策略研究員（含 Python）（經歷不拘，待遇面議，台北市中山區）[3]",
+  "answer_status": "ok",
+  "answer_sec": 1.51,
+  "sources": [
+   {
+    "company": "凱基證券",
+    "file": "A_凱基_台哥大.md",
+    "heading_path": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 其他（只在搜尋列表看到，未開啟內頁，故無連結與技能細節）"
+   },
+   {
+    "company": "凱基證券",
+    "file": "A_凱基_台哥大.md",
+    "heading_path": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 2. 【數位創新部】AI Solution 工程師／架構師"
+   },
+   {
+    "company": "凱基證券",
+    "file": "A_凱基_台哥大.md",
+    "heading_path": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 4. 【量化策略部】量化策略研究員（含 Python）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "華電聯網",
+  "question": "華電聯網是做什麼的？",
+  "kind": "faq1",
+  "search_status": "ok",
+  "search_sec": 0.21,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 來源 |\n|---|---|---|\n| 法人全名 | 華電聯網股份有限公司（英文 Hwacom Systems Inc.） | https://www.cnyes.com/twstock/6163/company/profile |\n| 統編 | 84778623（未在商工登記官網原文核對） | https://info.technews.tw/company/84778623-%E8%8F%AF%E9%9B%BB%E8%81%AF%E7%B6%B2%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8 |\n| 成立日 | 1994-05-04 | https://www.cnyes.com/twstock/6163/company/profile |\n| 資本額 | 實收約 14.73 億（鉅亨 14.72 億；另有來源 14.04 億，時間點不同） | https://www.cnyes.com/twstock/6163/company/profile |\n| 員工數 | 約 980 人；工程師與研發人員 560 人以上（65% 以上）【自述，法說會，經 AI 整理】 | https://blog.fugle.tw/post/earnings-call-6163-2026-05-14 |\n| 上市櫃"
+   },
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "1. 華電聯網股份有限公司",
+    "text": "- 公司頁：https://www.104.com.tw/company/12y30460\n- 公司概況：電腦系統整合服務業；員工 920 人；總公司新北市汐止區；資本額 14.1 億（同上公司頁）\n- 公司頁顯示工作機會 99+；職缺列表分 7 頁，本次只讀第 1 頁（20 筆）。\n- 第 1 頁沒有 Python、後端、軟體開發、資料工程類職缺。有 AI 字樣的只有 1 筆（資安產品）。\n- 第 1 頁大部分是工程、業務、會計、資安、網路、系統職缺。"
+   },
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）",
+    "text": "1. 雲端與AI資安系統及產品工程師（最相關）\n   - 連結：https://www.104.com.tw/job/61qdm\n   - 薪資：待遇面議（經常性薪資 4 萬元以上）\n   - 地點：新北市汐止區新台五路一段102號18樓\n   - 出差外派：無需出差外派\n   - 條件：3 年以上；大學、碩士；科系不拘\n   - 工作內容：公有雲（AWS/GCP/Azure）資安架構、IAM、VPC、WAF/DDoS；資安產品研發，含生成式 AI 安全防護規則調校；用雲端 AI/ML 服務做客戶應用\n   - 技能要求（內文）：Python 或 Shell Script；Docker、Kubernetes、Container Security；Linux、TCP/IP\n   - 擅長工具、工作技能欄：不拘\n2. 資安工程師（技術服務二部/台中）\n   - 連結：https://www.104.com.tw/job/7gani\n   - 薪資：待遇面議（4 萬以上）；地點：台中市南屯區\n   - 出差外派：需出差，一年累積時間未定。內文寫「需配合專案進行駐點工作」\n   - 條件：3 年以上；專科以上；英文中等；證照 CEH、CompTIA Security+ 尤佳；有電信業者服務與企業系統維護經驗尤佳\n3. 系統工程師（新竹）\n   - 連結：https://www.104.co"
+   }
+  ],
+  "answer": "華電聯網主要從事電腦系統整合服務業 [2]，法人全名為華電聯網股份有限公司（Hwacom Systems Inc.）[1]。",
+  "answer_status": "ok",
+  "answer_sec": 1.08,
+  "sources": [
+   {
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "華電聯網",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "1. 華電聯網股份有限公司"
+   },
+   {
+    "company": "華電聯網",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "華電聯網",
+  "question": "華電聯網的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "- 公開資料查無語言、框架、雲、資料庫。查了：官網、職缺平台、搜尋 GitHub 與技術部落格（沒有找到公司帳號）。\n- 可確認的技術「主題」（不是具體工具）：生成式 AI、AI 影像辨識、5G 專網、C-V2X、AIoT、數位孿生。https://www.cna.com.tw/business/chinese/428282\n- 【推測】主體是網路、資通訊、雲端基礎建設整合。軟體多為自有產品與專案客製。Python 比重不明。"
+   },
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "2. 業務與財務 > 產品與服務",
+    "text": "- 主力是資通訊整合（占 75.1%）。其餘：智慧整合 12.4%、資安整合 6.5%、媒體整合 5.9%。【自述】https://blog.fugle.tw/post/earnings-call-6163-2026-05-14\n- 自研／自有產品：\n  - SmartQ LAS 企業專屬生成式 AI 平台\n  - FaceKey 人臉辨識整合系統\n  - Cyber Monitor 智慧網管系統\n  - PMS 旅客運輸系統\n  - D-City 驗測平台\n  - 來源：https://www.cna.com.tw/business/chinese/428282\n- 技術主題：生成式 AI、C-V2X 車聯網、5G 專網、AIoT、AR、AI 影像辨識、數位孿生。【自述】同上。\n- AI 專案：機房設備預測性維護、與 Palo Alto 合作 AI 輔助 MDR、國道／雪隧 AI 事故影像偵測、AI 冰機節能。【自述】https://blog.fugle.tw/post/earnings-call-6163-2026-05-14"
+   },
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "4. 職缺",
+    "text": "- 104 公司頁：自動化工具回 403，已放棄。https://www.104.com.tw/company/12y30460\n- 官網徵才頁只轉連到 104，無職缺內容。https://www.hwacom.com/web/bbs/board.php?bo_table=article&wr_id=80\n- Yourator：公司頁無資料。https://www.yourator.co/companies/hwacom\n- CakeResume（cake.me）：404。https://www.cake.me/companies/hwacom\n- 1111、LinkedIn：搜尋沒有找到華電聯網的 AI／Python／後端／資料職缺。\n- 結論：AI／Python／後端／資料職缺，查無公開刊登。請當天直接問。"
+   }
+  ],
+  "answer": "根據段落內容，華電聯網的技術堆疊與開發工具情況如下：\n\n- 公開資料查無使用的語言、框架、雲端平台與資料庫；官網、職缺平台、GitHub 與技術部落格都沒有找到公司帳號 [1]。\n- 可確認的技術「主題」（不是具體工具）包括：生成式 AI、AI 影像辨識、5G 專網、C-V2X、AIoT、數位孿生 [1]。\n- 推測其主體是網路、資通訊、雲端基礎建設整合，軟體多為自有產品與專案客製，Python 比重不明 [1]。\n- 自研／自有產品包括 SmartQ LAS 企業專屬生成式 AI 平台、FaceKey 人臉辨識整合系統、Cyber Monitor 智慧網管系統、PMS 旅客運輸系統、D-City 驗測平台 [2]。\n- 技術主題另包括 AR [2]。\n- AI 專案包括機房設備預測性維護、與 Palo Alto 合作 AI 輔助 MDR、國道／雪隧 AI 事故影像偵測、AI 冰機節能 [2]。",
+  "answer_status": "ok",
+  "answer_sec": 2.08,
+  "sources": [
+   {
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "2. 業務與財務 > 產品與服務"
+   },
+   {
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "4. 職缺"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "華電聯網",
+  "question": "華電聯網是做什麼的？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.23,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "1. 基本資料",
+    "text": "| 項目 | 內容 | 來源 |\n|---|---|---|\n| 法人全名 | 華電聯網股份有限公司（英文 Hwacom Systems Inc.） | https://www.cnyes.com/twstock/6163/company/profile |\n| 統編 | 84778623（未在商工登記官網原文核對） | https://info.technews.tw/company/84778623-%E8%8F%AF%E9%9B%BB%E8%81%AF%E7%B6%B2%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8 |\n| 成立日 | 1994-05-04 | https://www.cnyes.com/twstock/6163/company/profile |\n| 資本額 | 實收約 14.73 億（鉅亨 14.72 億；另有來源 14.04 億，時間點不同） | https://www.cnyes.com/twstock/6163/company/profile |\n| 員工數 | 約 980 人；工程師與研發人員 560 人以上（65% 以上）【自述，法說會，經 AI 整理】 | https://blog.fugle.tw/post/earnings-call-6163-2026-05-14 |\n| 上市櫃"
+   },
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "1. 華電聯網股份有限公司",
+    "text": "- 公司頁：https://www.104.com.tw/company/12y30460\n- 公司概況：電腦系統整合服務業；員工 920 人；總公司新北市汐止區；資本額 14.1 億（同上公司頁）\n- 公司頁顯示工作機會 99+；職缺列表分 7 頁，本次只讀第 1 頁（20 筆）。\n- 第 1 頁沒有 Python、後端、軟體開發、資料工程類職缺。有 AI 字樣的只有 1 筆（資安產品）。\n- 第 1 頁大部分是工程、業務、會計、資安、網路、系統職缺。"
+   },
+   {
+    "also_in": [],
+    "company": "華電聯網",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）",
+    "text": "1. 雲端與AI資安系統及產品工程師（最相關）\n   - 連結：https://www.104.com.tw/job/61qdm\n   - 薪資：待遇面議（經常性薪資 4 萬元以上）\n   - 地點：新北市汐止區新台五路一段102號18樓\n   - 出差外派：無需出差外派\n   - 條件：3 年以上；大學、碩士；科系不拘\n   - 工作內容：公有雲（AWS/GCP/Azure）資安架構、IAM、VPC、WAF/DDoS；資安產品研發，含生成式 AI 安全防護規則調校；用雲端 AI/ML 服務做客戶應用\n   - 技能要求（內文）：Python 或 Shell Script；Docker、Kubernetes、Container Security；Linux、TCP/IP\n   - 擅長工具、工作技能欄：不拘\n2. 資安工程師（技術服務二部/台中）\n   - 連結：https://www.104.com.tw/job/7gani\n   - 薪資：待遇面議（4 萬以上）；地點：台中市南屯區\n   - 出差外派：需出差，一年累積時間未定。內文寫「需配合專案進行駐點工作」\n   - 條件：3 年以上；專科以上；英文中等；證照 CEH、CompTIA Security+ 尤佳；有電信業者服務與企業系統維護經驗尤佳\n3. 系統工程師（新竹）\n   - 連結：https://www.104.co"
+   }
+  ],
+  "answer": "華電聯網主要從事電腦系統整合服務業 [2]。此外，從職缺內容來看，也涉及資安產品研發、雲端（AWS/GCP/Azure）資安架構與 AI/ML 應用等業務 [3]。",
+  "answer_status": "ok",
+  "answer_sec": 1.14,
+  "sources": [
+   {
+    "company": "華電聯網",
+    "file": "07_華電聯網.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "華電聯網",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "1. 華電聯網股份有限公司"
+   },
+   {
+    "company": "華電聯網",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "1. 華電聯網股份有限公司 > 相關職缺（5 筆，全部更新日 11/11，應徵人數皆 0~5 人）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "奧衍",
+  "question": "奧衍是做什麼的？",
+  "kind": "faq1",
+  "search_status": "low",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "08_奧衍.md",
+    "heading_path": "8. 近一年新聞",
+    "text": "- 2025-11 至 2026-11：沒有找到奧衍的新聞。查無。裁員、融資、訴訟：查無。\n- 較早的新聞：DRUID 與奧衍策略合作，2021-07-13。奧衍是 DRUID 在台灣第一個夥伴。https://www.druidai.com/news/druid-ai-partners-omnia-automation-taiwan 【第三方】\n  - 稿中提到奧衍業務「正擴展至人工智慧、金融科技等領域」。這是 2021 年的說法，不是現況證據。\n- 產業背景：UiPath 2025 年起轉向 agentic automation（AI Agent）。例：https://www.cio.com.tw/94796/ 、https://udn.com/news/story/7240/8923723 。這是 UiPath 的方向，不代表奧衍已有服務。【第三方】"
+   },
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+    "heading_path": "2. 奧衍股份有限公司（公司頁 4 筆）",
+    "text": "\n| 奧衍 | 解決方案架構師 - Solutions Architect（Junior）（技術） | https://www.104.com.tw/job/91xwo | 1 年以上（內文：無經驗但有後端與 RESTful API 概念者也收） | 專科、大學 | 月薪 36,000~50,000 | 11/11 | 0~5 人 | 無需出差外派 | 詳頁。日班。需求 1 人。工具：Python、Java、Linux、K8s、Git、Go |\n| 奧衍 | 財務｜主辦會計 (東方科學園區辦公室) | https://www.104.com.tw/job/7y2kq | 3 年以上 | 專科 | 月薪 40,000~55,000 | 11/11 | 0~5 人 | 查無 | 列表。非技術 |"
+   },
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+    "heading_path": "3. 奧衍股份有限公司（公司頁 4 筆；含 3 筆技術職缺） > 3-3 解決方案架構師 - Solutions Architect（Junior）",
+    "text": "- 連結：https://www.104.com.tw/company/1a2x6bmgjf\n- 工作：微服務與 API Gateway 設計；API 管理平台放入 Kubernetes；AI Gateway（Token 成本限流、Prompt 安全審查、敏感資料遮蔽）；CI/CD、GitOps、Configuration as Code\n- 無經驗者需有基礎後端開發與 RESTful API 概念\n- 1 年以上；專科；月薪 36,000~50,000；汐止；更新日 11/11；應徵 0~5 人\n- 上班時段、出差外派：查無（未開啟單頁）"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "奧衍",
+  "question": "奧衍的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "low",
+  "search_sec": 0.24,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "08_奧衍.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "- 明確：UiPath（RPA）。Yourator 只列這一項。https://www.yourator.co/companies/omnia\n- 產品線：Druid 聊天機器人平台、Docusign、elDoc。https://omnia.com.tw 【自述】\n- 語言、框架、雲、資料庫：查無。\n- 技術部落格、GitHub、活動分享：搜尋沒有找到。查無。\n- 【推測】工作多為 UiPath Studio 低程式碼開發加流程分析。Python 需求可能很少。"
+   },
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "08_奧衍.md",
+    "heading_path": "2. 業務與財務",
+    "text": "產品與服務（官網自述）：\n- RPA 流程自動化機器人方案\n- 聊天機器人應用\n- 文件數位化\n- 培訓課程\n- 代理的產品：UiPath（RPA）、Docusign（電子簽章）、elDoc（數位文件整合）、Druid（聊天機器人平台）\n- 來源：https://omnia.com.tw 【自述】\n客戶：\n- 官網沒列客戶名，只寫「眾多不同領域的客戶」。【自述】\n- Yourator 提到協助臺北市衛生局導入 RPA。【自述】https://www.yourator.co/companies/omnia\n- 我搜尋標案與新聞，沒有找到能確認奧衍得標的紀錄。「查無第三方佐證」。\n財務：\n- 近 3 年營收：查無。公司非上市櫃，沒有公開財報。\n- 資本額 2000 萬（見上），規模屬小型公司。【推測】"
+   },
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+    "heading_path": "2. 奧衍股份有限公司（公司頁 4 筆）",
+    "text": "\n| 奧衍 | 解決方案架構師 - Solutions Architect（Junior）（技術） | https://www.104.com.tw/job/91xwo | 1 年以上（內文：無經驗但有後端與 RESTful API 概念者也收） | 專科、大學 | 月薪 36,000~50,000 | 11/11 | 0~5 人 | 無需出差外派 | 詳頁。日班。需求 1 人。工具：Python、Java、Linux、K8s、Git、Go |\n| 奧衍 | 財務｜主辦會計 (東方科學園區辦公室) | https://www.104.com.tw/job/7y2kq | 3 年以上 | 專科 | 月薪 40,000~55,000 | 11/11 | 0~5 人 | 查無 | 列表。非技術 |"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "奧衍",
+  "question": "奧衍是做什麼的？",
+  "kind": "preset1",
+  "search_status": "low",
+  "search_sec": 0.23,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "08_奧衍.md",
+    "heading_path": "8. 近一年新聞",
+    "text": "- 2025-11 至 2026-11：沒有找到奧衍的新聞。查無。裁員、融資、訴訟：查無。\n- 較早的新聞：DRUID 與奧衍策略合作，2021-07-13。奧衍是 DRUID 在台灣第一個夥伴。https://www.druidai.com/news/druid-ai-partners-omnia-automation-taiwan 【第三方】\n  - 稿中提到奧衍業務「正擴展至人工智慧、金融科技等領域」。這是 2021 年的說法，不是現況證據。\n- 產業背景：UiPath 2025 年起轉向 agentic automation（AI Agent）。例：https://www.cio.com.tw/94796/ 、https://udn.com/news/story/7240/8923723 。這是 UiPath 的方向，不代表奧衍已有服務。【第三方】"
+   },
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+    "heading_path": "2. 奧衍股份有限公司（公司頁 4 筆）",
+    "text": "\n| 奧衍 | 解決方案架構師 - Solutions Architect（Junior）（技術） | https://www.104.com.tw/job/91xwo | 1 年以上（內文：無經驗但有後端與 RESTful API 概念者也收） | 專科、大學 | 月薪 36,000~50,000 | 11/11 | 0~5 人 | 無需出差外派 | 詳頁。日班。需求 1 人。工具：Python、Java、Linux、K8s、Git、Go |\n| 奧衍 | 財務｜主辦會計 (東方科學園區辦公室) | https://www.104.com.tw/job/7y2kq | 3 年以上 | 專科 | 月薪 40,000~55,000 | 11/11 | 0~5 人 | 查無 | 列表。非技術 |"
+   },
+   {
+    "also_in": [],
+    "company": "奧衍",
+    "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+    "heading_path": "3. 奧衍股份有限公司（公司頁 4 筆；含 3 筆技術職缺） > 3-3 解決方案架構師 - Solutions Architect（Junior）",
+    "text": "- 連結：https://www.104.com.tw/company/1a2x6bmgjf\n- 工作：微服務與 API Gateway 設計；API 管理平台放入 Kubernetes；AI Gateway（Token 成本限流、Prompt 安全審查、敏感資料遮蔽）；CI/CD、GitOps、Configuration as Code\n- 無經驗者需有基礎後端開發與 RESTful API 概念\n- 1 年以上；專科；月薪 36,000~50,000；汐止；更新日 11/11；應徵 0~5 人\n- 上班時段、出差外派：查無（未開啟單頁）"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "中華網龍",
+  "question": "中華網龍是做什麼的？",
+  "kind": "faq1",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "1. 基本資料",
+    "text": "- 法人全名：中華網龍股份有限公司。英文名 Chinesegamer International Corp.（官網頁尾）。\n  - 來源：https://www.chinesegamer.net 【自述】\n- 統一編號：70541704。狀態：核准設立。登記機關：商業發展署。代表人：王俊博。登記地：台北市南港區。\n  - 來源：https://twincn.com/item.aspx?no=70541704 【第三方】（由搜尋摘要取得，未逐頁驗證）\n- 資本額：資本總額 10 億元；實收資本額 864,868,580 元（約 8.65 億）。\n  - 來源：https://info.technews.tw/company/70541704-中華網龍股份有限公司 【第三方】（直接開啟回 403，數字取自搜尋摘要）\n- 成立日：2000-03-28。\n  - 來源：同上；https://www.nstock.tw/網龍做什麼.html 【第三方】\n- 員工數：查無。查了 technews 公司資料、nStock、GoodJob。\n- 母公司／集團：智冠科技（5478，統編 81231585）持股 48.42%。網龍是智冠的從屬公司。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n  - 智冠實收資本額 15.6 億元：https://inf"
+   },
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "1. 基本資料",
+    "text": "。網龍是智冠的從屬公司。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n  - 智冠實收資本額 15.6 億元：https://info.technews.tw/company/81231585-智冠科技股份有限公司 【第三方】\n- 上市櫃狀態：股票代號 3083。是上市或上櫃，本次來源未明載。查無明確字樣。\n- 註：商工登記公示資料與公開資訊觀測站未能直接開啟。以上為第三方轉載。"
+   },
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "2. 業務與財務 > 業務",
+    "text": "- 業務：開發網路連線平台與應用軟體；提供網路遊戲與手機遊戲服務。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n- 官網列出多款線上遊戲與台、港、中、美等地區入口。\n  - 來源：https://www.chinesegamer.net 【自述】\n- 近期產品：\n  - 《飄流幻境 Re:星之方舟》：2025 年 6 月推出。到 2026 年 2 月單月營收仍近 1,000 萬元。\n  - 《尋秦記》：2026 年 1 月推出。黃易出版社授權，網龍自研。台、港、澳由智冠子公司遊戲新幹線共同發行。\n  - 《吞食天地 2》Steam 版：2024 年貢獻營收。\n  - 來源：https://blog.fugle.tw/post/earnings-call-3083-2026-03-11 、https://blog.fugle.tw/post/earnings-call-3083-2025-03-06 【第三方，AI 摘要】\n  - 發行合約：https://wantrich.chinatimes.com/news/20251103900510-420101 【第三方】\n- 主要客戶：查無（遊戲業是玩家直接消費）。"
+   }
+  ],
+  "answer": "中華網龍主要從事網路連線平台與應用軟體的開發，並提供網路遊戲與手機遊戲服務 [3]。官網也列出多款線上遊戲，以及台、港、中、美等地區的入口 [3]。",
+  "answer_status": "ok",
+  "answer_sec": 1.58,
+  "sources": [
+   {
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "2. 業務與財務 > 業務"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "中華網龍",
+  "question": "中華網龍的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "- 近年工程師題目以 Unity、C#、物件導向、演算法為主。見第 6 節。\n  - 來源：https://www.goodjob.life/companies/中華網龍股份有限公司/interview-experiences 【第三方】\n- 遊戲後端語言：查無。\n- 雲平台、資料庫、框架：查無。\n- GitHub、技術部落格、技術分享活動：搜尋沒找到網龍的。查無。\n- MyCard 系統語言：查無。\n  - 注意：MyCard 是智冠集團的點數金流業務，不是網龍的產品。智冠 2026 年推 MyCard 到海外。\n  - 來源：https://technews.tw/2026/04/10/ai-development-center/ 【第三方】\n- 【推測】網龍技術偏遊戲 client（Unity／C#）。你的 Python／Flask／Gemini 背景與此不同。需當天確認。"
+   },
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+    "heading_path": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-5 其他（非工程）",
+    "text": "- 遊戲企劃（鑽石俱樂部、吞食天地M、飄流幻境）、遊戲美術、遊戲測試-飄流幻境、東南亞商務專員（印尼語）。\n---"
+   },
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+    "heading_path": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關）",
+    "text": "地點：台北市南港區南港路三段47巷2號4樓。來源：https://www.104.com.tw/company/wempj5s"
+   }
+  ],
+  "answer": "根據段落 [1]，中華網龍近年工程師題目以 Unity、C#、物件導向、演算法為主；遊戲後端語言、雲平台、資料庫、框架、GitHub、技術部落格、技術分享活動、MyCard 系統語言皆查無。段落另提到「【推測】網龍技術偏遊戲 client（Unity／C#）」，但這是推測內容。",
+  "answer_status": "ok",
+  "answer_sec": 1.67,
+  "sources": [
+   {
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "中華網龍",
+    "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+    "heading_path": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-5 其他（非工程）"
+   },
+   {
+    "company": "中華網龍",
+    "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+    "heading_path": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關）"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "中華網龍",
+  "question": "中華網龍是做什麼的？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.21,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "1. 基本資料",
+    "text": "- 法人全名：中華網龍股份有限公司。英文名 Chinesegamer International Corp.（官網頁尾）。\n  - 來源：https://www.chinesegamer.net 【自述】\n- 統一編號：70541704。狀態：核准設立。登記機關：商業發展署。代表人：王俊博。登記地：台北市南港區。\n  - 來源：https://twincn.com/item.aspx?no=70541704 【第三方】（由搜尋摘要取得，未逐頁驗證）\n- 資本額：資本總額 10 億元；實收資本額 864,868,580 元（約 8.65 億）。\n  - 來源：https://info.technews.tw/company/70541704-中華網龍股份有限公司 【第三方】（直接開啟回 403，數字取自搜尋摘要）\n- 成立日：2000-03-28。\n  - 來源：同上；https://www.nstock.tw/網龍做什麼.html 【第三方】\n- 員工數：查無。查了 technews 公司資料、nStock、GoodJob。\n- 母公司／集團：智冠科技（5478，統編 81231585）持股 48.42%。網龍是智冠的從屬公司。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n  - 智冠實收資本額 15.6 億元：https://inf"
+   },
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "1. 基本資料",
+    "text": "。網龍是智冠的從屬公司。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n  - 智冠實收資本額 15.6 億元：https://info.technews.tw/company/81231585-智冠科技股份有限公司 【第三方】\n- 上市櫃狀態：股票代號 3083。是上市或上櫃，本次來源未明載。查無明確字樣。\n- 註：商工登記公示資料與公開資訊觀測站未能直接開啟。以上為第三方轉載。"
+   },
+   {
+    "also_in": [],
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "2. 業務與財務 > 業務",
+    "text": "- 業務：開發網路連線平台與應用軟體；提供網路遊戲與手機遊戲服務。\n  - 來源：https://www.nstock.tw/網龍做什麼.html 【第三方】\n- 官網列出多款線上遊戲與台、港、中、美等地區入口。\n  - 來源：https://www.chinesegamer.net 【自述】\n- 近期產品：\n  - 《飄流幻境 Re:星之方舟》：2025 年 6 月推出。到 2026 年 2 月單月營收仍近 1,000 萬元。\n  - 《尋秦記》：2026 年 1 月推出。黃易出版社授權，網龍自研。台、港、澳由智冠子公司遊戲新幹線共同發行。\n  - 《吞食天地 2》Steam 版：2024 年貢獻營收。\n  - 來源：https://blog.fugle.tw/post/earnings-call-3083-2026-03-11 、https://blog.fugle.tw/post/earnings-call-3083-2025-03-06 【第三方，AI 摘要】\n  - 發行合約：https://wantrich.chinatimes.com/news/20251103900510-420101 【第三方】\n- 主要客戶：查無（遊戲業是玩家直接消費）。"
+   }
+  ],
+  "answer": "中華網龍主要在做網路連線平台與應用軟體的開發，並提供網路遊戲與手機遊戲服務 [3]。官網也列出多款線上遊戲，以及台、港、中、美等地區的入口 [3]。近期產品包括《飄流幻境 Re:星之方舟》、《尋秦記》、《吞食天地 2》Steam 版等 [3]。",
+  "answer_status": "ok",
+  "answer_sec": 1.39,
+  "sources": [
+   {
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "1. 基本資料"
+   },
+   {
+    "company": "中華網龍",
+    "file": "09_中華網龍.md",
+    "heading_path": "2. 業務與財務 > 業務"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "尼諾思科技",
+  "question": "尼諾思是做什麼的？",
+  "kind": "faq1",
+  "search_status": "low",
+  "search_sec": 0.24,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "1. 基本資料 > 1.1 商工登記（經濟部商業司開放資料 API，已查到）",
+    "text": "） | 游國樑（持股欄 8,000） |\n| 監察人 | 嚴惠馨（持股欄 200,000） | 嚴惠馨（持股欄 2,000） |\n- 兩家董事長與監察人相同。是同一批人的兩家公司。\n- 持股欄單位 API 未標示。若面額 10 元，持股比例約 75% 與 25%。【推測】\n- 所營事業（科技）：資訊軟體服務、資料處理、電腦週邊製造、無線／有線通信器材、軟體出版等 20 項。\n- 所營事業（智慧科技）：電子零組件製造、自動控制設備工程、產品設計、智慧財產權、資訊軟體服務等 8 項。\n- 「智慧科技」所營事業含「自動控制設備工程」，與官網的工業自動化方向吻合。【推測】\n- 本次未能開啟商工登記網站頁面（findbiz 回 403）。上列資料來自同一機關的開放資料 API。"
+   },
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "C_宏碁雲_尼諾思.md",
+    "heading_path": "2. 尼諾思智慧科技股份有限公司 > 公司簡介",
+    "text": "- 產業：電腦系統整合服務業\n- 員工人數：5 人\n- 資本額：暫不提供\n- 地址：暫不提供\n- 網址：http://ninox.ai\n- 定位：Industrial Intelligence Platform Provider（工業智慧平台）\n- 主要產品：\n  - PerformX：Sim2Real 智慧機器人部署平台。整合 Gazebo、CoppeliaSim、NVIDIA Isaac Sim；跨品牌控制機械手臂、CNC、PLC；做 Virtual Commissioning。\n  - AI Robot CNC Tending：智慧 CNC 上下料，主打 CNC 一小時換線。\n- 發展歷程：2022.03 完成 Benzol 服務平台；2022.06 入選緯創 Accelerator 第 3 期；2023.05 入選 CIAT 加速器；2024.08 獲智慧扣件設備開發計畫；2025.10 推出 PerformX；2026.09 推出 AI Robot CNC Tending。\n- 20 人關注。\n- 來源：公司頁"
+   },
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "1. 基本資料 > 1.1 商工登記（經濟部商業司開放資料 API，已查到）",
+    "text": "來源：https://data.gcis.nat.gov.tw/od/data/api/6BBA2268-1367-4B42-9CCA-BC17499EBE8C （公司名稱查詢）、https://data.gcis.nat.gov.tw/od/data/api/236EE382-4942-41A9-BD03-CA0709025E7C （基本資料）、https://data.gcis.nat.gov.tw/od/data/api/4E5F7653-1B91-4DDC-99D5-468530FAE396 （董監事）\n【第三方】登記上有兩家：\n| 項目 | 尼諾思科技股份有限公司 | 尼諾思智慧科技股份有限公司 |\n|---|---|---|\n| 統編 | 54325820 | 93763024 |\n| 狀態 | 核准設立 | 核准設立 |\n| 資本額 | 8,000,000 元 | 100,000 元 |\n| 設立日 | 2013-05-27 | 2023-07-05 |\n| 地址 | 高雄市左營區辛亥路62巷3號5樓 | 新北市土城區中央路4段303號7樓 |\n| 董事長 | 游國樑（持股欄 600,000） | 游國樑（持股欄 8,000） |\n| 監察人 | 嚴惠馨（持股欄 200,000） | 嚴惠馨（持股欄 2,000） |\n- 兩家董事長與監察人相同。是同一批人的兩家公司。"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "尼諾思科技",
+  "question": "尼諾思的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "ok",
+  "search_sec": 0.24,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "沒有職缺，沒有技術部落格，沒有 GitHub。以下來自官網與新聞。\n- 【自述】ROS 2、MoveIt、Gazebo、NVIDIA Omniverse。\n- 【自述】NoSQL 資料庫、微服務、網頁儀表板、API。具體產品（Cassandra、Mongo 等）查無。\n- 【自述】AMD Vitis AI／FPGA／DPU 的頁面。\n- 【自述】模仿學習、影像辨識。\n- 語言、雲端、框架：查無。\n- 查了：官網、新聞、GitHub 搜尋（無結果）。"
+   },
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "2. 業務與財務 > 2.1 產品",
+    "text": "全部是【自述】，官網沒有客戶案例。\n- PerformX 工業智能平台：遙測資料收集、多產線多機台、任務設計、設備管理、UI 小部件；可單體或微服務；無主從節點；用 NoSQL 複寫。https://ninox.ai/performx-%E5%B7%A5%E6%A5%AD%E6%99%BA%E8%83%BD%E5%B9%B3%E5%8F%B0-1\n- AI Robot CNC 上下料：模擬、調節控制、動作控制、追溯回饋四層。https://ninox.ai/ai-robot-cnc-%E4%B8%8A%E4%B8%8B%E6%96%99-1\n- SimXReal 虛實整合：官網只有導覽，未讀到內容。\n- xLink：設備聯網與邊緣整合，PerformX 的底層，可接 MES、SCADA、ERP。https://ninox.ai/xlink\n- AI Accelerator IDE：頁面幾乎是 AMD Vitis AI 的介紹文字，沒說明與 NinoX 的關係。https://ninox.ai/ai-accelerator-ide\n- 選用設備：AI 邊緣計算、相容機器手臂、3D Body Pose。\n- 夥伴 logo：ROS 2、MoveIt、Gazebo、NVIDIA Omniverse。這是「使用的開源或工具生態」，不是簽約客戶。【推測】\n- 官網版權為 2023，用 GoD"
+   },
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "C_宏碁雲_尼諾思.md",
+    "heading_path": "2. 尼諾思智慧科技股份有限公司 > 公司簡介",
+    "text": "- 產業：電腦系統整合服務業\n- 員工人數：5 人\n- 資本額：暫不提供\n- 地址：暫不提供\n- 網址：http://ninox.ai\n- 定位：Industrial Intelligence Platform Provider（工業智慧平台）\n- 主要產品：\n  - PerformX：Sim2Real 智慧機器人部署平台。整合 Gazebo、CoppeliaSim、NVIDIA Isaac Sim；跨品牌控制機械手臂、CNC、PLC；做 Virtual Commissioning。\n  - AI Robot CNC Tending：智慧 CNC 上下料，主打 CNC 一小時換線。\n- 發展歷程：2022.03 完成 Benzol 服務平台；2022.06 入選緯創 Accelerator 第 3 期；2023.05 入選 CIAT 加速器；2024.08 獲智慧扣件設備開發計畫；2025.10 推出 PerformX；2026.09 推出 AI Robot CNC Tending。\n- 20 人關注。\n- 來源：公司頁"
+   }
+  ],
+  "answer": "尼諾思的技術堆疊與開發工具，依段落可整理如下：\n\n- 自述使用 ROS 2、MoveIt、Gazebo、NVIDIA Omniverse [1]。\n- 自述使用 NoSQL 資料庫、微服務、網頁儀表板、API；但具體產品（如 Cassandra、Mongo 等）查無 [1]。\n- 有 AMD Vitis AI／FPGA／DPU 的頁面 [1]。\n- 自述涉及模仿學習、影像辨識 [1]。\n- 語言、雲端、框架：查無 [1]。\n- 夥伴 logo 包含 ROS 2、MoveIt、Gazebo、NVIDIA Omniverse，但這是「使用的開源或工具生態」，不是簽約客戶 [2]。\n- PerformX 為 Sim2Real 智慧機器人部署平台，整合 Gazebo、CoppeliaSim、NVIDIA Isaac Sim [3]。",
+  "answer_status": "ok",
+  "answer_sec": 1.81,
+  "sources": [
+   {
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "2. 業務與財務 > 2.1 產品"
+   },
+   {
+    "company": "尼諾思科技",
+    "file": "C_宏碁雲_尼諾思.md",
+    "heading_path": "2. 尼諾思智慧科技股份有限公司 > 公司簡介"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "尼諾思科技",
+  "question": "尼諾思的技術堆疊與開發工具有哪些？",
+  "kind": "preset1",
+  "search_status": "ok",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "沒有職缺，沒有技術部落格，沒有 GitHub。以下來自官網與新聞。\n- 【自述】ROS 2、MoveIt、Gazebo、NVIDIA Omniverse。\n- 【自述】NoSQL 資料庫、微服務、網頁儀表板、API。具體產品（Cassandra、Mongo 等）查無。\n- 【自述】AMD Vitis AI／FPGA／DPU 的頁面。\n- 【自述】模仿學習、影像辨識。\n- 語言、雲端、框架：查無。\n- 查了：官網、新聞、GitHub 搜尋（無結果）。"
+   },
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "2. 業務與財務 > 2.1 產品",
+    "text": "全部是【自述】，官網沒有客戶案例。\n- PerformX 工業智能平台：遙測資料收集、多產線多機台、任務設計、設備管理、UI 小部件；可單體或微服務；無主從節點；用 NoSQL 複寫。https://ninox.ai/performx-%E5%B7%A5%E6%A5%AD%E6%99%BA%E8%83%BD%E5%B9%B3%E5%8F%B0-1\n- AI Robot CNC 上下料：模擬、調節控制、動作控制、追溯回饋四層。https://ninox.ai/ai-robot-cnc-%E4%B8%8A%E4%B8%8B%E6%96%99-1\n- SimXReal 虛實整合：官網只有導覽，未讀到內容。\n- xLink：設備聯網與邊緣整合，PerformX 的底層，可接 MES、SCADA、ERP。https://ninox.ai/xlink\n- AI Accelerator IDE：頁面幾乎是 AMD Vitis AI 的介紹文字，沒說明與 NinoX 的關係。https://ninox.ai/ai-accelerator-ide\n- 選用設備：AI 邊緣計算、相容機器手臂、3D Body Pose。\n- 夥伴 logo：ROS 2、MoveIt、Gazebo、NVIDIA Omniverse。這是「使用的開源或工具生態」，不是簽約客戶。【推測】\n- 官網版權為 2023，用 GoD"
+   },
+   {
+    "also_in": [],
+    "company": "尼諾思科技",
+    "file": "C_宏碁雲_尼諾思.md",
+    "heading_path": "2. 尼諾思智慧科技股份有限公司 > 公司簡介",
+    "text": "- 產業：電腦系統整合服務業\n- 員工人數：5 人\n- 資本額：暫不提供\n- 地址：暫不提供\n- 網址：http://ninox.ai\n- 定位：Industrial Intelligence Platform Provider（工業智慧平台）\n- 主要產品：\n  - PerformX：Sim2Real 智慧機器人部署平台。整合 Gazebo、CoppeliaSim、NVIDIA Isaac Sim；跨品牌控制機械手臂、CNC、PLC；做 Virtual Commissioning。\n  - AI Robot CNC Tending：智慧 CNC 上下料，主打 CNC 一小時換線。\n- 發展歷程：2022.03 完成 Benzol 服務平台；2022.06 入選緯創 Accelerator 第 3 期；2023.05 入選 CIAT 加速器；2024.08 獲智慧扣件設備開發計畫；2025.10 推出 PerformX；2026.09 推出 AI Robot CNC Tending。\n- 20 人關注。\n- 來源：公司頁"
+   }
+  ],
+  "answer": "尼諾思的技術堆疊與開發工具，依段落可整理如下：\n\n- **機器人／模擬相關**：自述使用 ROS 2、MoveIt、Gazebo、NVIDIA Omniverse [1]；夥伴 logo 也列出 ROS 2、MoveIt、Gazebo、NVIDIA Omniverse，但這是「使用的開源或工具生態」，不是簽約客戶 [2]。另提到整合 Gazebo、CoppeliaSim、NVIDIA Isaac Sim [3]。\n- **AI 與硬體加速**：有 AMD Vitis AI／FPGA／DPU 的頁面 [1]；另提到模仿學習、影像辨識 [1]。AI Accelerator IDE 頁面幾乎是 AMD Vitis AI 的介紹文字，沒說明與 NinoX 的關係 [2]。\n- **資料庫與系統架構**：自述使用 NoSQL 資料庫、微服務、網頁儀表板、API，但具體產品（Cassandra、Mongo 等）查無 [1]。PerformX 提到可單體或微服務、無主從節點、用 NoSQL 複寫 [2]。\n- **語言、雲端、框架**：查無 [1]。\n\n另外，官網版權為 2023，用 GoD（段落文字到此中斷）[2]。",
+  "answer_status": "ok",
+  "answer_sec": 2.69,
+  "sources": [
+   {
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "5. 技術堆疊"
+   },
+   {
+    "company": "尼諾思科技",
+    "file": "10_尼諾思科技.md",
+    "heading_path": "2. 業務與財務 > 2.1 產品"
+   },
+   {
+    "company": "尼諾思科技",
+    "file": "C_宏碁雲_尼諾思.md",
+    "heading_path": "2. 尼諾思智慧科技股份有限公司 > 公司簡介"
+   }
+  ],
+  "http": 200,
+  "message": null
+ },
+ {
+  "company": "醫宇宙",
+  "question": "醫宇宙是做什麼的？",
+  "kind": "faq1",
+  "search_status": "low",
+  "search_sec": 0.24,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "11_醫宇宙.md",
+    "heading_path": "2. 業務與財務",
+    "text": "查無。\n- 產品：查無。\n- 主要客戶：查無。\n- 融資：查無。\n- 已查：上述網路搜尋、Yourator／CakeResume／LinkedIn 搜尋。未查到 Crunchbase、創業小聚的相符頁面。\n- 推測（非事實）：名稱含「醫宇宙」「遠距健康」，可能做醫療元宇宙或遠距照護。無任何來源支持。"
+   },
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "3. 醫宇宙遠距健康科技股份有限公司",
+    "text": "- 104 查無。\n- 搜尋「醫宇宙」公司結果只有 1 筆「小宇宙牙醫診所」（高雄），與目標無關。\n- 來源：https://www.104.com.tw/company/search/?keyword=%E9%86%AB%E5%AE%87%E5%AE%99"
+   },
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "11_醫宇宙.md",
+    "heading_path": "3. 專案辦公室在做什麼",
+    "text": "查無公開資料。\n- 推測：專案辦公室可能負責跨部門專案管理、政府計畫或院所合作案。依據只是部門名稱，無公開資料。\n- 推測：對方出面的是 2 位執行副總，可能公司規模小，高階直接面談。這也是推測。\n- 搜尋到的「遠距健康照護服務發展計畫專案辦公室」屬 2010 年大同相關報導，與本公司無關。https://www.compotechasia.com/a/ji_fen_/_ziji_/___zi0/2010/0429/15131.html"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "醫宇宙",
+  "question": "醫宇宙的技術堆疊與開發工具有哪些？",
+  "kind": "faq2",
+  "search_status": "low",
+  "search_sec": 0.24,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "11_醫宇宙.md",
+    "heading_path": "5. 技術堆疊",
+    "text": "查無。公司自述、職缺、第三方資料皆無。"
+   },
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "11_醫宇宙.md",
+    "heading_path": "1. 基本資料",
+    "text": " Mediverse 多為外國別家，不引用。\n注意：搜尋結果出現的名稱相近公司，都**不是**這家公司，不可混用：\n- 醫智健康科技（DermAi）https://www.yourator.co/companies/DermAi\n- 鳴醫 MEDIOT https://www.yourator.co/companies/mediot\n- WaCare 遠距健康 https://www.yourator.co/companies/La-Vida-Tec"
+   },
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "11_醫宇宙.md",
+    "heading_path": "2. 業務與財務",
+    "text": "查無。\n- 產品：查無。\n- 主要客戶：查無。\n- 融資：查無。\n- 已查：上述網路搜尋、Yourator／CakeResume／LinkedIn 搜尋。未查到 Crunchbase、創業小聚的相符頁面。\n- 推測（非事實）：名稱含「醫宇宙」「遠距健康」，可能做醫療元宇宙或遠距照護。無任何來源支持。"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ },
+ {
+  "company": "醫宇宙",
+  "question": "醫宇宙是做什麼的？",
+  "kind": "preset1",
+  "search_status": "low",
+  "search_sec": 0.22,
+  "hits": [
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "11_醫宇宙.md",
+    "heading_path": "2. 業務與財務",
+    "text": "查無。\n- 產品：查無。\n- 主要客戶：查無。\n- 融資：查無。\n- 已查：上述網路搜尋、Yourator／CakeResume／LinkedIn 搜尋。未查到 Crunchbase、創業小聚的相符頁面。\n- 推測（非事實）：名稱含「醫宇宙」「遠距健康」，可能做醫療元宇宙或遠距照護。無任何來源支持。"
+   },
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "E_華電_艾普特_醫宇宙.md",
+    "heading_path": "3. 醫宇宙遠距健康科技股份有限公司",
+    "text": "- 104 查無。\n- 搜尋「醫宇宙」公司結果只有 1 筆「小宇宙牙醫診所」（高雄），與目標無關。\n- 來源：https://www.104.com.tw/company/search/?keyword=%E9%86%AB%E5%AE%87%E5%AE%99"
+   },
+   {
+    "also_in": [],
+    "company": "醫宇宙",
+    "file": "11_醫宇宙.md",
+    "heading_path": "3. 專案辦公室在做什麼",
+    "text": "查無公開資料。\n- 推測：專案辦公室可能負責跨部門專案管理、政府計畫或院所合作案。依據只是部門名稱，無公開資料。\n- 推測：對方出面的是 2 位執行副總，可能公司規模小，高階直接面談。這也是推測。\n- 搜尋到的「遠距健康照護服務發展計畫專案辦公室」屬 2010 年大同相關報導，與本公司無關。https://www.compotechasia.com/a/ji_fen_/_ziji_/___zi0/2010/0429/15131.html"
+   }
+  ],
+  "answer": null,
+  "answer_status": null,
+  "answer_sec": null,
+  "sources": []
+ }
+]
