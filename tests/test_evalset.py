@@ -1,19 +1,19 @@
 """評估題資料檔的檢查：佐證引文真的在金標標題之下；不可回答題的關鍵字真的搜不到。"""
 from pathlib import Path
 
-from job_rag.evalset import to_markdown, verify
+from job_rag.evalset import to_markdown, type_summary, verify
 
 MINI = Path(__file__).parent / "fixtures" / "mini"
 PEND = "待使用者確認"
 
 
-def A(id, gold, private=False, **kw):
-    return {"id": id, "question": "題", "type": "單一公司", "answerable": True, "private": private,
+def A(id, gold, **kw):
+    return {"id": id, "question": "題", "type": "單一公司", "answerable": True,
             "gold": gold, "status": PEND} | kw
 
 
 def U(id, keywords, **kw):
-    return {"id": id, "question": "題", "type": "不可回答", "answerable": False, "private": False,
+    return {"id": id, "question": "題", "type": "不可回答", "answerable": False,
             "gold": [], "absence_keywords": keywords, "status": PEND} | kw
 
 
@@ -65,11 +65,11 @@ def test_unanswerable_without_keywords_is_rejected():
     assert verify([U("u", [])], MINI)
 
 
-def test_private_flag_must_match_gold_classification():
-    pub_as_private = A("a", [g("01_甲科技.md", "1. 基本資料", "鯨魚")], private=True)
-    priv_as_public = A("b", [g("02_乙資訊.md", "7. 工作評價", "刺蝟密語")], private=False)
-    assert verify([pub_as_private], MINI) and verify([priv_as_public], MINI)
-    assert verify([A("c", [g("02_乙資訊.md", "7. 工作評價", "刺蝟密語")], private=True)], MINI) == []
+def test_gold_in_excluded_section_is_rejected():
+    # 排除段落（工作評價）不能當金標；公開段落可以
+    bad = A("b", [g("02_乙資訊.md", "7. 工作評價", "刺蝟密語")])
+    assert any("排除段落" in p for p in verify([bad], MINI))
+    assert verify([A("a", [g("01_甲科技.md", "1. 基本資料", "鯨魚")])], MINI) == []
 
 
 def test_agent_cannot_mark_a_question_confirmed():
@@ -88,6 +88,12 @@ def test_markdown_table_has_required_columns_and_pending_status():
     for col in ("題目", "類型", "金標檔案與標題", "佐證", "核對狀態"):
         assert col in md
     assert md.count(PEND) == 2 and "量子麵包" in md and "鯨魚追蹤軟體" in md
+    assert "私人" not in md and "查詢模式" not in md
+
+
+def test_type_summary_counts_by_type():
+    qs = [A("a", [], type="跨公司"), A("b", [], type="跨公司"), A("c", [], type="職缺"), U("u", ["x"])]
+    assert type_summary(qs) == "跨公司 2、職缺 1、不可回答 1"
 
 
 # ---- 真正的 eval/questions.json ----
@@ -109,10 +115,18 @@ def test_real_question_set_composition():
     assert len(qs) == 30
     assert sum(q["answerable"] for q in qs) == 25
     c = Counter(q["type"] for q in qs)
-    assert c["不可回答"] == 5 and all(c[t] > 0 for t in ("跨公司", "單一公司", "職缺", "面試與評價"))
-    assert all(q["private"] for q in qs if q["type"] == "面試與評價")
-    assert all(not q["private"] for q in qs if q["type"] != "面試與評價")
+    assert c["不可回答"] == 5 and all(c[t] > 0 for t in ("跨公司", "單一公司", "職缺"))
+    assert set(c) == {"跨公司", "單一公司", "職缺", "不可回答"}
     assert all(q["status"] == PEND for q in qs)  # 只有使用者能改成已確認
+    assert all("private" not in q for q in qs)
+
+
+def test_no_interview_or_review_questions_remain():
+    # 面試／評價題（排除段落）已移除：題號 i** 不存在，金標不指向「面試」「評價」標題
+    qs = _real()
+    assert not any(q["id"].startswith("i") for q in qs)
+    heads = [g["heading"] for q in qs for g in q["gold"]]
+    assert not any(w in h for h in heads for w in ("面試", "評價"))
 
 
 @pytest.mark.skipif(not os.environ.get("JOB_RAG_CORPUS"), reason="需要完整語料")

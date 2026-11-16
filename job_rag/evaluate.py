@@ -46,15 +46,8 @@ def _group(questions, mode, method, corpus):
 
 
 def evaluate(questions: list[dict], method: str = "bm25", corpus=None) -> dict:
-    """演示模式：只評公開題。查詢模式：全部題。query_private：查詢模式中只看私人題。"""
-    public = [q for q in questions if not q["private"]]
-    private = [q for q in questions if q["private"]]
-    return {
-        "method": method,
-        "demo": _group(public, "demo", method, corpus),
-        "query": _group(questions, "query", method, corpus),
-        "query_private": _group(private, "query", method, corpus),
-    }
+    """全部題，只查公開事實段落（排除段落不在索引內）。"""
+    return {"method": method, "scores": _group(questions, "demo", method, corpus)}
 
 
 def _fmt(m):
@@ -65,15 +58,13 @@ def _fmt(m):
 
 def format_report(rep: dict) -> str:
     out = [f"檢索方式：{rep['method']}　評分單位：段落　Hit@k 的 k=1、3；名次最多看到 {DEPTH}"]
-    for key, title in (("demo", "演示模式（只含公開題）"), ("query", "查詢模式（全部題）"),
-                       ("query_private", "查詢模式中的私人題（面試、評價）")):
-        g = rep[key]
-        out.append(f"\n## {title}\n{_fmt(g['metrics'])}")
-        if g["unanswerable"]["n"]:
-            out.append(f"不可回答題 {g['unanswerable']['n']} 題；正確拒答率：尚未實作門檻")
-        miss = [i for i, r in g["ranks"].items() if r is None or r > 3]
-        if miss:
-            out.append("前 3 名未命中：" + "、".join(f"{i}(名次{g['ranks'][i] or '無'})" for i in miss))
+    g = rep["scores"]
+    out.append(f"\n## 全部題（只查公開事實段落）\n{_fmt(g['metrics'])}")
+    if g["unanswerable"]["n"]:
+        out.append(f"不可回答題 {g['unanswerable']['n']} 題；正確拒答率：尚未實作門檻")
+    miss = [i for i, r in g["ranks"].items() if r is None or r > 3]
+    if miss:
+        out.append("前 3 名未命中：" + "、".join(f"{i}(名次{g['ranks'][i] or '無'})" for i in miss))
     return "\n".join(out)
 
 
@@ -88,20 +79,18 @@ def compare(questions: list[dict], methods=None, corpus=None) -> dict:
 
 
 def format_table(reps: dict) -> str:
-    out = [f"檢索方式並列　評分單位：段落　Hit@k 的 k=1、3；名次最多看到 {DEPTH}"]
+    out = [f"檢索方式並列　評分單位：段落　只查公開事實段落　Hit@k 的 k=1、3；名次最多看到 {DEPTH}",
+           f"{'方式':<14}{'題數':>4}{'Hit@1':>8}{'Hit@3':>8}{'MRR':>8}"]
     flagged = False
-    for key, title in (("demo", "演示模式（只含公開題）"), ("query", "查詢模式（全部題）"),
-                       ("query_private", "僅私人題（查詢模式中的面試、評價題）")):
-        out += [f"\n## {title}", f"{'方式':<14}{'題數':>4}{'Hit@1':>8}{'Hit@3':>8}{'MRR':>8}"]
-        for name, rep in reps.items():
-            m = rep[key]["metrics"]
-            if m is None:
-                out.append(f"{name:<14}（無可回答題）")
-                continue
-            flagged |= m["hit@1"] >= NEAR_PERFECT or m["hit@3"] >= NEAR_PERFECT
-            out.append(f"{name:<14}{m['n']:>4}{m['hit@1']:>8.3f}{m['hit@3']:>8.3f}{m['mrr']:>8.3f}")
-    any_rep = next(iter(reps.values()))
-    out.append(f"\n不可回答題 {any_rep['demo']['unanswerable']['n']} 題；正確拒答率：尚未實作門檻")
+    for name, rep in reps.items():
+        m = rep["scores"]["metrics"]
+        if m is None:
+            out.append(f"{name:<14}（無可回答題）")
+            continue
+        flagged |= m["hit@1"] >= NEAR_PERFECT or m["hit@3"] >= NEAR_PERFECT
+        out.append(f"{name:<14}{m['n']:>4}{m['hit@1']:>8.3f}{m['hit@3']:>8.3f}{m['mrr']:>8.3f}")
+    n = next(iter(reps.values()))["scores"]["unanswerable"]["n"]
+    out.append(f"\n不可回答題 {n} 題；正確拒答率：尚未實作門檻")
     if flagged:
         out.append(SUSPICIOUS)
     return "\n".join(out)

@@ -70,53 +70,50 @@ from job_rag.evaluate import evaluate, format_report
 MINI = Path(__file__).parent / "fixtures" / "mini"
 
 
-def Q(id, question, gold=None, private=False):
-    return {"id": id, "question": question, "answerable": gold is not None, "private": private,
+def Q(id, question, gold=None):
+    return {"id": id, "question": question, "answerable": gold is not None,
             "gold": [{"file": f, "heading": h} for f, h in (gold or [])]}
 
 
 QS = [
     Q("q1", "鯨魚追蹤軟體", [("01_甲科技.md", "1. 基本資料")]),
-    Q("q2", "刺蝟密語", [("02_乙資訊.md", "7. 工作評價")], private=True),
+    Q("q2", "刺蝟密語", [("02_乙資訊.md", "7. 工作評價")]),  # 金標在排除段落：公開池搜不到
     Q("q3", "zzzxqv qqq 量子麵包"),
 ]
 
 
-def test_demo_scores_only_public_answerable_questions():
+def test_scores_cover_all_answerable_questions_over_public_pool_only():
     rep = evaluate(QS, corpus=MINI)
-    assert rep["demo"]["metrics"]["n"] == 1
-    assert rep["demo"]["ranks"] == {"q1": 1}  # 私人題 q2 不在演示模式評分
+    assert rep["scores"]["ranks"] == {"q1": 1, "q2": None}
+    assert rep["scores"]["metrics"]["n"] == 2
+    assert "query_private" not in rep and "query" not in rep
 
 
-def test_query_mode_scores_all_answerable_and_splits_private():
-    rep = evaluate(QS, corpus=MINI)
-    assert rep["query"]["ranks"] == {"q1": 1, "q2": 1}
-    assert rep["query"]["metrics"]["n"] == 2
-    assert rep["query_private"]["metrics"]["n"] == 1  # 只有私人題
+def test_report_has_no_private_only_row():
+    out = format_report(evaluate(QS, corpus=MINI))
+    assert "私人" not in out and "查詢模式" not in out and "演示模式" not in out
 
 
-def test_private_question_is_a_miss_if_demo_mode_were_used():
-    # 負向：私人金標在演示模式搜不到，所以不能把私人題算進演示成績
+def test_excluded_section_is_not_searchable_so_its_question_misses():
     from job_rag import search
     assert search("刺蝟密語", mode="demo", corpus=MINI) == []
 
 
 def test_unanswerable_refusal_rate_is_not_invented():
     rep = evaluate(QS, corpus=MINI)
-    assert rep["demo"]["unanswerable"] == {"n": 1, "refusal_rate": None}
+    assert rep["scores"]["unanswerable"] == {"n": 1, "refusal_rate": None}
     assert "尚未實作門檻" in format_report(rep)
 
 
 def test_wrong_gold_gives_miss_not_error():
     rep = evaluate([Q("q9", "鯨魚追蹤軟體", [("01_甲科技.md", "2. 業務與財務")])], corpus=MINI)
-    assert rep["demo"]["ranks"] == {"q9": None}
-    assert rep["demo"]["metrics"]["hit@3"] == 0
+    assert rep["scores"]["ranks"] == {"q9": None}
+    assert rep["scores"]["metrics"]["hit@3"] == 0
 
 
-def test_questions_without_answerable_in_a_group_gives_no_metrics():
+def test_questions_without_answerable_gives_no_metrics():
     rep = evaluate([QS[2]], corpus=MINI)
-    assert rep["demo"]["metrics"] is None and rep["query_private"]["metrics"] is None
-
+    assert rep["scores"]["metrics"] is None
 
 # ---- 5 種方式並列（票 03）----
 from job_rag.evaluate import compare, format_table, SUSPICIOUS
@@ -137,13 +134,14 @@ def test_compare_runs_all_five_methods_and_table_lists_each(monkeypatch, tmp_pat
     t = format_table(reps)
     for m in reps:
         assert m in t
-    for head in ("演示模式", "查詢模式", "私人題", "Hit@1", "Hit@3", "MRR"):
+    for head in ("Hit@1", "Hit@3", "MRR"):
         assert head in t
+    assert "私人" not in t and "查詢模式" not in t
 
 
 def _rep(h1, h3, mrr):
     g = {"ranks": {}, "metrics": {"n": 10, "hit@1": h1, "hit@3": h3, "mrr": mrr}, "unanswerable": {"n": 0, "refusal_rate": None}}
-    return {"method": "x", "demo": g, "query": g, "query_private": g}
+    return {"method": "x", "scores": g}
 
 
 def test_near_perfect_score_is_flagged_suspicious():
