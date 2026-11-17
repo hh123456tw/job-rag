@@ -443,11 +443,12 @@ def search(question: str, method: str = DEFAULT_METHOD, company: str | None = No
 
 
 # 跨公司提問（票 31）。每家公司各取 PER_COMPANY 段；預設值由 eval/results_cross.txt 的 1／2／3 段比較決定。
-PER_COMPANY = 2  # 1／2／3 段的涵蓋率 0.538／0.674／0.734（eval/results_cross.txt）：1→2 明顯較好，2→3 增幅小而多送約 2000 token，選 2
+PER_COMPANY = 3  # 新語料 1／2／3 段涵蓋率 0.530／0.731／0.794（eval/results_cross.txt）；端到端單次比較（eval_per3/summary.md）：3 段多送約 2100 token、延遲幾乎沒差，11 題中 3 題較完整、1 題出現來源沒有的說法。使用者決定取 3
 CROSS_FLOOR = 0.534  # 跨公司的查無常數：全部段落的最高分低於它才回 low。值與挑法見 eval/results_cross.txt（同批題挑的，偏樂觀）
 _CROSS_WORDS = re.compile(
     "哪一?[間家]|哪些公司|哪個公司|哪幾[間家]|各家|所有公司|全部公司|每[一]?家|優先投|推薦哪|"
-    "(?:比較|最)(?:好|高|低|多|少|大|適合|值得|推薦|優先)|哪.{0,3}比較")
+    "(?:比較|最)(?:好|高|低|多|少|大|適合|值得|推薦|優先)|哪.{0,3}比較|"
+    "哪些.{0,6}職缺.{0,4}[要需會用]|(?:工程師|設計師|分析師|研究員|架構師)的?職缺有哪些|有哪些.{1,12}職缺")  # 沒指定公司的職缺清單問法
 
 
 def is_cross(question: str, corpus=None, mode: str = "demo") -> bool:
