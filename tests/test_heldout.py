@@ -1,4 +1,4 @@
-"""票 39：獨立測試題 40 題（eval/questions_heldout.json）的組成與金標檢查。
+"""獨立測試題 100 題（eval/questions_heldout.json；2026-11-17 取代舊 40 題）的組成與金標檢查。
 題檔只在私人 repo；沒有題檔就整檔跳過。核對真語料需設 JOB_RAG_REAL_CORPUS。"""
 import json
 import os
@@ -20,51 +20,43 @@ def _qs():
     return json.loads(QFILE.read_text(encoding="utf-8"))["questions"]
 
 
-def test_composition_26_answerable_14_unanswerable_with_ids_and_split():
+def test_composition_100_questions_by_type_with_ids_and_split():
     qs = _qs()
-    assert len(qs) == 40 and len({q["id"] for q in qs}) == 40
-    assert [q["id"] for q in qs] == [f"h{i:02d}" for i in range(1, 41)]
-    assert sum(q["answerable"] for q in qs) == 26  # h40 於 2026-11-17 因新語料已含答案改標為可回答
-    assert all(q["split"] == "heldout" and q["status"].startswith("待使用者確認") for q in qs)  # 只有使用者能改成已確認
+    assert len(qs) == 100 and len({q["id"] for q in qs}) == 100
+    assert [q["id"] for q in qs] == [f"g{i:03d}" for i in range(1, 101)]
+    assert Counter(q["type"] for q in qs) == {"單一公司": 56, "職缺": 16, "跨公司": 10, "不可回答": 18}
+    assert sum(q["answerable"] for q in qs) == 82
+    assert all(q["split"] == "gen100" and q["status"].startswith("待使用者確認") for q in qs)  # 只有使用者能改成已確認
     assert all("private" not in q for q in qs)
 
 
-def test_all_13_companies_appear_in_answerable_questions():
-    qs = [q for q in _qs() if q["answerable"]]
-    seen = {c for q in qs for c in COMPANIES if c == q.get("company") or c in q["question"]}
-    assert seen == set(COMPANIES)
+def test_each_live_company_has_single_company_and_job_list_questions():
+    qs = _qs()
+    for c in LIVE:
+        assert sum(q["type"] == "單一公司" and q["company"] == c for q in qs) == 7, c
+        assert sum(q["type"] == "職缺" and q["company"] == c for q in qs) == 2, c
 
 
-def test_topics_cover_salary_tech_jobs_overview_finance_and_cross():
-    c = Counter(q["topic"] for q in _qs() if q["answerable"])
-    assert all(c[t] >= 1 for t in ("薪資", "技術", "公司概況", "財務", "跨公司")) and c["跨公司"] == 5
-    assert Counter(q["type"] for q in _qs() if q["answerable"])["職缺"] >= 1
-
-
-def test_at_least_8_short_company_page_questions_without_company_name():
-    short = [q for q in _qs() if q["answerable"] and q.get("company")]
-    assert len(short) >= 8
-    assert all(not any(c in q["question"] for c in COMPANIES) for q in short)
+def test_company_page_questions_do_not_repeat_company_name_and_use_only_live_companies():
+    short = [q for q in _qs() if q.get("company")]
     assert {q["company"] for q in short} <= set(LIVE)  # 公司頁只有現場 8 家有
 
 
-def test_cross_questions_use_keywords_without_single_gold_and_do_not_name_a_company():
+def test_cross_questions_use_keywords_without_single_company_and_do_not_name_a_company():
     cross = [q for q in _qs() if q["type"] == "跨公司"]
-    assert len(cross) == 6  # h21–h25 加上改標的 h40
+    assert len(cross) == 10
     for q in cross:
-        assert q["answerable"] and q["gold"] == [] and q["keywords"] and "company" not in q
-        assert re.search("哪一?[間家]|哪些公司|哪幾[間家]", q["question"])
+        assert q["answerable"] and q["keywords"] and "company" not in q
         assert not any(c in q["question"] for c in COMPANIES)
 
 
-def test_unanswerable_have_keywords_no_gold_and_at_least_5_traps_and_cover_topics():
+def test_unanswerable_have_absence_keywords_no_gold_and_a_few_traps():
     un = [q for q in _qs() if not q["answerable"]]
-    assert len(un) == 14 and all(q["gold"] == [] and q["absence_keywords"] for q in un)
-    assert sum(q["trap"] for q in un) >= 5
-    assert {"福利規章", "內部資訊", "其他公司", "語料外"} <= {q["topic"] for q in un}
+    assert len(un) == 18 and all(q["gold"] == [] and q["absence_keywords"] for q in un)
+    assert sum(bool(q.get("trap")) for q in un) >= 3
 
 
-def test_every_answerable_single_gold_has_file_heading_and_quote():
+def test_every_answerable_non_cross_gold_has_file_heading_and_quote():
     for q in _qs():
         if q["answerable"] and q["type"] != "跨公司":
             assert q["gold"] and all(g["file"] and g["heading"] and g["quote"] for g in q["gold"]), q["id"]

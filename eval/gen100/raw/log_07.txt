@@ -1,0 +1,2496 @@
+OpenAI Codex v0.166.0
+--------
+workdir: C:\claude\aipe04期末\履歷\廠商深查
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1ea1a-8f63-7c33-b3d7-f0d43f3c1b27
+--------
+user
+你是求職情報問答 RAG 的「出題者」。只用讀檔（唯讀），不要改任何檔案，不要執行會連網的指令。
+語料資料夾就是目前工作目錄（C:/claude/aipe04期末/履歷/廠商深查）。現有題檔在 C:/claude/aipe04期末/job-rag/eval/questions_heldout.json 與 C:/claude/aipe04期末/job-rag/eval/questions.json（先讀，格式要沿用，題目不能和它們重複或高度相似）。
+
+【可用來源】
+- 公司頁（0N_公司.md）只能用這幾段：「1. 基本資料」「2. 業務與財務」「4. 職缺」「5. 技術堆疊」「8. 近一年新聞」。
+- 補充檔（2N_補充_公司.md）只能用標題不含下列字詞的公開事實段落。
+- 104 職缺更新檔（3N_104職缺更新_公司.md）。
+- 禁用字詞（標題或段落主旨含這些就不能用）：面試、評價、風險、判斷、推測、矛盾、限制、未查到、對應、作戰。
+- 禁用檔案：00_面談作戰卡.md、00_總報告.md、104/ 資料夾、selfdata、其他非列名的檔案。
+
+【口吻】像面試官現場用手機問的：短、口語、10–30 字，不要照抄原文用字（要換同義說法，避免只靠關鍵字比對就答得出來）。公司名可以直接講。題目本身不可寫「根據文件」「上面」之類字眼。
+
+【輸出格式】只輸出一個 JSON 陣列（不要 markdown 圍欄、不要說明文字）。每題一個物件：
+{"question": 題目, "type": 類型, "topic": 主題（薪資/技術/地點/學歷/業務/財務/新聞/職缺/福利規章/內部資訊/其他）, "company": 公司名（跨公司題省略）, "gold": [{"file": 檔名, "heading": 標題路徑, "quote": 原文片段}], ...}
+- heading 寫法：不含檔案最上面的 # 一級標題；把上層到該層的標題文字用 " > " 串起來（例如 "2. 業務與財務"、"目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）"），文字與檔案內完全一致（含編號、全形括號）。
+- quote：必須是該標題段落內「逐字存在」的連續原文，單行內、8–60 字、不要跨行、不要自己改標點或空白。程式會逐字比對，錯一個字就整題作廢。
+- 一題的 gold 可以多筆（例如同一事實在公司頁與補充檔都有就都列）。
+
+【你的任務】只針對「華電聯網」，檔案：07_*.md、26_補充_*.md、36_104職缺更新_*.md。共出 11 題：
+1) 7 題 type="單一公司"：答案是明確單一事實，主題要分散（薪資、技術堆疊、工作地點、學歷要求、業務、財務數字、新聞…）。至少 2 題取自 104 職缺更新檔的單一職缺（要指明職稱），其餘取自公司頁或補充檔。
+2) 2 題 type="職缺"：「職缺清單」題，例如「華電聯網有哪些軟體職缺」「華電聯網有沒有 Python 後端職缺」。答案是多個職缺，gold 要為「每個符合的職缺」各列一筆（file 為 36_*.md，heading 為該職缺標題路徑，quote 取該職缺段內一句）。你必須讀完整份 36 檔，確定列出所有符合的職缺，不要漏。符合職缺要 2–6 個。
+3) 2 題 type="不可回答"：貼近真實面試官會問、但語料裡沒有答案的題（福利細節如員工旅遊、年終獎金月數、加班費算法；公司內部組織人數；語料沒寫的數字等），問的是「華電聯網」。gold 設 []，另加 "absence_keywords": [2–4 個關鍵字，用來在全語料 grep 驗證真的沒有；用最短、最能代表答案的詞，例如「年終」「員工旅遊」]。你自己先用 grep 確認這些關鍵字在「華電聯網」相關檔案沒有出現。
+type 欄位的值只能是：單一公司、職缺、不可回答。company 欄位填 "華電聯網"。
+
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+我會先讀現有題庫與華電聯網的三份檔案，核對題目不重複、引文逐字相符，並確認職缺清單完整。
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions_heldout.json' -Encoding UTF8 -Raw; Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions.json' -Encoding UTF8 -Raw; Get-ChildItem -File -Path '07_*.md','26_補充_*.md','36_104職缺更新_*.md' | Select-Object Name,FullName" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 517ms:
+{
+ "說明": "票 39：獨立測試題 40 題（原本有答案 25、沒答案 15；2026-11-17 因語料換新版，h40 改標為可回答，現為有答案 26、沒答案 14；gold 與關鍵字隨之更新，非為提高分數）。題目與金標在跑任何檢索評估之前寫定，之後不得為了結果改題。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（程式核對確實出現在公開段落）。沒有答案題的 absence_keywords 在整份語料（含排除段落）出現 0 次；trap＝相近主題但語料確實沒寫的陷阱題。核對狀態只有使用者能改成已確認。",
+ "questions": [
+  {
+   "id": "h01",
+   "question": "EPS 多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "EPS 4.77 元"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "EPS 4.77 元，營收年減 0.31%"
+    },
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "業務與財務 > 2025 年第四季與全年細項",
+     "quote": "EPS 4.77 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h02",
+   "question": "用什麼雲端？",
+   "type": "公司頁短問句",
+   "topic": "技術",
+   "answerable": true,
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）"
+    },
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "技術堆疊 > Google Cloud 資料與運算架構",
+     "quote": "使用的產品包括 BigQuery、Vertex AI、Compute Engine"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h03",
+   "question": "董事長是誰？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "張培鏞（代表人）／陳世安"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h04",
+   "question": "公司在哪裡？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "台北市內湖區堤頂大道二段 187 號"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h05",
+   "question": "什麼時候上櫃？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元"
+    },
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "68 元掛牌上櫃，開盤 73.7 元"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "基本資料 > 設立與資本市場歷程",
+     "quote": "每股 68 元掛牌上櫃"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2026 年上櫃審議到掛牌",
+     "quote": "承銷價每股 68 元掛牌上櫃"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h06",
+   "question": "海外有哪些據點？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 業務",
+     "quote": "香港、泰國、新加坡、印尼、中國大陸"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h07",
+   "question": "客戶是哪些類型？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 主要客戶",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "基本資料 > 策略夥伴與客戶群",
+     "quote": "政府單位（交通部、國防單位、地方政府）、電信業"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 2025 年營收結構與客戶組成",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h08",
+   "question": "股利配多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "配發 0.33 元現金股利，12 年來首次配息"
+    },
+    {
+     "file": "09_中華網龍.md",
+     "heading": "8. 近一年新聞",
+     "quote": "2025 年首次配息 0.33 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h09",
+   "question": "遠振資訊的資本額是多少？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "16_遠振資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "資本總額：20,000,000 元"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 公司簡介",
+     "quote": "資本額：1300 萬元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h10",
+   "question": "數據立的續約率是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "續約率 90%、續費率 120%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h11",
+   "question": "艾普特有哪四大事業群？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "廣告科技、行銷科技、管理科技、電商科技"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h12",
+   "question": "宏碁雲架構的母公司是誰？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "1. 基本資料",
+     "quote": "安碁資訊股份有限公司（ACSI，6690）"
+    },
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "安碁資訊（6690）的子公司"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h13",
+   "question": "典凡科技的資深網路架構師年薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師",
+     "quote": "年薪 1,500,000 元以上"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 1,500,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h14",
+   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "薪資：月薪 37,000 以上"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "job/8x526 | 1 年以上 | 大學、碩士 | 月薪 37,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h15",
+   "question": "艾普特的 PM 專案規劃師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "E_華電_艾普特_醫宇宙.md",
+     "heading": "2. 艾普特 > 相關職缺",
+     "quote": "月薪 40,000~42,000"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）",
+     "quote": "https://www.104.com.tw/job/8tpxn | 1 年以上 | 專科以上 | 月薪 40,000~42,000"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h16",
+   "question": "數據立的產品維運工程師要會哪些工具？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師",
+     "quote": "精通 Docker、Grafana + Prometheus"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h17",
+   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "3. 業務與財務 > 產品與業務",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    },
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "技術堆疊 > Agent Builder 企業 AI 一體機的軟硬體",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h18",
+   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "179.4 億，年增 383%"
+    },
+    {
+     "file": "06_凱基證券.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "上半年證券純益 179.4 億，年增 383%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h19",
+   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）",
+     "quote": "擅長工具欄為 MySQL、Oracle、PL/SQL"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "h20",
+   "question": "叡揚資訊 2026 前三季的營收是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "15.34 億，年增 6.58%"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "前三季營收年增 6.58%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h21",
+   "question": "哪些公司的職缺要求 Spring Boot？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Spring Boot"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h22",
+   "question": "哪幾家公司的職缺會用到 VMware？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "VMware"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h23",
+   "question": "哪家公司有做 AI Agent 的產品？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "AI Agent"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h24",
+   "question": "哪些公司使用 Google Cloud？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Google Cloud"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h25",
+   "question": "哪些公司的職缺要會 C#？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "C#"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h26",
+   "question": "有颱風假嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "神通資訊",
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "颱風假"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h27",
+   "question": "有員工持股信託嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "凱基證券",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "持股信託",
+    "員工持股"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h28",
+   "question": "有交通津貼嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "聯合報",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "交通津貼",
+    "交通補助"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h29",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "心理諮商"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h30",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "育嬰"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h31",
+   "question": "典凡科技今年的營收目標是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "營收目標"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "營收目標": "2026-11-17 新語料命中：27 號中華網龍補充檔寫的是《吞食天地》放置版首月營收目標，不是典凡科技今年營收目標；題目仍無答案"
+   }
+  },
+  {
+   "id": "h32",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "下載次數",
+    "下載量",
+    "累計下載"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h33",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "AI 部有",
+    "AI 部人數",
+    "AI 部共"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h34",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "廣達"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h35",
+   "question": "鴻海的董事長是誰？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "鴻海"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h36",
+   "question": "富邦金控旗下有哪些子公司？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "富邦金控"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h37",
+   "question": "台北明天會下雨嗎？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "天氣",
+    "氣象",
+    "下雨"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h38",
+   "question": "履歷的自傳要怎麼寫？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "自傳",
+    "履歷範本"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "自傳": "2026-11-17 新語料命中：37 號中華網龍職缺條件提到自傳，沒有教人怎麼寫自傳；題目仍無答案"
+   }
+  },
+  {
+   "id": "h39",
+   "question": "哪些公司有哺乳室？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "哺乳室"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h40",
+   "question": "哪間公司有員工社團？",
+   "type": "跨公司",
+   "topic": "福利規章",
+   "answerable": true,
+   "gold": [],
+   "split": "heldout",
+   "status": "待使用者確認（2026-11-17 因新語料已含答案，由不可回答改標為可回答，非為提高分數）",
+   "keywords": [
+    "家庭日、社團"
+   ]
+  }
+ ]
+}
+
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2025 年底原廠夥伴獎項",
+     "quote": "HPE FY25 最佳合作夥伴獎"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "c06",
+   "question": "哪一家公司有自研的語音模型？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研語音模型 myVoca"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "myVoca"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "神通資訊的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "額定 25 億；實收 21 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 標案占比（重點）",
+     "quote": "政府標案 110 件，總額近 83 億"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 政府標案與在手專案",
+     "quote": "110 件政府標案，得標總金額近 83 億元"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "20.19 億，年增 16.33%"
+    },
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "業務與財務 > 2025 年財務結果",
+     "quote": "20.19 億元，年增 16.33%"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "AltaBots.ai：企業級 No-Code AI Agent 平台"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "部門 2008 年成立"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "AI 智慧辨識（InsAI，VLM，支援地端）"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "InsAI 支援地端部署"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "InsAI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s11",
+   "question": "艾普特是做什麼的公司？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "數位行銷公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "2. 業務與財務 > 產品與服務（【自述】https://tftech.com.tw ）",
+     "quote": "企業級資料保護與雙活資料中心"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 公司簡介",
+     "quote": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+    },
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "2. 業務與財務",
+     "quote": "機房維運管理、雲端相關服務"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）",
+     "quote": "年薪 900,000~1,200,000"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
+     "quote": "薪資：年薪 900,000~1,200,000 元"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 900,000~1,200,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "Django"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I97 Kubernetes 平台工程師（8xjjo）",
+     "quote": "3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【戰略部】數據優化師(數據分析)（7qtdo）",
+     "quote": "月薪 35,000 元以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-1 AI 解決方案工程師（已讀單頁）",
+     "quote": "需出差，一年累積約三個月以下"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）",
+     "quote": "AI 解決方案工程師（技術）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）",
+     "quote": "不需出差"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）",
+     "quote": "必備為 Python 開發 3 年以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "3 年以上 AI 系統或大型軟體架構設計經驗"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "多益",
+    "TOEIC",
+    "英檢",
+    "英文能力"
+   ],
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "多益": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案",
+    "TOEIC": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案"
+   }
+  },
+  {
+   "id": "u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "月活躍",
+    "活躍玩家",
+    "MAU",
+    "DAU"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u06",
+   "question": "叡揚資訊的特休天數是幾天？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "特休",
+    "特別休假",
+    "休假天數"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u07",
+   "question": "藍新資訊可以在家上班嗎？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "在家上班",
+    "居家辦公",
+    "混合辦公",
+    "WFH",
+    "在家工作"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "平均年薪",
+    "平均薪資",
+    "薪資中位數"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}
+
+
+Name               FullName                                     
+----               --------                                     
+07_華電聯網.md         C:\claude\aipe04期末\履歷\廠商深查\07_華電聯網.md        
+26_補充_華電聯網.md      C:\claude\aipe04期末\履歷\廠商深查\26_補充_華電聯網.md     
+36_104職缺更新_華電聯網.md C:\claude\aipe04期末\履歷\廠商深查\36_104職缺更新_華電聯網.md
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '07_華電聯網.md' -Encoding UTF8 -Raw; Get-Content -LiteralPath '26_補充_華電聯網.md' -Encoding UTF8 -Raw; Get-Content -LiteralPath '36_104職缺更新_華電聯網.md' -Encoding UTF8 -Raw" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 395ms:
+# 07 華電聯網股份有限公司（Hwacom，6163）深查
+
+調查日：2026-11-16。標記：【自述】公司自述、【三方】第三方、【推測】推測。
+注意：多數數字來自媒體或 AI 整理的摘要，不是財報原文。面試前請到公開資訊觀測站核對。
+
+## 0. 一頁結論
+
+- 公司是上櫃系統整合商（SI），約 980 人，工程師占 65% 以上。【自述】
+- 2025 營收約 61.06 億，已由兩個獨立來源交叉核對。【三方】
+- 標案占比：政府客戶占營收 31.5%（不是全部）。企業 44.1%，電信 24.4%。【自述】
+- 工程師型態：樣本顯示「駐點」為主，自研產品為輔。樣本很少。
+- 對求職者：適合當「AI 應用落地、專案導向」的入口。不適合期待「深度後端／模型研發」。
+
+## 1. 基本資料
+
+| 項目 | 內容 | 來源 |
+|---|---|---|
+| 法人全名 | 華電聯網股份有限公司（英文 Hwacom Systems Inc.） | https://www.cnyes.com/twstock/6163/company/profile |
+| 統編 | 84778623（未在商工登記官網原文核對） | https://info.technews.tw/company/84778623-%E8%8F%AF%E9%9B%BB%E8%81%AF%E7%B6%B2%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8 |
+| 成立日 | 1994-05-04 | https://www.cnyes.com/twstock/6163/company/profile |
+| 資本額 | 實收約 14.73 億（鉅亨 14.72 億；另有來源 14.04 億，時間點不同） | https://www.cnyes.com/twstock/6163/company/profile |
+| 員工數 | 約 980 人；工程師與研發人員 560 人以上（65% 以上）【自述，法說會，經 AI 整理】 | https://blog.fugle.tw/post/earnings-call-6163-2026-05-14 |
+| 上市櫃 | 上櫃（櫃買），上櫃日 2002-03-19 | https://www.cnyes.com/twstock/6163/company/profile |
+| 董事長 | 陳國章 | https://www.cnyes.com/twstock/6163/company/profile |
+| 母公司／集團 | 無單一母公司。大股東為研華（2395）體系。2023-08 資料：研華投資持股 24,575,000 股，是持股最多的董事之一。研華曾參與私募 | https://www.cnyes.com/twstock/directorholder.aspx?code=6163 |
+| 子公司 | 碩維（見第 8 節）、開啟資安 | https://www.ithome.com.tw/pr/174141 |
+
+- 官網只列解決方案：資通訊、智慧應用、數位媒體、資安。官網未寫客戶、員工數、集團。https://www.hwacom.com
+- 商工登記公示、公開資訊觀測站：我沒有直接打開原頁，見第 10 節。
+
+## 2. 業務與財務
+
+### 產品與服務
+- 主力是資通訊整合（占 75.1%）。其餘：智慧整合 12.4%、資安整合 6.5%、媒體整合 5.9%。【自述】https://blog.fugle.tw/post/earnings-call-6163-2026-05-14
+- 自研／自有產品：
+  - SmartQ LAS 企業專屬生成式 AI 平台
+  - FaceKey 人臉辨識整合系統
+  - Cyber Monitor 智慧網管系統
+  - PMS 旅客運輸系統
+  - D-City 驗測平台
+  - 來源：https://www.cna.com.tw/business/chinese/428282
+- 技術主題：生成式 AI、C-V2X 車聯網、5G 專網、AIoT、AR、AI 影像辨識、數位孿生。【自述】同上。
+- AI 專案：機房設備預測性維護、與 Palo Alto 合作 AI 輔助 MDR、國道／雪隧 AI 事故影像偵測、AI 冰機節能。【自述】https://blog.fugle.tw/post/earnings-call-6163-2026-05-14
+
+### 主要客戶
+- 客戶組合 2025：企業 44.1%、政府 31.5%、電信 24.4%。【自述】https://blog.fugle.tw/post/earnings-call-6163-2026-05-14
+- 已知案例：桃園機場第三航廈、淡海三期、高雄與台北市政府交通單位、高雄巨蛋、台灣富士軟片資訊。https://www.cna.com.tw/business/chinese/428282
+- 「交通部、台電」：本次未找到原文確認。查無。
+
+### 營收（核對結果）
+- 2025 全年合併營收 6,105,816 千元，約 61.06 億，年增 10.9%。
+  - 來源 1（月營收累計）：https://histock.tw/stock/6163/財務報表
+  - 來源 2（四季加總相同：1,247,004＋974,983＋1,639,413＋2,244,416）：https://www.wantgoo.com/stock/6163/financial-statements/income-statement
+  - 來源 3（法說會摘要寫 61 億、年增 11%）：https://blog.fugle.tw/post/earnings-call-6163-2026-05-14
+  - 結論：「約 61 億」正確。
+- 2024 營收 5,503,770 千元（約 55.04 億）。【三方】同來源 1。
+- 2023 營收：查無。
+- 2025 毛利率 20.1%、營益 1.3 億、EPS 0.75 元。【自述，AI 整理】
+- 2026 Q1 營收 18.2 億（年增 46%），毛利率 15.8%，EPS 0.02 元。原因是一個三年期專案採全部完工法一次認列。【自述】
+- 2026 年 1–4 月累計營收 22 億，年增約 30%。【自述】同上。
+- 負債比 56%，現金 16.2 億（2026 Q1）。
+
+### 標案占比（重點）
+- 2025 得標：政府標案 110 件，總額近 83 億，約為前一年的 5 倍。https://www.ctee.com.tw/news/20260325701850-430503
+- 83 億大於全年營收 61 億。原因是標案是多年期，金額不等於當年營收。
+- 研究報告估計：83 億中約 50% 於 2026 年認列。【三方，推測性質】https://www.sinotrade.com.tw/richclub/StockNavigator/6163-華電網-政府標案在手金額顯著增加-2026及2027年營運成長可期-69c48389435757638e98995e
+- 另一則報導寫「去年得標 16 億、今年 78 億」，與上列 83 億口徑不同。我沒有核對。https://news.cnyes.com/news/id/6561605
+- 結論：政府占 2025 營收 31.5%。2026 起預期上升（公司未給數字）。
+
+## 3. 報名部門（營運處人資部）在做什麼
+
+- 公開資料查無「營運處人資部」的職掌。
+- 【推測】這是人資窗口，負責招募與面談安排。面談你的專案經理 2 人，可能是人資部的專案經理，也可能是業務或工程單位來支援。要在當天確認。
+- 面試趣有類似職稱「專案經理（台中）」「專案管理師」，這些偏專案管理，不偏開發。https://interview.tw/c/fvT2
+
+## 4. 職缺
+
+- 104 公司頁：自動化工具回 403，已放棄。https://www.104.com.tw/company/12y30460
+- 官網徵才頁只轉連到 104，無職缺內容。https://www.hwacom.com/web/bbs/board.php?bo_table=article&wr_id=80
+- Yourator：公司頁無資料。https://www.yourator.co/companies/hwacom
+- CakeResume（cake.me）：404。https://www.cake.me/companies/hwacom
+- 1111、LinkedIn：搜尋沒有找到華電聯網的 AI／Python／後端／資料職缺。
+- 面試趣職缺頁：沒有結果。https://interview.tw/c/fvT2/job_opening
+- 間接線索：面試趣有人分享的職稱含軟體工程師（台中，2026-05、2026-08）、網路工程師、駐點工程師。https://interview.tw/c/fvT2
+- 結論：AI／Python／後端／資料職缺，查無公開刊登。請當天直接問。
+
+## 5. 技術堆疊
+
+- 公開資料查無語言、框架、雲、資料庫。查了：官網、職缺平台、搜尋 GitHub 與技術部落格（沒有找到公司帳號）。
+- 可確認的技術「主題」（不是具體工具）：生成式 AI、AI 影像辨識、5G 專網、C-V2X、AIoT、數位孿生。https://www.cna.com.tw/business/chinese/428282
+- 面試題內容偏網路：OSI、TCP/UDP、VLAN、NAT、OSPF／BGP。https://interview.tw/c/fvT2（單一心得）
+- 【推測】主體是網路、資通訊、雲端基礎建設整合。軟體多為自有產品與專案客製。Python 比重不明。
+
+## 6. 面試流程與常見題目
+
+- 面試趣：約 103–106 篇，平均 3.7/5，難度低，錄取率 56%（網站顯示）。https://interview.tw/c/fvT2
+- 第一頁 15 篇可見：4 篇錄取、4 篇待通知、7 篇未錄取或無聲卡。完整內容要付費。
+- 軟體工程師相關：
+  - 2026-08 台中，5/5，待通知，題目「畢業專題」（單一心得）
+  - 2026-04 台中，3/5，未錄取，題目「離職原因」（單一心得）
+- 其他：
+  - 網路工程師 2022-11 影片面試，4/5，錄取，題目問機房濕度（單一心得）
+  - 專案經理 2026-03 台中，1/5，未錄取，題目含「血型」（單一心得，品質疑慮）
+- 流程共通點：多由人資先邀約，再主管面談。GoodJob 有人說面試由 HR 主導、無技術主管（單一心得，2026-07）。https://www.goodjob.life/companies/華電聯網股份有限公司/work-experiences
+- PTT Soft_Job、Dcard：搜尋沒有找到華電聯網貼文。查無。
+- Glassdoor：未查到頁面。查無。
+
+## 7. 工作評價
+
+- GoodJob：36 筆評分，頁面列 8 篇。https://www.goodjob.life/companies/華電聯網股份有限公司/work-experiences
+  - 工程師月薪約 3.7–6.8 萬。個別：3 年 3.7 萬（2026-07）、3 年 5 萬（2025-05，兩篇）、高級工程師 6.8 萬（2024-11）。
+  - 加班：多數工時 40 小時，少加班。採購助理稱常加班到 7–9 點（單一心得，2025-07）。
+  - 正面：分紅與年終、福委會活動多、工作可自主規劃（單一心得）。
+  - 負面：調薪少、「以駐點為主」（2025-05，單一心得）。「好案子適合久待，不好的案子很痛苦，視同事主管而定」（2026-09，單一心得）。
+  - 離職原因：8 篇都沒寫。
+- 面試趣公司評分：升遷機會 2.3、傾聽意見 2.1、內部溝通 1.9（滿分 5）。【三方】https://interview.tw/c/fvT2/compare/OHifz
+- 面試趣平均月薪約 4.97 萬。https://interview.tw/c/fvT2
+- PTT、Dcard、Glassdoor：查無。
+- 結論：樣本小。薪水落在中低位。內部溝通評分低。
+
+## 8. 近一年新聞
+
+- 2026-03：陳國章稱轉型為「AI 服務提供商」，雙引擎為 AI 基建與韌性資通，預期營運雙位數成長。【自述】https://www.ctee.com.tw/news/20260325701850-430503
+- 2026-03：與大股東研華合作邊緣 AI、車聯網，場域以智慧建築為主。https://uanalyze.com.tw/articles/3732749607
+- 2026-03：台北智慧城市展，展出 SmartQ LAS、FaceKey 等。https://www.cna.com.tw/business/chinese/428282
+- 2026-08-05：董事會通過分割「業務三處業務一部及系統服務部」給 100% 持股子公司，分割基準日暫定 2026-09-08。公告未提員工是否移轉。https://news.cnyes.com/news/id/6561605
+  - 注意：我的摘要工具對「承受公司」的說法有矛盾（一次寫華電聯網，一次寫碩維）。請核對原公告。
+- 2026-10-06：宣布成立碩維（SureWin），投入 8,000 萬，鎖定半導體 AI 資料治理與後量子密碼（PQC）儲存。技術人員為主，逾九成有多年經驗，證照逾 50 張。https://uanalyze.com.tw/articles/2332156590
+- 2026 Q1 獲利近零，原因見第 2 節。
+- 裁員、訴訟、罰款：搜尋未發現相關報導。這不代表沒有，見第 10 節。
+
+## 9. 給求職者的判斷
+
+### (a) 適合度
+- 偏適合「入門級 AI 應用／專案落地」。
+- 理由：
+  1. 公司自稱轉向 AI，有自有 GAI 平台與 FaceKey。【自述】
+  2. 工程師占 65% 以上，需求量大。
+  3. 面試難度低，錄取率 56%（面試趣）。
+  4. 你的強項（需求、驗收、Gemini 應用）對「專案導向」環境有用。
+- 不適合的部分：公開資料看不到 Python／後端職缺，也沒有 LLM 私有化部署。
+
+### (b) 風險
+- 工作型態可能是「駐點」，不是內部開發。（樣本小，但有兩個獨立線索：面試趣有「駐點工程師」，GoodJob 有「以駐點為主」。）
+- 薪水中低（約 3.7–6.8 萬）。調薪少（單一心得）。
+- 內部溝通、升遷評分低。
+- 2026 Q1 獲利近零。標案多為多年期，收入認列有時間差。
+- 組織正在重整（分割、成立碩維）。報名部門可能受影響。
+- 你沒有網路、K8s 經驗，面試題偏網路時會吃虧。
+- 面試趣 2026 年有「問血型」之類不專業面試（單一心得）。
+
+### (c) 5 個該問的問題
+1. 這個職缺是內部開發，還是駐點客戶？比例各多少？
+2. 職缺屬於母公司、碩維，還是其他子公司？分割後員工歸屬哪裡？
+3. SmartQ LAS、FaceKey 的團隊多大？用什麼語言、模型、雲？
+4. 政府標案專案裡，AI 工程師具體做什麼？有沒有人帶新人？
+5. 試用期薪資範圍、調薪與分紅規則、加班怎麼算？
+
+### (d) 最能對上的專案與不要誇大
+- 最能對上：和泰 AI 黑客松 15 強（Next.js＋Gemini）。對應「企業 GAI 應用」。
+- 次之：OpenCV＋Gemini 影像辨識模組。對應 FaceKey、國道 AI 影像偵測。【推測】這是方向相近，不是同技術。
+- 停車推薦系統（Flask＋MySQL）：對應智慧城市、交通場景。
+- 不要誇大：
+  - 不要說自己寫了所有程式。要說「我負責需求、驗收、AI 協作」。
+  - 不要說有私有化 LLM 或 K8s 經驗。
+  - 不要說「很懂華電的產品」。目前只知道公開資訊。
+  - 不要說「進決賽 15 強」是「得獎」。
+
+## 10. 未查到與限制
+
+- 沒有直接打開：經濟部商工登記公示資料、公開資訊觀測站、年報、財報原文。統編、資本額來自第三方（鉅亨、TechNews、twincn 搜尋摘要）。twincn 頁面打開是空白。
+- 員工數 980 人來自法說會的 AI 整理摘要，不是年報原文。
+- 營收：2023 年查無。2025 數字已交叉核對，但不是財報原文。
+- 「客戶含交通部、台電」：未找到原文。
+- 標案金額有兩種口徑（83 億 vs 78 億），未解決。
+- 分割案承受公司的說法有矛盾，未核對原公告。
+- 碩維成立日：報導只給 2026-10-06 宣布日，非登記日。
+- 104：403，已放棄，沒有硬爬、沒有繞過。
+- Yourator 無資料，CakeResume 404，1111／LinkedIn 沒找到相關職缺。
+- 技術堆疊：查無。
+- 面試趣內容多數需付費，只看到預覽。多篇資料日期在 2026-10，我沒有交叉核對。
+- PTT、Dcard、Glassdoor：沒有找到。
+- 新聞：用搜尋摘要，沒有逐篇讀原文。沒找到裁員、訴訟，但不能證明沒有。
+- 沒有調查報名者個人，檔案內無電話與 email。
+
+# 26 華電聯網 公開資料補充
+
+## 基本資料
+
+### 公司沿革與系統整合經歷
+華電聯網股份有限公司（Hwacom Systems，股票代號 6163，簡稱華電網）於 1994 年 5 月 4 日設立，2002 年 3 月 19 日在櫃買中心上櫃。公司自稱累積約 30 年系統整合經驗。媒體報導列出的代表性建置包括：台灣第一套 ADSL 寬頻網路、規模最大的光世代寬頻網路系統、國際機場資通訊系統，以及台鐵環島光纖骨幹網路。公司把這些大型資通訊建設經驗，當作切入 AI 基礎建設與政府標案的基礎。官網的公司簡介區設有「認識華電」「企業願景／經營理念」「大事記」（分 1994–2020 與 2021 年起兩段）、分支機構等頁面。2026 年 4 月的活動報導中，公司的品牌理念是「超乎想像」。
+來源：https://finance.technews.tw/2026/03/25/hwacom/（查詢日 2026-11-17）
+
+### 四大事業領域與人力規模
+官網的解決方案分為四類：資通訊、智慧應用、數位媒體、資安。2025 年營收占比依序為：資通訊整合應用 75.1%、智慧整合應用 12.4%、資安整合應用 6.5%、媒體整合應用 5.9%。資安業務由 100% 持股的子公司開啟資安主導。公司在 2026 年法說會上說明，全公司近 980 名員工，其中工程師與研發人員超過 560 名，占比逾 65%。各事業內容：資通訊整合提供 5G 專網、雲端整合與 ICT 系統整合；資安整合從弱點掃描延伸到 SOC 戰情中心；智慧整合聚焦智慧城市、智慧交通與 AIoT 平台；媒體整合提供 MOD 影音平台與數位內容傳輸。
+來源：https://blog.fugle.tw/post/earnings-call-6163-2026-05-14（查詢日 2026-11-17）
+
+### 策略夥伴與客戶群
+2025 年 12 月法說會備忘錄列出華電聯網的客戶群：政府單位（交通部、國防單位、地方政府）、電信業（中華電信、台灣大哥大、遠傳）、一般企業（聯發科、群創、旺宏）。策略夥伴為大股東研華科技。公司也與 Cisco、Nokia、Microsoft、Palo Alto Networks 合作。2026 年法說會另提到，長期計畫是與 Nokia、AWS、Cisco、Dell 等國際大廠合作，打造高效能、高韌性的網路與算力基礎設施。公司自評為台灣網路建置規模第一、系統整合規模前三大。公司說明，會藉由大型專案爭取更多國內外標案，並把研華科技列為戰略夥伴，在邊緣運算與車聯網領域合作。
+來源：https://blog.fugle.tw/post/earnings-call-6163-2025-12-19 、https://uanalyze.com.tw/articles/3732749607（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 2025 年營收結構與客戶組成
+2025 年華電聯網客戶組成為企業 44.1%、政府 31.5%、電信 24.4%。公司預期 2026 年政府客戶占比會提高。2025 年前三季營收 38.61 億元，年增 10%，毛利 7.84 億元，毛利率 20.3%；歸屬母公司淨損 2,350 萬元，EPS 為 -0.17 元。第三季單季營收 16.39 億元，年增 20%，毛利率 18.8%，歸屬母公司淨利 3,122 萬元，由虧轉盈，EPS 0.22 元。2025 年 9 月 30 日資產總計 61.86 億元，現金及約當現金 8.33 億元，存貨 24.3 億元，負債總計 35.29 億元，權益總計 26.57 億元。公司表示存貨將轉為未來營收。
+來源：https://blog.fugle.tw/post/earnings-call-6163-2025-12-19（查詢日 2026-11-17）
+
+### 政府標案與在手專案
+2025 年華電聯網取得 110 件政府標案，得標總金額近 83 億元，年增近五倍。工商時報 2025 年 12 月 22 日的報導採用另一口徑：去年得標 16 億元，今年 78 億元；平均每件標案金額由 1,310 萬元升到 7,425 萬元，顯示公司轉向大型專案。2026 年法說會說明：2025 年承接的十大專案單一金額皆逾億元，預計 2026 年第三季起進入建置，成為下半年主要營收來源；因預算審核延遲，大型政府標案預期集中在 2026 年第四季釋出。報導另提到台電光傳輸網路採購案預計 2026 年開始貢獻營收。
+來源：https://www.ctee.com.tw/news/20251222700152-430502（查詢日 2026-11-17）
+
+### 2026 年營收與股東會決議
+2026 年 2 月營收 5.07 億元，年增 136%；1 至 2 月累計合併營收 10.81 億元，年增 33.8%。第一季營收 18.2 億元，年增 46%，毛利率 15.8%，EPS 0.02 元。公司說明，若排除一次性認列的大型專案，毛利率可回到 18% 至 20%。營業費用率降至 15.5%。前 4 月累計營收 22 億元，前 5 月累計 25.6 億元，年增 32.6%。2026 年 6 月 26 日股東會通過配發現金股利 0.58 元，配發率 77.3%。董事長陳國章表示，公司會強化大型專案控管、縮短驗收時程以控制成本，內部方針為「向上創造利潤、向下降低成本」，並把人才培育列為優先事項。
+來源：https://udn.com/news/story/7254/9589672（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### SmartQ LAS 企業專屬生成式 AI 平台
+SmartQ LAS 是華電聯網的企業專屬 GAI 應用服務平台。公司說明，它針對企業導入 AI 時的四個問題：成本失控、資安合規、應用失效、管理混亂。平台採雙軌架構：IT 部門以 Top-Down 治理軌道建立安全框架，業務團隊在框架內以 Bottom-Up 創新軌道自行發揮。服務樣板包括 No-Code 工具、對話式服務與任務自動化，公司宣稱各部門約 10 分鐘即可部署專屬 AI 助理。2025 年 12 月法說會備忘錄把企業級平台稱為「華電通（SmartQ）」，可整合內部規章、ERP、CRM 等資料。該新聞稿由公司提供，未經獨立查證。
+來源：https://www.cna.com.tw/business/chinese/428282（查詢日 2026-11-17）
+
+### FaceKey 人臉辨識與 Cyber Monitor 網管系統
+FaceKey 是智慧人臉辨識整合系統，搭載 AI 深度學習人臉演算法，採端到端身分驗證，整合門禁、考勤、列印取件三大應用。公司表示已取得 ISO 27001 與 ISO 27701 驗證，資料採地端控制與加密，並與台灣富士軟片資訊合作，結合多功能事務機。2026 年法說會稱 FaceKey 支援多人同時偵測。Cyber Monitor 是智慧網管系統，功能含自動偵測設備、繪製架構圖、組態備份比對、以大數據平台分析防火牆日誌，並模擬用戶行為巡檢 Web、Email、DNS、DHCP、FTP 服務。規劃中的功能有 AI 智能助理輔助異常分析、AI 偵測異常 Log 並主動告警，並結合 3D iDCIM 做機房數位孿生。
+來源：https://www.cna.com.tw/business/chinese/428282（查詢日 2026-11-17）
+
+### 智慧交通與車聯網平台
+華電聯網的智慧交通專案包括：桃園機場第三航廈 PMS 旅客運輸系統，整合 5G 專網、C-V2X 車聯網與 AIoT，並導入自駕電動巴士連接 T2 與 T3；淡海新市鎮 D-City 驗測平台，支援逾 10 項國際 V2X 通訊協定，可實證 9 大車聯網情境，如號誌即時資訊（SPaT）、行人安全警示（PSM）、緊急車輛優先通行（EVA）。公司也自主研發 Edge AI 影像辨識與數位分身交通管理平台，已導入高速公路系統，並參與制定台灣車聯網資通訊標準（TCROS）。另有智慧桿，整合道路影像收集與辨識，已在全台陸續落地。
+來源：https://www.ctee.com.tw/news/20251222700152-430502（查詢日 2026-11-17）
+
+### AI 應用案例與技術架構
+依 2026 年法說會，華電聯網的 AI 技術架構已從單一 AI 自主代理，發展到多模型協作的 Agentic Workflows，並導入視覺語言模型（VLM），提升車牌辨識與周界監控的情境理解能力。內部應用方面，公司把 AI Agent 導入內部 SAP 與 BI 系統，以自然語言查詢提升營運效率。其他案例：以 AI 做機房設備預測性維護；與 Palo Alto Networks 合作推出 AI 輔助 MDR 託管服務；為軍方與行動支付客戶提供 AI 自動化對抗性曝險驗證系統；國道與雪山隧道導入 AI 影像事故偵測（可偵測停等、壅塞、散落物、逆行、煙霧）；AI 冰機能耗優化方案可節電超過 10%；與台灣大學研究生成式 AI 於市區號誌控制。
+來源：https://blog.fugle.tw/post/earnings-call-6163-2026-05-14（查詢日 2026-11-17）
+
+### AI 基礎建設與數位孿生
+華電聯網 2026 年營運主軸是「AI 基礎建設」與「韌性資通」雙引擎。AI 基建的範圍包括算力設備、超高速低延遲網路、資料儲存與雲端平台，客戶需求已從國內部署延伸到海外。董事長陳國章說明，AI 基建已從硬體採購延伸為整體系統建設。在網路面，公司與 Nokia 合作，為桃園機場 T1／T2 通訊基礎設施導入 IP/MPLS，整合語音、數據、視訊系統。2026 年 4 月 24 日，公司與台灣諾基亞、擎邦國際舉辦 AI 智慧建築論壇，由資通系統整合處協理張智為說明數位孿生與 AI 應用：把實體空間數位化，支援預測性維護與能源管理。
+來源：https://www.cio.com.tw/111399/（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2025 年 12 月法說會與第三季轉盈
+2025 年 12 月 19 日華電聯網召開法說會。工商時報 12 月 22 日報導：第三季營收 16.4 億元，年增 19%，EPS 0.22 元，單季由虧轉盈；第三季毛利率 18.81%；累計前 11 月營收 48.2 億元，年增 3.9%。公司說明，國軍營區警監系統發展 AI 哨兵，可做入侵偵測；與國立大學合作建立資安基地，培育資安人才。營運長表示第四季為傳統旺季。法說會列出的成長動能包括：智慧交通擴展到園區、醫療院所與物流場域，資安需求帶動開啟資安業務，以及政府與企業對 5G、物聯網、雲端的基礎建設投資。公司認為經過數年轉型，各專案陸續推進後，2026 年營運將轉旺，並由系統整合商轉型為 AI 方案服務提供商。
+來源：https://www.ctee.com.tw/news/20251222700152-430502（查詢日 2026-11-17）
+
+### 2026 年 3 月 AI 服務提供商轉型與智慧城市展
+2026 年 3 月，董事長陳國章說明公司正由傳統系統整合商轉向「AI 服務提供商」，營運以 AI 基建與韌性資通為雙引擎，預期 2026 年全年營運維持雙位數成長。公司指出，生成式 AI 與 Agentic AI 正在重塑公私部門營運流程，客戶除了部署問題，也需兼顧軟體彈性、異質資料串接與資安防護。子公司開啟資安把「負責任的 AI」概念導入服務。同月公司在台北智慧城市展展出企業專屬生成式 AI 平台、FaceKey，以及桃園機場第三航廈 PMS 系統。董事長另表示，今年感受到邊緣 AI 專案增加，與大股東研華合作邊緣 AI 與車聯網，場域以智慧建築為主。
+來源：https://technews.tw/?p=1531362（查詢日 2026-11-17）
+
+### 2026 年 8 月分割案與 10 月成立碩維
+2026 年 8 月 5 日，華電聯網董事會通過分割「業務三處業務一部及系統服務部」的相關營業（含資產、負債），分割基準日暫定 2026 年 9 月 8 日，對價為碩維股份有限公司發行的新股，債權人異議期為 8 月 6 日至 9 月 7 日。2026 年 10 月 6 日，華電聯網宣布成立碩維（SureWin），投入 8,000 萬元，總經理為鍾瑜庭。碩維鎖定半導體產業 AI 落地需求，以 Data First 為架構思維，提供系統整合、網路安全、系統架構、儲存設備、雲端運算的整合與維運服務，並結合後量子密碼（PQC）技術導入儲存設備。團隊以技術人員為主，逾九成具多年實務經驗，專業證照逾 50 張。
+來源：https://uanalyze.com.tw/articles/2332156590（查詢日 2026-11-17）
+
+### 官網公開的人力資源方向
+華電聯網官網設有「人力資源（加入我們）」區塊，員工專區分為「安心華電」「成長華電」「樂活華電」三個面向，「菁英招募」連結到外部人力銀行的職缺頁。官網的企業永續（ESG）區塊含永續報告書、公司治理、舉報管道與友善職場等項目。2026 年股東會上，董事長把人才培育列為優先要務。公司 2026 年法說會稱，工程師與研發人員占全體員工 65% 以上。官網最新消息分為「新聞消息」與「研討會訊息」兩類。2025 年公司與國立大學合作建立資安基地，並與台灣大學合作研究生成式 AI 在市區號誌控制的應用，兩者都屬公開的人才與研究合作方向。
+來源：https://www.hwacom.com 、https://blog.fugle.tw/post/earnings-call-6163-2025-12-19（查詢日 2026-11-17）
+
+# 36 華電聯網 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+本次收錄 29 筆軟體、AI、資料、雲端、資安、系統建置與維運相關職缺。公司頁（https://www.104.com.tw/company/12y30460）顯示工作機會 99+，共 7 頁，逐頁讀完後列表約 122 列（每頁另有 3 筆重複置頂職缺，未計入）。其餘職缺為網路工程、公共工程、業務、財會、人資、專案管理、現場施工等，不屬本檔範圍。網路工程類（如 7ganc、7gkpk、8tqvm）與車輛、施工現場類職缺未收。
+與舊檔（2026-11-16 的 E_華電、補3_華電）相比：
+- 新增職稱（舊檔未收錄詳頁）：資安監控工程師（L1 SOC／MDR）夜間值班、資安威脅獵捕分析師、資安營運管理工程師、雲端資安工程師、資安工程師－技術服務一部、資安網路工程師（政府二部）、資安人才（資安工程師／管理師／顧問）、系統工程師（政府二部）、系統工程師－技術服務一部、系統工程師（桃園整合服務部）、資安檢測專案工程師、資安實習生、資深系統工程師（資訊部）、資安工程師（資訊部）。
+- 舊檔有但已找不到（已下架）的軟體相關職稱：無。舊檔列出的軟體、資安、雲端、資料庫職缺全部仍在列表中。
+- 依 104 顯示，本檔職缺更新日多為 11/11，資深系統工程師（資訊部）為 11/12。
+
+### 職稱清單
+華電聯網在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 29 筆：
+- 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）
+- 資安工程師（技術服務二部／台中）（104 職缺代碼 7gani）
+- 資安檢測工程師（104 職缺代碼 7bebb）
+- 儲存系統工程師（新竹）（104 職缺代碼 6jad5）
+- 系統工程師（新竹）（104 職缺代碼 6ggg2）
+- 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）
+- 資安威脅獵捕分析師（104 職缺代碼 82lge）
+- 資安營運管理工程師（104 職缺代碼 7to9q）
+- 雲端資安工程師（104 職缺代碼 7x0lv）
+- 系統工程師－研發六部（汐止）（104 職缺代碼 8s06a）
+- 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）
+- 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）
+- 雲端工程師（104 職缺代碼 8feu3）
+- 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）
+- 資安工程師－技術服務一部（104 職缺代碼 7z5cx）
+- 資安網路工程師（政府二部）（104 職缺代碼 8fefn）
+- 資安人才：資安工程師／資安管理師／資安顧問（104 職缺代碼 77rqk）
+- 系統工程師（政府二部）（104 職缺代碼 8ux1x）
+- 系統工程師－技術服務一部（104 職缺代碼 8niie）
+- 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）
+- 資安檢測專案工程師（104 職缺代碼 8z1b1）
+- 研發工程師－研發一部（104 職缺代碼 8zcjf）
+- 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）
+- 建置工程師（網路／資安／智慧影像應用）（104 職缺代碼 90nok）
+- (C#)資深軟體工程師（104 職缺代碼 94ew3）
+- 【2026 實習生／儲備人才招募計畫】資安實習生（104 職缺代碼 909n9）
+- 資安技術經理（104 職缺代碼 96pla）
+- 資深系統工程師（資訊部）（104 職缺代碼 89yhy）
+- 資安工程師（資訊部）（104 職缺代碼 8q0mi）
+
+### 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段102號18樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：大學、碩士
+- 工作內容：負責公有雲（AWS／GCP／Azure）的資安架構規劃與維運，包含 IAM 權限治理、VPC 網路隔離、WAF／DDoS 防護策略。參與公司內部資安產品研發，做雲服務與生成式 AI 安全防護機制的客製化開發與規則調校。也用雲端 AI／ML 服務為客戶建立應用。
+- 條件與技能：必備為至少一種公有雲平台實戰經驗、Python 或 Shell Script、Docker 與 Kubernetes（含 Container Security）、Linux 與 TCP/IP。加分為持有經濟部 iPAS 證書。科系不拘，出差外派為無需出差外派，日班，週休二日。
+- 網址：https://www.104.com.tw/job/61qdm
+- 104 上顯示的更新日：11/11
+
+### 資安工程師（技術服務二部／台中）（104 職缺代碼 7gani）
+- 公司：華電聯網股份有限公司　地點：台中市南屯區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：專科、大學、碩士
+- 工作內容：擔任資安專家，提供技術專長與設計能力，支援客戶資安環境維運。協助解決方案的執行與升級，包含溝通、文件建立與教育訓練。維護管理資安環境的硬體、文件與軟體，排除並診斷資安相關故障。內文寫明需配合專案進行駐點工作。
+- 條件與技能：必備為專科以上、3 年以上經驗。加分為 CEH、CompTIA Security+ 等證照，以及電信業者服務與企業系統技術維護經驗。出差外派欄為需出差，一年累積時間未定。科系不拘，擅長工具與工作技能欄為不拘。
+- 網址：https://www.104.com.tw/job/7gani
+- 104 上顯示的更新日：11/11
+
+### 資安檢測工程師（104 職缺代碼 7bebb）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段98號12樓　薪資：月薪35,000元以上　經歷：1年以上　學歷：大學、碩士
+- 工作內容：執行弱點掃描、Web 弱點掃描、滲透測試、原始碼檢測與社交工程等資安檢測工作。協助檢測團隊提升技能與作業品質，並協助專案經理做資安專案管理。
+- 條件與技能：必備為 1 年以上資安檢測經驗（VA、Web VA、PT、Code Review、SE），熟悉 Kali、Metasploit、Acunetix、Nessus、WebInspect、AppScan 等工具，具備 CEH、ECSA 等證照。加分為網路攻防經驗，以及 IoT、5G 資安檢測經驗。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/7bebb
+- 104 上顯示的更新日：11/11
+
+### 儲存系統工程師（新竹）（104 職缺代碼 6jad5）
+- 公司：華電聯網股份有限公司　地點：新竹市關新路27號16樓之1　薪資：月薪35,000~45,000元　經歷：3年以上　學歷：專科、大學、碩士
+- 工作內容：短期協助業務三處新竹地區專案的建置與維護（NetApp）。中期擔任專案 PM，獨立執行各項專案。長期協助前端規劃解決方案。
+- 條件與技能：必備為 NAS／SAN 磁碟陣列、儲存區域網路與資料備份相關系統的建置經驗，熟練使用 Linux 與 Windows。加分為熟悉虛擬化技術。出差外派欄為需出差，一年累積時間未定。具備駕照（普通重型機車、普通小型車）。
+- 網址：https://www.104.com.tw/job/6jad5
+- 104 上顯示的更新日：11/11
+
+### 系統工程師（新竹）（104 職缺代碼 6ggg2）
+- 公司：華電聯網股份有限公司　地點：新竹市　薪資：月薪38,000元以上　經歷：1年以上　學歷：專科、大學、碩士
+- 工作內容：擔任系統專家，提供技術專長與設計能力，支援系統維運。協助解決方案的執行與升級，包含溝通、文件建立與教育訓練。維護管理系統環境的硬體、文件與軟體，排除系統故障。內文寫明需配合專案進行駐點工作。
+- 條件與技能：證照欄為 MCSE、Red Hat 認證工程師。加分為 VMware、NetApp、MCSE、RHCE、Veeam 等系統證照，以及電信業者服務與企業系統技術維護經驗。出差外派欄為需出差，一年累積時間未定。
+- 網址：https://www.104.com.tw/job/6ggg2
+- 104 上顯示的更新日：11/11
+
+### 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓　薪資：月薪45,000~60,000元　經歷：不拘　學歷：專科、大學
+- 工作內容：在 SOC／MDR 資安監控中心使用 Cortex XDR、Cortex XSIAM 平台做日常告警監控與事件初步分析。執行告警研判、異常行為分析與事件分類，負責資安事件通報、案件追蹤與客戶回應。重大等級事件依標準流程電話通報與升級，並處理白名單申請與防護政策調整。班別為固定大夜 23:00 至隔日 08:00。
+- 條件與技能：必備為基本電腦操作能力，並能配合固定大夜班。科系為資訊管理、資訊工程、電機電子工程相關。加分為 TCP/IP、Linux、Windows、SOC／SIEM 經驗、Cortex XDR／XSIAM 操作，以及 CCNA、Security+、CEH 等證照。公司提供一個月教育訓練。
+- 網址：https://www.104.com.tw/job/7yi2d
+- 104 上顯示的更新日：11/11
+
+### 資安威脅獵捕分析師（104 職缺代碼 82lge）
+- 公司：華電聯網股份有限公司　地點：新北市板橋區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：大學以上
+- 工作內容：負責公司端點偵測與回應（EDR）的即時監控，回應客戶資安問題與事件諮詢。協防客戶阻擋 APT 攻擊並追蹤處理狀況，分析各大 APT 族群的攻擊手法、特徵與惡意程式。
+- 條件與技能：必備為熟悉 Linux、Windows 資安事件調查指令，了解紅隊演練架構與工具，有數位鑑識調查實務，熟悉防火牆、IPS、WAF、NDR 等設備。加分為 CEH、CHFI、ECSA、ISO27001 等證照。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/82lge
+- 104 上顯示的更新日：11/11
+
+### 資安營運管理工程師（104 職缺代碼 7to9q）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段102號18樓　薪資：月薪35,000~50,000元　經歷：2年以上　學歷：專科、大學、碩士
+- 工作內容：撰寫日常防毒報告，追蹤異常資安事件單，做資安事件分析與查找。在 SOC 平台上調查事件，並執行資安相關產品的日常維運操作。
+- 條件與技能：擅長工具欄為 Excel、PowerPoint、Word。加分為有資安服務（SIEM／SOC）經驗、了解資安服務流程、熟悉資安操作環境。出差外派為無需出差外派，科系不拘。
+- 網址：https://www.104.com.tw/job/7to9q
+- 104 上顯示的更新日：11/11
+
+### 雲端資安工程師（104 職缺代碼 7x0lv）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓　薪資：月薪30,000~60,000元　經歷：不拘　學歷：專科、大學
+- 工作內容：執行工控物聯網（IoT／OT）安全檢測，包含封包側錄、工控網域安全設定、弱點檢測與阻斷攻擊驗證。協助工控物聯網資安產品與服務的售前、售後技術支援，並撰寫 RFP、計畫書與簡報。負責工控物聯網雲端資安架構的設計與設定。
+- 條件與技能：科系為工程、數學及電算機科學、自然科學學科類。工作技能欄為安裝與維護網路安全系統、網路安全架構分析與設計。擅長工具欄為不拘。出差外派為無需出差外派，日班 8:30-17:30。
+- 網址：https://www.104.com.tw/job/7x0lv
+- 104 上顯示的更新日：11/11
+
+### 系統工程師－研發六部（汐止）（104 職缺代碼 8s06a）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：月薪40,000~80,000元　經歷：1年以上　學歷：專科以上
+- 工作內容：參與智慧城市智慧交通系統的規劃、設計、軟體開發與測試。負責資訊系統的安裝、佈署與維護，以及專案建置、規劃與執行。團隊採敏捷開發並套用 Scrum 工作框架，也協助專案現場排除問題。
+- 條件與技能：擅長工具為 Linux、Java。科系為資訊工程、資訊管理、電機電子工程相關。要求注重軟體工程方法，樂於接受新技術。出差外派為無需出差外派，08:00~09:30 彈性上班。
+- 網址：https://www.104.com.tw/job/8s06a
+- 104 上顯示的更新日：11/11
+
+### 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：月薪50,000~80,000元　經歷：1年以上　學歷：專科以上
+- 工作內容：發展智慧城市智慧交通系統，並研究車聯網國際標準通訊協定。負責智慧交通系統的規劃、設計、軟體開發與測試，車聯網整合服務的設計與開發，以及網路通訊。團隊採敏捷開發與 Scrum，並負責系統安裝、佈署與維護。
+- 條件與技能：擅長工具為 C++、Java、Python、HTML、JavaScript，工作技能為軟體程式設計。要求熟悉物件導向技術。科系為資訊工程、資訊管理、電機電子工程相關。出差外派為無需出差外派，彈性上班。
+- 網址：https://www.104.com.tw/job/864ko
+- 104 上顯示的更新日：11/11
+
+### 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）
+- 公司：華電聯網股份有限公司　地點：高雄市新興區　薪資：月薪40,000~70,000元　經歷：不拘　學歷：專科以上
+- 工作內容：負責專案資料庫的建置、管理與維護，Oracle 與 MySQL 至少熟悉一種。需熟悉 PL/SQL 或 T-SQL 語法，具備 1 年以上 Stored Procedure 實務經驗尤佳。可獨立作業或與團隊合作。
+- 條件與技能：擅長工具欄為 MySQL、Oracle、PL/SQL。出差外派欄為需出差，一年累積時間未定，內文寫需配合專案任務出差。具備駕照（普通小型車）。科系不拘。
+- 網址：https://www.104.com.tw/job/7q8te
+- 104 上顯示的更新日：11/11
+
+### 雲端工程師（104 職缺代碼 8feu3）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：專科、大學、碩士
+- 工作內容：負責 Azure 客戶支援，回應客戶需求並做基本問題排查，例如虛擬機啟動失敗、儲存存取問題。協助客戶配置 Azure 虛擬機、儲存帳號與網路，維護 FAQ 與知識庫，並提供 Azure 平台基本教育訓練。無法解決的案件升級給資深工程師並追蹤。
+- 條件與技能：擅長工具為 Linux、VMware、PowerPoint、Word。工作技能為系統維護操作、系統架構規劃與維護、網路系統配置。證照欄為 Microsoft Certified Application Specialist、Azure 基礎知識認證、VCP。要求了解 IaaS／PaaS／SaaS、Azure Portal、虛擬網路、虛擬機與 Blob 儲存。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8feu3
+- 104 上顯示的更新日：11/11
+
+### 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）
+- 公司：華電聯網股份有限公司　地點：台中市南屯區黎明路二段　薪資：月薪35,000~55,000元　經歷：1年以上　學歷：大學以上
+- 工作內容：發展車聯網（C-V2X）智慧交通系統，設計、開發與整合軟體系統與應用程式。了解客戶需求並規劃產品方向，與研發團隊協作。團隊採敏捷開發與 Scrum，也協助專案現場排除問題。
+- 條件與技能：擅長工具為 Java、Spring、RDBMS、HTML、JavaScript、XML、XML Web services、VueJS。要求熟悉物件導向技術，注重軟體工程方法。科系為資訊工程、資訊管理、電機電子工程相關。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/7q4uo
+- 104 上顯示的更新日：11/11
+
+### 資安工程師－技術服務一部（104 職缺代碼 7z5cx）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號12樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科以上
+- 工作內容：負責以網通資安設備為主的產品，例如 Firewall、WAF、Endpoint。工作包含客戶資安環境的部署規劃、安裝與維護，客戶端 PoC 執行與原廠關係維護，文件製作與專案溝通協調，以及提供客戶解決方案諮詢與教育訓練。
+- 條件與技能：要求清楚的邏輯思考與問題解決能力。加分為 PMP、ISO 27001 或其他資安證照。擅長工具與工作技能欄為不拘，出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/7z5cx
+- 104 上顯示的更新日：11/11
+
+### 資安網路工程師（政府二部）（104 職缺代碼 8fefn）
+- 公司：華電聯網股份有限公司　地點：新北市板橋區　薪資：月薪35,000~80,000元　經歷：2年以上　學歷：專科、大學、碩士
+- 工作內容：負責 Firewall、IPS、SPAM、WAF 等資訊與資安設備的維運基礎操作。與團隊解決路由、交換與流量管理等網路問題，並支援客戶端網路與資安的整合，提供技術支援與問題排查。
+- 條件與技能：證照欄為 CCNA、CCNP、CCIE。加分為 WAF 與負載平衡（Load Balancer）設定經驗，Arbor、IPS、Packet X、NetProxy、NetTrap 操作經驗，誘捕系統經驗，Juniper、Cisco、Mellanox 設備經驗，以及 F5 證照。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8fefn
+- 104 上顯示的更新日：11/11
+
+### 資安人才：資安工程師／資安管理師／資安顧問（104 職缺代碼 77rqk）
+- 公司：華電聯網股份有限公司（含集團資安子公司開啟資安系統）　地點：新北市汐止區新台五路一段102號18樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士
+- 工作內容：集團招募資安人才，涵蓋五類角色。資安檢測工程師做弱點掃描、滲透測試、原碼檢測與社交工程。資安系統及產品工程師建置維護資安產品 LAB、做產品推廣與售後。資安監控工程師做日誌監控、分析、通報與追蹤。資安管理師制定資安與個資規範、規劃稽核與資產評鑑。資安顧問負責管理制度導入輔導。
+- 條件與技能：科系為資訊管理、資訊工程、數學及電算機科學學科類。擅長工具與工作技能欄為不拘，其他條件欄為空白。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/77rqk
+- 104 上顯示的更新日：11/11
+
+### 系統工程師（政府二部）（104 職缺代碼 8ux1x）
+- 公司：華電聯網股份有限公司　地點：新北市板橋區　薪資：月薪35,000~80,000元　經歷：1年以上　學歷：專科、大學、碩士
+- 工作內容：提供技術專業支援、系統設計與維運服務，協助解決方案的導入與升級，撰寫技術文件並做教育訓練。維護管理系統環境，涵蓋硬體、軟體與文件。與客戶、廠商和跨單位溝通，依專案需求配合駐點技術支援或現場作業。
+- 條件與技能：證照欄為 MCSE、JNCIA-JUNOS、Red Hat 認證工程師、VCP。加分為 VMware、NetApp、Nutanix、MCSE、RHCE、Veeam 等系統證照，以及電信業者服務與企業系統維護經驗。出差外派欄為需出差，一年累積時間約一個月以下。具備駕照（普通重型機車、普通小型車）。
+- 網址：https://www.104.com.tw/job/8ux1x
+- 104 上顯示的更新日：11/11
+
+### 系統工程師－技術服務一部（104 職缺代碼 8niie）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1年以上　學歷：專科以上
+- 工作內容：負責系統相關專案的軟硬體維護。短期參與成交案的建置與維護，中期負責專案維護與保固服務，長期熟悉公司主力產品的軟硬體操作。
+- 條件與技能：要求 1 年以上相關經驗，或參加過電腦相關職訓班。需具備 x86 伺服器（Dell／HP）建置與維護能力，以及虛擬化（vSphere／Hyper-V）系統建置與維護能力。具備駕照（普通小型車）。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8niie
+- 104 上顯示的更新日：11/11
+
+### 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）
+- 公司：華電聯網股份有限公司　地點：桃園市中壢區環西路121號5樓5B　薪資：月薪38,000~50,000元　經歷：不拘　學歷：專科以上
+- 工作內容：負責虛擬化系統的建置、維運與除錯，包含 VMware 虛擬系統。熟悉 Windows Server 與 Linux 作業系統，並做伺服器與儲存設備的整合建置與除錯。具備虛擬化平台維運經驗者佳。
+- 條件與技能：要求專科或大學相關科系畢業，或受過資訊、網路相關訓練。需具備良好溝通協調與系統故障排除能力。科系、擅長工具、工作技能欄為不拘。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/7fal8
+- 104 上顯示的更新日：11/11
+
+### 資安檢測專案工程師（104 職缺代碼 8z1b1）
+- 公司：華電聯網股份有限公司　地點：台中市南屯區　薪資：月薪40,000~80,000元　經歷：2年以上　學歷：大學、碩士
+- 工作內容：熟悉資安條款，使用 Nessus 掃描工具掃描伺服器弱點並修補。需有專案經驗，在專案工作中達到專案規定的資安要求。
+- 條件與技能：關鍵工具為 Nessus 弱點掃描。科系、擅長工具、工作技能欄為不拘。出差外派為無需出差外派，日班 08:30 ~ 17:30。
+- 網址：https://www.104.com.tw/job/8z1b1
+- 104 上顯示的更新日：11/11
+
+### 研發工程師－研發一部（104 職缺代碼 8zcjf）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2年以上　學歷：大學以上
+- 工作內容：設計、開發、整合軟體系統與應用程式，深入了解客戶需求並規劃產品方向。與研發部門團隊及公司其他組織協作，採敏捷開發並套用 Scrum 工作框架快速交付，也協助專案現場解決問題。
+- 條件與技能：擅長工具為 Java、RDBMS、HTML、JavaScript、CSS。要求熟悉物件導向技術、注重軟體工程方法。科系為資訊工程、資訊管理、電機電子工程相關。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8zcjf
+- 104 上顯示的更新日：11/11
+
+### 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：月薪40,000~80,000元　經歷：2年以上　學歷：大學以上
+- 工作內容：把 AI（影像辨識、LLM 等）技術轉成可落地的方案，應用場域為智慧城市、交通監控與安防。參與 AI 模型維護與驗證、推論環境部署與優化、系統整合開發與前瞻技術研究。職缺內文寫明不要求深厚的 AI 經驗。
+- 條件與技能：必備為 Python 開發 3 年以上並能獨立處理開源專案與環境問題，熟悉 Linux、Docker、Ubuntu CLI（Shell Script 佳）。擅長工具為 Python、Ubuntu、Docker。加分為統計與線性代數基礎、數位影像格式、ML 與影像辨識經驗。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8zclg
+- 104 上顯示的更新日：11/11
+
+### 建置工程師（網路／資安／智慧影像應用）（104 職缺代碼 90nok）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區　薪資：月薪40,000~50,000元　經歷：2年以上　學歷：大學以上
+- 工作內容：負責 Router／Switch 網路設備與防火牆的建置、設定與維運，並做 CCTV、NVR 與主機的安裝整合。協助智慧影像辨識系統（AI 影像分析）建置，支援雲端服務導入與系統串接、資料整合。應用場域包含公托、公幼與路口監視器等智慧城市專案。職務定位為二線工程師。
+- 條件與技能：必備為網路建置經驗（TCP/IP）與防火牆設定經驗。加分為對 AWS、Azure、GCP 雲端服務有基礎概念，對 AI 影像辨識有興趣，具攝影機、NVR 或弱電系統經驗。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/90nok
+- 104 上顯示的更新日：11/11
+
+### (C#)資深軟體工程師（104 職缺代碼 94ew3）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓（東方科學園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5年以上　學歷：大學以上
+- 工作內容：開發、維護並整合 BPM 電子簽核系統與 WMS 倉儲管理系統（內部系統）。參與需求訪談、流程分析、系統與資料庫設計及功能開發，負責功能測試、效能優化，並撰寫系統分析與維運文件。
+- 條件與技能：必備為 C# 開發 2 年以上，熟悉 ASP.NET、Web API、MS SQL（Stored Procedure、T-SQL）、JavaScript／HTML／CSS／jQuery／Bootstrap、Git。加分為 WinForm、RESTful API 整合、SmartBPM 或 DIAWMS 經驗，以及使用 ChatGPT、GitHub Copilot 等 AI 輔助開發工具的經驗。
+- 網址：https://www.104.com.tw/job/94ew3
+- 104 上顯示的更新日：11/11
+
+### 【2026 實習生／儲備人才招募計畫】資安實習生（104 職缺代碼 909n9）
+- 公司：華電聯網股份有限公司（資安子公司開啟資安）　地點：新北市汐止區　薪資：月薪30,000元以上　經歷：未標示　學歷：內文寫大三生或碩班生
+- 工作內容：一學年期實習計畫，參與大型政府場域的資安業務。工作含資安日誌分析、事件通報與追蹤、端點監控與事件分析、資安設備維運協助，並優化作業流程、開發自動化工具。通過培育評估後可轉任正職。
+- 條件與技能：對資訊安全有高度興趣，每週上班 4 至 5 天。加分為 iPAS 或 CEH 證照、漏洞提報經驗、CTF 競賽或 TryHackMe／Hack The Box 經驗，以及 Python、Java 等能寫自動化工具的開發能力。
+- 網址：https://www.104.com.tw/job/909n9
+- 104 上顯示的更新日：11/11
+
+### 資安技術經理（104 職缺代碼 96pla）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段102號18樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5年以上　學歷：專科、大學、碩士
+- 工作內容：規劃與管理 AI 專案，建立 AI 資安發展計畫並確保交付符合需求。建置 PQC（後量子密碼）檢測工具與專案，做資安設備產品的需求分析與建置規劃，研發前瞻技術，並整理技術需求規格書。
+- 條件與技能：科系為資訊工程、資訊管理、電機電子工程相關。加分為相關產業資安領域經驗、管理與跨部門溝通能力。擅長工具與工作技能欄為不拘，出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/96pla
+- 104 上顯示的更新日：11/11
+
+### 資深系統工程師（資訊部）（104 職缺代碼 89yhy）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：大學、碩士
+- 工作內容：維運集團各點資訊機房與監控伺服器，規劃建置並維護 Proxmox VE、VMware ESXi 虛擬化平台。建置維護 Linux（Ubuntu、SUSE）與 Windows Server 虛擬主機，評估新技術與工具，並撰寫 ISO27001 相關文件與操作手冊。
+- 條件與技能：必備為熟悉 LDAP，並有 AWS、Azure、GCP 雲端平台管理與建置經驗。加分為 Shell Script 或 PowerShell 基礎。科系為資訊管理、資訊工程相關。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/89yhy
+- 104 上顯示的更新日：11/12
+
+### 資安工程師（資訊部）（104 職缺代碼 8q0mi）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號12樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2年以上　學歷：大學、碩士
+- 工作內容：分析 IT 系統與網路日誌並處理異常事件，做資安事件緊急應變。執行自動化弱點掃描並追蹤修補進度，配合滲透測試與社交工程演練，整理資安報告與 ISO27001 文件，規劃資安教育訓練。
+- 條件與技能：必備為 2 年以上資安經驗（流量監控、異常日誌分析）、2 年以上作業系統與網路設備維運（Ubuntu、Rocky、防火牆、IPS、WAF）、1 年以上弱點掃描與修補經驗。加分為網路隔離優化與 ISO 27001 文件管理經驗。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8q0mi
+- 104 上顯示的更新日：11/11
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '36_104職缺更新_華電聯網.md' -Encoding UTF8 -Raw" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 342ms:
+# 36 華電聯網 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+本次收錄 29 筆軟體、AI、資料、雲端、資安、系統建置與維運相關職缺。公司頁（https://www.104.com.tw/company/12y30460）顯示工作機會 99+，共 7 頁，逐頁讀完後列表約 122 列（每頁另有 3 筆重複置頂職缺，未計入）。其餘職缺為網路工程、公共工程、業務、財會、人資、專案管理、現場施工等，不屬本檔範圍。網路工程類（如 7ganc、7gkpk、8tqvm）與車輛、施工現場類職缺未收。
+與舊檔（2026-11-16 的 E_華電、補3_華電）相比：
+- 新增職稱（舊檔未收錄詳頁）：資安監控工程師（L1 SOC／MDR）夜間值班、資安威脅獵捕分析師、資安營運管理工程師、雲端資安工程師、資安工程師－技術服務一部、資安網路工程師（政府二部）、資安人才（資安工程師／管理師／顧問）、系統工程師（政府二部）、系統工程師－技術服務一部、系統工程師（桃園整合服務部）、資安檢測專案工程師、資安實習生、資深系統工程師（資訊部）、資安工程師（資訊部）。
+- 舊檔有但已找不到（已下架）的軟體相關職稱：無。舊檔列出的軟體、資安、雲端、資料庫職缺全部仍在列表中。
+- 依 104 顯示，本檔職缺更新日多為 11/11，資深系統工程師（資訊部）為 11/12。
+
+### 職稱清單
+華電聯網在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 29 筆：
+- 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）
+- 資安工程師（技術服務二部／台中）（104 職缺代碼 7gani）
+- 資安檢測工程師（104 職缺代碼 7bebb）
+- 儲存系統工程師（新竹）（104 職缺代碼 6jad5）
+- 系統工程師（新竹）（104 職缺代碼 6ggg2）
+- 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）
+- 資安威脅獵捕分析師（104 職缺代碼 82lge）
+- 資安營運管理工程師（104 職缺代碼 7to9q）
+- 雲端資安工程師（104 職缺代碼 7x0lv）
+- 系統工程師－研發六部（汐止）（104 職缺代碼 8s06a）
+- 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）
+- 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）
+- 雲端工程師（104 職缺代碼 8feu3）
+- 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）
+- 資安工程師－技術服務一部（104 職缺代碼 7z5cx）
+- 資安網路工程師（政府二部）（104 職缺代碼 8fefn）
+- 資安人才：資安工程師／資安管理師／資安顧問（104 職缺代碼 77rqk）
+- 系統工程師（政府二部）（104 職缺代碼 8ux1x）
+- 系統工程師－技術服務一部（104 職缺代碼 8niie）
+- 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）
+- 資安檢測專案工程師（104 職缺代碼 8z1b1）
+- 研發工程師－研發一部（104 職缺代碼 8zcjf）
+- 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）
+- 建置工程師（網路／資安／智慧影像應用）（104 職缺代碼 90nok）
+- (C#)資深軟體工程師（104 職缺代碼 94ew3）
+- 【2026 實習生／儲備人才招募計畫】資安實習生（104 職缺代碼 909n9）
+- 資安技術經理（104 職缺代碼 96pla）
+- 資深系統工程師（資訊部）（104 職缺代碼 89yhy）
+- 資安工程師（資訊部）（104 職缺代碼 8q0mi）
+
+### 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段102號18樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：大學、碩士
+- 工作內容：負責公有雲（AWS／GCP／Azure）的資安架構規劃與維運，包含 IAM 權限治理、VPC 網路隔離、WAF／DDoS 防護策略。參與公司內部資安產品研發，做雲服務與生成式 AI 安全防護機制的客製化開發與規則調校。也用雲端 AI／ML 服務為客戶建立應用。
+- 條件與技能：必備為至少一種公有雲平台實戰經驗、Python 或 Shell Script、Docker 與 Kubernetes（含 Container Security）、Linux 與 TCP/IP。加分為持有經濟部 iPAS 證書。科系不拘，出差外派為無需出差外派，日班，週休二日。
+- 網址：https://www.104.com.tw/job/61qdm
+- 104 上顯示的更新日：11/11
+
+### 資安工程師（技術服務二部／台中）（104 職缺代碼 7gani）
+- 公司：華電聯網股份有限公司　地點：台中市南屯區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：專科、大學、碩士
+- 工作內容：擔任資安專家，提供技術專長與設計能力，支援客戶資安環境維運。協助解決方案的執行與升級，包含溝通、文件建立與教育訓練。維護管理資安環境的硬體、文件與軟體，排除並診斷資安相關故障。內文寫明需配合專案進行駐點工作。
+- 條件與技能：必備為專科以上、3 年以上經驗。加分為 CEH、CompTIA Security+ 等證照，以及電信業者服務與企業系統技術維護經驗。出差外派欄為需出差，一年累積時間未定。科系不拘，擅長工具與工作技能欄為不拘。
+- 網址：https://www.104.com.tw/job/7gani
+- 104 上顯示的更新日：11/11
+
+### 資安檢測工程師（104 職缺代碼 7bebb）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段98號12樓　薪資：月薪35,000元以上　經歷：1年以上　學歷：大學、碩士
+- 工作內容：執行弱點掃描、Web 弱點掃描、滲透測試、原始碼檢測與社交工程等資安檢測工作。協助檢測團隊提升技能與作業品質，並協助專案經理做資安專案管理。
+- 條件與技能：必備為 1 年以上資安檢測經驗（VA、Web VA、PT、Code Review、SE），熟悉 Kali、Metasploit、Acunetix、Nessus、WebInspect、AppScan 等工具，具備 CEH、ECSA 等證照。加分為網路攻防經驗，以及 IoT、5G 資安檢測經驗。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/7bebb
+- 104 上顯示的更新日：11/11
+
+### 儲存系統工程師（新竹）（104 職缺代碼 6jad5）
+- 公司：華電聯網股份有限公司　地點：新竹市關新路27號16樓之1　薪資：月薪35,000~45,000元　經歷：3年以上　學歷：專科、大學、碩士
+- 工作內容：短期協助業務三處新竹地區專案的建置與維護（NetApp）。中期擔任專案 PM，獨立執行各項專案。長期協助前端規劃解決方案。
+- 條件與技能：必備為 NAS／SAN 磁碟陣列、儲存區域網路與資料備份相關系統的建置經驗，熟練使用 Linux 與 Windows。加分為熟悉虛擬化技術。出差外派欄為需出差，一年累積時間未定。具備駕照（普通重型機車、普通小型車）。
+- 網址：https://www.104.com.tw/job/6jad5
+- 104 上顯示的更新日：11/11
+
+### 系統工程師（新竹）（104 職缺代碼 6ggg2）
+- 公司：華電聯網股份有限公司　地點：新竹市　薪資：月薪38,000元以上　經歷：1年以上　學歷：專科、大學、碩士
+- 工作內容：擔任系統專家，提供技術專長與設計能力，支援系統維運。協助解決方案的執行與升級，包含溝通、文件建立與教育訓練。維護管理系統環境的硬體、文件與軟體，排除系統故障。內文寫明需配合專案進行駐點工作。
+- 條件與技能：證照欄為 MCSE、Red Hat 認證工程師。加分為 VMware、NetApp、MCSE、RHCE、Veeam 等系統證照，以及電信業者服務與企業系統技術維護經驗。出差外派欄為需出差，一年累積時間未定。
+- 網址：https://www.104.com.tw/job/6ggg2
+- 104 上顯示的更新日：11/11
+
+### 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓　薪資：月薪45,000~60,000元　經歷：不拘　學歷：專科、大學
+- 工作內容：在 SOC／MDR 資安監控中心使用 Cortex XDR、Cortex XSIAM 平台做日常告警監控與事件初步分析。執行告警研判、異常行為分析與事件分類，負責資安事件通報、案件追蹤與客戶回應。重大等級事件依標準流程電話通報與升級，並處理白名單申請與防護政策調整。班別為固定大夜 23:00 至隔日 08:00。
+- 條件與技能：必備為基本電腦操作能力，並能配合固定大夜班。科系為資訊管理、資訊工程、電機電子工程相關。加分為 TCP/IP、Linux、Windows、SOC／SIEM 經驗、Cortex XDR／XSIAM 操作，以及 CCNA、Security+、CEH 等證照。公司提供一個月教育訓練。
+- 網址：https://www.104.com.tw/job/7yi2d
+- 104 上顯示的更新日：11/11
+
+### 資安威脅獵捕分析師（104 職缺代碼 82lge）
+- 公司：華電聯網股份有限公司　地點：新北市板橋區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：大學以上
+- 工作內容：負責公司端點偵測與回應（EDR）的即時監控，回應客戶資安問題與事件諮詢。協防客戶阻擋 APT 攻擊並追蹤處理狀況，分析各大 APT 族群的攻擊手法、特徵與惡意程式。
+- 條件與技能：必備為熟悉 Linux、Windows 資安事件調查指令，了解紅隊演練架構與工具，有數位鑑識調查實務，熟悉防火牆、IPS、WAF、NDR 等設備。加分為 CEH、CHFI、ECSA、ISO27001 等證照。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/82lge
+- 104 上顯示的更新日：11/11
+
+### 資安營運管理工程師（104 職缺代碼 7to9q）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段102號18樓　薪資：月薪35,000~50,000元　經歷：2年以上　學歷：專科、大學、碩士
+- 工作內容：撰寫日常防毒報告，追蹤異常資安事件單，做資安事件分析與查找。在 SOC 平台上調查事件，並執行資安相關產品的日常維運操作。
+- 條件與技能：擅長工具欄為 Excel、PowerPoint、Word。加分為有資安服務（SIEM／SOC）經驗、了解資安服務流程、熟悉資安操作環境。出差外派為無需出差外派，科系不拘。
+- 網址：https://www.104.com.tw/job/7to9q
+- 104 上顯示的更新日：11/11
+
+### 雲端資安工程師（104 職缺代碼 7x0lv）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓　薪資：月薪30,000~60,000元　經歷：不拘　學歷：專科、大學
+- 工作內容：執行工控物聯網（IoT／OT）安全檢測，包含封包側錄、工控網域安全設定、弱點檢測與阻斷攻擊驗證。協助工控物聯網資安產品與服務的售前、售後技術支援，並撰寫 RFP、計畫書與簡報。負責工控物聯網雲端資安架構的設計與設定。
+- 條件與技能：科系為工程、數學及電算機科學、自然科學學科類。工作技能欄為安裝與維護網路安全系統、網路安全架構分析與設計。擅長工具欄為不拘。出差外派為無需出差外派，日班 8:30-17:30。
+- 網址：https://www.104.com.tw/job/7x0lv
+- 104 上顯示的更新日：11/11
+
+### 系統工程師－研發六部（汐止）（104 職缺代碼 8s06a）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：月薪40,000~80,000元　經歷：1年以上　學歷：專科以上
+- 工作內容：參與智慧城市智慧交通系統的規劃、設計、軟體開發與測試。負責資訊系統的安裝、佈署與維護，以及專案建置、規劃與執行。團隊採敏捷開發並套用 Scrum 工作框架，也協助專案現場排除問題。
+- 條件與技能：擅長工具為 Linux、Java。科系為資訊工程、資訊管理、電機電子工程相關。要求注重軟體工程方法，樂於接受新技術。出差外派為無需出差外派，08:00~09:30 彈性上班。
+- 網址：https://www.104.com.tw/job/8s06a
+- 104 上顯示的更新日：11/11
+
+### 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：月薪50,000~80,000元　經歷：1年以上　學歷：專科以上
+- 工作內容：發展智慧城市智慧交通系統，並研究車聯網國際標準通訊協定。負責智慧交通系統的規劃、設計、軟體開發與測試，車聯網整合服務的設計與開發，以及網路通訊。團隊採敏捷開發與 Scrum，並負責系統安裝、佈署與維護。
+- 條件與技能：擅長工具為 C++、Java、Python、HTML、JavaScript，工作技能為軟體程式設計。要求熟悉物件導向技術。科系為資訊工程、資訊管理、電機電子工程相關。出差外派為無需出差外派，彈性上班。
+- 網址：https://www.104.com.tw/job/864ko
+- 104 上顯示的更新日：11/11
+
+### 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）
+- 公司：華電聯網股份有限公司　地點：高雄市新興區　薪資：月薪40,000~70,000元　經歷：不拘　學歷：專科以上
+- 工作內容：負責專案資料庫的建置、管理與維護，Oracle 與 MySQL 至少熟悉一種。需熟悉 PL/SQL 或 T-SQL 語法，具備 1 年以上 Stored Procedure 實務經驗尤佳。可獨立作業或與團隊合作。
+- 條件與技能：擅長工具欄為 MySQL、Oracle、PL/SQL。出差外派欄為需出差，一年累積時間未定，內文寫需配合專案任務出差。具備駕照（普通小型車）。科系不拘。
+- 網址：https://www.104.com.tw/job/7q8te
+- 104 上顯示的更新日：11/11
+
+### 雲端工程師（104 職缺代碼 8feu3）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：專科、大學、碩士
+- 工作內容：負責 Azure 客戶支援，回應客戶需求並做基本問題排查，例如虛擬機啟動失敗、儲存存取問題。協助客戶配置 Azure 虛擬機、儲存帳號與網路，維護 FAQ 與知識庫，並提供 Azure 平台基本教育訓練。無法解決的案件升級給資深工程師並追蹤。
+- 條件與技能：擅長工具為 Linux、VMware、PowerPoint、Word。工作技能為系統維護操作、系統架構規劃與維護、網路系統配置。證照欄為 Microsoft Certified Application Specialist、Azure 基礎知識認證、VCP。要求了解 IaaS／PaaS／SaaS、Azure Portal、虛擬網路、虛擬機與 Blob 儲存。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8feu3
+- 104 上顯示的更新日：11/11
+
+### 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）
+- 公司：華電聯網股份有限公司　地點：台中市南屯區黎明路二段　薪資：月薪35,000~55,000元　經歷：1年以上　學歷：大學以上
+- 工作內容：發展車聯網（C-V2X）智慧交通系統，設計、開發與整合軟體系統與應用程式。了解客戶需求並規劃產品方向，與研發團隊協作。團隊採敏捷開發與 Scrum，也協助專案現場排除問題。
+- 條件與技能：擅長工具為 Java、Spring、RDBMS、HTML、JavaScript、XML、XML Web services、VueJS。要求熟悉物件導向技術，注重軟體工程方法。科系為資訊工程、資訊管理、電機電子工程相關。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/7q4uo
+- 104 上顯示的更新日：11/11
+
+### 資安工程師－技術服務一部（104 職缺代碼 7z5cx）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號12樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科以上
+- 工作內容：負責以網通資安設備為主的產品，例如 Firewall、WAF、Endpoint。工作包含客戶資安環境的部署規劃、安裝與維護，客戶端 PoC 執行與原廠關係維護，文件製作與專案溝通協調，以及提供客戶解決方案諮詢與教育訓練。
+- 條件與技能：要求清楚的邏輯思考與問題解決能力。加分為 PMP、ISO 27001 或其他資安證照。擅長工具與工作技能欄為不拘，出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/7z5cx
+- 104 上顯示的更新日：11/11
+
+### 資安網路工程師（政府二部）（104 職缺代碼 8fefn）
+- 公司：華電聯網股份有限公司　地點：新北市板橋區　薪資：月薪35,000~80,000元　經歷：2年以上　學歷：專科、大學、碩士
+- 工作內容：負責 Firewall、IPS、SPAM、WAF 等資訊與資安設備的維運基礎操作。與團隊解決路由、交換與流量管理等網路問題，並支援客戶端網路與資安的整合，提供技術支援與問題排查。
+- 條件與技能：證照欄為 CCNA、CCNP、CCIE。加分為 WAF 與負載平衡（Load Balancer）設定經驗，Arbor、IPS、Packet X、NetProxy、NetTrap 操作經驗，誘捕系統經驗，Juniper、Cisco、Mellanox 設備經驗，以及 F5 證照。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8fefn
+- 104 上顯示的更新日：11/11
+
+### 資安人才：資安工程師／資安管理師／資安顧問（104 職缺代碼 77rqk）
+- 公司：華電聯網股份有限公司（含集團資安子公司開啟資安系統）　地點：新北市汐止區新台五路一段102號18樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士
+- 工作內容：集團招募資安人才，涵蓋五類角色。資安檢測工程師做弱點掃描、滲透測試、原碼檢測與社交工程。資安系統及產品工程師建置維護資安產品 LAB、做產品推廣與售後。資安監控工程師做日誌監控、分析、通報與追蹤。資安管理師制定資安與個資規範、規劃稽核與資產評鑑。資安顧問負責管理制度導入輔導。
+- 條件與技能：科系為資訊管理、資訊工程、數學及電算機科學學科類。擅長工具與工作技能欄為不拘，其他條件欄為空白。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/77rqk
+- 104 上顯示的更新日：11/11
+
+### 系統工程師（政府二部）（104 職缺代碼 8ux1x）
+- 公司：華電聯網股份有限公司　地點：新北市板橋區　薪資：月薪35,000~80,000元　經歷：1年以上　學歷：專科、大學、碩士
+- 工作內容：提供技術專業支援、系統設計與維運服務，協助解決方案的導入與升級，撰寫技術文件並做教育訓練。維護管理系統環境，涵蓋硬體、軟體與文件。與客戶、廠商和跨單位溝通，依專案需求配合駐點技術支援或現場作業。
+- 條件與技能：證照欄為 MCSE、JNCIA-JUNOS、Red Hat 認證工程師、VCP。加分為 VMware、NetApp、Nutanix、MCSE、RHCE、Veeam 等系統證照，以及電信業者服務與企業系統維護經驗。出差外派欄為需出差，一年累積時間約一個月以下。具備駕照（普通重型機車、普通小型車）。
+- 網址：https://www.104.com.tw/job/8ux1x
+- 104 上顯示的更新日：11/11
+
+### 系統工程師－技術服務一部（104 職缺代碼 8niie）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1年以上　學歷：專科以上
+- 工作內容：負責系統相關專案的軟硬體維護。短期參與成交案的建置與維護，中期負責專案維護與保固服務，長期熟悉公司主力產品的軟硬體操作。
+- 條件與技能：要求 1 年以上相關經驗，或參加過電腦相關職訓班。需具備 x86 伺服器（Dell／HP）建置與維護能力，以及虛擬化（vSphere／Hyper-V）系統建置與維護能力。具備駕照（普通小型車）。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8niie
+- 104 上顯示的更新日：11/11
+
+### 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）
+- 公司：華電聯網股份有限公司　地點：桃園市中壢區環西路121號5樓5B　薪資：月薪38,000~50,000元　經歷：不拘　學歷：專科以上
+- 工作內容：負責虛擬化系統的建置、維運與除錯，包含 VMware 虛擬系統。熟悉 Windows Server 與 Linux 作業系統，並做伺服器與儲存設備的整合建置與除錯。具備虛擬化平台維運經驗者佳。
+- 條件與技能：要求專科或大學相關科系畢業，或受過資訊、網路相關訓練。需具備良好溝通協調與系統故障排除能力。科系、擅長工具、工作技能欄為不拘。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/7fal8
+- 104 上顯示的更新日：11/11
+
+### 資安檢測專案工程師（104 職缺代碼 8z1b1）
+- 公司：華電聯網股份有限公司　地點：台中市南屯區　薪資：月薪40,000~80,000元　經歷：2年以上　學歷：大學、碩士
+- 工作內容：熟悉資安條款，使用 Nessus 掃描工具掃描伺服器弱點並修補。需有專案經驗，在專案工作中達到專案規定的資安要求。
+- 條件與技能：關鍵工具為 Nessus 弱點掃描。科系、擅長工具、工作技能欄為不拘。出差外派為無需出差外派，日班 08:30 ~ 17:30。
+- 網址：https://www.104.com.tw/job/8z1b1
+- 104 上顯示的更新日：11/11
+
+### 研發工程師－研發一部（104 職缺代碼 8zcjf）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2年以上　學歷：大學以上
+- 工作內容：設計、開發、整合軟體系統與應用程式，深入了解客戶需求並規劃產品方向。與研發部門團隊及公司其他組織協作，採敏捷開發並套用 Scrum 工作框架快速交付，也協助專案現場解決問題。
+- 條件與技能：擅長工具為 Java、RDBMS、HTML、JavaScript、CSS。要求熟悉物件導向技術、注重軟體工程方法。科系為資訊工程、資訊管理、電機電子工程相關。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8zcjf
+- 104 上顯示的更新日：11/11
+
+### 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：月薪40,000~80,000元　經歷：2年以上　學歷：大學以上
+- 工作內容：把 AI（影像辨識、LLM 等）技術轉成可落地的方案，應用場域為智慧城市、交通監控與安防。參與 AI 模型維護與驗證、推論環境部署與優化、系統整合開發與前瞻技術研究。職缺內文寫明不要求深厚的 AI 經驗。
+- 條件與技能：必備為 Python 開發 3 年以上並能獨立處理開源專案與環境問題，熟悉 Linux、Docker、Ubuntu CLI（Shell Script 佳）。擅長工具為 Python、Ubuntu、Docker。加分為統計與線性代數基礎、數位影像格式、ML 與影像辨識經驗。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8zclg
+- 104 上顯示的更新日：11/11
+
+### 建置工程師（網路／資安／智慧影像應用）（104 職缺代碼 90nok）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區　薪資：月薪40,000~50,000元　經歷：2年以上　學歷：大學以上
+- 工作內容：負責 Router／Switch 網路設備與防火牆的建置、設定與維運，並做 CCTV、NVR 與主機的安裝整合。協助智慧影像辨識系統（AI 影像分析）建置，支援雲端服務導入與系統串接、資料整合。應用場域包含公托、公幼與路口監視器等智慧城市專案。職務定位為二線工程師。
+- 條件與技能：必備為網路建置經驗（TCP/IP）與防火牆設定經驗。加分為對 AWS、Azure、GCP 雲端服務有基礎概念，對 AI 影像辨識有興趣，具攝影機、NVR 或弱電系統經驗。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/90nok
+- 104 上顯示的更新日：11/11
+
+### (C#)資深軟體工程師（104 職缺代碼 94ew3）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號11樓（東方科學園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5年以上　學歷：大學以上
+- 工作內容：開發、維護並整合 BPM 電子簽核系統與 WMS 倉儲管理系統（內部系統）。參與需求訪談、流程分析、系統與資料庫設計及功能開發，負責功能測試、效能優化，並撰寫系統分析與維運文件。
+- 條件與技能：必備為 C# 開發 2 年以上，熟悉 ASP.NET、Web API、MS SQL（Stored Procedure、T-SQL）、JavaScript／HTML／CSS／jQuery／Bootstrap、Git。加分為 WinForm、RESTful API 整合、SmartBPM 或 DIAWMS 經驗，以及使用 ChatGPT、GitHub Copilot 等 AI 輔助開發工具的經驗。
+- 網址：https://www.104.com.tw/job/94ew3
+- 104 上顯示的更新日：11/11
+
+### 【2026 實習生／儲備人才招募計畫】資安實習生（104 職缺代碼 909n9）
+- 公司：華電聯網股份有限公司（資安子公司開啟資安）　地點：新北市汐止區　薪資：月薪30,000元以上　經歷：未標示　學歷：內文寫大三生或碩班生
+- 工作內容：一學年期實習計畫，參與大型政府場域的資安業務。工作含資安日誌分析、事件通報與追蹤、端點監控與事件分析、資安設備維運協助，並優化作業流程、開發自動化工具。通過培育評估後可轉任正職。
+- 條件與技能：對資訊安全有高度興趣，每週上班 4 至 5 天。加分為 iPAS 或 CEH 證照、漏洞提報經驗、CTF 競賽或 TryHackMe／Hack The Box 經驗，以及 Python、Java 等能寫自動化工具的開發能力。
+- 網址：https://www.104.com.tw/job/909n9
+- 104 上顯示的更新日：11/11
+
+### 資安技術經理（104 職缺代碼 96pla）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段102號18樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5年以上　學歷：專科、大學、碩士
+- 工作內容：規劃與管理 AI 專案，建立 AI 資安發展計畫並確保交付符合需求。建置 PQC（後量子密碼）檢測工具與專案，做資安設備產品的需求分析與建置規劃，研發前瞻技術，並整理技術需求規格書。
+- 條件與技能：科系為資訊工程、資訊管理、電機電子工程相關。加分為相關產業資安領域經驗、管理與跨部門溝通能力。擅長工具與工作技能欄為不拘，出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/96pla
+- 104 上顯示的更新日：11/11
+
+### 資深系統工程師（資訊部）（104 職缺代碼 89yhy）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段（東方科學園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：3年以上　學歷：大學、碩士
+- 工作內容：維運集團各點資訊機房與監控伺服器，規劃建置並維護 Proxmox VE、VMware ESXi 虛擬化平台。建置維護 Linux（Ubuntu、SUSE）與 Windows Server 虛擬主機，評估新技術與工具，並撰寫 ISO27001 相關文件與操作手冊。
+- 條件與技能：必備為熟悉 LDAP，並有 AWS、Azure、GCP 雲端平台管理與建置經驗。加分為 Shell Script 或 PowerShell 基礎。科系為資訊管理、資訊工程相關。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/89yhy
+- 104 上顯示的更新日：11/12
+
+### 資安工程師（資訊部）（104 職缺代碼 8q0mi）
+- 公司：華電聯網股份有限公司　地點：新北市汐止區新台五路一段108號12樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2年以上　學歷：大學、碩士
+- 工作內容：分析 IT 系統與網路日誌並處理異常事件，做資安事件緊急應變。執行自動化弱點掃描並追蹤修補進度，配合滲透測試與社交工程演練，整理資安報告與 ISO27001 文件，規劃資安教育訓練。
+- 條件與技能：必備為 2 年以上資安經驗（流量監控、異常日誌分析）、2 年以上作業系統與網路設備維運（Ubuntu、Rocky、防火牆、IPS、WAF）、1 年以上弱點掃描與修補經驗。加分為網路隔離優化與 ISO 27001 文件管理經驗。出差外派為無需出差外派。
+- 網址：https://www.104.com.tw/job/8q0mi
+- 104 上顯示的更新日：11/11
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '26_補充_華電聯網.md' -Encoding UTF8 -Raw; rg -n -i '員工旅遊|旅遊補助|尾牙|抽獎|加班費|加班給付|育嬰|育兒|健檢|健康檢查' -- '07_華電聯網.md' '26_補充_華電聯網.md' '36_104職缺更新_華電聯網.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 381ms:
+# 26 華電聯網 公開資料補充
+
+## 基本資料
+
+### 公司沿革與系統整合經歷
+華電聯網股份有限公司（Hwacom Systems，股票代號 6163，簡稱華電網）於 1994 年 5 月 4 日設立，2002 年 3 月 19 日在櫃買中心上櫃。公司自稱累積約 30 年系統整合經驗。媒體報導列出的代表性建置包括：台灣第一套 ADSL 寬頻網路、規模最大的光世代寬頻網路系統、國際機場資通訊系統，以及台鐵環島光纖骨幹網路。公司把這些大型資通訊建設經驗，當作切入 AI 基礎建設與政府標案的基礎。官網的公司簡介區設有「認識華電」「企業願景／經營理念」「大事記」（分 1994–2020 與 2021 年起兩段）、分支機構等頁面。2026 年 4 月的活動報導中，公司的品牌理念是「超乎想像」。
+來源：https://finance.technews.tw/2026/03/25/hwacom/（查詢日 2026-11-17）
+
+### 四大事業領域與人力規模
+官網的解決方案分為四類：資通訊、智慧應用、數位媒體、資安。2025 年營收占比依序為：資通訊整合應用 75.1%、智慧整合應用 12.4%、資安整合應用 6.5%、媒體整合應用 5.9%。資安業務由 100% 持股的子公司開啟資安主導。公司在 2026 年法說會上說明，全公司近 980 名員工，其中工程師與研發人員超過 560 名，占比逾 65%。各事業內容：資通訊整合提供 5G 專網、雲端整合與 ICT 系統整合；資安整合從弱點掃描延伸到 SOC 戰情中心；智慧整合聚焦智慧城市、智慧交通與 AIoT 平台；媒體整合提供 MOD 影音平台與數位內容傳輸。
+來源：https://blog.fugle.tw/post/earnings-call-6163-2026-05-14（查詢日 2026-11-17）
+
+### 策略夥伴與客戶群
+2025 年 12 月法說會備忘錄列出華電聯網的客戶群：政府單位（交通部、國防單位、地方政府）、電信業（中華電信、台灣大哥大、遠傳）、一般企業（聯發科、群創、旺宏）。策略夥伴為大股東研華科技。公司也與 Cisco、Nokia、Microsoft、Palo Alto Networks 合作。2026 年法說會另提到，長期計畫是與 Nokia、AWS、Cisco、Dell 等國際大廠合作，打造高效能、高韌性的網路與算力基礎設施。公司自評為台灣網路建置規模第一、系統整合規模前三大。公司說明，會藉由大型專案爭取更多國內外標案，並把研華科技列為戰略夥伴，在邊緣運算與車聯網領域合作。
+來源：https://blog.fugle.tw/post/earnings-call-6163-2025-12-19 、https://uanalyze.com.tw/articles/3732749607（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 2025 年營收結構與客戶組成
+2025 年華電聯網客戶組成為企業 44.1%、政府 31.5%、電信 24.4%。公司預期 2026 年政府客戶占比會提高。2025 年前三季營收 38.61 億元，年增 10%，毛利 7.84 億元，毛利率 20.3%；歸屬母公司淨損 2,350 萬元，EPS 為 -0.17 元。第三季單季營收 16.39 億元，年增 20%，毛利率 18.8%，歸屬母公司淨利 3,122 萬元，由虧轉盈，EPS 0.22 元。2025 年 9 月 30 日資產總計 61.86 億元，現金及約當現金 8.33 億元，存貨 24.3 億元，負債總計 35.29 億元，權益總計 26.57 億元。公司表示存貨將轉為未來營收。
+來源：https://blog.fugle.tw/post/earnings-call-6163-2025-12-19（查詢日 2026-11-17）
+
+### 政府標案與在手專案
+2025 年華電聯網取得 110 件政府標案，得標總金額近 83 億元，年增近五倍。工商時報 2025 年 12 月 22 日的報導採用另一口徑：去年得標 16 億元，今年 78 億元；平均每件標案金額由 1,310 萬元升到 7,425 萬元，顯示公司轉向大型專案。2026 年法說會說明：2025 年承接的十大專案單一金額皆逾億元，預計 2026 年第三季起進入建置，成為下半年主要營收來源；因預算審核延遲，大型政府標案預期集中在 2026 年第四季釋出。報導另提到台電光傳輸網路採購案預計 2026 年開始貢獻營收。
+來源：https://www.ctee.com.tw/news/20251222700152-430502（查詢日 2026-11-17）
+
+### 2026 年營收與股東會決議
+2026 年 2 月營收 5.07 億元，年增 136%；1 至 2 月累計合併營收 10.81 億元，年增 33.8%。第一季營收 18.2 億元，年增 46%，毛利率 15.8%，EPS 0.02 元。公司說明，若排除一次性認列的大型專案，毛利率可回到 18% 至 20%。營業費用率降至 15.5%。前 4 月累計營收 22 億元，前 5 月累計 25.6 億元，年增 32.6%。2026 年 6 月 26 日股東會通過配發現金股利 0.58 元，配發率 77.3%。董事長陳國章表示，公司會強化大型專案控管、縮短驗收時程以控制成本，內部方針為「向上創造利潤、向下降低成本」，並把人才培育列為優先事項。
+來源：https://udn.com/news/story/7254/9589672（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### SmartQ LAS 企業專屬生成式 AI 平台
+SmartQ LAS 是華電聯網的企業專屬 GAI 應用服務平台。公司說明，它針對企業導入 AI 時的四個問題：成本失控、資安合規、應用失效、管理混亂。平台採雙軌架構：IT 部門以 Top-Down 治理軌道建立安全框架，業務團隊在框架內以 Bottom-Up 創新軌道自行發揮。服務樣板包括 No-Code 工具、對話式服務與任務自動化，公司宣稱各部門約 10 分鐘即可部署專屬 AI 助理。2025 年 12 月法說會備忘錄把企業級平台稱為「華電通（SmartQ）」，可整合內部規章、ERP、CRM 等資料。該新聞稿由公司提供，未經獨立查證。
+來源：https://www.cna.com.tw/business/chinese/428282（查詢日 2026-11-17）
+
+### FaceKey 人臉辨識與 Cyber Monitor 網管系統
+FaceKey 是智慧人臉辨識整合系統，搭載 AI 深度學習人臉演算法，採端到端身分驗證，整合門禁、考勤、列印取件三大應用。公司表示已取得 ISO 27001 與 ISO 27701 驗證，資料採地端控制與加密，並與台灣富士軟片資訊合作，結合多功能事務機。2026 年法說會稱 FaceKey 支援多人同時偵測。Cyber Monitor 是智慧網管系統，功能含自動偵測設備、繪製架構圖、組態備份比對、以大數據平台分析防火牆日誌，並模擬用戶行為巡檢 Web、Email、DNS、DHCP、FTP 服務。規劃中的功能有 AI 智能助理輔助異常分析、AI 偵測異常 Log 並主動告警，並結合 3D iDCIM 做機房數位孿生。
+來源：https://www.cna.com.tw/business/chinese/428282（查詢日 2026-11-17）
+
+### 智慧交通與車聯網平台
+華電聯網的智慧交通專案包括：桃園機場第三航廈 PMS 旅客運輸系統，整合 5G 專網、C-V2X 車聯網與 AIoT，並導入自駕電動巴士連接 T2 與 T3；淡海新市鎮 D-City 驗測平台，支援逾 10 項國際 V2X 通訊協定，可實證 9 大車聯網情境，如號誌即時資訊（SPaT）、行人安全警示（PSM）、緊急車輛優先通行（EVA）。公司也自主研發 Edge AI 影像辨識與數位分身交通管理平台，已導入高速公路系統，並參與制定台灣車聯網資通訊標準（TCROS）。另有智慧桿，整合道路影像收集與辨識，已在全台陸續落地。
+來源：https://www.ctee.com.tw/news/20251222700152-430502（查詢日 2026-11-17）
+
+### AI 應用案例與技術架構
+依 2026 年法說會，華電聯網的 AI 技術架構已從單一 AI 自主代理，發展到多模型協作的 Agentic Workflows，並導入視覺語言模型（VLM），提升車牌辨識與周界監控的情境理解能力。內部應用方面，公司把 AI Agent 導入內部 SAP 與 BI 系統，以自然語言查詢提升營運效率。其他案例：以 AI 做機房設備預測性維護；與 Palo Alto Networks 合作推出 AI 輔助 MDR 託管服務；為軍方與行動支付客戶提供 AI 自動化對抗性曝險驗證系統；國道與雪山隧道導入 AI 影像事故偵測（可偵測停等、壅塞、散落物、逆行、煙霧）；AI 冰機能耗優化方案可節電超過 10%；與台灣大學研究生成式 AI 於市區號誌控制。
+來源：https://blog.fugle.tw/post/earnings-call-6163-2026-05-14（查詢日 2026-11-17）
+
+### AI 基礎建設與數位孿生
+華電聯網 2026 年營運主軸是「AI 基礎建設」與「韌性資通」雙引擎。AI 基建的範圍包括算力設備、超高速低延遲網路、資料儲存與雲端平台，客戶需求已從國內部署延伸到海外。董事長陳國章說明，AI 基建已從硬體採購延伸為整體系統建設。在網路面，公司與 Nokia 合作，為桃園機場 T1／T2 通訊基礎設施導入 IP/MPLS，整合語音、數據、視訊系統。2026 年 4 月 24 日，公司與台灣諾基亞、擎邦國際舉辦 AI 智慧建築論壇，由資通系統整合處協理張智為說明數位孿生與 AI 應用：把實體空間數位化，支援預測性維護與能源管理。
+來源：https://www.cio.com.tw/111399/（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2025 年 12 月法說會與第三季轉盈
+2025 年 12 月 19 日華電聯網召開法說會。工商時報 12 月 22 日報導：第三季營收 16.4 億元，年增 19%，EPS 0.22 元，單季由虧轉盈；第三季毛利率 18.81%；累計前 11 月營收 48.2 億元，年增 3.9%。公司說明，國軍營區警監系統發展 AI 哨兵，可做入侵偵測；與國立大學合作建立資安基地，培育資安人才。營運長表示第四季為傳統旺季。法說會列出的成長動能包括：智慧交通擴展到園區、醫療院所與物流場域，資安需求帶動開啟資安業務，以及政府與企業對 5G、物聯網、雲端的基礎建設投資。公司認為經過數年轉型，各專案陸續推進後，2026 年營運將轉旺，並由系統整合商轉型為 AI 方案服務提供商。
+來源：https://www.ctee.com.tw/news/20251222700152-430502（查詢日 2026-11-17）
+
+### 2026 年 3 月 AI 服務提供商轉型與智慧城市展
+2026 年 3 月，董事長陳國章說明公司正由傳統系統整合商轉向「AI 服務提供商」，營運以 AI 基建與韌性資通為雙引擎，預期 2026 年全年營運維持雙位數成長。公司指出，生成式 AI 與 Agentic AI 正在重塑公私部門營運流程，客戶除了部署問題，也需兼顧軟體彈性、異質資料串接與資安防護。子公司開啟資安把「負責任的 AI」概念導入服務。同月公司在台北智慧城市展展出企業專屬生成式 AI 平台、FaceKey，以及桃園機場第三航廈 PMS 系統。董事長另表示，今年感受到邊緣 AI 專案增加，與大股東研華合作邊緣 AI 與車聯網，場域以智慧建築為主。
+來源：https://technews.tw/?p=1531362（查詢日 2026-11-17）
+
+### 2026 年 8 月分割案與 10 月成立碩維
+2026 年 8 月 5 日，華電聯網董事會通過分割「業務三處業務一部及系統服務部」的相關營業（含資產、負債），分割基準日暫定 2026 年 9 月 8 日，對價為碩維股份有限公司發行的新股，債權人異議期為 8 月 6 日至 9 月 7 日。2026 年 10 月 6 日，華電聯網宣布成立碩維（SureWin），投入 8,000 萬元，總經理為鍾瑜庭。碩維鎖定半導體產業 AI 落地需求，以 Data First 為架構思維，提供系統整合、網路安全、系統架構、儲存設備、雲端運算的整合與維運服務，並結合後量子密碼（PQC）技術導入儲存設備。團隊以技術人員為主，逾九成具多年實務經驗，專業證照逾 50 張。
+來源：https://uanalyze.com.tw/articles/2332156590（查詢日 2026-11-17）
+
+### 官網公開的人力資源方向
+華電聯網官網設有「人力資源（加入我們）」區塊，員工專區分為「安心華電」「成長華電」「樂活華電」三個面向，「菁英招募」連結到外部人力銀行的職缺頁。官網的企業永續（ESG）區塊含永續報告書、公司治理、舉報管道與友善職場等項目。2026 年股東會上，董事長把人才培育列為優先要務。公司 2026 年法說會稱，工程師與研發人員占全體員工 65% 以上。官網最新消息分為「新聞消息」與「研討會訊息」兩類。2025 年公司與國立大學合作建立資安基地，並與台灣大學合作研究生成式 AI 在市區號誌控制的應用，兩者都屬公開的人才與研究合作方向。
+來源：https://www.hwacom.com 、https://blog.fugle.tw/post/earnings-call-6163-2025-12-19（查詢日 2026-11-17）
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+已讀完 29 筆職缺。清單題會分別問新竹職缺與車聯網開發職缺，各有兩筆符合；另會查核福利題的缺答關鍵字是否完全未出現。
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "@'
+import json,re,pathlib
+root=pathlib.Path('.')
+cases=[
+('36_104職缺更新_華電聯網.md','目前開放職缺 > 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）','薪資：月薪45,000~60,000元'),
+('36_104職缺更新_華電聯網.md','目前開放職缺 > 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）','地點：桃園市中壢區環西路121號5樓5B'),
+('36_104職缺更新_華電聯網.md','目前開放職缺 > 資安檢測工程師（104 職缺代碼 7bebb）','學歷：大學、碩士'),
+('26_補充_華電聯網.md','技術堆疊 > FaceKey 人臉辨識與 Cyber Monitor 網管系統','FaceKey 是智慧人臉辨識整合系統，搭載 AI 深度學習人臉演算法'),
+('26_補充_華電聯網.md','基本資料 > 四大事業領域與人力規模','資安業務由 100% 持股的子公司開啟資安主導。'),
+('26_補充_華電聯網.md','業務與財務 > 2026 年營收與股東會決議','2026 年 6 月 26 日股東會通過配發現金股利 0.58 元'),
+('07_華電聯網.md','8. 近一年新聞','2026-10-06：宣布成立碩維（SureWin），投入 8,000 萬'),
+('36_104職缺更新_華電聯網.md','目前開放職缺 > 儲存系統工程師（新竹）（104 職缺代碼 6jad5）','短期協助業務三處新竹地區專案的建置與維護（NetApp）。'),
+('36_104職缺更新_華電聯網.md','目前開放職缺 > 系統工程師（新竹）（104 職缺代碼 6ggg2）','擔任系統專家，提供技術專長與設計能力，支援系統維運。'),
+('36_104職缺更新_華電聯網.md','目前開放職缺 > 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）','負責智慧交通系統的規劃、設計、軟體開發與測試，車聯網整合服務的設計與開發'),
+('36_104職缺更新_華電聯網.md','目前開放職缺 > 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）','發展車聯網（C-V2X）智慧交通系統，設計、開發與整合軟體系統與應用程式。')
+]
+for f,h,q in cases:
+    text=(root/f).read_text(encoding='utf-8')
+    stack=[]; sections={}
+    for line in text.splitlines():
+        m=re.match(r'"'^(#{1,6}) (.+)$'"',line)
+        if m:
+            level=len(m[1]);stack=[(l,t) for l,t in stack if l<level]
+            stack.append((level,m[2]));key=' > '.join(t for l,t in stack if l>1)
+            sections.setdefault(key,[])
+        else:
+            sections.setdefault(' > '.join(t for l,t in stack if l>1),[]).append(line)
+    assert h in sections,h
+    assert any(q in line for line in sections[h]),q
+    assert 8<=len(q)<=60,(len(q),q)
+print('All 11 evidence entries: exact section, exact single-line quote, 8-60 characters verified.')
+questions=['華電聯網夜班資安監控工程師月薪落在哪？','華電聯網桃園整合服務部系統工程師在哪辦公？','華電聯網資安檢測工程師最低要什麼學位？','華電聯網 FaceKey 靠哪種演算法認人？','華電聯網把資安生意交給哪家子公司主導？','華電聯網二〇二六年股東會決定每股發多少現金？','華電聯網成立碩維時砸了多少資金？','華電聯網在新竹有哪些技術職缺？','華電聯網哪些職缺會做車聯網開發？','華電聯網每年旅遊補助能領多少？','華電聯網多久安排一次員工健檢？']
+for q in questions: assert 10<=len(q)<=30,(q,len(q))
+print('All 11 questions: 10-30 characters verified.')
+'@ | python -; rg -n '員工旅遊|旅遊補助|健檢|健康檢查' -- '07_華電聯網.md' '26_補充_華電聯網.md' '36_104職缺更新_華電聯網.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 511ms:
+Traceback (most recent call last):
+  File "<stdin>", line 17, in <module>
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1058, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 22] Invalid argument: '36_104????_????.md'
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command '$checks = @(
+@('"'36_104職缺更新_華電聯網.md','【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）','薪資：月薪45,000~60,000元'),
+@('36_104職缺更新_華電聯網.md','系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）','地點：桃園市中壢區環西路121號5樓5B'),
+@('36_104職缺更新_華電聯網.md','資安檢測工程師（104 職缺代碼 7bebb）','學歷：大學、碩士'),
+@('26_補充_華電聯網.md','FaceKey 人臉辨識與 Cyber Monitor 網管系統','FaceKey 是智慧人臉辨識整合系統，搭載 AI 深度學習人臉演算法'),
+@('26_補充_華電聯網.md','四大事業領域與人力規模','資安業務由 100% 持股的子公司開啟資安主導。'),
+@('26_補充_華電聯網.md','2026 年營收與股東會決議','2026 年 6 月 26 日股東會通過配發現金股利 0.58 元'),
+@('07_華電聯網.md','8. 近一年新聞','2026-10-06：宣布成立碩維（SureWin），投入 8,000 萬'),
+@('36_104職缺更新_華電聯網.md','儲存系統工程師（新竹）（104 職缺代碼 6jad5）','短期協助業務三處新竹地區專案的建置與維護（NetApp）。'),
+@('36_104職缺更新_華電聯網.md','系統工程師（新竹）（104 職缺代碼 6ggg2）','擔任系統專家，提供技術專長與設計能力，支援系統維運。'),
+@('36_104職缺更新_華電聯網.md','軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）','負責智慧交通系統的規劃、設計、軟體開發與測試，車聯網整合服務的設計與開發'),
+@('36_104職缺更新_華電聯網.md','軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）','發展車聯網（C-V2X）智慧交通系統，設計、開發與整合軟體系統與應用程式。')
+)
+foreach ("'$c in $checks) {
+$lines = Get-Content -LiteralPath $c[0] -Encoding UTF8
+$active = $false; $found = $false
+foreach ($line in $lines) {
+if ($line -match '"'"'^#{2,3} (.+)$'"') { "'$active = $Matches[1] -ceq $c[1] }
+if ($active -and $line.Contains($c[2])) { $found = $true }
+}
+if (-not $found -or $c[2].Length -lt 8 -or $c[2].Length -gt 60) { throw "Invalid evidence: $($c[1])" }
+}
+Write-Output '"'Verified all 11 evidence quotes within exact heading sections, each 8-60 characters.'
+rg -n '員工旅遊|旅遊補助|健檢|健康檢查' -- '07_華電聯網.md' '26_補充_華電聯網.md' '36_104職缺更新_華電聯網.md'
+if ("'$LASTEXITCODE -eq 1) { Write-Output '"'All four absence keywords: zero matches across all three full company files.' }" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 548ms:
+Verified all 11 evidence quotes within exact heading sections, each 8-60 characters.
+All four absence keywords: zero matches across all three full company files.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+[
+  {
+    "question": "華電聯網夜班資安監控工程師月薪落在哪？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）",
+        "quote": "薪資：月薪45,000~60,000元"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網桃園整合服務部系統工程師在哪辦公？",
+    "type": "單一公司",
+    "topic": "地點",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）",
+        "quote": "地點：桃園市中壢區環西路121號5樓5B"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網資安檢測工程師最低要什麼學位？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 資安檢測工程師（104 職缺代碼 7bebb）",
+        "quote": "學歷：大學、碩士"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網 FaceKey 靠哪種演算法認人？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "26_補充_華電聯網.md",
+        "heading": "技術堆疊 > FaceKey 人臉辨識與 Cyber Monitor 網管系統",
+        "quote": "FaceKey 是智慧人臉辨識整合系統，搭載 AI 深度學習人臉演算法"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網把資安生意交給哪家子公司主導？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "26_補充_華電聯網.md",
+        "heading": "基本資料 > 四大事業領域與人力規模",
+        "quote": "資安業務由 100% 持股的子公司開啟資安主導。"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網二〇二六年股東會決定每股發多少現金？",
+    "type": "單一公司",
+    "topic": "財務",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "26_補充_華電聯網.md",
+        "heading": "業務與財務 > 2026 年營收與股東會決議",
+        "quote": "2026 年 6 月 26 日股東會通過配發現金股利 0.58 元"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網成立碩維時砸了多少資金？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "07_華電聯網.md",
+        "heading": "8. 近一年新聞",
+        "quote": "2026-10-06：宣布成立碩維（SureWin），投入 8,000 萬"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網在新竹有哪些技術職缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 儲存系統工程師（新竹）（104 職缺代碼 6jad5）",
+        "quote": "短期協助業務三處新竹地區專案的建置與維護（NetApp）。"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 系統工程師（新竹）（104 職缺代碼 6ggg2）",
+        "quote": "擔任系統專家，提供技術專長與設計能力，支援系統維運。"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網哪些職缺會做車聯網開發？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）",
+        "quote": "負責智慧交通系統的規劃、設計、軟體開發與測試，車聯網整合服務的設計與開發"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）",
+        "quote": "發展車聯網（C-V2X）智慧交通系統，設計、開發與整合軟體系統與應用程式。"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網每年旅遊補助能領多少？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "華電聯網",
+    "gold": [],
+    "absence_keywords": [
+      "員工旅遊",
+      "旅遊補助"
+    ]
+  },
+  {
+    "question": "華電聯網多久安排一次員工健檢？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "華電聯網",
+    "gold": [],
+    "absence_keywords": [
+      "健檢",
+      "健康檢查"
+    ]
+  }
+]
+hook: Stop
+hook: Stop Completed
+tokens used
+76,355
+[
+  {
+    "question": "華電聯網夜班資安監控工程師月薪落在哪？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）",
+        "quote": "薪資：月薪45,000~60,000元"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網桃園整合服務部系統工程師在哪辦公？",
+    "type": "單一公司",
+    "topic": "地點",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）",
+        "quote": "地點：桃園市中壢區環西路121號5樓5B"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網資安檢測工程師最低要什麼學位？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 資安檢測工程師（104 職缺代碼 7bebb）",
+        "quote": "學歷：大學、碩士"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網 FaceKey 靠哪種演算法認人？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "26_補充_華電聯網.md",
+        "heading": "技術堆疊 > FaceKey 人臉辨識與 Cyber Monitor 網管系統",
+        "quote": "FaceKey 是智慧人臉辨識整合系統，搭載 AI 深度學習人臉演算法"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網把資安生意交給哪家子公司主導？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "26_補充_華電聯網.md",
+        "heading": "基本資料 > 四大事業領域與人力規模",
+        "quote": "資安業務由 100% 持股的子公司開啟資安主導。"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網二〇二六年股東會決定每股發多少現金？",
+    "type": "單一公司",
+    "topic": "財務",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "26_補充_華電聯網.md",
+        "heading": "業務與財務 > 2026 年營收與股東會決議",
+        "quote": "2026 年 6 月 26 日股東會通過配發現金股利 0.58 元"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網成立碩維時砸了多少資金？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "07_華電聯網.md",
+        "heading": "8. 近一年新聞",
+        "quote": "2026-10-06：宣布成立碩維（SureWin），投入 8,000 萬"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網在新竹有哪些技術職缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 儲存系統工程師（新竹）（104 職缺代碼 6jad5）",
+        "quote": "短期協助業務三處新竹地區專案的建置與維護（NetApp）。"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 系統工程師（新竹）（104 職缺代碼 6ggg2）",
+        "quote": "擔任系統專家，提供技術專長與設計能力，支援系統維運。"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網哪些職缺會做車聯網開發？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "華電聯網",
+    "gold": [
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）",
+        "quote": "負責智慧交通系統的規劃、設計、軟體開發與測試，車聯網整合服務的設計與開發"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）",
+        "quote": "發展車聯網（C-V2X）智慧交通系統，設計、開發與整合軟體系統與應用程式。"
+      }
+    ]
+  },
+  {
+    "question": "華電聯網每年旅遊補助能領多少？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "華電聯網",
+    "gold": [],
+    "absence_keywords": [
+      "員工旅遊",
+      "旅遊補助"
+    ]
+  },
+  {
+    "question": "華電聯網多久安排一次員工健檢？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "華電聯網",
+    "gold": [],
+    "absence_keywords": [
+      "健檢",
+      "健康檢查"
+    ]
+  }
+]

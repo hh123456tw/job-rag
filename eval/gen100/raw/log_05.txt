@@ -1,0 +1,2103 @@
+2026-11-17T15:22:55.595753Z ERROR codex_models_manager::manager: failed to refresh available models: request timed out
+OpenAI Codex v0.166.0
+--------
+workdir: C:\claude\aipe04期末\履歷\廠商深查
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1ea1a-9015-7c80-b117-c990853ff96f
+--------
+user
+你是求職情報問答 RAG 的「出題者」。只用讀檔（唯讀），不要改任何檔案，不要執行會連網的指令。
+語料資料夾就是目前工作目錄（C:/claude/aipe04期末/履歷/廠商深查）。現有題檔在 C:/claude/aipe04期末/job-rag/eval/questions_heldout.json 與 C:/claude/aipe04期末/job-rag/eval/questions.json（先讀，格式要沿用，題目不能和它們重複或高度相似）。
+
+【可用來源】
+- 公司頁（0N_公司.md）只能用這幾段：「1. 基本資料」「2. 業務與財務」「4. 職缺」「5. 技術堆疊」「8. 近一年新聞」。
+- 補充檔（2N_補充_公司.md）只能用標題不含下列字詞的公開事實段落。
+- 104 職缺更新檔（3N_104職缺更新_公司.md）。
+- 禁用字詞（標題或段落主旨含這些就不能用）：面試、評價、風險、判斷、推測、矛盾、限制、未查到、對應、作戰。
+- 禁用檔案：00_面談作戰卡.md、00_總報告.md、104/ 資料夾、selfdata、其他非列名的檔案。
+
+【口吻】像面試官現場用手機問的：短、口語、10–30 字，不要照抄原文用字（要換同義說法，避免只靠關鍵字比對就答得出來）。公司名可以直接講。題目本身不可寫「根據文件」「上面」之類字眼。
+
+【輸出格式】只輸出一個 JSON 陣列（不要 markdown 圍欄、不要說明文字）。每題一個物件：
+{"question": 題目, "type": 類型, "topic": 主題（薪資/技術/地點/學歷/業務/財務/新聞/職缺/福利規章/內部資訊/其他）, "company": 公司名（跨公司題省略）, "gold": [{"file": 檔名, "heading": 標題路徑, "quote": 原文片段}], ...}
+- heading 寫法：不含檔案最上面的 # 一級標題；把上層到該層的標題文字用 " > " 串起來（例如 "2. 業務與財務"、"目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）"），文字與檔案內完全一致（含編號、全形括號）。
+- quote：必須是該標題段落內「逐字存在」的連續原文，單行內、8–60 字、不要跨行、不要自己改標點或空白。程式會逐字比對，錯一個字就整題作廢。
+- 一題的 gold 可以多筆（例如同一事實在公司頁與補充檔都有就都列）。
+
+【你的任務】只針對「藍新資訊」，檔案：05_*.md、24_補充_*.md、34_104職缺更新_*.md。共出 11 題：
+1) 7 題 type="單一公司"：答案是明確單一事實，主題要分散（薪資、技術堆疊、工作地點、學歷要求、業務、財務數字、新聞…）。至少 2 題取自 104 職缺更新檔的單一職缺（要指明職稱），其餘取自公司頁或補充檔。
+2) 2 題 type="職缺"：「職缺清單」題，例如「藍新資訊有哪些軟體職缺」「藍新資訊有沒有 Python 後端職缺」。答案是多個職缺，gold 要為「每個符合的職缺」各列一筆（file 為 34_*.md，heading 為該職缺標題路徑，quote 取該職缺段內一句）。你必須讀完整份 34 檔，確定列出所有符合的職缺，不要漏。符合職缺要 2–6 個。
+3) 2 題 type="不可回答"：貼近真實面試官會問、但語料裡沒有答案的題（福利細節如員工旅遊、年終獎金月數、加班費算法；公司內部組織人數；語料沒寫的數字等），問的是「藍新資訊」。gold 設 []，另加 "absence_keywords": [2–4 個關鍵字，用來在全語料 grep 驗證真的沒有；用最短、最能代表答案的詞，例如「年終」「員工旅遊」]。你自己先用 grep 確認這些關鍵字在「藍新資訊」相關檔案沒有出現。
+type 欄位的值只能是：單一公司、職缺、不可回答。company 欄位填 "藍新資訊"。
+
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+我會先讀現有題檔與藍新資訊的指定來源，檢查題目是否重複、引文是否逐字吻合，再用唯讀搜尋驗證不可回答題。
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions_heldout.json' -Encoding UTF8; Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions.json' -Encoding UTF8; Get-ChildItem -File | Where-Object { "'$_.Name -like '"'05_*.md' -or "'$_.Name -like '"'24_補充_*.md' -or "'$_.Name -like '"'34_104職缺更新_*.md' } | Select-Object -ExpandProperty Name" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 1234ms:
+{
+ "說明": "票 39：獨立測試題 40 題（原本有答案 25、沒答案 15；2026-11-17 因語料換新版，h40 改標為可回答，現為有答案 26、沒答案 14；gold 與關鍵字隨之更新，非為提高分數）。題目與金標在跑任何檢索評估之前寫定，之後不得為了結果改題。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（程式核對確實出現在公開段落）。沒有答案題的 absence_keywords 在整份語料（含排除段落）出現 0 次；trap＝相近主題但語料確實沒寫的陷阱題。核對狀態只有使用者能改成已確認。",
+ "questions": [
+  {
+   "id": "h01",
+   "question": "EPS 多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "EPS 4.77 元"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "EPS 4.77 元，營收年減 0.31%"
+    },
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "業務與財務 > 2025 年第四季與全年細項",
+     "quote": "EPS 4.77 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h02",
+   "question": "用什麼雲端？",
+   "type": "公司頁短問句",
+   "topic": "技術",
+   "answerable": true,
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）"
+    },
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "技術堆疊 > Google Cloud 資料與運算架構",
+     "quote": "使用的產品包括 BigQuery、Vertex AI、Compute Engine"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h03",
+   "question": "董事長是誰？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "張培鏞（代表人）／陳世安"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h04",
+   "question": "公司在哪裡？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "台北市內湖區堤頂大道二段 187 號"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h05",
+   "question": "什麼時候上櫃？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元"
+    },
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "68 元掛牌上櫃，開盤 73.7 元"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "基本資料 > 設立與資本市場歷程",
+     "quote": "每股 68 元掛牌上櫃"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2026 年上櫃審議到掛牌",
+     "quote": "承銷價每股 68 元掛牌上櫃"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h06",
+   "question": "海外有哪些據點？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 業務",
+     "quote": "香港、泰國、新加坡、印尼、中國大陸"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h07",
+   "question": "客戶是哪些類型？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 主要客戶",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "基本資料 > 策略夥伴與客戶群",
+     "quote": "政府單位（交通部、國防單位、地方政府）、電信業"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 2025 年營收結構與客戶組成",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h08",
+   "question": "股利配多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "配發 0.33 元現金股利，12 年來首次配息"
+    },
+    {
+     "file": "09_中華網龍.md",
+     "heading": "8. 近一年新聞",
+     "quote": "2025 年首次配息 0.33 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h09",
+   "question": "遠振資訊的資本額是多少？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "16_遠振資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "資本總額：20,000,000 元"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 公司簡介",
+     "quote": "資本額：1300 萬元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h10",
+   "question": "數據立的續約率是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "續約率 90%、續費率 120%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h11",
+   "question": "艾普特有哪四大事業群？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "廣告科技、行銷科技、管理科技、電商科技"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h12",
+   "question": "宏碁雲架構的母公司是誰？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "1. 基本資料",
+     "quote": "安碁資訊股份有限公司（ACSI，6690）"
+    },
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "安碁資訊（6690）的子公司"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h13",
+   "question": "典凡科技的資深網路架構師年薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師",
+     "quote": "年薪 1,500,000 元以上"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 1,500,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h14",
+   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "薪資：月薪 37,000 以上"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "job/8x526 | 1 年以上 | 大學、碩士 | 月薪 37,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h15",
+   "question": "艾普特的 PM 專案規劃師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "E_華電_艾普特_醫宇宙.md",
+     "heading": "2. 艾普特 > 相關職缺",
+     "quote": "月薪 40,000~42,000"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）",
+     "quote": "https://www.104.com.tw/job/8tpxn | 1 年以上 | 專科以上 | 月薪 40,000~42,000"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h16",
+   "question": "數據立的產品維運工程師要會哪些工具？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師",
+     "quote": "精通 Docker、Grafana + Prometheus"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h17",
+   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "3. 業務與財務 > 產品與業務",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    },
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "技術堆疊 > Agent Builder 企業 AI 一體機的軟硬體",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h18",
+   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "179.4 億，年增 383%"
+    },
+    {
+     "file": "06_凱基證券.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "上半年證券純益 179.4 億，年增 383%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h19",
+   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）",
+     "quote": "擅長工具欄為 MySQL、Oracle、PL/SQL"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "h20",
+   "question": "叡揚資訊 2026 前三季的營收是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "15.34 億，年增 6.58%"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "前三季營收年增 6.58%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h21",
+   "question": "哪些公司的職缺要求 Spring Boot？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Spring Boot"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h22",
+   "question": "哪幾家公司的職缺會用到 VMware？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "VMware"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h23",
+   "question": "哪家公司有做 AI Agent 的產品？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "AI Agent"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h24",
+   "question": "哪些公司使用 Google Cloud？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Google Cloud"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h25",
+   "question": "哪些公司的職缺要會 C#？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "C#"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h26",
+   "question": "有颱風假嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "神通資訊",
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "颱風假"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h27",
+   "question": "有員工持股信託嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "凱基證券",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "持股信託",
+    "員工持股"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h28",
+   "question": "有交通津貼嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "聯合報",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "交通津貼",
+    "交通補助"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h29",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "心理諮商"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h30",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "育嬰"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h31",
+   "question": "典凡科技今年的營收目標是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "營收目標"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "營收目標": "2026-11-17 新語料命中：27 號中華網龍補充檔寫的是《吞食天地》放置版首月營收目標，不是典凡科技今年營收目標；題目仍無答案"
+   }
+  },
+  {
+   "id": "h32",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "下載次數",
+    "下載量",
+    "累計下載"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h33",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "AI 部有",
+    "AI 部人數",
+    "AI 部共"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h34",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "廣達"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h35",
+   "question": "鴻海的董事長是誰？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "鴻海"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h36",
+   "question": "富邦金控旗下有哪些子公司？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "富邦金控"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h37",
+   "question": "台北明天會下雨嗎？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "天氣",
+    "氣象",
+    "下雨"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h38",
+   "question": "履歷的自傳要怎麼寫？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "自傳",
+    "履歷範本"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "自傳": "2026-11-17 新語料命中：37 號中華網龍職缺條件提到自傳，沒有教人怎麼寫自傳；題目仍無答案"
+   }
+  },
+  {
+   "id": "h39",
+   "question": "哪些公司有哺乳室？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "哺乳室"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h40",
+   "question": "哪間公司有員工社團？",
+   "type": "跨公司",
+   "topic": "福利規章",
+   "answerable": true,
+   "gold": [],
+   "split": "heldout",
+   "status": "待使用者確認（2026-11-17 因新語料已含答案，由不可回答改標為可回答，非為提高分數）",
+   "keywords": [
+    "家庭日、社團"
+   ]
+  }
+ ]
+}
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2025 年底原廠夥伴獎項",
+     "quote": "HPE FY25 最佳合作夥伴獎"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "c06",
+   "question": "哪一家公司有自研的語音模型？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研語音模型 myVoca"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "myVoca"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "神通資訊的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "額定 25 億；實收 21 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 標案占比（重點）",
+     "quote": "政府標案 110 件，總額近 83 億"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 政府標案與在手專案",
+     "quote": "110 件政府標案，得標總金額近 83 億元"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "20.19 億，年增 16.33%"
+    },
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "業務與財務 > 2025 年財務結果",
+     "quote": "20.19 億元，年增 16.33%"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "AltaBots.ai：企業級 No-Code AI Agent 平台"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "部門 2008 年成立"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "AI 智慧辨識（InsAI，VLM，支援地端）"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "InsAI 支援地端部署"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "InsAI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s11",
+   "question": "艾普特是做什麼的公司？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "數位行銷公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "2. 業務與財務 > 產品與服務（【自述】https://tftech.com.tw ）",
+     "quote": "企業級資料保護與雙活資料中心"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 公司簡介",
+     "quote": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+    },
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "2. 業務與財務",
+     "quote": "機房維運管理、雲端相關服務"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）",
+     "quote": "年薪 900,000~1,200,000"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
+     "quote": "薪資：年薪 900,000~1,200,000 元"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 900,000~1,200,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "Django"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I97 Kubernetes 平台工程師（8xjjo）",
+     "quote": "3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【戰略部】數據優化師(數據分析)（7qtdo）",
+     "quote": "月薪 35,000 元以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-1 AI 解決方案工程師（已讀單頁）",
+     "quote": "需出差，一年累積約三個月以下"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）",
+     "quote": "AI 解決方案工程師（技術）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）",
+     "quote": "不需出差"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）",
+     "quote": "必備為 Python 開發 3 年以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "3 年以上 AI 系統或大型軟體架構設計經驗"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "多益",
+    "TOEIC",
+    "英檢",
+    "英文能力"
+   ],
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "多益": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案",
+    "TOEIC": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案"
+   }
+  },
+  {
+   "id": "u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "月活躍",
+    "活躍玩家",
+    "MAU",
+    "DAU"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u06",
+   "question": "叡揚資訊的特休天數是幾天？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "特休",
+    "特別休假",
+    "休假天數"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u07",
+   "question": "藍新資訊可以在家上班嗎？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "在家上班",
+    "居家辦公",
+    "混合辦公",
+    "WFH",
+    "在家工作"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "平均年薪",
+    "平均薪資",
+    "薪資中位數"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}
+05_藍新資訊.md
+24_補充_藍新資訊.md
+34_104職缺更新_藍新資訊.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '05_藍新資訊.md' -Encoding UTF8; Get-Content -LiteralPath '24_補充_藍新資訊.md' -Encoding UTF8; Get-Content -LiteralPath '34_104職缺更新_藍新資訊.md' -Encoding UTF8" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 469ms:
+# 藍新資訊股份有限公司（NEWEB Information，6938）深查
+
+調查日：2026-11-16。標記：【自述】公司自己說；【第三方】媒體或資料網站；【推測】我的判斷。
+面談日：2026-11-19 下午。部門：智能應用發展部。對方職稱：處長。
+
+## 0. 先釐清：藍新資訊 vs 藍新金流（NewebPay）
+
+- 兩家是不同公司。
+  - 藍新資訊：系統整合、雲端機房、資安、AI 基礎建設。股票 6938。
+  - 藍新金流（藍新科技股份有限公司）：第三方支付。智冠（Soft-World）子公司，未掛牌。【第三方】
+- 來源關係：藍新資訊在 2014 年由藍新科技原「系統整合事業群」分割出來。原因是配合政府第三方支付規範。【第三方，PTT 單篇投資文，2025-03-26】https://disp.cc/ptt/Stock/1dutVBdd
+- 現在無股權隸屬關係。【第三方，同上 PTT 文未提智冠持股；官網也未提】
+- 搜尋時會混淆。GoodJob 的「藍新科技」頁面是金流公司，不是這家。https://www.goodjob.life/companies/藍新科技
+- 注意：有一則搜尋摘要說藍新科技代號 7739。我沒查證，不採用。
+
+## 1. 基本資料
+
+| 項目 | 內容 | 來源 | 類型 |
+|---|---|---|---|
+| 全名 | 藍新資訊股份有限公司（NEWEB INFORMATION CO., LTD.） | https://www.cnyes.com/twstock/6938/company/profile | 第三方 |
+| 統編 | 24540267 | https://ww2.money-link.com.tw/TWStock/StockBasic.aspx?SymId=6938 | 第三方，單一來源，未經商工登記核對 |
+| 成立日 | 2014-04-23 | https://www.cnyes.com/twstock/6938/company/profile | 第三方 |
+| 地址 | 台北市內湖區行忠路 42 號 2 樓 | 同上 | 第三方 |
+| 資本額 | 約 1.46 億（現增後，發行 1,464 萬股）。現增前約 1.25–1.26 億 | cnyes 同上；PTT 文寫 1.26 億 | 第三方，各站不一 |
+| 董事長／總經理 | 郭廷群／楊璦如 | cnyes 同上 | 第三方 |
+| 興櫃 | 2024-01-23，參考價 41 元，國票證券輔導 | https://www.ctee.com.tw/news/20240123700202-439901 | 第三方 |
+| 上櫃 | 2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元 | https://uanalyze.com.tw/articles/3620757735 | 第三方 |
+| 上櫃審議會 | 2026-08-03 通過 | https://www.ctee.com.tw/news/20260803701529-431201 | 第三方 |
+| 員工數 | 查無總數。只有「工程團隊 90+、技術證照 600+」 | https://wantrich.chinatimes.com/news/20260930900472-420101 與 https://uanalyze.com.tw/articles/9353956242 | 公司自述（業績發表會，媒體轉述） |
+| 據點 | 內湖總部；竹北、台中、台南、高雄 | https://www.newebinfo.com.tw | 公司自述 |
+
+日期說明：
+- cnyes 把「上櫃日」寫成 2024-01-23。那是興櫃日。cnyes 不可信。
+- 10/27 掛牌日有兩篇報導一致。我沒有打開公開資訊觀測站核對。
+- 業績發表會原定 10/01。有報導稱「預計 10 月中旬」掛牌。實際以 10/27 為準。
+
+### 母公司／集團（有矛盾，要小心）
+- 官網新聞：2019 年精誠取得藍新資訊 30% 股權。【公司自述】https://www.newebinfo.com.tw
+- PTT 文：2024-07 精誠以每股 72 元，向原大股東鑫嘉科技等買進 1,949 張。精誠集團成為最大股東，約 47%（5,919 張）。董監合計約 40%。【第三方，單一投資文，未核對】https://disp.cc/ptt/Stock/1dutVBdd
+- 精誠 2024-07-12 董事會通過公開收購藍新資訊，每股 72 元。https://tw.systex.com/wp-content/uploads/sites/2/1130712MA.pdf （我打不開此 PDF，只見搜尋摘要）。
+- 結果：查無公開收購最終持股。47% 是 PTT 單篇數字。
+- 上層又變：2026 年台灣大（透過台信電訊）公開收購精誠。報導稱總持股 61.02%。https://uanalyze.com.tw/articles/8820058547 【第三方，我只看到標題】
+- 【推測】藍新資訊的實質控制方可能是精誠，精誠再由台灣大控制。要在面談時確認。
+
+## 2. 業務與財務
+
+### 業務【公司自述】
+- 核心：資訊軟硬體整合、顧問、導入、雲端建置、維運。https://www.newebinfo.com.tw
+- 平台：UNIX、AIX、Linux、NT；虛擬化、資料庫、儲存、備份、網路資安。
+- 產品線：全面資安、網路基礎架構、AI 應用、混合雲、儲存備份。
+- 代理品牌：Cisco、HPE、Palo Alto、Fortinet、NetApp、Dell EMC、IBM、VMware、Veeam、F5。
+- 近期獎項：HPE FY25 Best Partner、NetApp FY25 夥伴獎（2025-12）。同官網。
+- 目標客戶：政府、金融、大型企業。業務類型接近 ERP、MES、HIS、金融交易系統的底層平台。
+- 【推測】這是「賣硬體加維運」的系統整合商。軟體開發不是主體。
+
+### 客戶【公司自述】
+- 400+ 客戶（媒體稱「上市櫃客戶超過 400 家」，兩篇說法略不同）。https://www.ctee.com.tw/news/20260803701529-431201
+- 客戶滿意度與合約存續率超過 9 成。同上。
+- 持續性收入約占 4 成。維運合約三年複合成長約 14.5%。https://uanalyze.com.tw/articles/9353956242
+- 具名客戶：查無。
+- PTT 文稱客戶是大型雲端服務商。單篇，未驗證。
+
+### 營收與獲利（數字不一致，不要引用成定論）
+| 年度 | 營收 | 來源與備註 |
+|---|---|---|
+| 2023 | 約 6.14 億 | PTT 文（第三方，單篇）https://disp.cc/ptt/Stock/1dutVBdd |
+| 2024 | 約 7.80 億（年增 28.2%）；EPS 6.14 | 同上。留言說還有 7.12 億的版本，可能是重編。 |
+| 2025 | 約 6.77 億；EPS 6.15；營業利益 9,631 萬，創高 | https://www.stockfeel.com.tw/financial/?stock=6938 ；https://www.ctee.com.tw/news/20260803701529-431201 |
+| 2026 上半年 | 3.29 億，年增約 22% | ctee 同上 |
+| 2026 1–8 月 | 4.29 億，年增 26.24%；8 月單月 5,925 萬，年增 43.73% | https://wantrich.chinatimes.com/news/20260930900472-420101 |
+
+- 2024 的 7.80 億與 2025 的 6.77 億看起來是下降。與「創高」說法不合。【推測】可能是 2024 數字有誤或重編。查無官方財報核對。
+- 股利：2024 年度現金股利 5 元；2025 年度也配 5 元，配發率超過 8 成。
+- 毛利率：約 30–31%（2026 各季）。https://www.stockfeel.com.tw/financial/?stock=6938
+- AI 營收占比：2025 約 2%；2026 上半年約 8%，已接近 2025 全年。【公司自述】https://wantrich.chinatimes.com/news/20260930900472-420101
+- 【推測】AI 營收主要是賣 AI 伺服器、GPU 平台。不是軟體開發收入。
+
+## 3. 智能應用發展部在做什麼
+
+- 公開事實【公司自述】：
+  - 2025 年成立，並引進關鍵技術人才。https://uanalyze.com.tw/articles/3620757735
+  - 已有 AI 伺服器、高階 GPU 運算平台、企業 AI 應用整合建置實績。
+  - 服務範圍：AI 基礎設施與推論環境規劃、企業 LLM 私有化部署、AI Agent 整合、資料治理。https://wantrich.chinatimes.com/news/20260930900472-420101 （摘要自搜尋結果，頁面我打不開）
+  - 方向：零信任、IAM、資料治理、AI 驅動資安。
+- 部門人數、主管姓名、產品名稱、具名案例：查無。
+- 【推測】
+  - 工作多半是「客戶現場導入」：評估硬體、裝 LLM 推論環境、串企業系統。
+  - 可能重視 on-prem、RAG、Agent、權限與資料治理，少做 SaaS 產品。
+  - 部門剛成立一年，業務還在摸索。處長可能同時要賣方案、帶技術。
+- 標題提到「AI 維運平台」。內文沒有說明內容。https://uanalyze.com.tw/articles/9353956242
+
+## 4. 職缺
+
+- 官網徵才頁沒有列職缺，只連到 104 公司頁。https://www.newebinfo.com.tw/recruit_tw_1.php （104 公司頁：https://www.104.com.tw/company/1a2x6bj3r0）
+- 報名職缺 https://www.104.com.tw/job/8uol0：直接打開回 403。依規則放棄，未再試。
+- 找到一則 104 相似職缺頁：網路工程師。https://nabi.104.com.tw/job/7ystn
+  - 技能標籤：Python、Linux、MySQL、PostgreSQL、Github、VMware、EMC、Firewall、Cisco、Checkpoint、Fortinet。
+  - 薪資、發布日、工作內容：頁面未顯示。
+  - 這是網路／資安職，不是 AI 職。
+- 另有搜尋摘要提到「(資深)網路/資安工程師」104 頁，內容抓不到。
+- 面試趣職缺頁：沒有職缺。https://interview.tw/c/FXl7/job_opening
+- Yourator、CakeResume、1111、LinkedIn：搜尋一次，查無該公司職缺。
+- AI／Python／後端／資料職缺：查無公開頁面。不能確認職缺要求。
+
+## 5. 技術堆疊
+
+- 公開可見【第三方／自述】：
+  - 平台：UNIX、AIX、Linux、Windows Server、VMware 虛擬化。
+  - 儲存備份：NetApp、Dell EMC、HPE、Veeam。
+  - 網路資安：Cisco、Palo Alto、Fortinet、F5、Checkpoint。
+  - 104 網路工程師標籤有 Python、MySQL、PostgreSQL（見第 4 節）。
+- AI 端：GPU 伺服器、私有化 LLM、Agent。具體模型、框架、雲：查無。
+- 技術部落格、GitHub、活動分享：搜尋未發現。查無。
+- 【推測】AI 部門技術用 Python、Docker、vLLM／Ollama 一類推論工具。這是我的猜測，沒有來源。
+
+## 6. 面試流程與常見題目
+
+來源：面試趣，共 19 則，評價 3.9/5，錄取率 35%，難度「低」。頁面只看得到 15 則，多數內容鎖住。https://interview.tw/c/FXl7
+- 與 AI／軟體開發有關的只有 1 則：iOS 工程師，2022-03 面試，分享於 2022-07-14。有筆試，問 MVVM。未錄取。https://interview.tw/i/62cf788918c3a9452e4eaa66
+- 其他多為業務、客服、網路工程師、Pre-sale、專案經理。
+- 常見題：自我介紹、離職原因、期望薪資、能否加班、對產業認識、讀不讀得懂原廠文件、英文、VMware 熟悉度。
+- 流程：多為 1–2 關，部門主管加人資，有時總經理出席。
+  - 2023-08 網路服務工程師：多位面試官含總經理，問期望薪資。https://interview.tw/i/64dc82bceec6349b5a0fb9a8
+  - 2019 網路工程師：先與直屬主管談。https://interview.tw/i/5fffc5308f739201f362f8a8
+- GoodJob 面試經驗 3 則（2018-02、2023-10 ×2），皆系統工程師。https://www.goodjob.life/companies/藍新資訊股份有限公司
+  - 2023-10 系統工程師，月薪 34,000，2.0 分，培訓班媒合，線上初試加實體。
+  - 2023-10 AIX/Linux 系統工程師，月薪 40,000，5.0 分，人資與部門主管輪流問。
+  - 2018-02 系統工程師，月薪 42,000，2.0 分，說老闆看重第一印象。
+- PTT Soft_Job、Dcard：搜尋一次，查無。
+- Glassdoor、CakeResume：未查到。
+- 樣本數很小。AI 或 Python 職缺的面試題：查無。
+
+## 7. 工作評價
+
+- GoodJob：評分 3.0（頁面顯示評分數 3），文字評價 0 則；平均每週工時 41 小時；工時資料 1 筆。https://www.goodjob.life/companies/藍新資訊股份有限公司
+- 薪資：只有上面 3 個面試單篇（3.4–4.2 萬月薪，系統工程師）。皆為單一心得。
+- 面試趣有人問「能否接受加班」（2020-09 業務助理，單一心得）。
+- 加班、主管、離職原因：查無足夠資料。
+- PTT、Dcard、Glassdoor：查無。
+- 結論：樣本太少。不能判斷文化好壞。
+
+## 8. 近一年新聞
+
+- 2025-12：HPE、NetApp 年度夥伴獎。https://www.newebinfo.com.tw
+- 2026-08-03：通過上櫃審議會。https://www.ctee.com.tw/news/20260803701529-431201
+- 2026-09-30／10-03：上櫃前業績發表會；AI 占比、客戶、營收。https://uanalyze.com.tw/articles/9353956242
+- 2026-10-27：68 元掛牌上櫃，開盤 73.7 元。https://uanalyze.com.tw/articles/3620757735
+- 2026-08~10：台灣大收購精誠（藍新資訊的大股東，見第 1 節）。https://uanalyze.com.tw/articles/8820058547
+- 裁員、融資（上櫃現增除外）、訴訟：搜尋未發現。查無。我沒查司法院判決書。
+
+## 9. 給求職者的判斷
+
+### (a) 適合度
+- 中等，偏「值得談，但別預設是開發職」。
+- 理由：
+  - 部門做 LLM、Agent、資料治理，與你的 Gemini 專案方向一致。【公司自述】
+  - 剛成立，缺人，門檻可能較低。【推測】
+  - 公司是系統整合商，AI 營收只占約 8%。【公司自述】
+  - 你沒有 on-prem LLM、Kubernetes 經驗。而他們的賣點正是私有化。落差大。
+  - 面試趣顯示公司重視「讀得懂原廠文件」「英文」。
+
+### (b) 風險
+- 職位內容不明：104 職缺我讀不到。可能偏售前、導入、專案。
+- 部門才 1 年，AI 營收小，可能被當成「幫業務賣 GPU 伺服器」。【推測】
+- 大股東結構在變（精誠、台灣大）。方向可能調整。【推測】
+- 財務數字不一致，要看正式年報。
+- 評價資料少，文化不明。
+- 薪資參考只有系統工程師 3.4–4.2 萬，且是舊單篇。
+
+### (c) 該問的 5 個問題
+1. 這個職缺 70% 時間做什麼：客戶現場導入、原型開發，還是售前展示？
+2. 部門現在幾人？已有哪幾個客戶案例？用什麼模型與框架（vLLM、RAG、Agent 框架）？
+3. 私有化專案裡，我需要自己懂 GPU、Linux、容器，還是有基礎架構團隊配合？
+4. 部門 KPI 是賣硬體營收，還是軟體／服務營收？AI 的角色怎麼算績效？
+5. 上櫃後，精誠與台灣大集團對這個部門的資源和方向有什麼影響？試用期與培訓怎麼安排？
+
+### (d) 最對得上的專案，與不要誇大的事
+- 最對：Gemini 專案裡的 RAG／Agent 部分，以及和泰黑客松 15 強（Next.js + Gemini，有決賽經驗）。
+  - 講法：我能快速把 LLM 做成可用原型，並做需求與驗收。
+- 次要：停車推薦系統（Flask + MySQL）：證明你有資料庫與後端交付經驗。
+- 影像辨識模組：相對偏離，只當補充。
+- 不要誇大：
+  - 不要說「做過私有化 LLM」。你沒有。
+  - 不要說「懂 Kubernetes」「懂 GPU 叢集」。
+  - 程式碼由 AI Agent 產生。直接說你負責需求、驗收與測試。被問到細節要答得出，不要硬撐。
+  - 不要把雲端 API（Gemini）說成與私有化等價。
+- 可誠實補一句：「私有化部署我還沒做過，已經會先用 Ollama／vLLM 在本機練習。」（做完再說）
+
+## 10. 未查到與限制
+
+- 公開資訊觀測站、商工登記公示資料：未直接打開。統編、資本額、上櫃日都是第三方資料。
+- 2023–2025 營收與 EPS：沒有官方財報。PTT 與其他數字衝突（2024 的 7.80 億與 2025 的 6.77 億）。
+- 精誠公開收購藍新資訊的最終結果與現在持股比例：查無。47% 與 30% 兩個說法並存。
+- 精誠公告 PDF 與 ithome 報導：回 404／403，只看到搜尋摘要。
+- 報名職缺（104 /job/8uol0）：403，已放棄。職稱、技能、薪資、發布日：查無。
+- Yourator、CakeResume、1111、LinkedIn 職缺：查無。
+- PTT Soft_Job、Dcard、Glassdoor：查無。
+- 員工總數：查無。「90+ 工程師」是公司自述。
+- 具名客戶、技術部落格、GitHub：查無。
+- 裁員、訴訟、融資：搜尋未發現，未查司法院。
+- 部分報導（wantrich、台灣大收購精誠最終持股 61.02%）只引用搜尋摘要或標題，未讀完整頁。
+- 未調查報名者個人資料。檔案內無電話或 email。
+# 24 藍新資訊 公開資料補充
+
+## 基本資料
+
+### 設立與資本市場歷程
+藍新資訊股份有限公司於 2014 年 4 月 23 日核准設立，主要營業項目是電腦軟硬體設備銷售與維護，以及資訊系統整合的規劃、建置與維運。官網新聞時間軸顯示，精誠投資在 2019 年取得 30% 股權；2022 年 12 月公司申報首次公開發行並生效；同年郭廷群出任董事長，楊璦如出任總經理。2024 年 1 月 23 日公司登錄興櫃，參考價每股 41 元，輔導券商為國票證券。興櫃報導指出，2023 年營收為 6.15 億元，年增 35%，當年前 11 月自結 EPS 為 4.55 元。2025 年 10 月 28 日，官網新增投資人專區。2026 年 8 月 3 日公司通過櫃買中心上櫃審議會，2026 年 10 月以承銷價每股 68 元掛牌上櫃。
+來源：https://www.newebinfo.com.tw ；https://www.ctee.com.tw/news/20240123700202-439901 ；https://www.nstock.tw/%E8%97%8D%E6%96%B0%E8%B3%87%E8%A8%8A%E5%81%9A%E4%BB%80%E9%BA%BC.html（查詢日 2026-11-17）
+
+### 據點配置與工程團隊
+藍新資訊總公司位於台北市內湖區行忠路 42 號 2 樓。官網另列四處據點：新竹縣竹北市的新竹辦公室、台中市南區的台中辦事處、台南市新市區的台南辦事處，以及高雄市鼓山區的高雄辦公室。據點涵蓋北、中、南三區。團隊規模方面，公司在 2026 年 10 月上櫃前業績發表會中表示，專業工程團隊超過 90 人，累積超過 600 張技術認證。認證主要集中在四個領域：大型核心主機、雲端虛擬化、AI 資料儲存，以及資訊安全。官網自述公司有超過 20 年的系統整合經驗，強項是大型核心系統主機，並整合跨平台的雲端運算能力。
+來源：https://www.newebinfo.com.tw ；https://uanalyze.com.tw/articles/9353956242（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 解決方案與專業服務
+官網把業務分成「解決方案」與「專業服務」兩類。解決方案有五項：全方位資安防護、基礎網路架構、AI 智慧應用、混合雲基礎建設，以及資產資料儲存與備份備援。專業服務有六項：IT 機房建置及維運、系統維護整合建置、雲端系統整合、系統與資料庫管理維護、儲存備份備援，以及網路資訊安全建置與諮詢。公司自述的主要工作，是資訊軟硬體產品的整合規劃與銷售、顧問諮詢、導入、雲端建置與管理維運。2024 年興櫃報導則描述，公司強項是規劃與建置高階大型核心系統，例如大型機房的伺服主機與 UNIX 伺服器，之後再以維運服務帶來穩定的現金流。
+來源：https://www.newebinfo.com.tw ；https://www.ctee.com.tw/news/20240123700202-439901（查詢日 2026-11-17）
+
+### 客戶結構與持續性收入
+2024 年興櫃報導指出，藍新資訊的客戶超過 400 家，以政府、金融業與上市櫃企業為主，行業涵蓋生技醫療、光電、重電、流通與半導體，續約率約 9 成。2026 年上櫃前的報導進一步說明，服務的關鍵應用包括 ERP、MES、HIS、金融交易系統與資料庫。公司表示，維護維運合約在 2023 年至 2025 年的年複合成長率約 14.5%，三年平均合約存續率超過 90%，持續性收入占營收比重接近 4 成。公司把這種模式稱為「建置帶動維護維運、維護維運帶動優化」的服務循環。報導中也提到，客戶滿意度與合約存續率都超過 9 成。來源：https://www.ctee.com.tw/news/20240123700202-439901 ；https://uanalyze.com.tw/articles/9353956242 ；https://www.ctee.com.tw/news/20260803701529-431201（查詢日 2026-11-17）
+
+### 年度營收與股利
+藍新資訊 2023 年營收為 6.15 億元，年增 35%。2025 年全年營收為 6.77 億元；2025 年營業利益為 9,631.4 萬元，創歷史新高，EPS 為 6.15 元。股利方面，2024 年全年每股現金股利 5 元，現金配發率約 80.91%。2025 年第 4 季配發每股現金股利 5 元，無股票股利，除息日為 2026 年 6 月 17 日。上櫃審議會的報導指出，公司已連續兩年現金配發率超過 8 成。資本額方面，興櫃報導計算 EPS 時使用的股本為 1.03 億元，財經網站列出的現行資本額為 1.26 億元，各來源的時點不同。
+來源：https://www.ctee.com.tw/news/20260803701529-431201 ；https://www.nstock.tw/%E8%97%8D%E6%96%B0%E8%B3%87%E8%A8%8A%E5%81%9A%E4%BB%80%E9%BA%BC.html（查詢日 2026-11-17）
+
+### 2026 年營收走勢與獲利指標
+2026 年上半年累計營收 3.29 億元，年增 22.03%，每個月的營收都比去年同期成長。8 月營收 5,925 萬元，年增 43.73%；前 8 月累計 4.29 億元，年增 26.24%。9 月營收 7,702 萬元，年增 33.48%，前 9 月累計 5.06 億元，年增 27.29%。10 月營收約 0.71 億元，年增 58.4%，前 10 月累計 5.77 億元，年增 30.42%。2026 年第 3 季 EPS 為 1.56 元，毛利率 30.14%，營業利益率 14.18%，淨利率 11.06%。公司表示，資服業第四季通常是專案結單與驗收的高峰，在手專案依進度推進，對全年營收審慎樂觀。
+來源：https://www.ctee.com.tw/news/20260803701529-431201 ；https://www.mirrormedia.mg/external/setn_1919716 ；https://www.nstock.tw/%E8%97%8D%E6%96%B0%E8%B3%87%E8%A8%8A%E5%81%9A%E4%BB%80%E9%BA%BC.html（查詢日 2026-11-17）
+
+### 智能應用發展部與 AI 營收占比
+藍新資訊在 2025 年成立智能應用發展部，並引進關鍵技術人才，協助企業建立 AI-Ready 的 IT 環境，把 AI 整合進既有核心系統與營運流程。公司已有 AI 伺服器、高階 GPU 運算平台與企業 AI 應用導入的銷售實績。AI 相關營收約占 2025 年全年營收的 2%；2026 年上半年已達到去年全年的規模，約占上半年營收的 8%。公司強調，AI 是既有企業 IT 架構的延伸，不只是賣 AI 伺服器。報導引用 IDC 預測，台灣 AI 平台市場將從 2025 年的 1.34 億美元成長到 2029 年的 6.08 億美元。公司把這個成長視為加深客戶服務的路徑。
+來源：https://wantrich.chinatimes.com/news/20260930900472-420101 ；https://www.setn.com/news/1915698 ；https://uanalyze.com.tw/articles/3620757735（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### 代理與整合的原廠產品線
+官網列出公司整合與銷售的原廠產品。伺服器與 PC 有 Acer、Lenovo、HPE、Dell 與 Cisco UCS；UNIX 平台為 IBM Power System。儲存與超融合有 IBM、NetApp、Dell EMC、HPE、VMware vSAN 與 Nutanix。網路為 Cisco 與 HPE Aruba，資安為 Palo Alto 與 Fortinet 次世代防火牆。備份軟體包括 Veeam、TSM、Symantec BackupExec 與 Arcserve；虛擬化平台包括 VMware、Hyper-V 與 Nutanix KVM。公司上櫃前說明會另提到，合作的國際原廠還有 F5，並多次獲得原廠的傑出夥伴獎項。
+來源：https://www.newebinfo.com.tw ；https://uanalyze.com.tw/articles/9353956242（查詢日 2026-11-17）
+
+### AI 基礎設施與企業 LLM 私有化服務
+根據公司在 2026 年 10 月的說明，智能應用發展部的服務範圍有四塊：AI 基礎設施與推論環境的規劃建置、企業級 LLM 私有化部署、AI Agent 整合，以及資料治理。硬體面是 AI 伺服器與高階 GPU 運算平台，並接續既有的混合雲、儲存與備份架構。公司說明後續聚焦三件事：AI 算力導入、混合雲架構升級與零信任資安治理。9 月營收成長，公司也歸因於客戶的 AI 基礎建設需求。公司的出發點是既有客戶的核心系統與機房，客戶多為政府、金融與大型企業，因此 AI 專案通常接在原有的伺服器、儲存與網路架構之上。報導未公開所用的模型名稱、推論框架與雲端供應商。
+來源：https://wantrich.chinatimes.com/news/20260930900472-420101 ；https://www.mirrormedia.mg/external/setn_1919716（查詢日 2026-11-17）
+
+### 資安架構與機房升級方向
+藍新資訊在資安上布局零信任架構、身分識別與存取管理（IAM）、持續監控，以及 AI 驅動的資安防護。公司的目標，是把資安服務從單點產品導入，提升為整體架構規劃與治理。上櫃掛牌當日的報導另指出，AI 算力需求與 ESG 趨勢帶動機房升級，需求從設備更新轉向電力、冷卻、空間與資源的整體重整。公司以「建置、維運、優化、再升級」的循環，把既有的系統整合能力延伸到 AI 導入與長期維運。資安產品線上，公司整合 Palo Alto、Fortinet 與 F5 等原廠方案，並提供網路資訊安全的建置與諮詢服務。官網的專業服務也包含 IT 機房建置及維運。
+來源：https://uanalyze.com.tw/articles/3620757735 ；https://www.newebinfo.com.tw（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2025 年底原廠夥伴獎項
+官網新聞顯示，藍新資訊在 2025 年 12 月連續獲得兩項原廠獎項。2025-12-17，公司獲 NetApp FY25 年度卓越客戶拓展合作夥伴獎；2025-12-23，公司獲 HPE FY25 最佳合作夥伴獎。更早之前，公司在 2024-12-30 獲 HPE FY24 最佳合作夥伴，2025-01-09 獲 Palo Alto 2024 創新服務獎，2025-03-20 獲 Veeam FY24 Gold Partner Award。這些獎項反映公司在儲存、伺服器、資安與備份幾條原廠線上的銷售與服務成績。
+來源：https://www.newebinfo.com.tw（查詢日 2026-11-17）
+
+### 2026 年上櫃審議到掛牌
+2026-08-03，藍新資訊通過櫃買中心上櫃審議會，主辦券商為國票證券。審議報導指出，公司 2025 年營業利益創高、EPS 6.15 元，上市櫃客戶超過 400 家。2026-10-01，公司舉辦上櫃前業績發表會，說明 AI 營收占比由 2% 升至約 8%。2026 年 10 月，公司以承銷價每股 68 元掛牌上櫃，掛牌當日報導指出早盤開出 73.7 元，盤中漲幅超過 5%。公司募資與發行細節以公開資訊觀測站公告為準，本文未引用。報導中各家對確切掛牌日略有不同，掛牌當日的優分析報導日期為 2026-10-27。
+來源：https://www.ctee.com.tw/news/20260803701529-431201 ；https://uanalyze.com.tw/articles/3620757735 ；https://uanalyze.com.tw/articles/9353956242（查詢日 2026-11-17）
+# 34 藍新資訊 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+- 公司：藍新資訊股份有限公司（104 公司頁 https://www.104.com.tw/company/1a2x6bj3r0 ，內湖科；電腦系統整合服務業；不是藍新金流，也不是藍新科技）。
+- 104 公司頁列表總筆數 14 筆，只有 1 頁。本次收錄軟體／AI／系統／網路／平台相關職缺 12 筆。未收 2 筆非工程職缺：業務經理（8wswm）、資訊行政專員（中正區，93qc1，專案管理行政類）。
+- 與舊檔（2026-11-16 的網址5、F 檔）相比：新增職稱：無。已下架職稱：無。14 筆職稱全部仍在。
+- 更新日有變動的職缺：AI前線部署工程師（11/09 變 11/16）、(AIX/Linux)系統工程師（10/29 變 11/16）、專案工程師-MIS（楠梓，11/09 變 11/16）、專案工程師-網路（大安區，11/11 變 11/12）。
+- 12 筆職缺皆已開 104 內頁逐筆讀完整頁（2026-11-17），無已關閉職缺。
+- 公司頁沒有後端、前端、全端開發職缺。工程職缺集中在 AI 導入、AI 平台、系統維運與網路維運。
+
+### 職稱清單
+藍新資訊在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 12 筆：
+- AI前線部署工程師（8uol0）
+- AI平台工程師（95xqc）
+- 資訊助理工程師（中山區；正職，非約聘人員）（94ack）
+- 網路工程師（7ystn）
+- 系統工程師（69ejn）
+- (AIX/Linux)系統工程師（6qc31）
+- 專案工程師-系統（中山區；正職，非約聘人員）（7qv1u）
+- 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）
+- 資深系統工程師（91vjx）
+- 專案工程師-網路（大安區；正職，非約聘人員）（96vha）
+- 專案工程師-網路（中正區；正職，非約聘人員）（9793u）
+- 專案工程師-MIS（楠梓科技園區；正職，非約聘）（97ftl）
+
+### AI前線部署工程師（8uol0）
+- 公司：藍新資訊　地點：台北市內湖區行忠路42號2樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學（資訊工程相關、其他相關科系）
+- 工作內容：參與客戶訪談與工作坊，分析作業流程與資訊系統，盤點 AI 自動化場景，撰寫需求規格與建議書。設計 Agentic AI、RAG 與 Workflow 架構，規劃企業知識庫與 AI 助理，協助客戶導入與驗證。串接 ERP、CRM、HR、電子簽核，開發 REST API、Webhook、MCP Connector，建置資料同步與事件驅動架構。建置 CI/CD Pipeline，規劃 GitOps、IaC 與自動化部署。
+- 條件與技能：擅長工具 JavaScript、Python、PostgreSQL；技能 AI、系統整合分析。專業知識 GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes。專業技能 Python、JavaScript/TypeScript、n8n、Elasticsearch、PostgreSQL。AI 相關證照尤佳（加分）。語文不拘。職務類別 AI工程師。需求 2 人；無需出差外派；日班 0900-1800；應徵 6~10 人。
+- 網址：https://www.104.com.tw/job/8uol0
+- 104 上顯示的更新日：11/16
+
+### AI平台工程師（95xqc）
+- 公司：藍新資訊　地點：台北市內湖區行忠路42號2樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學（資訊工程相關、其他相關科系）
+- 工作內容：研究、開發並部署 Proxmox VE（PVE）虛擬化平台；研究 Kubernetes（K8s）容器平台，負責叢集建置與故障排除；為客戶評估並導入雲端原生技術。為客戶導入 AI 解決方案，涵蓋模型部署、平台建置與應用整合；用 Zabbix、Prometheus、Grafana 建置監控系統，維持穩定與可觀測性；追蹤新技術並提供建議。另為公司內部同仁開發 AI 應用程式。
+- 條件與技能：擅長工具 Linux、VM；技能 AI。專業知識 Linux、虛擬化技術、Kubernetes、Generative AI、RAG、Python。專業技能 VM／Container 平台部署與管理、RAG 工具開發。證照（加分）CKA、LPIC、RHCSA。語文不拘。職務類別 AI工程師。需求 1~2 人；無需出差外派；日班 0900-1800；應徵 0~5 人。
+- 網址：https://www.104.com.tw/job/95xqc
+- 104 上顯示的更新日：10/29
+
+### 資訊助理工程師（中山區；正職，非約聘人員）（94ack）
+- 公司：藍新資訊　地點：台北市中山區（派駐政府單位現場）　薪資：月薪 38,000 元以上　經歷：1 年以上　學歷：專科、大學（科系：資訊工程相關）
+- 工作內容：正職，派駐政府單位現場。協助資訊系統、AI 應用平台與知識庫系統的操作、測試與日常支援；協助資料整理、文件維護、內容上架；受理使用者問題、記錄需求並回報異常；執行系統測試與操作驗證並記錄結果；整理會議紀錄、操作文件與工作報告；配合客戶教育訓練、會議與專案活動；與專案團隊追蹤問題處理進度。職務亮點含後勤系統、雲端、網路專家支援，教育訓練與證照補助，以及公司內部輪調機制。
+- 條件與技能：擅長工具不拘；工作技能 文書處理軟體操作、專案溝通／整合管理。專業知識：資訊系統、資料管理與系統測試基本知識。專業技能：Office 軟體操作、文件撰寫、資料整理、系統測試、溝通協調。專業訓練：資訊相關、系統操作、資訊安全或 AI 應用訓練尤佳。必要條件：大專以上資訊相關科系畢業，或非資訊相關科系畢業並有資訊相關工作經驗 2 年以上；對 AI 學習有興趣。職務類別 系統工程師、資訊設備管制人員、網路管理工程師。需求 1 人；無需出差外派；日班 8:30-17:30；週休二日；可上班日一個月內；應徵 0~5 人。
+- 網址：https://www.104.com.tw/job/94ack
+- 104 上顯示的更新日：11/05
+
+### 網路工程師（7ystn）
+- 公司：藍新資訊　地點：台北市內湖區行忠路42號2樓　薪資：月薪 40,000~60,000 元　經歷：不拘　學歷：專科、大學、碩士（科系不拘）
+- 工作內容：建置、定期維護網通與資安設備並排除故障，含網路設備與防火牆的硬體安裝。提供客戶技術諮詢，撰寫維護報告與報修紀錄，處理主管與客戶交辦的 1~3 項事項。公司與 Cisco、Palo Alto、Fortinet、F5、HPE、Dell EMC、IBM、NetApp、微軟、VMware 等原廠合作，客戶多為中大型企業、銀行、醫院與公家單位。提供原廠教育訓練與證照補助。
+- 條件與技能：擅長工具 Checkpoint、Cisco、Firewall；技能 網路安全系統安裝維護、防火牆規劃管理、網路設備設定安裝。證照 CCNA、CCNP、CCIE、CCSA NGX。必備：1 年以上網路或資安設備經驗、專科以上、具網路或資安認證、可配合非上班日輪（直）班或出差。職務類別 網路管理工程師、資安工程師。出差一年累積約一個月以下；週休二日；需求 1 人；應徵 6~10 人。
+- 網址：https://www.104.com.tw/job/7ystn
+- 104 上顯示的更新日：11/12
+
+### 系統工程師（69ejn）
+- 公司：藍新資訊　地點：台北市內湖區行忠路42號2樓　薪資：月薪 35,000~50,000 元　經歷：3 年以上　學歷：專科、大學（科系不拘）
+- 工作內容：共七項。處理客戶故障報修排除；專案執行與設備上架支援；駐點單位代班支援；客戶例行維護與定檢作業；問題追蹤與改善建議；文件與報告產出；跨部門協作與知識分享。內頁沒有列出具體軟體或產品清單。
+- 條件與技能：擅長工具 DNS、DHCP、VMware。工作技能 系統維護操作、專案管理軟體操作、網路規劃管理、網路系統配置、系統架構規劃與維護、測試環境建置規劃、資料備份與復原、作業系統基本操作、專案管理架構及專案說明、專案溝通／整合管理、專案規劃執行／範圍管理、專案時間／進度控管。證照 VCP。其他條件欄位未填寫。職務類別 系統工程師、業務支援工程師、軟體專案管理師。語文不拘。需出差，一年累積約一個月以下；週休二日；需求 1~2 人；可上班日不限；應徵 0~5 人。
+- 網址：https://www.104.com.tw/job/69ejn
+- 104 上顯示的更新日：11/12
+
+### (AIX/Linux)系統工程師（6qc31）
+- 公司：藍新資訊　地點：台北市內湖區行忠路42號2樓（內湖科技園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：專科、大學、碩士（科系不拘）
+- 工作內容：維護 IBM Server、Storage 等產品，做定期維護與系統專案建置。回覆客戶應用技術問題，提供產品技術諮詢。提供客戶技術服務，必要時外勤到客戶處安裝、檢修設備。內頁註明認真、負責、有自我學習能力者佳。
+- 條件與技能：擅長工具 AIX、Linux、UNIX。工作技能 伺服器網站管理維護、作業系統基本操作、資料備份與復原、電腦設備裝配、資訊設備操作檢修與環境設定、功能測試、問題追蹤處理（Bug tracking）、測試環境建置規劃、系統架構規劃與維護。英文 聽／說略懂、讀／寫中等。駕照 輕型機車、普通重型機車、普通小型車。其他條件欄位未填寫。職務類別 系統工程師、產品售後技術服務、電腦組裝／測試。需出差，一年累積約一個月以下；週休二日；需求 1~2 人；應徵 0~5 人。
+- 網址：https://www.104.com.tw/job/6qc31
+- 104 上顯示的更新日：11/16
+
+### 專案工程師-系統（中山區；正職，非約聘人員）（7qv1u）
+- 公司：藍新資訊　地點：台北市中山區（派駐政府單位現場）　薪資：月薪 40,000~50,000 元　經歷：1 年以上　學歷：專科、大學（資訊工程相關）
+- 工作內容：正職，派駐政府單位現場，做機房、網路、伺服器與資訊安全維運整合。管理機房線路與網路架構圖，處理現場網路報修。操作與管理伺服器、實體主機、虛擬化主機、儲存設備與備份系統。監控並記錄系統軟硬體效能與資源使用。管理備份排程、檢視備份結果、處理資料回復與儲存媒體分類。配合單位 ISO 27001 與國家資通安全管理作業。
+- 條件與技能：擅長工具 Windows Server 2019、MS SQL、VMware。工作技能 伺服器網站管理維護、作業系統基本操作、資料備份與復原、資訊設備操作檢修、系統維護操作、文書處理軟體操作。必備：具 VMware 或 Linux 或微軟作業系統擇一相關證照。加分：系統維護建置經驗、公（私）部門駐點經驗、ISO 27001 證照。職務類別 系統工程師、資訊設備管制人員、網路管理工程師。無需出差外派；日班 8:30-17:30；週休二日；需求 1 人；應徵 0~5 人；有後勤系統、雲端、網路專家支援，提供證照補助與內部輪調。
+- 網址：https://www.104.com.tw/job/7qv1u
+- 104 上顯示的更新日：11/12
+
+### 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）
+- 公司：藍新資訊　地點：台北市大安區（派駐政府單位現場）　薪資：月薪 50,000~55,000 元　經歷：2 年以上　學歷：大學（資訊工程相關、資訊管理相關）
+- 工作內容：維運伺服器、儲存、網路與資安設備。管理 VMware、Nutanix、K8S 等虛擬化平台與虛擬機器，以及 Active Directory、備份與回復、郵件系統。分析網路流量與異常，處理資通安全技術作業，協助資產盤點與特權帳號清查，維護架構圖、設備清冊與 SOP，製作定期報告，協助新系統導入與簡易故障排除，並與公司網路、資安團隊協作。
+- 條件與技能：擅長工具 Cisco；工作技能 網路設備設定安裝、防火牆規劃管理、電腦設備裝配、網路安全系統安裝維護。證照 CCNA。必備：2 年以上網路管理或維運經驗；具下列其一：勞動部電腦硬體裝修或軟體應用丙級以上、iPAS 資訊安全工程師初級以上、微軟或思科 CCNA（含）以上。加分：ISO27001 LA、SSCP、CompTIA Security+、政府單位維運經驗。職務類別 其他資訊專業人員。無需出差外派；週休二日；需求 1 人；應徵 0~5 人。
+- 網址：https://www.104.com.tw/job/8yyz5
+- 104 上顯示的更新日：11/11
+
+### 資深系統工程師（91vjx）
+- 公司：藍新資訊　地點：新竹縣竹北市北崙里光明三路62號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上　學歷：專科、大學（科系不拘）
+- 工作內容：共七項。處理客戶故障報修與問題排除；專案執行與系統安裝上架支援；駐點單位代班支援；客戶例行維護與定期檢測；問題追蹤與改善建議；文件與報告產出；跨部門協作與知識分享。內頁沒有列出具體產品清單。
+- 條件與技能：擅長工具 VMware、DNS、DHCP、Linux。工作技能 系統維護操作、專案管理軟體操作、網路規劃管理、網路系統配置、系統架構規劃與維護、測試環境建置規劃、資料備份與復原、作業系統基本操作、專案溝通／整合管理、專案規劃執行／範圍管理、專案時間／進度控管。證照 VCP、CCNA、AZ-104 Azure 系統管理技術師、Red Hat 認證工程師。其他條件欄位未填寫。職務類別 系統工程師、業務支援工程師。無需出差外派；日班 09:00-18:00；週休二日；需求 1 人；可上班日不限；應徵 0~5 人。
+- 網址：https://www.104.com.tw/job/91vjx
+- 104 上顯示的更新日：11/12
+
+### 專案工程師-網路（大安區；正職，非約聘人員）（96vha）
+- 公司：藍新資訊　地點：台北市大安區（派駐政府單位現場）　薪資：月薪 40,000~50,000 元　經歷：2 年以上　學歷：大學（資訊工程相關、資訊管理相關）
+- 工作內容：維運網路與資安設備，排查網路問題。操作與監控防火牆、WAF，設定、檢視、診斷並調整防火牆安全政策。分析網路流量與異常，處理資通安全技術作業，清查網路與資安設備的帳號與版本，維護網路架構圖、設備清冊與 SOP，製作定期報告，協助新設備測試與簡易故障排除，並與公司網路、資安團隊協作。
+- 條件與技能：擅長工具 Cisco；工作技能 網路設備設定安裝、防火牆規劃管理、電腦設備裝配、網路安全系統安裝維護。證照 CCNA。其他條件：需為中華民國國民；大學以上資訊相關科系畢業，或有資訊（安）相關工作經驗 2 年；網路資安證照如 CCNA、CCNP、PCNSE、PCNSA、ISO27001 LA、SSCP、CompTIA Security+；思科及資安教育訓練。職務類別 其他資訊專業人員。無需出差外派；週休二日；需求 1 人；可上班日一個月內；應徵 0~5 人。
+- 網址：https://www.104.com.tw/job/96vha
+- 104 上顯示的更新日：11/12
+
+### 專案工程師-網路（中正區；正職，非約聘人員）（9793u）
+- 公司：藍新資訊　地點：台北市中正區（派駐政府單位現場）　薪資：月薪 40,000~60,000 元　經歷：2 年以上　學歷：專科、大學（資訊工程相關）
+- 工作內容：日常維運 Cisco 網路設備，含組態管理與故障排除。操作、監控防火牆、WAF、SLB 等資安設備並處理異常。監控網路流量、頻寬與設備狀態並做異常分析。維護網路拓撲、設備清冊、組態資訊、SOP、維護紀錄，製作定期報告。可累積企業級與公部門網路架構經驗，有後勤網路與資安專家支援。
+- 條件與技能：擅長工具與工作技能欄位為不拘。證照 CCNA、CCNP，內文註明必備 CCNA 或 CCNP。專業知識：網路基礎、網路監控與故障排除。專業技能：網路資安設備操作與組態、故障診斷、流量分析、事件處理與跨團隊協作。加分：資安署公布之資通安全專業證照。專業訓練：Cisco Switch/Router、防火牆、WAF、SLB、網路監控與資安教育訓練；政府機關資訊環境維運尤佳。職務類別 網路管理工程師。無需出差外派；週休二日；需求 1 人；可上班日一個月內；應徵 0~5 人；提供證照補助。
+- 網址：https://www.104.com.tw/job/9793u
+- 104 上顯示的更新日：11/11
+
+### 專案工程師-MIS（楠梓科技園區；正職，非約聘）（97ftl）
+- 公司：藍新資訊　地點：高雄市楠梓區（楠梓科技園區，派駐客戶端）　薪資：月薪 45,000~50,000 元　經歷：2 年以上　學歷：專科、大學（資訊工程相關）
+- 工作內容：派駐客戶端駐點，排除客戶問題，需具 Windows、Linux、VMware 系統與伺服器維護經驗，能獨立查找並解決系統或硬體問題。處理客戶交辦事項與現場報修派工。撰寫並整理技術文件，如工作日誌與 FAQ。
+- 條件與技能：擅長工具 VMware、Linux、Windows 11、Windows 10；工作技能 硬體整合測試、資訊設備操作檢修、安裝與維護網路安全系統。其他條件：具個人電腦硬體、網路基礎知識；Windows、Linux、VMware 基本操作；電腦設備裝配、檢修與環境設定；2 年以上 HP、Dell、IBM 等 Wintel 伺服器維護經驗；證照 MCITP、HP Wintel 伺服器維護認證；另需具個人端電腦維護或公私部門駐點經驗至少一項。駕照 輕型機車、普通小型車。職務類別 網路管理工程師。無需出差外派；日班 8:00~18:00；週休二日；需求 2 人；應徵 0~5 人。
+- 網址：https://www.104.com.tw/job/97ftl
+- 104 上顯示的更新日：11/16
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '24_補充_藍新資訊.md' -Encoding UTF8; rg -n -i '年終|年末獎金|員工旅遊|旅遊補助|旅遊津貼|尾牙|分紅|育嬰|育兒|托育' --glob '05_*.md' --glob '24_補充_*.md' --glob '34_104職缺更新_*.md' ." in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 424ms:
+# 24 藍新資訊 公開資料補充
+
+## 基本資料
+
+### 設立與資本市場歷程
+藍新資訊股份有限公司於 2014 年 4 月 23 日核准設立，主要營業項目是電腦軟硬體設備銷售與維護，以及資訊系統整合的規劃、建置與維運。官網新聞時間軸顯示，精誠投資在 2019 年取得 30% 股權；2022 年 12 月公司申報首次公開發行並生效；同年郭廷群出任董事長，楊璦如出任總經理。2024 年 1 月 23 日公司登錄興櫃，參考價每股 41 元，輔導券商為國票證券。興櫃報導指出，2023 年營收為 6.15 億元，年增 35%，當年前 11 月自結 EPS 為 4.55 元。2025 年 10 月 28 日，官網新增投資人專區。2026 年 8 月 3 日公司通過櫃買中心上櫃審議會，2026 年 10 月以承銷價每股 68 元掛牌上櫃。
+來源：https://www.newebinfo.com.tw ；https://www.ctee.com.tw/news/20240123700202-439901 ；https://www.nstock.tw/%E8%97%8D%E6%96%B0%E8%B3%87%E8%A8%8A%E5%81%9A%E4%BB%80%E9%BA%BC.html（查詢日 2026-11-17）
+
+### 據點配置與工程團隊
+藍新資訊總公司位於台北市內湖區行忠路 42 號 2 樓。官網另列四處據點：新竹縣竹北市的新竹辦公室、台中市南區的台中辦事處、台南市新市區的台南辦事處，以及高雄市鼓山區的高雄辦公室。據點涵蓋北、中、南三區。團隊規模方面，公司在 2026 年 10 月上櫃前業績發表會中表示，專業工程團隊超過 90 人，累積超過 600 張技術認證。認證主要集中在四個領域：大型核心主機、雲端虛擬化、AI 資料儲存，以及資訊安全。官網自述公司有超過 20 年的系統整合經驗，強項是大型核心系統主機，並整合跨平台的雲端運算能力。
+來源：https://www.newebinfo.com.tw ；https://uanalyze.com.tw/articles/9353956242（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 解決方案與專業服務
+官網把業務分成「解決方案」與「專業服務」兩類。解決方案有五項：全方位資安防護、基礎網路架構、AI 智慧應用、混合雲基礎建設，以及資產資料儲存與備份備援。專業服務有六項：IT 機房建置及維運、系統維護整合建置、雲端系統整合、系統與資料庫管理維護、儲存備份備援，以及網路資訊安全建置與諮詢。公司自述的主要工作，是資訊軟硬體產品的整合規劃與銷售、顧問諮詢、導入、雲端建置與管理維運。2024 年興櫃報導則描述，公司強項是規劃與建置高階大型核心系統，例如大型機房的伺服主機與 UNIX 伺服器，之後再以維運服務帶來穩定的現金流。
+來源：https://www.newebinfo.com.tw ；https://www.ctee.com.tw/news/20240123700202-439901（查詢日 2026-11-17）
+
+### 客戶結構與持續性收入
+2024 年興櫃報導指出，藍新資訊的客戶超過 400 家，以政府、金融業與上市櫃企業為主，行業涵蓋生技醫療、光電、重電、流通與半導體，續約率約 9 成。2026 年上櫃前的報導進一步說明，服務的關鍵應用包括 ERP、MES、HIS、金融交易系統與資料庫。公司表示，維護維運合約在 2023 年至 2025 年的年複合成長率約 14.5%，三年平均合約存續率超過 90%，持續性收入占營收比重接近 4 成。公司把這種模式稱為「建置帶動維護維運、維護維運帶動優化」的服務循環。報導中也提到，客戶滿意度與合約存續率都超過 9 成。來源：https://www.ctee.com.tw/news/20240123700202-439901 ；https://uanalyze.com.tw/articles/9353956242 ；https://www.ctee.com.tw/news/20260803701529-431201（查詢日 2026-11-17）
+
+### 年度營收與股利
+藍新資訊 2023 年營收為 6.15 億元，年增 35%。2025 年全年營收為 6.77 億元；2025 年營業利益為 9,631.4 萬元，創歷史新高，EPS 為 6.15 元。股利方面，2024 年全年每股現金股利 5 元，現金配發率約 80.91%。2025 年第 4 季配發每股現金股利 5 元，無股票股利，除息日為 2026 年 6 月 17 日。上櫃審議會的報導指出，公司已連續兩年現金配發率超過 8 成。資本額方面，興櫃報導計算 EPS 時使用的股本為 1.03 億元，財經網站列出的現行資本額為 1.26 億元，各來源的時點不同。
+來源：https://www.ctee.com.tw/news/20260803701529-431201 ；https://www.nstock.tw/%E8%97%8D%E6%96%B0%E8%B3%87%E8%A8%8A%E5%81%9A%E4%BB%80%E9%BA%BC.html（查詢日 2026-11-17）
+
+### 2026 年營收走勢與獲利指標
+2026 年上半年累計營收 3.29 億元，年增 22.03%，每個月的營收都比去年同期成長。8 月營收 5,925 萬元，年增 43.73%；前 8 月累計 4.29 億元，年增 26.24%。9 月營收 7,702 萬元，年增 33.48%，前 9 月累計 5.06 億元，年增 27.29%。10 月營收約 0.71 億元，年增 58.4%，前 10 月累計 5.77 億元，年增 30.42%。2026 年第 3 季 EPS 為 1.56 元，毛利率 30.14%，營業利益率 14.18%，淨利率 11.06%。公司表示，資服業第四季通常是專案結單與驗收的高峰，在手專案依進度推進，對全年營收審慎樂觀。
+來源：https://www.ctee.com.tw/news/20260803701529-431201 ；https://www.mirrormedia.mg/external/setn_1919716 ；https://www.nstock.tw/%E8%97%8D%E6%96%B0%E8%B3%87%E8%A8%8A%E5%81%9A%E4%BB%80%E9%BA%BC.html（查詢日 2026-11-17）
+
+### 智能應用發展部與 AI 營收占比
+藍新資訊在 2025 年成立智能應用發展部，並引進關鍵技術人才，協助企業建立 AI-Ready 的 IT 環境，把 AI 整合進既有核心系統與營運流程。公司已有 AI 伺服器、高階 GPU 運算平台與企業 AI 應用導入的銷售實績。AI 相關營收約占 2025 年全年營收的 2%；2026 年上半年已達到去年全年的規模，約占上半年營收的 8%。公司強調，AI 是既有企業 IT 架構的延伸，不只是賣 AI 伺服器。報導引用 IDC 預測，台灣 AI 平台市場將從 2025 年的 1.34 億美元成長到 2029 年的 6.08 億美元。公司把這個成長視為加深客戶服務的路徑。
+來源：https://wantrich.chinatimes.com/news/20260930900472-420101 ；https://www.setn.com/news/1915698 ；https://uanalyze.com.tw/articles/3620757735（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### 代理與整合的原廠產品線
+官網列出公司整合與銷售的原廠產品。伺服器與 PC 有 Acer、Lenovo、HPE、Dell 與 Cisco UCS；UNIX 平台為 IBM Power System。儲存與超融合有 IBM、NetApp、Dell EMC、HPE、VMware vSAN 與 Nutanix。網路為 Cisco 與 HPE Aruba，資安為 Palo Alto 與 Fortinet 次世代防火牆。備份軟體包括 Veeam、TSM、Symantec BackupExec 與 Arcserve；虛擬化平台包括 VMware、Hyper-V 與 Nutanix KVM。公司上櫃前說明會另提到，合作的國際原廠還有 F5，並多次獲得原廠的傑出夥伴獎項。
+來源：https://www.newebinfo.com.tw ；https://uanalyze.com.tw/articles/9353956242（查詢日 2026-11-17）
+
+### AI 基礎設施與企業 LLM 私有化服務
+根據公司在 2026 年 10 月的說明，智能應用發展部的服務範圍有四塊：AI 基礎設施與推論環境的規劃建置、企業級 LLM 私有化部署、AI Agent 整合，以及資料治理。硬體面是 AI 伺服器與高階 GPU 運算平台，並接續既有的混合雲、儲存與備份架構。公司說明後續聚焦三件事：AI 算力導入、混合雲架構升級與零信任資安治理。9 月營收成長，公司也歸因於客戶的 AI 基礎建設需求。公司的出發點是既有客戶的核心系統與機房，客戶多為政府、金融與大型企業，因此 AI 專案通常接在原有的伺服器、儲存與網路架構之上。報導未公開所用的模型名稱、推論框架與雲端供應商。
+來源：https://wantrich.chinatimes.com/news/20260930900472-420101 ；https://www.mirrormedia.mg/external/setn_1919716（查詢日 2026-11-17）
+
+### 資安架構與機房升級方向
+藍新資訊在資安上布局零信任架構、身分識別與存取管理（IAM）、持續監控，以及 AI 驅動的資安防護。公司的目標，是把資安服務從單點產品導入，提升為整體架構規劃與治理。上櫃掛牌當日的報導另指出，AI 算力需求與 ESG 趨勢帶動機房升級，需求從設備更新轉向電力、冷卻、空間與資源的整體重整。公司以「建置、維運、優化、再升級」的循環，把既有的系統整合能力延伸到 AI 導入與長期維運。資安產品線上，公司整合 Palo Alto、Fortinet 與 F5 等原廠方案，並提供網路資訊安全的建置與諮詢服務。官網的專業服務也包含 IT 機房建置及維運。
+來源：https://uanalyze.com.tw/articles/3620757735 ；https://www.newebinfo.com.tw（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2025 年底原廠夥伴獎項
+官網新聞顯示，藍新資訊在 2025 年 12 月連續獲得兩項原廠獎項。2025-12-17，公司獲 NetApp FY25 年度卓越客戶拓展合作夥伴獎；2025-12-23，公司獲 HPE FY25 最佳合作夥伴獎。更早之前，公司在 2024-12-30 獲 HPE FY24 最佳合作夥伴，2025-01-09 獲 Palo Alto 2024 創新服務獎，2025-03-20 獲 Veeam FY24 Gold Partner Award。這些獎項反映公司在儲存、伺服器、資安與備份幾條原廠線上的銷售與服務成績。
+來源：https://www.newebinfo.com.tw（查詢日 2026-11-17）
+
+### 2026 年上櫃審議到掛牌
+2026-08-03，藍新資訊通過櫃買中心上櫃審議會，主辦券商為國票證券。審議報導指出，公司 2025 年營業利益創高、EPS 6.15 元，上市櫃客戶超過 400 家。2026-10-01，公司舉辦上櫃前業績發表會，說明 AI 營收占比由 2% 升至約 8%。2026 年 10 月，公司以承銷價每股 68 元掛牌上櫃，掛牌當日報導指出早盤開出 73.7 元，盤中漲幅超過 5%。公司募資與發行細節以公開資訊觀測站公告為準，本文未引用。報導中各家對確切掛牌日略有不同，掛牌當日的優分析報導日期為 2026-10-27。
+來源：https://www.ctee.com.tw/news/20260803701529-431201 ；https://uanalyze.com.tw/articles/3620757735 ；https://uanalyze.com.tw/articles/9353956242（查詢日 2026-11-17）
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+已讀完 34 檔全部 12 筆職缺，兩道清單題分別選 AI 工程師與大安區駐點職缺，各有 2 筆符合。年終與員工旅遊相關關鍵字在三份指定檔案中皆無命中，接著核對標題路徑與引文。
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "@'
+import pathlib,re
+root=pathlib.Path('.')
+checks=[
+('34_104職缺更新_藍新資訊.md','目前開放職缺 > 網路工程師（7ystn）','薪資：月薪 40,000~60,000 元'),
+('34_104職缺更新_藍新資訊.md','目前開放職缺 > AI平台工程師（95xqc）','學歷：大學（資訊工程相關、其他相關科系）'),
+('24_補充_藍新資訊.md','基本資料 > 據點配置與工程團隊','高雄市鼓山區的高雄辦公室'),
+('24_補充_藍新資訊.md','技術堆疊 > 代理與整合的原廠產品線','UNIX 平台為 IBM Power System。'),
+('24_補充_藍新資訊.md','業務與財務 > 解決方案與專業服務','專業服務有六項：IT 機房建置及維運'),
+('24_補充_藍新資訊.md','業務與財務 > 2026 年營收走勢與獲利指標','2026 年第 3 季 EPS 為 1.56 元，毛利率 30.14%，營業利益率 14.18%，淨利率 11.06%。'),
+('24_補充_藍新資訊.md','基本資料 > 設立與資本市場歷程','2025 年 10 月 28 日，官網新增投資人專區。'),
+('34_104職缺更新_藍新資訊.md','目前開放職缺 > AI前線部署工程師（8uol0）','職務類別 AI工程師。需求 2 人'),
+('34_104職缺更新_藍新資訊.md','目前開放職缺 > AI平台工程師（95xqc）','職務類別 AI工程師。需求 1~2 人'),
+('34_104職缺更新_藍新資訊.md','目前開放職缺 > 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）','地點：台北市大安區（派駐政府單位現場）'),
+('34_104職缺更新_藍新資訊.md','目前開放職缺 > 專案工程師-網路（大安區；正職，非約聘人員）（96vha）','地點：台北市大安區（派駐政府單位現場）')]
+for fn,h,q in checks:
+    sections={};stack=[]
+    for line in (root/fn).read_text(encoding='utf-8').splitlines():
+        m=re.match(r'"'^(#{1,6}) (.*)$'"',line)
+        if m:
+            depth=len(m[1]);stack=[x for x in stack if x[0]<depth]
+            if depth>1:stack.append((depth,m[2]))
+        else:sections.setdefault(' > '.join(x[1] for x in stack),[]).append(line)
+    assert 8<=len(q)<=60,(len(q),q)
+    assert any(q in line for line in sections.get(h,[])),(fn,h,q)
+print('All 11 evidence entries match exact heading paths and single-line quotes (8-60 characters).')
+text=(root/'34_104職缺更新_藍新資訊.md').read_text(encoding='utf-8')
+for section in text.split('\\n### ')[1:]:
+    title=section.splitlines()[0]
+    if '職務類別 AI工程師' in section or '地點：台北市大安區' in section:
+        print(title)
+'@ | python -" in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 518ms:
+Traceback (most recent call last):
+  File "<stdin>", line 17, in <module>
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1058, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 22] Invalid argument: '34_104????_????.md'
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command '$checks = @'"'
+[
+[\"34_104職缺更新_藍新資訊.md\",\"目前開放職缺 > 網路工程師（7ystn）\",\"薪資：月薪 40,000~60,000 元\"],
+[\"34_104職缺更新_藍新資訊.md\",\"目前開放職缺 > AI平台工程師（95xqc）\",\"學歷：大學（資訊工程相關、其他相關科系）\"],
+[\"24_補充_藍新資訊.md\",\"基本資料 > 據點配置與工程團隊\",\"高雄市鼓山區的高雄辦公室\"],
+[\"24_補充_藍新資訊.md\",\"技術堆疊 > 代理與整合的原廠產品線\",\"UNIX 平台為 IBM Power System。\"],
+[\"24_補充_藍新資訊.md\",\"業務與財務 > 解決方案與專業服務\",\"專業服務有六項：IT 機房建置及維運\"],
+[\"24_補充_藍新資訊.md\",\"業務與財務 > 2026 年營收走勢與獲利指標\",\"2026 年第 3 季 EPS 為 1.56 元，毛利率 30.14%，營業利益率 14.18%，淨利率 11.06%。\"],
+[\"24_補充_藍新資訊.md\",\"基本資料 > 設立與資本市場歷程\",\"2025 年 10 月 28 日，官網新增投資人專區。\"],
+[\"34_104職缺更新_藍新資訊.md\",\"目前開放職缺 > AI前線部署工程師（8uol0）\",\"職務類別 AI工程師。需求 2 人\"],
+[\"34_104職缺更新_藍新資訊.md\",\"目前開放職缺 > AI平台工程師（95xqc）\",\"職務類別 AI工程師。需求 1~2 人\"],
+[\"34_104職缺更新_藍新資訊.md\",\"目前開放職缺 > 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）\",\"地點：台北市大安區（派駐政府單位現場）\"],
+[\"34_104職缺更新_藍新資訊.md\",\"目前開放職缺 > 專案工程師-網路（大安區；正職，非約聘人員）（96vha）\",\"地點：台北市大安區（派駐政府單位現場）\"]
+]
+'@ | ConvertFrom-Json
+foreach ("'$check in $checks) {
+ $sections = @{}; $stack = @{}
+ foreach ($line in (Get-Content -LiteralPath $check[0] -Encoding UTF8)) {
+  if ($line -match '"'"'^(#{1,6}) (.*)$'"') {
+   "'$depth=$Matches[1].Length; $title=$Matches[2]
+   foreach ($key in @($stack.Keys)) { if ($key -ge $depth) { $stack.Remove($key) } }
+   if ($depth -gt 1) { $stack[$depth]=$title }
+  } else {
+   $heading=(@($stack.Keys | Sort-Object | ForEach-Object { $stack[$_] }) -join '"' > ')
+   if ("'!$sections.ContainsKey($heading)) { $sections[$heading]=@() }
+   $sections[$heading]+=$line
+  }
+ }
+ $quote=$check[2]
+ if ($quote.Length -lt 8 -or $quote.Length -gt 60) { throw "Invalid quote length: $($quote.Length) $quote" }
+ if (!(@($sections[$check[1]] | Where-Object { $_.Contains($quote) }).Count)) { throw "Mismatch: $($check[1]) $quote" }
+}
+'"'Validated all 11 evidence entries.'
+"'$jobText=Get-Content -LiteralPath '"'34_104職缺更新_藍新資訊.md' -Encoding UTF8 -Raw
+"'$jobText -split '"'(?m)"'^### '"' | Where-Object { "'$_ -match '"'職務類別 AI工程師|地點：台北市大安區' } | ForEach-Object { ("'$_ -split '"'\\r?\\n')[0] }" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 1051ms:
+Validated all 11 evidence entries.
+AI前線部署工程師（8uol0）
+AI平台工程師（95xqc）
+專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）
+專案工程師-網路（大安區；正職，非約聘人員）（96vha）
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+[
+  {
+    "question": "藍新資訊的網路工程師一個月能領多少？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > 網路工程師（7ystn）",
+        "quote": "薪資：月薪 40,000~60,000 元"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊的 AI 平台工程師最低要讀到哪？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI平台工程師（95xqc）",
+        "quote": "學歷：大學（資訊工程相關、其他相關科系）"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊在高雄的辦公室落在哪一區？",
+    "type": "單一公司",
+    "topic": "地點",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "基本資料 > 據點配置與工程團隊",
+        "quote": "高雄市鼓山區的高雄辦公室"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊的 UNIX 主機用哪個產品系列？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "技術堆疊 > 代理與整合的原廠產品線",
+        "quote": "UNIX 平台為 IBM Power System。"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊把技術服務分成幾大類？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "業務與財務 > 解決方案與專業服務",
+        "quote": "專業服務有六項：IT 機房建置及維運"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊二〇二六年第三季每股賺多少？",
+    "type": "單一公司",
+    "topic": "財務",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "業務與財務 > 2026 年營收走勢與獲利指標",
+        "quote": "2026 年第 3 季 EPS 為 1.56 元，毛利率 30.14%，營業利益率 14.18%，淨利率 11.06%。"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊何時在官網加了給股東看的專區？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "基本資料 > 設立與資本市場歷程",
+        "quote": "2025 年 10 月 28 日，官網新增投資人專區。"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊有哪些 AI 工程師職缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "職務類別 AI工程師。需求 2 人"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI平台工程師（95xqc）",
+        "quote": "職務類別 AI工程師。需求 1~2 人"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊在大安區有哪些駐點工程師缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）",
+        "quote": "地點：台北市大安區（派駐政府單位現場）"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > 專案工程師-網路（大安區；正職，非約聘人員）（96vha）",
+        "quote": "地點：台北市大安區（派駐政府單位現場）"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊年底獎金通常發幾個月？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "藍新資訊",
+    "gold": [],
+    "absence_keywords": [
+      "年終",
+      "年末獎金"
+    ]
+  },
+  {
+    "question": "藍新資訊辦員工出遊會補貼多少錢？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "藍新資訊",
+    "gold": [],
+    "absence_keywords": [
+      "員工旅遊",
+      "旅遊補助",
+      "旅遊津貼"
+    ]
+  }
+]
+hook: Stop
+hook: Stop Completed
+tokens used
+78,117
+[
+  {
+    "question": "藍新資訊的網路工程師一個月能領多少？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > 網路工程師（7ystn）",
+        "quote": "薪資：月薪 40,000~60,000 元"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊的 AI 平台工程師最低要讀到哪？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI平台工程師（95xqc）",
+        "quote": "學歷：大學（資訊工程相關、其他相關科系）"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊在高雄的辦公室落在哪一區？",
+    "type": "單一公司",
+    "topic": "地點",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "基本資料 > 據點配置與工程團隊",
+        "quote": "高雄市鼓山區的高雄辦公室"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊的 UNIX 主機用哪個產品系列？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "技術堆疊 > 代理與整合的原廠產品線",
+        "quote": "UNIX 平台為 IBM Power System。"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊把技術服務分成幾大類？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "業務與財務 > 解決方案與專業服務",
+        "quote": "專業服務有六項：IT 機房建置及維運"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊二〇二六年第三季每股賺多少？",
+    "type": "單一公司",
+    "topic": "財務",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "業務與財務 > 2026 年營收走勢與獲利指標",
+        "quote": "2026 年第 3 季 EPS 為 1.56 元，毛利率 30.14%，營業利益率 14.18%，淨利率 11.06%。"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊何時在官網加了給股東看的專區？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "24_補充_藍新資訊.md",
+        "heading": "基本資料 > 設立與資本市場歷程",
+        "quote": "2025 年 10 月 28 日，官網新增投資人專區。"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊有哪些 AI 工程師職缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "職務類別 AI工程師。需求 2 人"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI平台工程師（95xqc）",
+        "quote": "職務類別 AI工程師。需求 1~2 人"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊在大安區有哪些駐點工程師缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "藍新資訊",
+    "gold": [
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）",
+        "quote": "地點：台北市大安區（派駐政府單位現場）"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > 專案工程師-網路（大安區；正職，非約聘人員）（96vha）",
+        "quote": "地點：台北市大安區（派駐政府單位現場）"
+      }
+    ]
+  },
+  {
+    "question": "藍新資訊年底獎金通常發幾個月？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "藍新資訊",
+    "gold": [],
+    "absence_keywords": [
+      "年終",
+      "年末獎金"
+    ]
+  },
+  {
+    "question": "藍新資訊辦員工出遊會補貼多少錢？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "藍新資訊",
+    "gold": [],
+    "absence_keywords": [
+      "員工旅遊",
+      "旅遊補助",
+      "旅遊津貼"
+    ]
+  }
+]

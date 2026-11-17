@@ -1,0 +1,1355 @@
+OpenAI Codex v0.166.0
+--------
+workdir: C:\claude\aipe04期末\履歷\廠商深查
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1ea22-b00f-7c73-8450-f206ca7917cf
+--------
+user
+你是求職情報問答 RAG 的「出題者」。只用讀檔（唯讀），不要改任何檔案，不要執行會連網的指令。
+語料資料夾就是目前工作目錄（C:/claude/aipe04期末/履歷/廠商深查）。現有題檔在 C:/claude/aipe04期末/job-rag/eval/questions_heldout.json 與 C:/claude/aipe04期末/job-rag/eval/questions.json（先讀，格式要沿用，題目不能和它們重複或高度相似）。
+
+【可用來源】
+- 公司頁（0N_公司.md）只能用這幾段：「1. 基本資料」「2. 業務與財務」「4. 職缺」「5. 技術堆疊」「8. 近一年新聞」。
+- 補充檔（2N_補充_公司.md）只能用標題不含下列字詞的公開事實段落。
+- 104 職缺更新檔（3N_104職缺更新_公司.md）。
+- 禁用字詞（標題或段落主旨含這些就不能用）：面試、評價、風險、判斷、推測、矛盾、限制、未查到、對應、作戰。
+- 禁用檔案：00_面談作戰卡.md、00_總報告.md、104/ 資料夾、selfdata、其他非列名的檔案。
+
+【口吻】像面試官現場用手機問的：短、口語、10–30 字，不要照抄原文用字（要換同義說法，避免只靠關鍵字比對就答得出來）。公司名可以直接講。題目本身不可寫「根據文件」「上面」之類字眼。
+
+【輸出格式】只輸出一個 JSON 陣列（不要 markdown 圍欄、不要說明文字）。每題一個物件：
+{"question": 題目, "type": 類型, "topic": 主題（薪資/技術/地點/學歷/業務/財務/新聞/職缺/福利規章/內部資訊/其他）, "company": 公司名（跨公司題省略）, "gold": [{"file": 檔名, "heading": 標題路徑, "quote": 原文片段}], ...}
+- heading 寫法：不含檔案最上面的 # 一級標題；把上層到該層的標題文字用 " > " 串起來（例如 "2. 業務與財務"、"目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）"），文字與檔案內完全一致（含編號、全形括號）。
+- quote：必須是該標題段落內「逐字存在」的連續原文，單行內、8–60 字、不要跨行、不要自己改標點或空白。程式會逐字比對，錯一個字就整題作廢。
+- 一題的 gold 可以多筆（例如同一事實在公司頁與補充檔都有就都列）。
+
+【你的任務】只針對「華電聯網」，出 1 題 type="不可回答"（company="華電聯網"）：貼近真實面試官會問、但整個語料資料夾裡完全沒有答案的題。gold 設 []，加 "absence_keywords": [2–4 個關鍵字]。
+硬性要求：每個關鍵字都要用 grep -r 對整個語料資料夾（含所有子資料夾）確認「全語料 0 筆命中」，所以不要用「加班費、年終、試用、健檢、員工旅遊」這類常見詞；請選更具體的題材（例如特定福利項目名稱、特定內部制度、特定數字）。
+不能與這些題重複或同題材：["華電聯網每年旅遊補助能領多少？", "華電聯網多久安排一次員工健檢？", "寵物、毛孩相關題材（已用過，不要再出）", "試著用這個方向：在家上班的天數規定（或其他你自己選，但要與寵物無關）", "凍卵、寵物、生育補助、證照補助、內推獎金（已用過）", "方向：在家上班的天數規定"]。上一題失敗原因：kw 健檢 in ['04_神通資訊.md', '23_補充_神通資訊.md']; kw 健康檢查 in ['14_典凡科技.md', '22_補充_叡揚資訊.md', '32_104職缺更新_叡揚資訊.md']
+
+輸出仍然是 JSON 陣列，只含 1 題。
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+我會先讀現有題檔，再用 grep -r 逐一確認候選關鍵字在全語料中都是零命中；全程唯讀、不連網。
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions_heldout.json' -Encoding UTF8; Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions.json' -Encoding UTF8" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 140ms:
+{
+ "說明": "票 39：獨立測試題 40 題（原本有答案 25、沒答案 15；2026-11-17 因語料換新版，h40 改標為可回答，現為有答案 26、沒答案 14；gold 與關鍵字隨之更新，非為提高分數）。題目與金標在跑任何檢索評估之前寫定，之後不得為了結果改題。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（程式核對確實出現在公開段落）。沒有答案題的 absence_keywords 在整份語料（含排除段落）出現 0 次；trap＝相近主題但語料確實沒寫的陷阱題。核對狀態只有使用者能改成已確認。",
+ "questions": [
+  {
+   "id": "h01",
+   "question": "EPS 多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "EPS 4.77 元"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "EPS 4.77 元，營收年減 0.31%"
+    },
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "業務與財務 > 2025 年第四季與全年細項",
+     "quote": "EPS 4.77 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h02",
+   "question": "用什麼雲端？",
+   "type": "公司頁短問句",
+   "topic": "技術",
+   "answerable": true,
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）"
+    },
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "技術堆疊 > Google Cloud 資料與運算架構",
+     "quote": "使用的產品包括 BigQuery、Vertex AI、Compute Engine"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h03",
+   "question": "董事長是誰？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "張培鏞（代表人）／陳世安"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h04",
+   "question": "公司在哪裡？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "台北市內湖區堤頂大道二段 187 號"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h05",
+   "question": "什麼時候上櫃？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元"
+    },
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "68 元掛牌上櫃，開盤 73.7 元"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "基本資料 > 設立與資本市場歷程",
+     "quote": "每股 68 元掛牌上櫃"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2026 年上櫃審議到掛牌",
+     "quote": "承銷價每股 68 元掛牌上櫃"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h06",
+   "question": "海外有哪些據點？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 業務",
+     "quote": "香港、泰國、新加坡、印尼、中國大陸"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h07",
+   "question": "客戶是哪些類型？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 主要客戶",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "基本資料 > 策略夥伴與客戶群",
+     "quote": "政府單位（交通部、國防單位、地方政府）、電信業"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 2025 年營收結構與客戶組成",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h08",
+   "question": "股利配多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "配發 0.33 元現金股利，12 年來首次配息"
+    },
+    {
+     "file": "09_中華網龍.md",
+     "heading": "8. 近一年新聞",
+     "quote": "2025 年首次配息 0.33 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h09",
+   "question": "遠振資訊的資本額是多少？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "16_遠振資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "資本總額：20,000,000 元"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 公司簡介",
+     "quote": "資本額：1300 萬元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h10",
+   "question": "數據立的續約率是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "續約率 90%、續費率 120%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h11",
+   "question": "艾普特有哪四大事業群？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "廣告科技、行銷科技、管理科技、電商科技"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h12",
+   "question": "宏碁雲架構的母公司是誰？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "1. 基本資料",
+     "quote": "安碁資訊股份有限公司（ACSI，6690）"
+    },
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "安碁資訊（6690）的子公司"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h13",
+   "question": "典凡科技的資深網路架構師年薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師",
+     "quote": "年薪 1,500,000 元以上"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 1,500,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h14",
+   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "薪資：月薪 37,000 以上"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "job/8x526 | 1 年以上 | 大學、碩士 | 月薪 37,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h15",
+   "question": "艾普特的 PM 專案規劃師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "E_華電_艾普特_醫宇宙.md",
+     "heading": "2. 艾普特 > 相關職缺",
+     "quote": "月薪 40,000~42,000"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）",
+     "quote": "https://www.104.com.tw/job/8tpxn | 1 年以上 | 專科以上 | 月薪 40,000~42,000"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h16",
+   "question": "數據立的產品維運工程師要會哪些工具？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師",
+     "quote": "精通 Docker、Grafana + Prometheus"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h17",
+   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "3. 業務與財務 > 產品與業務",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    },
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "技術堆疊 > Agent Builder 企業 AI 一體機的軟硬體",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h18",
+   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "179.4 億，年增 383%"
+    },
+    {
+     "file": "06_凱基證券.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "上半年證券純益 179.4 億，年增 383%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h19",
+   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）",
+     "quote": "擅長工具欄為 MySQL、Oracle、PL/SQL"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "h20",
+   "question": "叡揚資訊 2026 前三季的營收是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "15.34 億，年增 6.58%"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "前三季營收年增 6.58%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h21",
+   "question": "哪些公司的職缺要求 Spring Boot？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Spring Boot"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h22",
+   "question": "哪幾家公司的職缺會用到 VMware？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "VMware"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h23",
+   "question": "哪家公司有做 AI Agent 的產品？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "AI Agent"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h24",
+   "question": "哪些公司使用 Google Cloud？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Google Cloud"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h25",
+   "question": "哪些公司的職缺要會 C#？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "C#"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h26",
+   "question": "有颱風假嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "神通資訊",
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "颱風假"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h27",
+   "question": "有員工持股信託嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "凱基證券",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "持股信託",
+    "員工持股"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h28",
+   "question": "有交通津貼嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "聯合報",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "交通津貼",
+    "交通補助"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h29",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "心理諮商"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h30",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "育嬰"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h31",
+   "question": "典凡科技今年的營收目標是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "營收目標"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "營收目標": "2026-11-17 新語料命中：27 號中華網龍補充檔寫的是《吞食天地》放置版首月營收目標，不是典凡科技今年營收目標；題目仍無答案"
+   }
+  },
+  {
+   "id": "h32",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "下載次數",
+    "下載量",
+    "累計下載"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h33",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "AI 部有",
+    "AI 部人數",
+    "AI 部共"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h34",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "廣達"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h35",
+   "question": "鴻海的董事長是誰？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "鴻海"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h36",
+   "question": "富邦金控旗下有哪些子公司？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "富邦金控"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h37",
+   "question": "台北明天會下雨嗎？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "天氣",
+    "氣象",
+    "下雨"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h38",
+   "question": "履歷的自傳要怎麼寫？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "自傳",
+    "履歷範本"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "自傳": "2026-11-17 新語料命中：37 號中華網龍職缺條件提到自傳，沒有教人怎麼寫自傳；題目仍無答案"
+   }
+  },
+  {
+   "id": "h39",
+   "question": "哪些公司有哺乳室？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "哺乳室"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h40",
+   "question": "哪間公司有員工社團？",
+   "type": "跨公司",
+   "topic": "福利規章",
+   "answerable": true,
+   "gold": [],
+   "split": "heldout",
+   "status": "待使用者確認（2026-11-17 因新語料已含答案，由不可回答改標為可回答，非為提高分數）",
+   "keywords": [
+    "家庭日、社團"
+   ]
+  }
+ ]
+}
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2025 年底原廠夥伴獎項",
+     "quote": "HPE FY25 最佳合作夥伴獎"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "c06",
+   "question": "哪一家公司有自研的語音模型？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研語音模型 myVoca"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "myVoca"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "神通資訊的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "額定 25 億；實收 21 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 標案占比（重點）",
+     "quote": "政府標案 110 件，總額近 83 億"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 政府標案與在手專案",
+     "quote": "110 件政府標案，得標總金額近 83 億元"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "20.19 億，年增 16.33%"
+    },
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "業務與財務 > 2025 年財務結果",
+     "quote": "20.19 億元，年增 16.33%"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "AltaBots.ai：企業級 No-Code AI Agent 平台"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "部門 2008 年成立"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "AI 智慧辨識（InsAI，VLM，支援地端）"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "InsAI 支援地端部署"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "InsAI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s11",
+   "question": "艾普特是做什麼的公司？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "數位行銷公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "2. 業務與財務 > 產品與服務（【自述】https://tftech.com.tw ）",
+     "quote": "企業級資料保護與雙活資料中心"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 公司簡介",
+     "quote": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+    },
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "2. 業務與財務",
+     "quote": "機房維運管理、雲端相關服務"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）",
+     "quote": "年薪 900,000~1,200,000"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
+     "quote": "薪資：年薪 900,000~1,200,000 元"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 900,000~1,200,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "Django"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I97 Kubernetes 平台工程師（8xjjo）",
+     "quote": "3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【戰略部】數據優化師(數據分析)（7qtdo）",
+     "quote": "月薪 35,000 元以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-1 AI 解決方案工程師（已讀單頁）",
+     "quote": "需出差，一年累積約三個月以下"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）",
+     "quote": "AI 解決方案工程師（技術）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）",
+     "quote": "不需出差"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）",
+     "quote": "必備為 Python 開發 3 年以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "3 年以上 AI 系統或大型軟體架構設計經驗"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "多益",
+    "TOEIC",
+    "英檢",
+    "英文能力"
+   ],
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "多益": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案",
+    "TOEIC": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案"
+   }
+  },
+  {
+   "id": "u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "月活躍",
+    "活躍玩家",
+    "MAU",
+    "DAU"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u06",
+   "question": "叡揚資訊的特休天數是幾天？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "特休",
+    "特別休假",
+    "休假天數"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u07",
+   "question": "藍新資訊可以在家上班嗎？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "在家上班",
+    "居家辦公",
+    "混合辦公",
+    "WFH",
+    "在家工作"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "平均年薪",
+    "平均薪資",
+    "薪資中位數"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command 'Get-Command grep -ErrorAction SilentlyContinue | Select-Object Source; rg --files .' in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 118ms:
+
+.\37_104職缺更新_中華網龍.md
+.\07_華電聯網.md
+.\22_補充_叡揚資訊.md
+.\12_艾普特.md
+.\21_補充_聯合報.md
+.\20_補充_台灣大哥大.md
+.\06_凱基證券.md
+.\16_遠振資訊.md
+.\11_醫宇宙.md
+.\05_藍新資訊.md
+.\15_數據立.md
+.\04_神通資訊.md
+.\10_尼諾思科技.md
+.\14_典凡科技.md
+.\03_叡揚資訊.md
+.\13_宏碁雲架構.md
+.\02_聯合報.md
+.\01_台灣大哥大.md
+.\00_總報告.md
+.\00_面談作戰卡.md
+.\08_奧衍.md
+.\30_104職缺更新_台灣大哥大.md
+.\27_補充_中華網龍.md
+.\33_104職缺更新_神通資訊.md
+.\26_補充_華電聯網.md
+.\36_104職缺更新_華電聯網.md
+.\32_104職缺更新_叡揚資訊.md
+.\31_104職缺更新_聯合報.md
+.\35_104職缺更新_凱基證券.md
+.\25_補充_凱基證券.md
+.\34_104職缺更新_藍新資訊.md
+.\09_中華網龍.md
+.\24_補充_藍新資訊.md
+.\23_補充_神通資訊.md
+.\104\補5_典凡_聯合報系.md
+.\104\補4_凱基_叡揚.md
+.\104\補3_華電.md
+.\104\補2_神通.md
+.\104\補1_台哥大.md
+.\104\網址6_數據立_奧衍_艾普特_遠振.md
+.\104\網址5_宏碁雲_藍新_網龍.md
+.\104\網址4_聯合報系_典凡.md
+.\104\網址3_凱基_叡揚.md
+.\104\網址2_神通_華電.md
+.\104\網址1_台哥大.md
+.\104\F_叡揚_藍新_奧衍_網龍_數據立.md
+.\104\E_華電_艾普特_醫宇宙.md
+.\104\D_典凡_遠振.md
+.\104\C_宏碁雲_尼諾思.md
+.\104\B_神通_聯合報.md
+.\104\A_凱基_台哥大.md
+.\104\00_104職缺總結.md
+Source                               
+------                               
+C:\Program Files\Git\usr\bin\grep.exe
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command '$paths = @('"'C:/claude/aipe04期末/job-rag/eval/questions_heldout.json','C:/claude/aipe04期末/job-rag/eval/questions.json'); foreach ("'$p in $paths) { $j = Get-Content -LiteralPath $p -Encoding UTF8 -Raw | ConvertFrom-Json; $j.questions | Select-Object question | ConvertTo-Json -Compress }; & '"'C:/Program Files/Git/usr/bin/grep.exe' -r -n -F -- '留職進修' .; Write-Output \"留職進修 exit="'$LASTEXITCODE"; & '"'C:/Program Files/Git/usr/bin/grep.exe' -r -n -F -- '進修留停' .; Write-Output \"進修留停 exit="'$LASTEXITCODE"; & '"'C:/Program Files/Git/usr/bin/grep.exe' -r -n -E -- '進修|留職|留停|長休|充電假' ." in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 271ms:
+[{"question":"EPS 多少？"},{"question":"用什麼雲端？"},{"question":"董事長是誰？"},{"question":"公司在哪裡？"},{"question":"什麼時候上櫃？"},{"question":"海外有哪些據點？"},{"question":"客戶是哪些類型？"},{"question":"股利配多少？"},{"question":"遠振資訊的資本額是多少？"},{"question":"數據立的續約率是多少？"},{"question":"艾普特有哪四大事業群？"},{"question":"宏碁雲架構的母公司是誰？"},{"question":"典凡科技的資深網路架構師年薪多少？"},{"question":"宏碁雲架構的雲端維運工程師月薪多少？"},{"question":"艾普特的 PM 專案規劃師月薪多少？"},{"question":"數據立的產品維運工程師要會哪些工具？"},{"question":"神通資訊的 MiTAC Agent Builder 是什麼產品？"},{"question":"凱基證券 2026 上半年的稅後純益是多少？"},{"question":"華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？"},{"question":"叡揚資訊 2026 前三季的營收是多少？"},{"question":"哪些公司的職缺要求 Spring Boot？"},{"question":"哪幾家公司的職缺會用到 VMware？"},{"question":"哪家公司有做 AI Agent 的產品？"},{"question":"哪些公司使用 Google Cloud？"},{"question":"哪些公司的職缺要會 C#？"},{"question":"有颱風假嗎？"},{"question":"有員工持股信託嗎？"},{"question":"有交通津貼嗎？"},{"question":"數據立有提供員工心理諮商嗎？"},{"question":"遠振資訊的育嬰假可以休多久？"},{"question":"典凡科技今年的營收目標是多少？"},{"question":"中華網龍的《尋秦記》累計下載次數是多少？"},{"question":"艾普特的 AI 部有幾位工程師？"},{"question":"廣達電腦有哪些 AI 工程師職缺？"},{"question":"鴻海的董事長是誰？"},{"question":"富邦金控旗下有哪些子公司？"},{"question":"台北明天會下雨嗎？"},{"question":"履歷的自傳要怎麼寫？"},{"question":"哪些公司有哺乳室？"},{"question":"哪間公司有員工社團？"}]
+[{"question":"哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？"},{"question":"哪一家公司有自研的語音模型？"},{"question":"神通資訊的資本額是多少？"},{"question":"華電聯網 2025 年得標多少政府標案？"},{"question":"叡揚資訊 2025 年的營收和 EPS 是多少？"},{"question":"數據立有哪些產品？"},{"question":"聯合報的數據發展部做什麼？"},{"question":"叡揚資訊有哪些 AI 產品？"},{"question":"艾普特是做什麼的公司？"},{"question":"典凡科技提供哪些產品與服務？"},{"question":"宏碁雲架構服務是做什麼的？"},{"question":"台灣大哥大有哪些業務？"},{"question":"典凡科技的 AI 應用工程師年薪多少？"},{"question":"宏碁雲架構服務的應用系統開發工程師要會哪些技能？"},{"question":"神通資訊有沒有 Node.js 後端工程師的職缺？"},{"question":"台灣大哥大的 Kubernetes 平台工程師要幾年經驗？"},{"question":"遠振資訊目前開放幾筆職缺？"},{"question":"聯合報系的數據優化師（數據分析）月薪範圍是多少？"},{"question":"數據立的 AI 解決方案工程師需要出差嗎？"},{"question":"神通資訊的 C++/AI 應用工程師需要出差或外派嗎？"},{"question":"中華網龍的 AI 應用研發工程師要會哪些技術？"},{"question":"藍新資訊的 AI 前線部署工程師要會哪些技術？"},{"question":"神通資訊的 AI 工程師（生成式 AI）要會哪些技術？"},{"question":"華電聯網的資深研發工程師（研發一部）要會哪些技術？"},{"question":"凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？"},{"question":"叡揚資訊錄取後要求多益幾分？"},{"question":"中華網龍的遊戲月活躍玩家有多少？"},{"question":"叡揚資訊的特休天數是幾天？"},{"question":"藍新資訊可以在家上班嗎？"},{"question":"凱基證券員工的平均年薪是多少？"}]
+留職進修 exit=1
+進修留停 exit=1
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+[
+  {
+    "question": "華電聯網做滿幾年能申請留職進修？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "華電聯網",
+    "gold": [],
+    "absence_keywords": ["留職進修", "進修留停"]
+  }
+]
+hook: Stop
+hook: Stop Completed
+tokens used
+43,416
+[
+  {
+    "question": "華電聯網做滿幾年能申請留職進修？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "華電聯網",
+    "gold": [],
+    "absence_keywords": ["留職進修", "進修留停"]
+  }
+]

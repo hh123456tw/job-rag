@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 LENGTHS = (400, 600, 900, 1200)
 BASE = 600  # 目前網站用的長度；其他長度都跟它比
 RATIO = 0.15
-GROUPS = (("old30", "questions.json", "舊 30 題"), ("real20", "questions_real.json", "真實 20 題"), ("held40", "questions_heldout.json", "獨立 40 題"))
+GROUPS = (("old30", "questions.json", "舊 30 題"), ("real20", "questions_real.json", "真實 20 題"), ("held", "questions_heldout.json", "獨立 100 題"))
 OUT = ROOT / "eval" / "results_chunk_sweep"
 NO_CUT = 10 ** 9  # 基線：不切段
 
@@ -291,10 +291,10 @@ def render(res, qd) -> str:
     cell = lambda v, c=None: f"{v:.3f}" + (f" [{c[0]:.3f}, {c[1]:.3f}]" if c else "")
     L = [f"切段上限掃描（票 40）。量測日期 {res['date']}。只量不改：retrieval.CHUNK／OVERLAP 與 .cache/ 都沒動；每個長度各用獨立臨時快取。",
          f"長度與重疊：" + "、".join(f"{n} 字／重疊 {res['overlap'][n]}" for n in ns) + f"（重疊約 {RATIO:.0%}，取整）。目前網站是 {BASE} 字／90。",
-         "量測設定：網站目前設定（公司名自動偵測 開、去重 開、每題取前 K=5 段、bge-m3、已指定公司門檻 0.620／其餘 0.700、跨公司走各家取 2 段、CROSS_FLOOR）。"
+         "量測設定：網站目前設定（公司名自動偵測 開、去重 開、每題取前 K=5 段、bge-m3、已指定公司門檻 0.620／其餘 0.700、跨公司走各家取 3 段、CROSS_FLOOR）。"
          "三組題各自分流（單一公司題／跨公司題），評分沿用 eval/run_real.py。",
          "題檔摘要：" + "；".join(f"{f} {res['digests'][k][:16]}" for k, f, _ in GROUPS), "",
-         "證據強度：弱。三組題共 " + f"{pl[ns[0]]['pooled']['n']} 題單一公司有答案題（可回答題少）；舊 30 題曾用來挑門檻、真實 20 題與舊題同一人出、獨立 40 題未用來調參；"
+         "證據強度：弱。三組題共 " + f"{pl[ns[0]]['pooled']['n']} 題單一公司有答案題（可回答題少）；舊 30 題曾用來挑門檻、真實 20 題與舊題同一人出、獨立 100 題由 GPT 單一模型出題、未用來調參；"
          "同一份語料；金標只指到「檔案＋標題」，不是逐段標註。差異小於區間就只能當方向。", ""]
     L += ["== 一、各長度的段落統計（取自載入後的公開事實段落）==",
           "長度 總段數 平均 中位數 最大 等於上限的段 落在上限格(上限-99~上限)的段 被再切的接縫數"]

@@ -1,266 +1,716 @@
 {
- "n_answerable": 26,
- "n_scored_candidates": 24,
+ "n_answerable": 82,
+ "n_scored_candidates": 69,
  "gated": [
-  "h11",
-  "h21"
+  "g005",
+  "g029",
+  "g037",
+  "g038",
+  "g083",
+  "g089",
+  "g091",
+  "g093",
+  "g095",
+  "g096",
+  "g098"
  ],
- "model_not_found": [],
+ "model_not_found": [
+  "g030",
+  "g097"
+ ],
  "context_mismatch": [],
- "unanswerable_given_answer": [],
+ "unanswerable_given_answer": [
+  "g033"
+ ],
  "stats": {
   "faithfulness": {
-   "n": 24,
-   "mean": 0.9780844155844156,
+   "n": 69,
+   "mean": 0.9842995169082126,
    "ci95": [
-    0.9372294372294371,
+    0.9625603864734298,
     1.0
    ]
   },
   "answer_relevancy": {
-   "n": 24,
-   "mean": 0.8776714033862815,
+   "n": 69,
+   "mean": 0.8154117050985409,
    "ci95": [
-    0.8184694950229172,
-    0.9280598792030771
+    0.7706052834057916,
+    0.8567566655981091
    ]
   }
  },
  "per_question": [
   {
-   "id": "h01",
-   "question": "EPS 多少？",
+   "id": "g001",
+   "question": "台灣大哥大E161系統維運工程師一般年薪多少？",
    "company": "台灣大哥大",
-   "answer": "EPS 的數字依不同期間而不同：\n\n- 2025 年全年 EPS 為 4.77 元 [1][2]。\n- 2025 年第四季 EPS 為 1.28 元 [1]。\n- 2026 年第三季 EPS 為 1.4 元；前三季累計 EPS 為 4.26 元 [3]。",
+   "answer": "根據 [1]，E161 系統維運工程師的薪資是待遇面議，內文提到績效達平均水準者年薪約 77~95 萬。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.8340184924994092,
+   "answer_relevancy": 0.9234509730153091,
    "error": null
   },
   {
-   "id": "h02",
-   "question": "用什麼雲端？",
+   "id": "g002",
+   "question": "台灣大哥大HIPO資訊招募高中畢業能報嗎？",
+   "company": "台灣大哥大",
+   "answer": "可以。[1] 明確寫高中畢業的新世代程式人才可應徵，且學歷不拘。[1]",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7173409742847318,
+   "error": null
+  },
+  {
+   "id": "g003",
+   "question": "台灣大哥大總部落在台北哪一區？",
+   "company": "台灣大哥大",
+   "answer": "台灣大哥大總部在台北市信義區 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8116210347814136,
+   "error": null
+  },
+  {
+   "id": "g004",
+   "question": "台灣大哥大MyAgent底層核心叫什麼？",
+   "company": "台灣大哥大",
+   "answer": "MyAgent 的核心是自研的 GenAIus [1][3]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7950957547687222,
+   "error": null
+  },
+  {
+   "id": "g006",
+   "question": "台灣大哥大2026年打算花多少資本預算？",
+   "company": "台灣大哥大",
+   "answer": "台灣大哥大2026年資本支出預計82.4億元，其中電信61.3億元、有線電視10.3億元、momo與其他事業10.8億元 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9735609426328754,
+   "error": null
+  },
+  {
+   "id": "g007",
+   "question": "台灣大哥大2026年找誰合作手機直連衛星？",
+   "company": "台灣大哥大",
+   "answer": "台灣大哥大在 2026-03-02 與 AST SpaceMobile 簽署低軌衛星通訊服務策略合作備忘錄，合作內容採手機直連衛星（D2C）[1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7917970653389405,
+   "error": null
+  },
+  {
+   "id": "g008",
+   "question": "台灣大哥大有哪些專做手機App的工程師缺？",
+   "company": "台灣大哥大",
+   "answer": "台灣大哥大目前開放職缺中，專做手機 App 的工程師缺有：\n\n- **I104 Android App開發工程師（775u7）**：負責 Android App 的開發、上架、更新與維護 [2]。\n- **I103 iOS 開發工程師（7neau）**：負責 iOS App 的開發、維護與升級 [3]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9623530182612265,
+   "error": null
+  },
+  {
+   "id": "g009",
+   "question": "台灣大哥大哪些職缺要開發FreeSWITCH？",
+   "company": "台灣大哥大",
+   "answer": "根據 [1]，I90 通訊系統TPM（8sep4）的工作內容包括帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付，並提供 FreeSWITCH 與 VoIP 技術架構指導。根據 [2]，I92 通訊軟體工程師（8seot）的工作內容包括協助開發與維護 FreeSWITCH 核心功能模組，以及參與 PBX 系統規劃設計與自訂模組開發。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.42349532971666964,
+   "error": null
+  },
+  {
+   "id": "g012",
+   "question": "聯合報新聞部前端開發工程師月薪開多少？",
    "company": "聯合報",
-   "answer": "聯合報系使用 Google Cloud [1][2][3]。使用的產品包括 BigQuery、Vertex AI、Compute Engine、Google Kubernetes Engine（GKE）與 Cloud Functions [1]。",
+   "answer": "聯合報新聞部前端開發工程師的月薪為 35,000~50,000 元 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.6655265215487677,
+   "answer_relevancy": 0.9957256014701036,
    "error": null
   },
   {
-   "id": "h03",
-   "question": "董事長是誰？",
+   "id": "g013",
+   "question": "聯合報產品分析中心助理數據分析師要什麼學位？",
+   "company": "聯合報",
+   "answer": "聯合報【數據發展部】助理數據分析師－產品分析中心職缺要求學歷為大學、碩士 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9423197631219448,
+   "error": null
+  },
+  {
+   "id": "g014",
+   "question": "聯合報演算法工程師每天去哪裡上班？",
+   "company": "聯合報",
+   "answer": "根據 [1]，聯合報股份有限公司【數據發展部】演算法工程師的工作地點是台北市信義區基隆路一段178號11樓。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8844713392915234,
+   "error": null
+  },
+  {
+   "id": "g015",
+   "question": "聯合報哪年開始賣數位訂閱？",
+   "company": "聯合報",
+   "answer": "聯合報系於 2020 年推出數位訂閱 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9672641220094222,
+   "error": null
+  },
+  {
+   "id": "g016",
+   "question": "聯合報登記的資本金有多少？",
+   "company": "聯合報",
+   "answer": "聯合報股份有限公司登記的資本額為 30.9 億元（已發行 309,000,000 股，面額 10 元）[1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9664113683248884,
+   "error": null
+  },
+  {
+   "id": "g017",
+   "question": "聯合報自動抓錯字的新聞平台是哪家公司做的？",
+   "company": "聯合報",
+   "answer": "聯合報自動抓錯字的新聞平台是 Streamlined Newsroom，由聯經數位開發 [1][3]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9568945401935492,
+   "error": null
+  },
+  {
+   "id": "g018",
+   "question": "聯合報今年七月起引進哪家美國報紙的內容？",
+   "company": "聯合報",
+   "answer": "聯合報數位版自 2026 年 7 月 1 日起提供紐約時報的國際內容 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7045846818684303,
+   "error": null
+  },
+  {
+   "id": "g019",
+   "question": "聯合報哪些職位的辦公室在信義區？",
+   "company": "聯合報",
+   "answer": "根據段落 [3]，【數據發展部】資料科學資深經理（93f7l）的地點在台北市信義區基隆路一段178號11樓。其他職位的地點，資料中沒有提到。",
+   "faithfulness": 0.5,
+   "answer_relevancy": 0.4370328785015552,
+   "error": null
+  },
+  {
+   "id": "g020",
+   "question": "聯合報哪些職位讓沒工作經驗的人也能投？",
+   "company": "聯合報",
+   "answer": "根據 [1] 和 [2]，資料只列出 13 筆軟體、AI、資料相關職缺及部分內頁更新內容，沒有逐一說明各職缺的經歷要求；其中段落 [5] 提到【數據發展部】演算法工程師（4u5lb）的經歷為「不拘」，其餘職缺的經歷條件，資料中沒有提到。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.5528975943562286,
+   "error": null
+  },
+  {
+   "id": "g023",
+   "question": "叡揚資訊的 API 治理系統工程師月薪開多少？",
    "company": "叡揚資訊",
-   "answer": "董事長是張培鏞（代表人）[2]。",
+   "answer": "叡揚資訊的 API 治理系統工程師（系統工程師_API治理，職缺編號 26050401）月薪為 36,000~45,000 元 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9999999999996964,
+   "answer_relevancy": 0.9278636334303852,
    "error": null
   },
   {
-   "id": "h04",
-   "question": "公司在哪裡？",
+   "id": "g024",
+   "question": "叡揚資訊的資安顧問至少要拿到什麼學位？",
+   "company": "叡揚資訊",
+   "answer": "碩士學位，資訊工程、資訊管理相關 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6399199320967028,
+   "error": null
+  },
+  {
+   "id": "g025",
+   "question": "叡揚資訊的高雄研發據點在哪一區？",
+   "company": "叡揚資訊",
+   "answer": "叡揚資訊的高雄研發中心位於前鎮區中山二路 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.963135834934322,
+   "error": null
+  },
+  {
+   "id": "g026",
+   "question": "叡揚資訊的 Radar 是幫企業管哪一塊？",
+   "company": "叡揚資訊",
+   "answer": "根據段落，Radar（睿達人力資源）是幫企業管人力資源這塊 [1][2]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7184080238736533,
+   "error": null
+  },
+  {
+   "id": "g027",
+   "question": "叡揚資訊2025年研發花費占收入百分之多少？",
+   "company": "叡揚資訊",
+   "answer": "2025 年研發費用占營收 11.04% [2]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8045475199286968,
+   "error": null
+  },
+  {
+   "id": "g028",
+   "question": "叡揚資訊2026年五月活動誰談多代理協作？",
+   "company": "叡揚資訊",
+   "answer": "叡揚資訊 2026 年 5 月 GSS Solutions Day 中，談多 Agent 協作「Team Agent」概念的是前瞻技術研究所經理王麒詳 [2]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7481227357849335,
+   "error": null
+  },
+  {
+   "id": "g031",
+   "question": "叡揚資訊哪些職缺月薪下限剛好三萬八？",
+   "company": "叡揚資訊",
+   "answer": "月薪下限剛好三萬八的職缺有兩個：\n\n1. **.NET 產品開發工程師(24052801)**：月薪 38,000~69,000 元 [1]。\n2. **[高雄]程式設計師(20020405A)**：月薪 38,000~45,000 元 [3]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8118453209494524,
+   "error": null
+  },
+  {
+   "id": "g034",
+   "question": "神通資訊資料庫工程師月薪從多少起？",
    "company": "神通資訊",
-   "answer": "公司在台北市內湖區堤頂大道二段187號 [1][5]。",
+   "answer": "神通資訊資料庫工程師的月薪為 46,000 元以上 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.919060299689769,
+   "answer_relevancy": 0.9895882145694329,
    "error": null
   },
   {
-   "id": "h05",
-   "question": "什麼時候上櫃？",
+   "id": "g035",
+   "question": "神通資訊的 DevOps 工程師最低要什麼學位？",
+   "company": "神通資訊",
+   "answer": "神通資訊的 DevOps 工程師學歷要求為高中、專科、大學、碩士（資訊工程、資訊管理、其他工程相關）[1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9517762458563274,
+   "error": null
+  },
+  {
+   "id": "g036",
+   "question": "神通資訊七月展出的伺服器用哪款處理器？",
+   "company": "神通資訊",
+   "answer": "神通資訊七月 AI WAVE 展出的伺服器搭配 AMD EPYC 9004／9005 系列處理器 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9143238033438262,
+   "error": null
+  },
+  {
+   "id": "g039",
+   "question": "神通資訊員工裡做技術的大概占幾成？",
+   "company": "神通資訊",
+   "answer": "依段落 [1] 和 [3]，員工約 1,000 人，其中技術人員約占 80%（公司自述）。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7529822237959651,
+   "error": null
+  },
+  {
+   "id": "g040",
+   "question": "神通資訊多久安排一次員工健康檢查？",
+   "company": "神通資訊",
+   "answer": "每兩年一次健檢 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6755238724772404,
+   "error": null
+  },
+  {
+   "id": "g041",
+   "question": "神通資訊有哪些專做網頁前端的職缺？",
+   "company": "神通資訊",
+   "answer": "神通資訊的網頁前端相關職缺有：\n\n1. **C011CH2_前端開發工程師(angular)**（104 職缺代碼 8xzqc）：負責金融系統前端架構，用 Angular 開發響應式 SPA，以 RxJS 處理資料串流與非同步 API，用 NgRx 或 Service 管理全域狀態；封裝可重用 UI 元件（SCSS／SASS），與 Java 後端對接 RESTful API [1]。\n\n2. **【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）**（104 職缺代碼 8xz51）：負責 Web 系統前端功能開發與維護，參與前端架構與模組規劃，與 Python／Django 後端工程師對接 RESTful API 並制定資料串接規格；需熟悉 React、Vue、Angular 或 HTMX／Alpine.js 其一 [2]。\n\n3. **60056X0_前端工程師（Next.js／平台型系統）**（104 職缺代碼 8y663）：使用 Next.js 開發與維護平台型前端系統，設計 Chat、Workflow 與資料導向 UI，並實作 SSR／SSG 與可重用元件及 UI 規範 [4]。\n\n另外，職稱清單中還列有「C011CH2_前端開發工程師(angular)」等職缺名稱 [3]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9801666277989977,
+   "error": null
+  },
+  {
+   "id": "g042",
+   "question": "神通資訊有哪些專門找軟體毛病的職缺？",
+   "company": "神通資訊",
+   "answer": "神通資訊的職缺中，與測試相關的有以下幾筆：\n\n- C023CHK 測試工程師（銀行駐點）[1][3]\n- C034CF1 測試工程師 [1][3]\n- K011KBE 測試工程師 [1]\n\n另外，列表中有 K034KBW 工程師（智慧交通機電系統），但資料將它列為「本檔不收」的職缺 [4]，因此資料沒有說明它是否屬於測試類職缺。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8364187820566947,
+   "error": null
+  },
+  {
+   "id": "g045",
+   "question": "藍新資訊的網路工程師一個月能領多少？",
    "company": "藍新資訊",
-   "answer": "藍新資訊於 2026 年 10 月以承銷價每股 68 元掛牌上櫃 [1]。依報導，掛牌日為 2026-10-27 [2][3]。",
+   "answer": "藍新資訊網路工程師（7ystn）的月薪為 40,000~60,000 元 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.6558268704487692,
+   "answer_relevancy": 0.8625186265258226,
    "error": null
   },
   {
-   "id": "h06",
-   "question": "海外有哪些據點？",
+   "id": "g046",
+   "question": "藍新資訊的 AI 平台工程師最低要讀到哪？",
+   "company": "藍新資訊",
+   "answer": "根據 [1]，AI 平台工程師的學歷要求是大學（資訊工程相關、其他相關科系）。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7771686490747838,
+   "error": null
+  },
+  {
+   "id": "g047",
+   "question": "藍新資訊在高雄的辦公室落在哪一區？",
+   "company": "藍新資訊",
+   "answer": "藍新資訊在高雄的辦公室位於高雄市鼓山區 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9541415523998729,
+   "error": null
+  },
+  {
+   "id": "g048",
+   "question": "藍新資訊的 UNIX 主機用哪個產品系列？",
+   "company": "藍新資訊",
+   "answer": "藍新資訊的 UNIX 平台為 IBM Power System [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8387301578335351,
+   "error": null
+  },
+  {
+   "id": "g049",
+   "question": "藍新資訊把技術服務分成幾大類？",
+   "company": "藍新資訊",
+   "answer": "根據 [1]，藍新資訊官網把業務分成「解決方案」與「專業服務」兩大類；其中解決方案有五項，專業服務有六項。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.864730285904971,
+   "error": null
+  },
+  {
+   "id": "g050",
+   "question": "藍新資訊二〇二六年第三季每股賺多少？",
+   "company": "藍新資訊",
+   "answer": "藍新資訊 2026 年第 3 季 EPS 為 1.56 元 [2]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8931277185630866,
+   "error": null
+  },
+  {
+   "id": "g051",
+   "question": "藍新資訊何時在官網加了給股東看的專區？",
+   "company": "藍新資訊",
+   "answer": "2025 年 10 月 28 日，官網新增投資人專區 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.5897360034718554,
+   "error": null
+  },
+  {
+   "id": "g052",
+   "question": "藍新資訊有哪些 AI 工程師職缺？",
+   "company": "藍新資訊",
+   "answer": "藍新資訊在 104 收錄的 AI 相關職缺有兩筆：AI前線部署工程師（8uol0）與 AI平台工程師（95xqc），兩筆的職務類別都是 AI工程師 [1][2][3]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8701793766319069,
+   "error": null
+  },
+  {
+   "id": "g053",
+   "question": "藍新資訊在大安區有哪些駐點工程師缺？",
+   "company": "藍新資訊",
+   "answer": "藍新資訊在大安區的駐點工程師缺有兩個：\n\n1. 專案工程師-網路（大安區；正職，非約聘人員）（96vha），地點在台北市大安區，派駐政府單位現場 [2]。\n2. 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5），地點同樣在台北市大安區，派駐政府單位現場 [4]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9760410635097196,
+   "error": null
+  },
+  {
+   "id": "g056",
+   "question": "凱基證券軟體開發工程師薪水底線多少？",
    "company": "凱基證券",
-   "answer": "根據段落 [1]，凱基證券的海外據點包括：香港、泰國、新加坡、印尼、中國大陸（公司自述）。",
+   "answer": "待遇面議，但經常性薪資達 4 萬元或以上 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.7327156111624243,
+   "answer_relevancy": 0.0,
    "error": null
   },
   {
-   "id": "h07",
-   "question": "客戶是哪些類型？",
+   "id": "g057",
+   "question": "凱基證券Python系統程式設計師最低要什麼學位？",
+   "company": "凱基證券",
+   "answer": "大學、碩士 [1]",
+   "faithfulness": 0.5,
+   "answer_relevancy": 0.4881588756333685,
+   "error": null
+  },
+  {
+   "id": "g058",
+   "question": "凱基證券資深系統分析師在哪上班？",
+   "company": "凱基證券",
+   "answer": "凱基證券資深系統分析師的工作地點在台北市中山區明水路 700 號 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9751162123200734,
+   "error": null
+  },
+  {
+   "id": "g059",
+   "question": "凱基證券新核心靠哪套容器平台運作？",
+   "company": "凱基證券",
+   "answer": "凱基證券新架構採模組化平台，以 Kubernetes 支援微服務與 DevOps [1][3]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.805178497067291,
+   "error": null
+  },
+  {
+   "id": "g060",
+   "question": "凱基證券的凱富理財平台由哪家協助導入？",
+   "company": "凱基證券",
+   "answer": "由瑞銀集團（UBS）旗下子公司 UBS Partner 協助導入 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6142442890479601,
+   "error": null
+  },
+  {
+   "id": "g061",
+   "question": "凱基證券三年聯貸最多能借多少錢？",
+   "company": "凱基證券",
+   "answer": "凱基證券三年期聯貸案的額度上限是 213 億元，用於充實中期營運周轉金 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9386959745708262,
+   "error": null
+  },
+  {
+   "id": "g062",
+   "question": "凱基證券智慧牧羊犬拿過哪個獎？",
+   "company": "凱基證券",
+   "answer": "凱基證券的「AI Agent 智慧牧羊犬」於 2026-06-28 獲 2026 數位時代創新商務獎「最佳管理創新」銅獎 [5]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8856675447124357,
+   "error": null
+  },
+  {
+   "id": "g063",
+   "question": "凱基證券哪些缺需要用 C++ 寫程式？",
+   "company": "凱基證券",
+   "answer": "凱基證券需要用 C++ 寫程式的職缺有兩個：\n\n1. **【資訊部】C++ 交易系統程式設計師（857c8）**：工作內容是開發與維運證券或期貨交易系統，擅長工具包含 C++ [1]。\n2. **【資訊部】Linux C++開發工程師（80kjb）**：負責交易系統的程式開發與維運，必備條件包含 Linux C++ 程式開發 [2]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9243795199740005,
+   "error": null
+  },
+  {
+   "id": "g064",
+   "question": "凱基證券數位創新部現在招哪些人？",
+   "company": "凱基證券",
+   "answer": "凱基證券數位創新部目前開出的職缺共有三筆 [4]：\n\n- **AI專案經理**：負責把 AI／ML 專案導入客戶經營、投資分析與風控等核心業務，將業務需求轉成 AI 解決方案與專案計畫，以敏捷方法管理里程碑，並帶領 PoC 驗證；需具備 3 年以上專案管理經驗、跨部門專案領導、AI 與機器學習知識，以及熟悉金融市場與證券流程 [1]。\n- **AI Agent 應用開發工程師**：職稱見於職缺清單 [4]，資料中沒有提到這筆職缺的詳細工作內容。\n- **AI Solution 工程師/架構師**：負責規劃、開發與運維 Agentic AI 應用系統，設計 AI 與既有證券系統的整合，評估地端、雲端或 Hybrid AI 架構，設計 AI Guardrail、資料控管與稽核紀錄；需具備 3 年以上 AI 系統或大型軟體架構設計經驗等 [5]。\n\n其中 AI專案經理與 AI Solution 工程師/架構師的需求人數皆為 1 人 [1][5]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9408062060418693,
+   "error": null
+  },
+  {
+   "id": "g067",
+   "question": "華電聯網夜班資安監控工程師月薪落在哪？",
    "company": "華電聯網",
-   "answer": "華電聯網的客戶類型包括：政府單位、電信業、一般企業 [1]。以2025年客戶組成來看，企業占44.1%、政府占31.5%、電信占24.4% [2][3]。",
+   "answer": "華電聯網資安監控工程師（L1 SOC／MDR）夜間值班的月薪為45,000~60,000元 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.73423793595174,
+   "answer_relevancy": 0.9014480763248517,
    "error": null
   },
   {
-   "id": "h08",
-   "question": "股利配多少？",
+   "id": "g068",
+   "question": "華電聯網桃園整合服務部系統工程師在哪辦公？",
+   "company": "華電聯網",
+   "answer": "華電聯網桃園整合服務部系統工程師的工作地點在桃園市中壢區環西路121號5樓5B [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9717924624887453,
+   "error": null
+  },
+  {
+   "id": "g069",
+   "question": "華電聯網資安檢測工程師最低要什麼學位？",
+   "company": "華電聯網",
+   "answer": "華電聯網資安檢測工程師（104 職缺代碼 7bebb）的學歷要求為大學、碩士 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9478904670496805,
+   "error": null
+  },
+  {
+   "id": "g070",
+   "question": "華電聯網 FaceKey 靠哪種演算法認人？",
+   "company": "華電聯網",
+   "answer": "FaceKey 搭載 AI 深度學習人臉演算法來做人臉辨識 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8397700964231984,
+   "error": null
+  },
+  {
+   "id": "g071",
+   "question": "華電聯網把資安生意交給哪家子公司主導？",
+   "company": "華電聯網",
+   "answer": "資安業務由 100% 持股的子公司開啟資安主導 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7881675117068396,
+   "error": null
+  },
+  {
+   "id": "g072",
+   "question": "華電聯網二〇二六年股東會決定每股發多少現金？",
+   "company": "華電聯網",
+   "answer": "華電聯網 2026 年 6 月 26 日股東會通過配發現金股利每股 0.58 元 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8164689051052196,
+   "error": null
+  },
+  {
+   "id": "g073",
+   "question": "華電聯網成立碩維時砸了多少資金？",
+   "company": "華電聯網",
+   "answer": "華電聯網成立碩維時投入 8,000 萬元 [1][2]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9871507391784684,
+   "error": null
+  },
+  {
+   "id": "g074",
+   "question": "華電聯網在新竹有哪些技術職缺？",
+   "company": "華電聯網",
+   "answer": "華電聯網在新竹的技術職缺有兩個：\n\n1. **儲存系統工程師（新竹）**（104 職缺代碼 6jad5）：地點在新竹市關新路27號16樓之1；工作內容為短期協助業務三處新竹地區專案建置與維護（NetApp），中期擔任專案PM，長期協助前端規劃解決方案 [1]。\n2. **系統工程師（新竹）**（104 職缺代碼 6ggg2）：地點在新竹市；工作內容為擔任系統專家，提供技術專長與設計能力、支援系統維運，協助解決方案執行與升級，維護管理系統環境的硬體、文件與軟體並排除系統故障，需配合專案進行駐點工作 [2]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.999999999999592,
+   "error": null
+  },
+  {
+   "id": "g075",
+   "question": "華電聯網哪些職缺會做車聯網開發？",
+   "company": "華電聯網",
+   "answer": "華電聯網會做車聯網開發的職缺有：\n\n- **軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）**：工作內容為發展車聯網（C-V2X）智慧交通系統，設計、開發與整合軟體系統與應用程式 [1]。\n- **軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）**：工作內容包含研究車聯網國際標準通訊協定，以及車聯網整合服務的設計與開發 [3]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9673248655694865,
+   "error": null
+  },
+  {
+   "id": "g078",
+   "question": "中華網龍AI應用遊戲工程師月薪落在哪？",
    "company": "中華網龍",
-   "answer": "根據段落，2025 年配發現金股利 0.33 元，為 12 年來首次配息 [1][2]；2026 年股息除息日為 2026 年 7 月 17 日 [2]。",
+   "answer": "中華網龍 AI 應用遊戲工程師的月薪是 30,000~55,000 元 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.7323244189044607,
+   "answer_relevancy": 0.9714193562923708,
    "error": null
   },
   {
-   "id": "h09",
-   "question": "遠振資訊的資本額是多少？",
-   "company": null,
-   "answer": "遠振資訊的資本額有兩種說法：資本總額為 20,000,000 元、實收資本額為 16,054,500 元 [1]；另一處則寫資本額 1300 萬元 [2]。",
+   "id": "g079",
+   "question": "中華網龍飄流幻境遊戲測試最低要什麼學位？",
+   "company": "中華網龍",
+   "answer": "大學以上 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 1.0,
+   "answer_relevancy": 0.6374069816083606,
    "error": null
   },
   {
-   "id": "h10",
-   "question": "數據立的續約率是多少？",
-   "company": null,
-   "answer": "根據 [5]，Business Next 的廣編文章中提到「90% 續約」。",
+   "id": "g080",
+   "question": "中華網龍登記在哪個行政區？",
+   "company": "中華網龍",
+   "answer": "中華網龍登記在台北市南港區 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.691761359819727,
+   "answer_relevancy": 0.9134250755311327,
    "error": null
   },
   {
-   "id": "h12",
-   "question": "宏碁雲架構的母公司是誰？",
-   "company": null,
-   "answer": "宏碁雲架構的母公司是安碁資訊股份有限公司（ACSI，6690）[1]。資料也提到它是安碁資訊的子公司（公司自述）[2]。",
+   "id": "g081",
+   "question": "中華網龍2026年十月營業額多少？",
+   "company": "中華網龍",
+   "answer": "2026 年 10 月營收 0.45 億元 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9915340942030517,
+   "answer_relevancy": 0.791472903066318,
    "error": null
   },
   {
-   "id": "h13",
-   "question": "典凡科技的資深網路架構師年薪多少？",
-   "company": null,
-   "answer": "典凡科技資深網路架構師的年薪為 1,500,000 元以上 [1][4]。",
+   "id": "g082",
+   "question": "中華網龍把吞食天地3放置版交給哪隊開發？",
+   "company": "中華網龍",
+   "answer": "中華網龍把《吞食天地 3：放置版》交給真好玩旗下的團隊「無限製作所」負責研發與營運 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9945265386556592,
+   "answer_relevancy": 0.9257820482792892,
    "error": null
   },
   {
-   "id": "h14",
-   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
-   "company": null,
-   "answer": "宏碁雲架構的雲端維運工程師月薪為 37,000 元以上 [1]。",
+   "id": "g084",
+   "question": "中華網龍飄流幻境二十週年展哪天辦？",
+   "company": "中華網龍",
+   "answer": "2026 年 6 月 6 日、7 日 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9989788896032347,
+   "answer_relevancy": 0.3662006795076547,
    "error": null
   },
   {
-   "id": "h15",
-   "question": "艾普特的 PM 專案規劃師月薪多少？",
-   "company": null,
-   "answer": "艾普特的 PM 專案規劃師月薪為 40,000~42,000 元 [1][4]。",
+   "id": "g085",
+   "question": "中華網龍有哪些軟體相關工作能投？",
+   "company": "中華網龍",
+   "answer": "中華網龍目前收錄的軟體、AI、資料相關職缺共有 5 筆 [1]：\n\n- AI 應用研發工程師（104 職缺代碼 9523j）[1]\n- AI應用遊戲工程師（104 職缺代碼 95dlu）[1]\n- 遊戲程式設計師-飄流幻境（104 職缺代碼 6fqjo）[1]\n- Unity3D 工程師-吞食天地M（104 職缺代碼 6okd8）[1]\n- 遊戲測試-飄流幻境（104 職缺代碼 873it）[1]\n\n這 5 筆都屬於軟體相關職缺；其餘 5 筆是遊戲企劃、遊戲美術、東南亞商務專員（印尼語），不屬於軟體工程 [3]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9988780273899179,
+   "answer_relevancy": 0.8190548394539211,
    "error": null
   },
   {
-   "id": "h16",
-   "question": "數據立的產品維運工程師要會哪些工具？",
-   "company": null,
-   "answer": "根據 [1] 和 [5]，產品維運工程師要會的工具如下：\n\n**必要條件（[1]）**：\n- 精通 Linux\n- 精通 Docker、Grafana + Prometheus\n- Kafka、Nginx、DNS／SSL\n- Shell、Python 3.9+、Java JDK 17+ 日誌排查\n\n**加分條件（[1]）**：\n- Hadoop、Elasticsearch、Doris、ClickHouse、Kibana\n\n**公司頁工具欄列出的（[5]）**：\n- Linux、Java、MySQL、Hadoop、K8s、Shell、LLM、Claude\n\n另外，[1] 提到需 3 年以上經驗、大學以上學歷，待遇面議，工作地點在中山區。",
+   "id": "g086",
+   "question": "中華網龍哪些職缺是做飄流幻境的？",
+   "company": "中華網龍",
+   "answer": "中華網龍做《飄流幻境》的職缺有兩個：遊戲程式設計師-飄流幻境（104 職缺代碼 6fqjo），負責《飄流幻境》的遊戲程式開發 [1]；以及遊戲測試-飄流幻境（104 職缺代碼 873it），進行《飄流幻境》的遊戲測試與 BUG 管理 [2]。兩筆都列在職缺總覽的軟體相關職缺中 [3][4]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.8927970006018361,
+   "answer_relevancy": 0.9322786816390631,
    "error": null
   },
   {
-   "id": "h17",
-   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "id": "g090",
+   "question": "懂 Docker 能投哪幾家公司的職缺？",
    "company": null,
-   "answer": "神通資訊的 MiTAC Agent Builder 是企業 AI 一體機，於 2026 年 4 月 23 日與 AMD 及撼訊科技共同發表。軟體是零程式碼的 Agent 建立工具，不需技術背景即可使用，決策脈絡、運作規則與資料來源可追溯；硬體採 AMD 平台 [1]。2026 年 7 月 AI WAVE 展出的伺服器版本，底層為神雲 TN85-B8261 2U 機型，搭配 AMD EPYC 9004／9005 系列處理器與 AMD Instinct MI350P 顯示卡，軟體面是完全地端部署、以 RAG 做知識檢索、低程式碼／無程式碼的拖拉式介面 [5]。",
+   "answer": "台灣大哥大：I106 .Net工程師與新鮮人徵才計畫-資訊類的職缺內容提到 Docker [1][10]；I94 資深系統工程師的擅長工具欄列 Linux，段落亦提到 cker、Kubernetes [15]。\n\n叡揚資訊：資料沒寫。\n\n凱基證券：資料沒寫。\n\n聯合報：資料沒寫。\n\n藍新資訊：資料中沒有提到現行職缺要求 Docker；AI 部門技術用 Python、Docker、vLLM／Ollama 一類推論工具（資料標註為推測）[17]。\n\n神通資訊：資料沒寫。\n\n華電聯網：資深研發工程師－研發一部（汐止）必備熟悉 Linux、Docker、Ubuntu CLI [24]。\n\n中華網龍：AI 應用研發工程師職缺內容提到 Docker [9]。",
+   "faithfulness": 0.9166666666666666,
+   "answer_relevancy": 0.7899510208333229,
+   "error": null
+  },
+  {
+   "id": "g092",
+   "question": "哪幾家的徵才條件提到亞馬遜雲經驗？",
+   "company": null,
+   "answer": "叡揚資訊：資料沒寫。雲端只提到公有雲基本操作，沒有指名 AWS，資料中也沒提到亞馬遜雲經驗 [11]。\n台灣大哥大：AWS 在雲端技能裡，列為 AWS／Azure／GCP；在 107 資料分析／數據工程師職缺中，AWS／GCP／Azure 寫為加分。這些都是亞馬遜雲經驗的相關文字 [2][4][7]。\n中華網龍：AI 應用研發工程師的加分項提到「雲端」，沒有明確寫出 AWS [8]。\n藍新資訊：公開技術堆疊沒有 AWS；AI 平台工程師的條件也沒有 AWS [14][22]。\n凱基證券：資料沒寫；查到的集團 AI 職缺只是泛稱，沒有出現 AWS [10][20]。\n聯合報：資料發展部的資料科學資深經理職缺提到了解雲端資料平台（如 AWS）[13]；另有公司從 2018 年起把線上服務與資料分析搬到 Google Cloud，用的是 Google Cloud [15]。\n神通資訊：資料沒寫 [17][23]。\n華電聯網：雲端與 AI 資安系統工程師的職缺寫明公有雲（AWS／GCP／Azure），要求至少一種公有雲平台實戰經驗，因此包含 AWS [12]。\n\n依段落內容，明確提到 AWS 的是台灣大哥大、聯合報、華電聯網；其餘公司相關段落沒有提到 AWS，或只寫「雲端」而未指名 [2][4][7][12][13]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9826795446647694,
+   "answer_relevancy": 0.6625959828085347,
    "error": null
   },
   {
-   "id": "h18",
-   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "id": "g094",
+   "question": "會 FastAPI 可以留意哪幾家的工作？",
    "company": null,
-   "answer": "根據段落 [1] 和 [4]，凱基證券 2026 上半年的稅後純益是 179.4 億元，年增 383%。",
+   "answer": "叡揚資訊：資料沒寫 [1][11][15]\n凱基證券：資料沒寫 [2][10][13]\n中華網龍：資料沒寫 [3][16][24]\n台灣大哥大：資料沒寫 [4][6][7]\n神通資訊：職缺「60296BD_AI 工程師（生成式 AI）」的工作內容是用 Python 與 FastAPI 建構後端 API 與 AI 服務 [14]\n華電聯網：資料沒寫 [9][18][21]\n聯合報：資料沒寫 [12][20][23]\n藍新資訊：資料沒寫 [17][19][22]",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9999999999998016,
-   "error": null
-  },
-  {
-   "id": "h19",
-   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
-   "company": null,
-   "answer": "華電聯網「高級工程師（高雄）資料庫」職缺要求 Oracle 與 MySQL 至少熟悉一種，擅長工具欄列出 MySQL、Oracle、PL/SQL [1]。",
-   "faithfulness": 1.0,
-   "answer_relevancy": 0.953553242035161,
-   "error": null
-  },
-  {
-   "id": "h20",
-   "question": "叡揚資訊 2026 前三季的營收是多少？",
-   "company": null,
-   "answer": "叡揚資訊 2026 前三季營收為 15.34 億元，年增 6.58% [3]。",
-   "faithfulness": 1.0,
-   "answer_relevancy": 0.9992269679881923,
-   "error": null
-  },
-  {
-   "id": "h22",
-   "question": "哪幾家公司的職缺會用到 VMware？",
-   "company": null,
-   "answer": "藍新資訊：平台包含 VMware 虛擬化 [1]；官網列出的虛擬化平台包括 VMware、Hyper-V 與 Nutanix KVM [9]。\n神通資訊：擅長工具包含 VMware [4]。\n華電聯網：雲端工程師職缺的擅長工具包含 VMware [5]。\n台灣大哥大：資料沒寫。\n中華網龍：資料沒寫。\n叡揚資訊：資料沒寫。\n聯合報：資料沒寫。\n凱基證券：資料沒寫。",
-   "faithfulness": 0.5454545454545454,
-   "answer_relevancy": 0.8698115171491514,
-   "error": null
-  },
-  {
-   "id": "h23",
-   "question": "哪家公司有做 AI Agent 的產品？",
-   "company": null,
-   "answer": "神通資訊：有 Agent Builder 企業 AI 一體機，軟體是零程式碼的 Agent 建立工具，決策可稽核 [1][6]。  \n凱基證券：有「AI Agent 智慧牧羊犬」，把 AI Agent 與 RPA 整合 [2]。  \n台灣大哥大：有 MyAgent 企業 AI 代理平台 [4]。  \n叡揚資訊：資料提到 Agentic AI、InsAI 與公文 Copilot，並介紹 Agentic RAG、MCP [5]；另有 C.ai 3.0 為 Agentic Portal [7]。  \n華電聯網：SmartQ LAS 提供對話式服務與任務自動化 [8]。  \n藍新資訊：服務範圍包含 AI Agent 整合 [14]。  \n中華網龍：AI 用在遊戲開發流程與玩法，例如《尋秦記》的 AI 夥伴 [13]。  \n聯合報：資料沒寫。",
-   "faithfulness": 0.9285714285714286,
-   "answer_relevancy": 0.9247815176917559,
-   "error": null
-  },
-  {
-   "id": "h24",
-   "question": "哪些公司使用 Google Cloud？",
-   "company": null,
-   "answer": "聯合報系：新聞網站與資料分析搬到 Google Cloud，使用 BigQuery、Vertex AI、Compute Engine、GKE、Cloud Functions [1]；雲平台為 Google Cloud [2]。\n神通資訊：代理產品包括 Google Cloud（公司自述）[7]。\n\n其他公司資料沒寫使用 Google Cloud：叡揚資訊 [3][6]、藍新資訊 [4][5]、華電聯網 [9][11]、台灣大哥大 [10][15]、中華網龍 [12][14]、凱基證券 [13][16]。",
-   "faithfulness": 1.0,
-   "answer_relevancy": 0.9626096162958424,
-   "error": null
-  },
-  {
-   "id": "h25",
-   "question": "哪些公司的職缺要會 C#？",
-   "company": null,
-   "answer": "凱基證券：職缺【資訊部】C# 全端技術工程師要求必備 C#.NET 開發經驗，擅長工具含 C#、WinForm、MS SQL [1]；職缺【資訊部】C#/ASP.net全端工程師必備 2 年以上 C#／ASP.NET（MVC 或 ASP.NET Core）等技能 [3]。\n華電聯網：(C#)資深軟體工程師必備 C# 開發 2 年以上 [2]；高級工程師（高雄）資料庫職缺的資料中沒有提到要會 C# [16]。\n神通資訊：C037CCE_駐點工程師以 C#、ASP.NET 等做程式新增與修改，擅長工具含 C# [4]；C003CDG_軟體工程師職缺的資料中沒有提到要會 C# [5]。\n中華網龍：AI應用遊戲工程師要求熟悉或精通 C++、C# [7]；AI 應用研發工程師職缺的資料中沒有提到要會 C# [6]。\n叡揚資訊：[校園專區-台北].NET程式設計師必備擅長 C#.NET，工具含 C# [9]；.NET 軟體設計師(高雄)職缺的資料中沒有提到要會 C# [10]。\n聯合報：資料科學資深經理職缺的資料中沒有提到要會 C# [8]。\n台灣大哥大：I106 .Net工程師職缺的資料中沒有提到要會 C# [11]。\n藍新資訊：資料中沒有提到要會 C# 的職缺 [15]。",
-   "faithfulness": 1.0,
-   "answer_relevancy": 0.9602980441796009,
-   "error": null
-  },
-  {
-   "id": "h40",
-   "question": "哪間公司有員工社團？",
-   "company": null,
-   "answer": "叡揚資訊：有社團活動 [1]。",
-   "faithfulness": 1.0,
-   "answer_relevancy": 0.5689671707880138,
+   "answer_relevancy": 0.5142466528157374,
    "error": null
   }
  ],
  "low_ids": [
-  "h22"
+  "g019",
+  "g057"
  ],
  "reasons": {
-  "h22": null
+  "g019": "答案只列出一個職缺（資料科學資深經理，段落 [3] 寫地點在信義區基隆路），這句在段落找得到；另一句「其他職位的地點，資料中沒有提到」是否定句，沒有段落可對，評審可能判無依據。另外，聯合報其他職缺的地點段落沒有進前 5 段，所以答案列不全（這是檢索面的限制，不是編造）。RAGAS 沒輸出逐句判定，以上是推論。",
+  "g057": "答案只有「大學、碩士 [1]」一個短句，段落 [1] 的 Python系統程式設計師職缺寫「學歷：大學、碩士」，內容對得上；答案太短，評審拆出的陳述可能把「最低」當成要另外證明的說法。RAGAS 沒輸出逐句判定，以上是推論。"
  },
  "low_ar_ids": [
-  "h01",
-  "h02",
-  "h05",
-  "h06",
-  "h07",
-  "h08",
-  "h10",
-  "h16",
-  "h22",
-  "h40"
+  "g002",
+  "g003",
+  "g004",
+  "g007",
+  "g009",
+  "g014",
+  "g018",
+  "g019",
+  "g020",
+  "g024",
+  "g026",
+  "g027",
+  "g028",
+  "g031",
+  "g039",
+  "g040",
+  "g042",
+  "g045",
+  "g046",
+  "g048",
+  "g049",
+  "g050",
+  "g051",
+  "g052",
+  "g056",
+  "g057",
+  "g059",
+  "g060",
+  "g062",
+  "g070",
+  "g071",
+  "g072",
+  "g079",
+  "g081",
+  "g084",
+  "g085",
+  "g090",
+  "g092",
+  "g094"
  ],
- "note": "答案相關性是第二次補量（先停掉主服務騰出記憶體，用本機 bge-m3 嵌入）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案是 2026-11-17 在新版語料上由 run_heldout_answers.py 重新生成的（K=5、補公司名、已指定公司門檻 0.62）。"
+ "note": "忠實度與答案相關性在同一次 score 階段量完（用本機 bge-m3 嵌入；沒有停主服務）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。100 題的答案是 2026-11-17 在補完職稱清單的語料上由 run_heldout_answers.py 實跑一次生成的（K=5、補公司名、已指定公司門檻 0.62；DeepSeek 輸出可能隨機）。題目由 GPT 單一模型出、金標未經人工確認。"
 }

@@ -1,0 +1,2816 @@
+2026-11-17T15:22:49.730720Z ERROR codex_skills_extension::host_service: failed to install system skills: io error while remove existing system skills dir: 存取被拒。 (os error 5)
+OpenAI Codex v0.166.0
+--------
+workdir: C:\claude\aipe04期末\履歷\廠商深查
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1ea1a-8aac-7030-8d6b-7f539c2d7a67
+--------
+user
+你是求職情報問答 RAG 的「出題者」。只用讀檔（唯讀），不要改任何檔案，不要執行會連網的指令。
+語料資料夾就是目前工作目錄（C:/claude/aipe04期末/履歷/廠商深查）。現有題檔在 C:/claude/aipe04期末/job-rag/eval/questions_heldout.json 與 C:/claude/aipe04期末/job-rag/eval/questions.json（先讀，格式要沿用，題目不能和它們重複或高度相似）。
+
+【可用來源】
+- 公司頁（0N_公司.md）只能用這幾段：「1. 基本資料」「2. 業務與財務」「4. 職缺」「5. 技術堆疊」「8. 近一年新聞」。
+- 補充檔（2N_補充_公司.md）只能用標題不含下列字詞的公開事實段落。
+- 104 職缺更新檔（3N_104職缺更新_公司.md）。
+- 禁用字詞（標題或段落主旨含這些就不能用）：面試、評價、風險、判斷、推測、矛盾、限制、未查到、對應、作戰。
+- 禁用檔案：00_面談作戰卡.md、00_總報告.md、104/ 資料夾、selfdata、其他非列名的檔案。
+
+【口吻】像面試官現場用手機問的：短、口語、10–30 字，不要照抄原文用字（要換同義說法，避免只靠關鍵字比對就答得出來）。公司名可以直接講。題目本身不可寫「根據文件」「上面」之類字眼。
+
+【輸出格式】只輸出一個 JSON 陣列（不要 markdown 圍欄、不要說明文字）。每題一個物件：
+{"question": 題目, "type": 類型, "topic": 主題（薪資/技術/地點/學歷/業務/財務/新聞/職缺/福利規章/內部資訊/其他）, "company": 公司名（跨公司題省略）, "gold": [{"file": 檔名, "heading": 標題路徑, "quote": 原文片段}], ...}
+- heading 寫法：不含檔案最上面的 # 一級標題；把上層到該層的標題文字用 " > " 串起來（例如 "2. 業務與財務"、"目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）"），文字與檔案內完全一致（含編號、全形括號）。
+- quote：必須是該標題段落內「逐字存在」的連續原文，單行內、8–60 字、不要跨行、不要自己改標點或空白。程式會逐字比對，錯一個字就整題作廢。
+- 一題的 gold 可以多筆（例如同一事實在公司頁與補充檔都有就都列）。
+
+【你的任務】只針對「台灣大哥大」，檔案：01_*.md、20_補充_*.md、30_104職缺更新_*.md。共出 11 題：
+1) 7 題 type="單一公司"：答案是明確單一事實，主題要分散（薪資、技術堆疊、工作地點、學歷要求、業務、財務數字、新聞…）。至少 2 題取自 104 職缺更新檔的單一職缺（要指明職稱），其餘取自公司頁或補充檔。
+2) 2 題 type="職缺"：「職缺清單」題，例如「台灣大哥大有哪些軟體職缺」「台灣大哥大有沒有 Python 後端職缺」。答案是多個職缺，gold 要為「每個符合的職缺」各列一筆（file 為 30_*.md，heading 為該職缺標題路徑，quote 取該職缺段內一句）。你必須讀完整份 30 檔，確定列出所有符合的職缺，不要漏。符合職缺要 2–6 個。
+3) 2 題 type="不可回答"：貼近真實面試官會問、但語料裡沒有答案的題（福利細節如員工旅遊、年終獎金月數、加班費算法；公司內部組織人數；語料沒寫的數字等），問的是「台灣大哥大」。gold 設 []，另加 "absence_keywords": [2–4 個關鍵字，用來在全語料 grep 驗證真的沒有；用最短、最能代表答案的詞，例如「年終」「員工旅遊」]。你自己先用 grep 確認這些關鍵字在「台灣大哥大」相關檔案沒有出現。
+type 欄位的值只能是：單一公司、職缺、不可回答。company 欄位填 "台灣大哥大"。
+
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+我會先讀現有題庫與台灣大哥大三份來源，再核對題目重複度、職缺完整性及不可回答題的關鍵字。全程只讀本機檔案，不連網。
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions_heldout.json' -Encoding UTF8 -Raw; Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions.json' -Encoding UTF8 -Raw; rg --files -g '01_*.md' -g '20_補充_*.md' -g '30_104職缺更新_*.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 474ms:
+{
+ "說明": "票 39：獨立測試題 40 題（原本有答案 25、沒答案 15；2026-11-17 因語料換新版，h40 改標為可回答，現為有答案 26、沒答案 14；gold 與關鍵字隨之更新，非為提高分數）。題目與金標在跑任何檢索評估之前寫定，之後不得為了結果改題。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（程式核對確實出現在公開段落）。沒有答案題的 absence_keywords 在整份語料（含排除段落）出現 0 次；trap＝相近主題但語料確實沒寫的陷阱題。核對狀態只有使用者能改成已確認。",
+ "questions": [
+  {
+   "id": "h01",
+   "question": "EPS 多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "EPS 4.77 元"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "EPS 4.77 元，營收年減 0.31%"
+    },
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "業務與財務 > 2025 年第四季與全年細項",
+     "quote": "EPS 4.77 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h02",
+   "question": "用什麼雲端？",
+   "type": "公司頁短問句",
+   "topic": "技術",
+   "answerable": true,
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）"
+    },
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "技術堆疊 > Google Cloud 資料與運算架構",
+     "quote": "使用的產品包括 BigQuery、Vertex AI、Compute Engine"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h03",
+   "question": "董事長是誰？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "張培鏞（代表人）／陳世安"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h04",
+   "question": "公司在哪裡？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "台北市內湖區堤頂大道二段 187 號"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h05",
+   "question": "什麼時候上櫃？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元"
+    },
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "68 元掛牌上櫃，開盤 73.7 元"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "基本資料 > 設立與資本市場歷程",
+     "quote": "每股 68 元掛牌上櫃"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2026 年上櫃審議到掛牌",
+     "quote": "承銷價每股 68 元掛牌上櫃"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h06",
+   "question": "海外有哪些據點？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 業務",
+     "quote": "香港、泰國、新加坡、印尼、中國大陸"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h07",
+   "question": "客戶是哪些類型？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 主要客戶",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "基本資料 > 策略夥伴與客戶群",
+     "quote": "政府單位（交通部、國防單位、地方政府）、電信業"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 2025 年營收結構與客戶組成",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h08",
+   "question": "股利配多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "配發 0.33 元現金股利，12 年來首次配息"
+    },
+    {
+     "file": "09_中華網龍.md",
+     "heading": "8. 近一年新聞",
+     "quote": "2025 年首次配息 0.33 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h09",
+   "question": "遠振資訊的資本額是多少？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "16_遠振資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "資本總額：20,000,000 元"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 公司簡介",
+     "quote": "資本額：1300 萬元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h10",
+   "question": "數據立的續約率是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "續約率 90%、續費率 120%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h11",
+   "question": "艾普特有哪四大事業群？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "廣告科技、行銷科技、管理科技、電商科技"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h12",
+   "question": "宏碁雲架構的母公司是誰？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "1. 基本資料",
+     "quote": "安碁資訊股份有限公司（ACSI，6690）"
+    },
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "安碁資訊（6690）的子公司"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h13",
+   "question": "典凡科技的資深網路架構師年薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師",
+     "quote": "年薪 1,500,000 元以上"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 1,500,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h14",
+   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "薪資：月薪 37,000 以上"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "job/8x526 | 1 年以上 | 大學、碩士 | 月薪 37,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h15",
+   "question": "艾普特的 PM 專案規劃師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "E_華電_艾普特_醫宇宙.md",
+     "heading": "2. 艾普特 > 相關職缺",
+     "quote": "月薪 40,000~42,000"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）",
+     "quote": "https://www.104.com.tw/job/8tpxn | 1 年以上 | 專科以上 | 月薪 40,000~42,000"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h16",
+   "question": "數據立的產品維運工程師要會哪些工具？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師",
+     "quote": "精通 Docker、Grafana + Prometheus"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h17",
+   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "3. 業務與財務 > 產品與業務",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    },
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "技術堆疊 > Agent Builder 企業 AI 一體機的軟硬體",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h18",
+   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "179.4 億，年增 383%"
+    },
+    {
+     "file": "06_凱基證券.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "上半年證券純益 179.4 億，年增 383%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h19",
+   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）",
+     "quote": "擅長工具欄為 MySQL、Oracle、PL/SQL"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "h20",
+   "question": "叡揚資訊 2026 前三季的營收是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "15.34 億，年增 6.58%"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "前三季營收年增 6.58%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h21",
+   "question": "哪些公司的職缺要求 Spring Boot？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Spring Boot"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h22",
+   "question": "哪幾家公司的職缺會用到 VMware？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "VMware"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h23",
+   "question": "哪家公司有做 AI Agent 的產品？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "AI Agent"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h24",
+   "question": "哪些公司使用 Google Cloud？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Google Cloud"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h25",
+   "question": "哪些公司的職缺要會 C#？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "C#"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h26",
+   "question": "有颱風假嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "神通資訊",
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "颱風假"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h27",
+   "question": "有員工持股信託嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "凱基證券",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "持股信託",
+    "員工持股"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h28",
+   "question": "有交通津貼嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "聯合報",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "交通津貼",
+    "交通補助"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h29",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "心理諮商"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h30",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "育嬰"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h31",
+   "question": "典凡科技今年的營收目標是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "營收目標"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "營收目標": "2026-11-17 新語料命中：27 號中華網龍補充檔寫的是《吞食天地》放置版首月營收目標，不是典凡科技今年營收目標；題目仍無答案"
+   }
+  },
+  {
+   "id": "h32",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "下載次數",
+    "下載量",
+    "累計下載"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h33",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "AI 部有",
+    "AI 部人數",
+    "AI 部共"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h34",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "廣達"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h35",
+   "question": "鴻海的董事長是誰？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "鴻海"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h36",
+   "question": "富邦金控旗下有哪些子公司？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "富邦金控"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h37",
+   "question": "台北明天會下雨嗎？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "天氣",
+    "氣象",
+    "下雨"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h38",
+   "question": "履歷的自傳要怎麼寫？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "自傳",
+    "履歷範本"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "自傳": "2026-11-17 新語料命中：37 號中華網龍職缺條件提到自傳，沒有教人怎麼寫自傳；題目仍無答案"
+   }
+  },
+  {
+   "id": "h39",
+   "question": "哪些公司有哺乳室？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "哺乳室"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h40",
+   "question": "哪間公司有員工社團？",
+   "type": "跨公司",
+   "topic": "福利規章",
+   "answerable": true,
+   "gold": [],
+   "split": "heldout",
+   "status": "待使用者確認（2026-11-17 因新語料已含答案，由不可回答改標為可回答，非為提高分數）",
+   "keywords": [
+    "家庭日、社團"
+   ]
+  }
+ ]
+}
+
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2025 年底原廠夥伴獎項",
+     "quote": "HPE FY25 最佳合作夥伴獎"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "c06",
+   "question": "哪一家公司有自研的語音模型？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研語音模型 myVoca"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "myVoca"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "神通資訊的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "額定 25 億；實收 21 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 標案占比（重點）",
+     "quote": "政府標案 110 件，總額近 83 億"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 政府標案與在手專案",
+     "quote": "110 件政府標案，得標總金額近 83 億元"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "20.19 億，年增 16.33%"
+    },
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "業務與財務 > 2025 年財務結果",
+     "quote": "20.19 億元，年增 16.33%"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "AltaBots.ai：企業級 No-Code AI Agent 平台"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "部門 2008 年成立"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "AI 智慧辨識（InsAI，VLM，支援地端）"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "InsAI 支援地端部署"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "InsAI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s11",
+   "question": "艾普特是做什麼的公司？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "數位行銷公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "2. 業務與財務 > 產品與服務（【自述】https://tftech.com.tw ）",
+     "quote": "企業級資料保護與雙活資料中心"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 公司簡介",
+     "quote": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+    },
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "2. 業務與財務",
+     "quote": "機房維運管理、雲端相關服務"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）",
+     "quote": "年薪 900,000~1,200,000"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
+     "quote": "薪資：年薪 900,000~1,200,000 元"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 900,000~1,200,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "Django"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I97 Kubernetes 平台工程師（8xjjo）",
+     "quote": "3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【戰略部】數據優化師(數據分析)（7qtdo）",
+     "quote": "月薪 35,000 元以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-1 AI 解決方案工程師（已讀單頁）",
+     "quote": "需出差，一年累積約三個月以下"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）",
+     "quote": "AI 解決方案工程師（技術）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）",
+     "quote": "不需出差"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）",
+     "quote": "必備為 Python 開發 3 年以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "3 年以上 AI 系統或大型軟體架構設計經驗"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "多益",
+    "TOEIC",
+    "英檢",
+    "英文能力"
+   ],
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "多益": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案",
+    "TOEIC": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案"
+   }
+  },
+  {
+   "id": "u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "月活躍",
+    "活躍玩家",
+    "MAU",
+    "DAU"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u06",
+   "question": "叡揚資訊的特休天數是幾天？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "特休",
+    "特別休假",
+    "休假天數"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u07",
+   "question": "藍新資訊可以在家上班嗎？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "在家上班",
+    "居家辦公",
+    "混合辦公",
+    "WFH",
+    "在家工作"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "平均年薪",
+    "平均薪資",
+    "薪資中位數"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}
+
+30_104職缺更新_台灣大哥大.md
+20_補充_台灣大哥大.md
+01_台灣大哥大.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '01_台灣大哥大.md' -Encoding UTF8 -Raw; Get-Content -LiteralPath '20_補充_台灣大哥大.md' -Encoding UTF8 -Raw; Get-Content -LiteralPath '30_104職缺更新_台灣大哥大.md' -Encoding UTF8 -Raw" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 500ms:
+# 01 台灣大哥大 廠商深查
+
+- 調查日：2026-11-16
+- 標記說明：【自述】公司自己說；【第三方】媒體、平台、法院；【推測】我的判斷。
+- 範圍：只查公司與公開資料。不查報名者個人。
+- 報名資料：部門＝企業服務應用部；對方職稱＝副理；上午看發表、下午面談；提供簡報（無連結）。
+
+## 1. 基本資料
+
+- 法人全名：台灣大哥大股份有限公司（英文簡稱 TWM）【第三方】
+  - https://info.technews.tw/company/97176270-台灣大哥大股份有限公司
+- 統編：97176270【第三方】同上
+- 資本額：資本總額 600 億元；實收資本額約 372.33 億元【第三方】
+  - https://ww2.money-link.com.tw/TWStock/StockBasic.aspx?SymId=3045
+- 成立（核准設立）日：1997-02-25【第三方】同 technews 頁
+- 上市：股票代號 3045；上市日 2002-08-26【第三方】同 technews 頁
+- 員工數：查無。
+  - 查了：搜尋「員工人數／永續報告書」，未取得數字。永續報告書與年報 PDF 未開啟。
+- 母公司／集團：查無明確母公司。
+  - 第三方報導顯示董事長為蔡明忠，富邦集團蔡家為主要經營者。持股比例未驗證。
+  - 台灣大經大富媒體科技持有 momo 富邦媒約 45.01%（舊報導，需以年報為準）。
+  - https://www.ctee.com.tw/news/20250425700186-430502（搜尋結果摘要，未逐篇驗證）
+- 未做：經濟部商工登記公示資料、公開資訊觀測站未直接查詢。以上基本資料皆為第三方轉載，面試前請自己對一次。
+
+## 2. 業務與財務
+
+- 業務【第三方】：電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）。
+  - https://info.technews.tw/company/97176270-台灣大哥大股份有限公司
+- 2025 全年【第三方】：
+  - 合併營收 1,987.6 億元，年減 0.31%。
+  - EBITDA 431.7 億元，年增 1.53%。
+  - 稅後純益 144.4 億元，年增 4%；EPS 4.77 元，7 年新高。
+  - 來源：https://uanalyze.com.tw/articles/5466548988
+- 2025 分項【第三方，引述公司法說】：
+  - Telco＋企業服務營收年增 26%。
+  - 新科技事業營收年增 12%。
+  - momo 會員年增 3%。
+  - 同上來源。
+- 2026 展望【自述，經第三方轉述】：營收成長 5%–7%，營業利益成長 1%–2%。同上來源。
+- 2024 年【第三方】：營收、EBITDA 創歷史新高；EPS 4.57 元。
+  - https://cna.com.tw/business/chinese/403363（只讀到標題摘要）
+- 近 3 年營收趨勢：只確認 2024 創高、2025 持平略減（主因 momo 影響，富果研究說法）。2023 數字與三年完整表：查無。
+  - https://blog.fugle.tw/post/earnings-call-3045-2026-03-17
+- 主要客戶：查無完整客戶名單。
+- 注意：企業客戶 26% 成長的「口徑」有兩種說法。
+  - 公司新聞稿：「企業客戶事業整體營收」年增 26%。
+  - 法說報導：「Telco＋企業服務」年增 26%。
+  - 兩者可能同一數字。基數未公開。26% 不代表金額大。【推測】
+  - 公司新聞稿：https://www.cna.com.tw/business/chinese/432126（2026-04-29，台灣大發布）
+
+## 3. 報名部門在做什麼（企業服務應用部）
+
+- 官方組織圖查無「企業服務應用部」。搜尋「企業服務應用部／企業客戶事業群」沒有結果。
+- 可查的公開事實【自述／第三方】：
+  - 2026-04-27 推「AI 算力服務」，與 GMI Cloud 合作，提供 H100、H200、GB200；預計年中上線 GB300 NVL72。主打「算力與專線打包」、資料留在台灣。
+    - https://newtalk.tw/news/view/2026-04-29/1032433
+  - 桃園龜山 AIDC：規劃供電 25MW；公司稱預售 100% 完售；報導稱部署 7,000 顆 NVIDIA GB300 NVL72。
+    - https://www.ctee.com.tw/news/20260803701567-430502（第三方，2026-08-03）
+  - 企業級 AI Agent 平台 MyAgent，2026 D.E.E.P. Tech Day 發表：
+    - 地端或私有雲部署、多模型切換、企業治理。
+    - 以自研 GenAIus 為核心，用 MCP 串向量檢索、系統操作、人工協作。
+    - 公司稱內部知識查找與行政效率約提升 15%，端到端流程約 30%。
+    - https://www.inside.com.tw/article/42333-taiwan-mobile-bets-on-enterprise-agentic-ai-as-myagent-connects-compute-models-and-workflows-to-drive-the-next-wave-of-growth（搜尋摘要；全文 403，未讀全文）
+  - 公司稱 2026 Q1 AI 與雲服務相關營收年增 471%、AIDC 與算力年增 87%。基數未知。
+    - 見上方 newtalk 與 inside 來源（搜尋摘要）。
+  - 與精誠資訊合作，兩年約 50 項企業解決方案（搜尋摘要）。
+  - 公司稱研發專案超過 50% 導入 AI Coding，產能 1.3 倍。https://www.cna.com.tw/business/chinese/432126
+- 【推測】「企業服務應用部」可能負責把 AI 算力／MyAgent 做成客戶專案或應用解決方案。依據只有上述公開產品，無部門證據。面試要直接問。
+
+## 4. 職缺
+
+- 官方徵才頁：未能確認（搜尋沒回傳官網職缺頁）。
+- 104：依規定未嘗試硬爬。搜尋結果中的 104 連結未開啟。
+- LinkedIn、CakeResume：只有 cake.me 公司頁出現在搜尋結果，未讀內容。
+- 1111 頁面對自動工具回傳安全驗證失敗，只讀到標題。
+
+| 職稱 | 技能要求 | 薪資 | 日期 | 連結 |
+|---|---|---|---|---|
+| 107 資料分析／數據工程師（可遠端） | Python、SQL；PostgreSQL 或 SQL Server；ETL、BI 必備；CI/CD、Docker、MLOps；TensorFlow、PyTorch、Scikit-learn、Pandas；AWS/GCP/Azure 加分；Teradata 加分；LLM 知識加分 | 年薪 81–108 萬（績效平均） | Yourator 頁更新 2026-01-30（無刊登日） | https://www.yourator.co/companies/taiwanmobile/jobs/25039 |
+| I113 (Sr.) 軟體工程師，全端（可遠端） | 全端框架；CI/CD；AWS/GCP/Azure 加分（搜尋摘要） | 年薪約 81–108 萬（搜尋摘要） | 1111 更新 2026-03-09（搜尋摘要） | https://www.1111.com.tw/job/132136774/ |
+| I106 .NET 工程師（可遠端） | .NET、SQL；AI 開發經驗加分（搜尋摘要） | 查無 | 舊刊登 | https://www.yourator.co/companies/taiwanmobile/jobs/24249 |
+| I108 AI／DL 工程師（可遠端） | 查無 | 查無 | 1111 2025-02-11，可能已下架 | 搜尋結果提及，無單獨連結 |
+| HIPO 疾行軍招募計畫（資訊類） | 部分經驗加分；方向含 AI 應用、雲端、後端 | 績效優者年薪 120 萬以上 | 舊刊登 | https://www.yourator.co/companies/taiwanmobile/jobs/24197 |
+| 實習：AI 應用／資料建模 | 基礎 Python；AI／ML／DL 經驗 | 時薪 200–300 元 | 政大平台 2025-03-18 | https://cd.nccu.edu.tw/job/view/3695 |
+
+- 所有職缺都未標示「企業服務應用部」。目前無法確認該部門是否在招人。
+
+## 5. 技術堆疊
+
+- 來自職缺【第三方平台，公司刊登】：Python、SQL、PostgreSQL／SQL Server、Teradata、Docker、CI/CD、MLOps、Spark（標籤）、Java、C#／.NET、Spring Boot（面試題）、AWS／GCP／Azure。
+- 來自公司發表【自述】：自研 GenAIus、MCP、向量檢索 RAG、NVIDIA GB300 算力、自研語音模型 myVoca。
+  - https://www.ctee.com.tw/news/20260803701567-430502
+- GitHub、技術部落格：未查。
+- 【推測】企業端偏 Java／.NET 與資料倉儲；AI 端有 Python。企業服務應用部實際語言查無。
+
+## 6. 面試流程與常見題目
+
+樣本都很少。
+
+- 面試趣，技術職 2 則，2023-05 與 2023-11【第三方】。https://interview.tw/insights/article/bbf6ab7b-1f17-4ed1-8af5-1938d995772d
+  - 軟體工程師：中文面試、無筆試、有複試。題目：「前公司做過什麼改變、改善什麼流程」。
+  - Java 軟體工程師：有筆試、有複試。題目：寫過 stored procedure 嗎。
+  - 另有 1 則職員題目：物件導向三大特性。
+- GoodJob 全端工程師，面試 2025-12，發布 2026-01-05，單一心得【第三方】。https://www.goodjob.life/experiences/695b8a04e664ab81a31c9417
+  - 一面，人資加技術主管，線上。
+  - 題目：自我介紹、Spring Boot 自評 1–5、Docker 自評 1–5、優缺點、能否加班。
+  - 薪資：月薪 5 萬，年薪預計 18 個月，依 KPI 不保證。
+  - 作者稱結果未通知。
+- GoodJob .NET 工程師，單一心得（搜尋摘要）：一面用人主管加部門主管；二面筆試加口試；主管說底薪偏低、靠年終拉高。年份未確認。https://www.goodjob.life/experiences/64e6eefdea4e51001207691b（未逐篇確認內容）
+- PTT Soft_Job、Dcard、Glassdoor：查無（搜尋未回傳相關文章）。
+- 面試趣整體：評分約 3.6/5；子公司「台灣大數位服務」13 篇、平均 4 分、錄取率 69%（搜尋摘要，樣本為子公司，不等於本部門）。
+
+## 7. 工作評價
+
+- GoodJob 整體：評分 3.8–3.9，評分數 224（搜尋摘要）；薪資福利頁共 29 篇，我讀到 2026-02 至 2026-10 共 10 篇。
+  - https://www.goodjob.life/companies/台灣大哥大股份有限公司/work-experiences/薪資福利
+- 薪資（工程師類，各為單一心得）：
+  - 軟體工程師月薪 4.5 萬（2026-03）；年薪 86 萬含簽約金（2026-02）；資深工程師年薪 90 萬、年加薪約 2%（2026-04）；資深工程師年薪 86 萬、稱年終不保證（2026-04）。
+  - 結構：底薪低，年薪以 18 個月計，依考績 1–5 分浮動。
+- 加班：因部門與主管而異。工程師多填 40–45 小時／週；有人稱責任制、無加班費；有人稱忙季曾半年深夜（資深管理師，單一心得）。
+- 居家：每月可居家 10 天（單一心得，2026-04）；另一則提到有居家制度。職缺頁也寫「可遠端工作」。
+- 主管與氣氛：1 則（2026-04）稱氣氛不佳、團隊交流少（單一心得）。
+- 離職原因：查無有效樣本。
+- PTT、Dcard、Glassdoor：查無。
+- 限制：多為整體公司，含門市與管理職。企業服務應用部評價查無。
+
+## 8. 近一年新聞（2025-11 至 2026-11）
+
+- 2026-04-29：公司發布 2025 企業客戶營收年增 26%、AI 算力服務、AI Coding 超過 50%【自述】。https://www.cna.com.tw/business/chinese/432126
+- 2026-04-27：推 AI 算力服務（GMI Cloud）。https://newtalk.tw/news/view/2026-04-29/1032433
+- 2026-03：2025 財報，EPS 4.77 元，營收年減 0.31%【第三方】。https://uanalyze.com.tw/articles/5466548988
+- 2026-06：Computex 公布桃園 AIDC 預售 100% 完售【自述，經第三方轉述】。https://newtalk.tw/news/view/2026-06-02/1038847（只讀到搜尋摘要）
+- 2026-08-03：MyAgent、AIDC 7,000 顆 GB300、myVoca、「超人計畫」培訓近 2,500 名非 IT 同仁。https://www.ctee.com.tw/news/20260803701567-430502
+- 2026-09：D.E.E.P. Tech Day 發表 MyAgent。https://finance.technews.tw/2026/09/08/deep-tech-day-2026-agentic-ai/（只讀到搜尋摘要）
+- 訴訟：
+  - 2025-11 高雄地院判決駁回台灣之星合併後員工離職金請求。https://judgment.judicial.gov.tw/FILES/KSDV/114%2c%e5%8b%9e%e8%a8%b4%2c80%2c20251119%2c1.pdf（搜尋摘要，未開全文）
+  - 2025-06 NCC 行政訴訟訴訟費用裁定（小額）。
+  - 重大訴訟：未見。
+- 裁員：未查到報導。融資：上市公司，不適用。
+- 資安事故：未查到。2025 有推出企業資安服務。
+
+## 9. 給求職者的判斷
+
+### (a) 適合度
+- 中等偏高，條件是部門真的做 AI 應用而不是維運。理由：
+  - 公司正把資源投向企業 AI（算力、MyAgent、RAG、MCP）。【自述】
+  - 你的 Gemini 應用經驗屬於「應用層」，與 MyAgent 的 RAG／Agent 方向相近。【推測】
+  - 招募標籤偏 Java／.NET 與資料倉儲，與你的 Python／Flask 不完全對齊。【推測】
+- 不適合的情況：要的是 K8s、私有化 LLM 部署、GPU 叢集維運。你沒有這些經驗。
+
+### (b) 風險
+- 底薪偏低，年薪靠 18 個月與考績。多則單一心得提到。年終不保證。
+- 加班依部門與主管，差異大。
+- 部門名稱查無，職缺與部門可能無關。
+- 26%、471% 等成長數字缺基數。AI 算力與資料中心偏硬體資本支出，應用開發職位占比未知。
+- 整體營收持平。AI 事業是否轉成穩定人力預算未知。【推測】
+
+### (c) 5 個該問的問題
+1. 企業服務應用部服務哪類客戶？現在有幾個 AI 專案在做？
+2. 這個職位做的是客戶專案交付、MyAgent 產品開發，還是內部系統？
+3. 團隊主要語言與雲端是什麼？AI 用自研 GenAIus，還是外部 API（Gemini、OpenAI）？
+4. AI Coding 超過 50% 專案導入。程式碼審查與驗收怎麼做？誰負責品質？
+5. 薪資結構：底薪、年終月數、考績分布、居家天數、加班如何計算？
+
+### (d) 最能對上的專案與不能誇大的事
+- 最對上：Flask＋MySQL＋Gemini 停車推薦系統。
+  - 對應 Python 後端、資料庫、LLM 應用，且可說明需求拆解與驗收方法。
+  - 次選：和泰黑客松 Next.js＋Gemini（展示實戰與壓力下交付；但前端為主）。
+- 可呼應的點：公司自己用 AI Coding。你能說「需求定義、驗收測試、AI 產出把關」的流程。【推測】
+- 不要誇大：
+  - 程式主要由 AI Agent 產生，不要說成「全部自己寫」。
+  - 沒有私有化 LLM 部署、K8s、GPU 叢集經驗，不要暗示有。
+  - 黑客松是「入圍 15 強」，不要說成得獎。
+  - OpenCV＋Gemini 是模組，不要說成生產系統。
+  - 7 年自營電商是業務經驗，不等於軟體工程年資。
+
+## 未查到與限制
+
+- 員工數、母公司正式持股、2023 營收：查無。
+- 經濟部商工登記、公開資訊觀測站：未直接查詢；基本資料皆第三方轉載。
+- 官方徵才頁、LinkedIn、CakeResume 職缺內容、104：未取得。1111 頁面被驗證擋住，未繞過。I113 薪資與技能來自搜尋摘要，未見全文。
+- 「企業服務應用部」：查無公開資料。
+- PTT、Dcard、Glassdoor：未找到相關文章。
+- inside.com.tw MyAgent 全文 403；多數新聞只讀到搜尋摘要，標「搜尋摘要」處需自行開原文確認。
+- 面試與評價樣本小，且多為整體公司，不代表該部門。
+- 所有 2026 年內容來自工具回傳。若網頁日期有誤，以原網頁為準。
+- 公司自述數字（26%、471%、87%、100% 完售、50% AI Coding、1.3 倍）未經第三方審計。
+
+# 20 台灣大哥大 公開資料補充
+
+## 基本資料
+
+### 與台灣之星合併（2023-12-01 生效）
+
+台灣大哥大與台灣之星在 2023-12-01 正式合併。報導稱，合併後網內用戶一口氣擴大近千萬戶。頻譜方面，台灣大原有 3.5GHz 頻段 60MHz，再加上台灣之星的 40MHz，其中 40MHz 規劃用於企業專網與 5G AIoT。無線網路整併預計在 2024 年底前完成，5G 人口涵蓋率目標在 2025 年達 98%。董事長蔡明忠表示，台灣發展 5G 不應走「軍備競賽」，應進入「價值」競爭。他也提到，台灣大自 2016 年起倡議關閉 2G，並採「共享頻譜、網路與建設」的做法，估計每年可省電 1 億至 2 億度。總經理林之晨在合併當日午夜寫信給同仁，說產業正離開造成「499 之亂」的價格戰。合併承諾包括 149 元起的 4G／5G 方案，對象為身心障礙者、中低收入戶、清寒學生與年長者；台灣之星既有用戶維持原合約條件。
+來源：https://www.taiwannews.com.tw/zh/news/5050526（查詢日 2026-11-17）
+
+### 官網呈現的事業組成與徵才入口
+
+台灣大哥大官網載明公司總部在台北市信義區，股票代碼 3045，核心理念是「創造最佳客戶使用經驗」，業務涵蓋通訊與媒體服務。官網把客群分成個人、家庭、企業、中小企業四類，各有獨立入口。官網提到的品牌與關係企業包括「OP 響樂生活」、台灣大寬頻，以及台信電訊；台信電訊是 2026 年收購精誠資訊的出資主體。官網在 2026-11 的消息有：11-12 召開 115 年第三季法說會；11-12 第 5 度通過運動企業認證，獲頒「金質榮譽企業」；11-17 台灣大運動家族在名古屋亞洲運動會共獲 9 面獎牌（1 金、1 銀、7 銅）。官網另設「菁英招募」與「公司福利」入口，連到公司的人資系統 hrweb.taiwanmobile.com。官網首頁沒有列出沿革與員工數，只提供「大事紀」與「榮耀紀事」的連結。
+來源：https://corp.taiwanmobile.com/（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 2025 年第四季與全年細項
+
+2025 年全年合併營收 1,987.6 億元，EBITDA 431.7 億元，稅後純益 144.4 億元，EPS 4.77 元，現金股利每股 4.8 元（法說當日收盤 106.5 元，殖利率約 4.5%）。第四季合併營收 567.8 億元，年增 1.1%；EBITDA 114 億元；稅後純益 38.8 億元；EPS 1.28 元。行動業務方面，第四季月租型智慧型手機 ARPU 為 687 元，年增 3%；退租率降到 0.59%，為新低；月租型智慧型手機用戶的 5G 滲透率 44%，5G 營收年增 10%，占行動服務營收 68%。家用寬頻第四季營收年增 5%，300Mbps 以上方案用戶年增 27%。2026 年資本支出預計 82.4 億元，其中電信 61.3 億元、有線電視 10.3 億元、momo 與其他事業 10.8 億元。
+來源：https://uanalyze.com.tw/articles/5466548988（查詢日 2026-11-17）
+
+### 2026 年第三季電信本業
+
+台灣大在 2026-11-12 公布第三季財報。第三季合併營收 503.7 億元，年增 8.68%、季增 1.88%；EBITDA 113.14 億元，年增 6.45%；稅後純益 42.6 億元，年增 18.61%；EPS 1.4 元。前三季累計營收 1,495.8 億元，年增 5.36%；EBITDA 341.65 億元，年增 7.53%；稅後純益 129.5 億元，年增 22.87%；EPS 4.26 元。行動服務營收 170.5 億元，年增 3%，創歷史新高。月租型智慧型手機 ARPU 697 元，年增 3%；月租用戶退租率 0.48%。5G 滲透率升到 46%，4G 用戶升級 5G 後，月租費平均上升 47%。家計用戶事業收入年增 14%，寬頻營收年增 5%。
+來源：https://uanalyze.com.tw/articles/6148559244（查詢日 2026-11-17）
+
+### 2026 年第三季企業服務與新科技事業
+
+2026 年第三季，台灣大把企業電信相關事業稱為 Telco+，整體營收年增 34%。細項如下：AIDC 資料中心營收年增 1.4 倍；企業資通訊服務營收年增 2.84 倍；資安服務年增 53%；IoT 物聯網年增 23%；行動廣告聯播網年增 10%。中小企業一站式方案「OP 開店包」用戶數年增 37%。新科技電信事業（不含 momo）營收年增 14%，其中品牌電商營收年增 86%，OTT 服務與內容投資營收年增 26%。這些年增率的基期，法說報導並未揭露。報導也指出，AI 相關內容在此次法說文章中，主要體現在 AIDC 營收成長，沒有再列出其他 AI 業務的金額。
+來源：https://uanalyze.com.tw/articles/6148559244（查詢日 2026-11-17）
+
+### 公開收購精誠資訊的條件
+
+台灣大在 2026-08-12 公告，由百分之百持股的台信電訊公開收購精誠資訊（6214）。收購期間為 2026-08-18 至 2026-10-06，目標至少取得 39% 股權，加上原有的 11.86%，持股將過半。對價為股票與現金各半：每股精誠普通股換台灣大普通股 0.84 股，再加現金 92.5 元。以 8 月 12 日台灣大收盤價 109.5 元計，每股約 184.48 元，較精誠收盤價 142.5 元溢價約 29.5%。價金範圍為 195.8 億元（39%）至 291.3 億元（58%）。2024 年 9 月，台灣大曾以每股 123 元、共 39.72 億元取得精誠 32,298,154 股，當時只形成策略夥伴關係。精誠 2025 年營收 439.7 億元，EPS 7.91 元，歸屬母公司淨利 21.49 億元。第一個完整併表年度預計為 2027 年。
+來源：https://www.bnext.com.tw/article/91850/taiwan-mobile-systex-acquisition（查詢日 2026-11-17）
+
+### 精誠收購完成與整合方向
+
+精誠公開收購的有效應賣股數為 133,836,625 股，約占已發行股份 49.16%，加上原有 11.86%，台灣大總持股達 61.02%。對價包括現金約 123.8 億元與台灣大普通股約 1.124 億股，整體約當 273 億元。台灣大從 2024 年起與精誠合作，共推出近 50 項企業解決方案，合作案件數年增逾 10 倍。公司提出三大綜效：一是跨售，整合雙方客戶與產品，擴大雲端、資安與 ICT 業務；二是 AI，結合台灣大的電信、算力與 AI 技術，以及精誠在軟體開發與系統整合的經驗；三是區域化，利用精誠在日本、新加坡與東南亞的據點，把方案帶到海外。財務目標包括：企業服務營收三年內突破 1,000 億元，長期企業資服年複合成長率 20% 以上，六年內資訊服務市占率倍增。
+來源：https://uanalyze.com.tw/articles/8820058547（查詢日 2026-11-17）
+
+### 「黃金十年」宣示與 2020–2025 趨勢
+
+2026-04-29，台灣大宣示進入「黃金十年」，以三大引擎推動成長：Telco（電信本業）、Telco+（企業事業）、Telco+Tech（科技電信事業）。公司公布，2020 至 2025 年電信服務營收由 450 億元增至 639 億元，成長 42%；合併營收由 1,329 億元增至 1,988 億元，成長 50%；營業利益由 161 億元增至 215 億元，成長 34%。2025 年營業利益創 14 年新高，稅後純益創 9 年新高，每股現金股利 4.8 元，年增 7%，為 2019 年以來最高。2026 年第一季，電信營業利益年增 20%，EPS 1.37 元，科技電信事業（不含 momo）營收年增 32%。公司另提到，2025 年再生能源占比達 19%，今年將啟動「綠電共享」機制。
+來源：https://udn.com/news/story/7240/9471605（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### MyAgent 企業 AI 代理平台與工程師規模
+
+2026-09-08，台灣大舉辦第 4 屆 D.E.E.P. Tech Day，主題為 Agentic AI，展示 15 項 AI 成果，涵蓋 AI 基礎建設與企業應用。MyAgent 是企業 AI 代理平台，整合企業知識、模型、工具與工作流程，支援地端與私有雲部署、可切換模型，並內建企業治理機制。公司內部先用於知識管理與行政流程，估計知識查找與行政工作效率約提升 15%，端到端流程約提升 30%。公司表示，自研的 GenAIus 是 MyAgent 的核心。報導稱，公司員工逾 8,000 人，其中約 1,000 位軟體工程師、約 1,000 位電信與硬體工程師；98% 員工已部署 AI agent，並開發 22 項自有 AI 技術與服務。企業事業成長在第一季約 26%、第二季約 19%。
+來源：https://finance.technews.tw/2026/09/08/deep-tech-day-2026-agentic-ai/（查詢日 2026-11-17）
+
+### myVoca 語音辨識模型
+
+台灣大與長問科技在 2026-03-12 發表 ASR 語音辨識模型 myVoca，支援國語、台語、英語、客語混合辨識。分工上，台灣大負責擴充語料、資料清洗與標註，並提供醫療等產業資料；長問科技負責模型架構、訓練與演算法調校。公司自述，算力需求約為原來的八分之一，硬體成本降低約 88%；客製化後準確率最高可達 97%；即時轉寫在說話後約 1 秒內完成，回應速度約快 6 倍；並稱在算力、準確率與速度上超越 OpenAI Whisper-large-v3。這些數字為公司與合作方自述，報導沒有提供獨立測試。規劃的應用場景包括金融、醫療、製造與智慧政府，用途有客服、會議與工作流程管理。
+來源：https://technews.tw/?p=1524998（查詢日 2026-11-17）
+
+### 內部 AI 導入與 AI 算力服務
+
+台灣大在 2026-04-29 公布內部 AI 導入成果。研發領域超過 50% 的專案導入 AI Coding，開發產能提升至 1.3 倍。「超人計畫」進入第 2 年，完訓率 99.5%，實際應用比例 85.8%。大數據銷售系統「萬能大麥」帶動締結率成長 20%；客服系統「客服小麥」的自助率與滿意度皆達 97%。對外，公司正式推出 AI 算力服務，採用 NVIDIA 算力基礎設施，並建立超過 90 家合作夥伴的資料中心生態圈。企業服務聚焦 AI、ICT、資安、ESG 四大利基，鎖定製造、金融、政府與醫療產業。公司另表示，正結合 Agentic AI，從內部營運升級到服務客戶，但未提供具體數據。以上數字均為公司自述。
+來源：https://www.cna.com.tw/business/chinese/432126（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2026-03-02 與 AST SpaceMobile 簽署低軌衛星合作備忘錄
+
+台灣大在 2026-03-02，於世界行動通訊大會（MWC）期間，與 AST SpaceMobile 簽署「低軌衛星通訊服務策略合作備忘錄」。目標是在台灣推動太空基地台與既有行動網路協同運作，強化全時全地連網與通訊韌性。技術採手機直連衛星（D2C），用戶不必更換或加裝專用設備，即可在基地台覆蓋不到的地區或災害情境下維持基本連線。分工上，AST SpaceMobile 提供 BlueBird 衛星，發射台灣大的行動通訊訊號；台灣大提供行動網路與地面衛星站。衛星位於 500 公里以上高空，單顆 BlueBird 衛星的天線展開面積約 2,400 平方英尺。報導指出，AST 已與 AT&T、Verizon、Vodafone、Rakuten、Google 等業者建立合作。報導沒有提供商轉時程與頻譜安排。
+來源：https://finance.technews.tw/2026/03/02/taiwan-mobile-ast-spacemobile/（查詢日 2026-11-17）
+
+# 30 台灣大哥大 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+本次在台灣大哥大 104 公司頁（8 頁、共 151 筆列表）收錄 49 筆軟體相關職缺，包含 Java／.Net／Python／Node.js 後端與全端、iOS／Android、LLM 平台、資料與數據分析、雲端／Kubernetes／基礎架構、資料庫、資安，以及資訊類招募與實習計畫。列表其餘約 100 筆為業務、行政、行銷、產品經理、網路與基站維運等，未收錄。
+與舊檔（2026-11-16 的 補1／網址1）相比：
+- 新增職稱：I90 通訊系統TPM、I92 通訊軟體工程師、I99 網路工程師、I205 資安防禦工程師、I206 資安工程師（滲透測試）、E161 系統維運工程師、Taiwan Mobile 科技大神培育實習計畫（中文版與英文版各一筆）、第二筆同名的數據研究暨管理主管。
+- 舊檔有、但這次公司頁列表沒有出現：I150 Java影音串流工程師、台灣客服科技「台灣大哥大集團-資料數據分析師」（雇主為台灣客服科技，本來就不在此公司頁）。
+- 其餘舊檔職缺仍在列表；多數職缺的 104 更新日由 11/10 更新為 11/17。
+- 本次不收錄的相關職稱（偏產品與專案管理）：I110 AI 產品經理、I210 AI專案PM、I210 AI資安PM、D661／D662／D663／D666／D667／D665、AI 供應鏈系統規劃與導入專員、E164 網管系統工程師。
+- 內容取自 49 筆 104 內頁的完整文字（2026-11-17 逐筆開啟）。49 筆內頁都能正常開啟，沒有顯示「職缺已關閉」的職缺。
+### 職稱清單
+台灣大哥大在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 49 筆：
+- HIPO疾行軍招募計畫-資訊類（7m38q）
+- 新鮮人徵才計畫-資訊類（7lmd9）
+- 【Taiwan Mobile 科技大神培育實習計畫】Intern-IT（7oc7w）
+- 【Taiwan Mobile Internship】IT Tech Genius Internship Program（80paa）
+- I102 Java全端軟體工程師（7nebo）
+- I36 Java帳務工程師（8nami）
+- I37 Java帳務工程師（7wuwx）
+- I66 Java應用系統工程師（803gw）
+- I106 .Net工程師（47x1e）
+- I109 Java新創金流服務工程師（7kndd）
+- I113 (Sr.)軟體工程師, 全端開發（8tphn）
+- I165 Java資深工程師（8qbzy）
+- I187 Java開發工程師（8eh4t）
+- I193 資深JAVA工程師（7ndix）
+- I105 Python Web工程師（8i0ux）
+- I137 Python全端工程師（8ntrt）
+- I186 Python後端工程師（7wutt）
+- I186 Node.js後端工程師（85n5t）
+- I112 Java/PHP/Python系統開發工程師（8bj3i）
+- I90 通訊系統TPM（8sep4）
+- I92 通訊軟體工程師（8seot）
+- I103 iOS 開發工程師（7neau）
+- I104 Android App開發工程師（775u7）
+- I108 LLM應用平台架構師（8b54k）
+- I107 資料分析/數據工程師（7osnc）
+- I93 雲端工程師（8lnko）
+- I97 Kubernetes 平台工程師（8xjjo）
+- I162 科技服務管理暨維運工程師（8slgk）
+- I91 中介軟體平台技術課主管（8t8wz）
+- I96 資深基礎架構整合工程師（8xjap）
+- I94 資深系統工程師（8b5sf）
+- I100 IT基礎架構工程師（90j99）
+- I201 GPU系統架構工程師（905ot）
+- I202 資料庫平台工程師（6xiif）
+- E161 系統維運工程師（93hps）
+- I99 網路工程師（7oeca）
+- I205 資安防禦工程師（8dpzu）
+- I206 資安工程師（滲透測試）（86xef）
+- I165 TPM 技術專案工程師（8qc2y）
+- I116 TPM技術專案工程師（95v6d）
+- D635 MyVideo 數據分析師（8ly9u）
+- D429 產業研究分析師/數據分析師（8xx70）
+- D429 資深產業研究分析師/數據分析師（8y933）
+- 數據研究暨管理主管（8hnwq）
+- 數據研究暨管理主管（8hsfv）
+- 大哥付你分期數據分析人員（8yx2c）
+- D467 用戶行為分析人員（6k2q4）
+- F56 逾期用戶行為分析人員（891gm）
+- F56 資深逾期用戶行為分析人員（969iy）
+
+### HIPO疾行軍招募計畫-資訊類（7m38q）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：年薪1,200,000元以上（內文：績效優者年薪可達 120 萬以上）　經歷：不拘　學歷：不拘
+- 工作內容：台灣大哥大為 AI 世代與高潛力人才開的重點招募計畫，高中畢業的新世代程式人才與研發替代役也可應徵。新人在導師與團隊協作下參與跨單位與外部客戶的系統與數位服務開發，涵蓋 AI 應用、雲端系統、大數據處理與 App 服務；把業務需求轉成技術方案，並用 AI 工具提升開發與分析效率。發展領域分四類：AI 與智慧應用（AI 應用開發、資料處理、自動化）、雲端與系統開發（後端服務、平台建置）、App 與前端開發（iOS／Android／Web）、數位創新與新型服務。
+- 條件與技能：不需樣樣都會；具備部分以下經驗即為加分：Python、Java、JavaScript、SQL 等程式開發；使用或學習 AI 工具進行開發、分析或自動化；AWS／Azure／GCP 雲端學習或實作；side project、作品集、專題、競賽；邏輯思考與問題拆解；特定領域（機器人控制、WEB3、資安、AI 模型訓練）。104 擅長工具欄列 Java、Python、Objective-C、Swift、Kotlin、AWS、HTML、JavaScript、CSS、VueJS；語文與工作技能欄為不拘。
+- 網址：https://www.104.com.tw/job/7m38q
+- 104 上顯示的更新日：11/17
+
+### 新鮮人徵才計畫-資訊類（7lmd9）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：不拘　學歷：不拘
+- 工作內容：針對新鮮人的資訊類招募，分五個方向：Java 全端軟體工程師（系統需求開發、架構規劃）；Python Web 工程師（資料庫架構、API、雲端服務整合、串接第三方系統）；雲端工程師（公有／私有雲架構、雲端資安、成本治理、SaaS 評估、擔任 SRE）；科技服務管理暨維運工程師（監控告警、CI/CD、根因分析、容量規劃、Log 除錯）；.Net 工程師（ASP.NET MVC／Core、Web API、SQL 調校、資料建模）。
+- 條件與技能：語文為英文聽說讀寫中等。Java 全端：Java＋SQL、JavaScript／HTML5／CSS、SA/SD；加分 Spring Boot、Angular／React／Vue、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP。Python Web：Python、Flask／FastAPI、AWS／GCP、HTML／JavaScript／CSS、Git、物件導向、關聯式 DB／Redis／Linux／容器化。雲端：TCP/IP、AWS／Azure／GCP、Windows／Linux。維運：Linux、Shell Script／Python、Tomcat；加分 Zabbix／Nagios／Grafana。.Net：.NET Framework／Core、C#、WebForm、ASP.NET MVC／Core、jQuery、ADO.NET、Entity Framework Core；加分 Kafka、PostgreSQL／SQL Server、Redis、Docker、CI/CD、AI coding tools。
+- 網址：https://www.104.com.tw/job/7lmd9
+- 104 上顯示的更新日：11/17
+
+### 【Taiwan Mobile 科技大神培育實習計畫】Intern-IT（7oc7w）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端；線上或實體皆可）　薪資：時薪200~300元　經歷：不拘　學歷：不拘
+- 工作內容：不限國籍、實習時間不限寒暑假，由專屬導師帶領；收到履歷後由單位媒合到 16 個方向之一。技術類包含：與 AI 工具（ChatGPT、Copilot）協作開發、API 與後端整合；科技與 AI 服務開發測試（NoSQL 測試程式、資料搬移）；開源資料庫 DBA；M+ Meet 視訊會議（WebSocket／gRPC／RESTful）；語音 ASR／TTS 模型與 API；FinOps 與 CMDB；Terraform／Ansible 的 IaC 與 CI/CD；開源基礎設施 PoC；Unity 3D。另有資安專案管理、AI 訓練語料校正、AI 產品企劃等非開發方向。
+- 條件與技能：依方向不同。程式語言：Python、JavaScript、Java、Go、C#；Web／後端：Django、Node.js、Flask、RESTful API、GraphQL；資料庫：MySQL、PostgreSQL、MariaDB、SQL、NoSQL；工具：Docker、Linux、Shell Script、Git、Postman、Jira、Figma、Terraform、Ansible、Unity、K8s（加分）、AWS／GCP／Azure（加分）。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/7oc7w
+- 104 上顯示的更新日：11/17
+
+### 【Taiwan Mobile Internship】IT Tech Genius Internship Program（80paa）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端）　薪資：時薪200~300元　經歷：不拘　學歷：不拘
+- 工作內容：科技大神實習計畫的英文版，工作性質為兼職、時段彈性，不限國籍，線上或實體皆可，由專屬導師帶領。收到履歷後 HR 媒合四類職務：系統開發（新創科技服務、AI 視覺、影音視覺、語音辨識、雲端服務、資安、BNPL 支付、加密貨幣、海量資料分析）；資料建模（NLP 斷詞資料集、AI 多標籤分類模型、用戶特徵與品牌偏好標註）；系統測試（NoSQL／資料庫測試程式、資料搬移與效能測試、管理後台與 API 測試）；M+ 創新模組開發（小遊戲、會議 AI 影像處理）。
+- 條件與技能：系統開發：Java、HTML5 基礎、Docker 知識。資料建模：Python 基礎、AI／ML／DL 使用經驗。系統測試：Java 基礎、Linux 基本指令。M+ 模組：基礎程式經驗、對 AI 影像處理有興趣。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/80paa
+- 104 上顯示的更新日：11/17
+
+### I102 Java全端軟體工程師（7nebo）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（台北、高雄；部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：參與台灣大哥大跨單位與外部客戶系統的需求開發設計與架構規劃，並執行專案、提出可行方案。領域涵蓋科技新創服務、加值服務、通路營運、虛擬通路、客戶服務、企業創新服務。系統範例包含 MyCharge CPO 平台、訊息系統與優惠券系統、物聯網企業客戶平台、通路門市系統、客服中心系統、電商代運營平台、企業創新整合開發。需求 1~6 人。
+- 條件與技能：必備：Java 程式開發與 SQL 後端開發；JavaScript、HTML5、CSS 前端開發；系統分析／設計（SA/SD）經驗。加分：Spring、Spring Boot；Angular／React／Vue.js；Python／Shell Script；Redis；PostgreSQL；Docker 與 CI/CD；AWS、Azure、GCP 任一雲使用／開發／佈署；帶領開發小組；英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Java、Python、Spring、HTML、JavaScript、CSS。
+- 網址：https://www.104.com.tw/job/7nebo
+- 104 上顯示的更新日：11/17
+
+### I36 Java帳務工程師（8nami）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：4年以上　學歷：不拘
+- 工作內容：參與台灣大哥大跨單位系統的需求開發設計、架構規劃與功能測試；主動提出可行的建議方案；導入新技術（例如 AI 協作）並建立自動化測試流程。
+- 條件與技能：必備：Java、JSP/Servlet、Spring MVC／Spring Boot 架構，並具 RESTful API 設計開發經驗；Oracle 或 PostgreSQL 資料庫程式設計開發經驗；Linux Shell Script 撰寫能力；了解雲端系統開發架構；了解容器（Container）技術與應用服務部署。內文未列加分條件。104 擅長工具欄列 Java、JSP、Spring、Oracle、PostgreSQL。
+- 網址：https://www.104.com.tw/job/8nami
+- 104 上顯示的更新日：11/16
+
+### I37 Java帳務工程師（7wuwx）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（台北／高雄；部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：4年以上　學歷：不拘
+- 工作內容：負責帳務系統銷帳相關作業的開發與日常維運。
+- 條件與技能：必備：Java、JSP/Servlet、Spring MVC 架構，並具 RESTful API 設計開發經驗；Oracle 或 PostgreSQL 資料庫程式設計開發經驗；Linux Shell Script 撰寫能力；了解雲端系統開發架構；了解容器（Container）技術與應用服務部署。內文未列加分條件。104 擅長工具欄列 Linux、Shell、Java、Spring、Oracle。
+- 網址：https://www.104.com.tw/job/7wuwx
+- 104 上顯示的更新日：11/17
+
+### I66 Java應用系統工程師（803gw）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：負責集團 ERP 系統的開發、設計與維運，支援銷售管報系統與投資平台專案的系統功能建置與維運；同時支援集團新創服務專案需求與雲端服務系統的功能建置；參與並執行專案，從各種角度提出可行的建議方案。需求 1 人。
+- 條件與技能：必備：具 Java 開發經驗；了解 Oracle 或 PL/SQL 資料庫。加分：英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Java、Oracle、PL/SQL。
+- 網址：https://www.104.com.tw/job/803gw
+- 104 上顯示的更新日：11/17
+
+### I106 .Net工程師（47x1e）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：參與跨單位系統的需求架構規劃、設計與開發；用 C# .NET（ASP.NET MVC／ASP.NET Core）做後端開發，整合前後端並開發 Web API 與 RESTful API；進行 SQL 查詢、效能調優與資料建模。系統包含 CRM 用戶溝通與行銷平台、電信網路維護平台資料庫、客服中心與 AI 智能客服系統、集團 MIS 系統。
+- 條件與技能：必備：.NET Framework／.NET Core 與 SQL 後端；C#、WebForm、ASP.NET MVC、ASP.NET Core；JavaScript、HTML5、CSS、jQuery；Webservice、Web API、RESTful API 界接；ADO.NET、Entity Framework Core、Bootstrap-Vue。加分：Kafka；WinForm／Console；Angular／React／Vue.js；Data model、系統設計與 API Spec 設計；PostgreSQL／SQL Server；Redis；Docker、CI/CD；AWS／Azure／GCP；AI 開發與 AI coding tools；多益聽讀 550 以上。
+- 網址：https://www.104.com.tw/job/47x1e
+- 104 上顯示的更新日：11/17
+
+### I109 Java新創金流服務工程師（7kndd）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：為數百萬消費者與數千家商店使用的先買後付（BNPL）平台，建構高彈性的系統與周邊服務並持續優化。工作包含資訊系統程式開發、單元測試與功能測試撰寫、資料庫程式開發與維護、系統開發文件撰寫、系統維護管理與功能更新。需求 1 人。
+- 條件與技能：必備：Java 開發能力並熟悉 Spring Boot；JavaScript、HTML5、CSS 網頁開發；資料庫使用經驗；RESTful API 開發經驗。具 Docker、雲端服務使用經驗尤佳。語文：英文聽說讀寫中等。104 擅長工具欄列 Java、JavaScript、jQuery、CSS。
+- 網址：https://www.104.com.tw/job/7kndd
+- 104 上顯示的更新日：11/17
+
+### I113 (Sr.)軟體工程師, 全端開發（8tphn）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：參與核心產品與平台的設計與開發，從 UI 到系統核心邏輯做全端實作，可與 AI 團隊、雲端架構團隊、第三方應用整合協作。工作包含 Web／Server 程式設計與系統模組建構、依產品規格開發與整合功能模組、資料庫架構設計、RESTful API 開發、第三方系統串接，並與 UI/UX 設計師、產品經理、後端與雲端團隊協作；支援問題分析、技術除錯、設計審查與效能優化。需求 1 人。
+- 條件與技能：必備：至少一種後端語言（Java、Python、Go、C++）；JavaScript／TypeScript／HTML／CSS；Git 與 RESTful API 設計開發；溝通與獨立解決問題能力。加分：Spring Boot、Node.js、React、Vue、Angular 任一；CI/CD；AWS／GCP／Azure；資料結構與演算法、大型系統設計；技術文件與系統設計；對 AI 應用、資料視覺化、分散式系統有興趣。104 擅長工具欄列 Java、Python。
+- 網址：https://www.104.com.tw/job/8tphn
+- 104 上顯示的更新日：11/17
+
+### I165 Java資深工程師（8qbzy）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：6年以上　學歷：不拘
+- 工作內容：以 Java（Spring Boot）實作核心系統並重構既有程式碼；設計 API 規格，考量安全、授權與效能並產出技術文件；針對複雜業務邏輯寫高效能 SQL，以 SQL Tuning（Index 優化）處理資料庫瓶頸；撰寫 Docker 腳本或操作 Kubernetes，將應用程式部署到雲端；設定 Logging Tracking，以 ELK 等工具追蹤線上問題。職務類別含軟體工程師、測試人員，需求 1 人。
+- 條件與技能：必備：6 年以上 Java 開發；精通 Spring Boot／MVC；AWS／GCP／Azure 雲端實作與 Docker／K8s；SQL 優化；API Spec 設計、OWASP Top 10 與檢測工具；Code Review。加分：SD／SA 經驗；CI/CD 部署流程規劃；高併發系統或 AI 模型串接。104 擅長工具欄列 Java、Spring、AWS、Microsoft Azure。
+- 網址：https://www.104.com.tw/job/8qbzy
+- 104 上顯示的更新日：11/17
+
+### I187 Java開發工程師（8eh4t）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：進行雲端與容器化平台的規劃分析、架構設計與佈署維運；發展與導入新創服務系統技術；引入或開發自動化部署、測試與監控工具（OpenTelemetry、Prometheus、Grafana）；建立監控與警報系統並整合 AI，及時發現、派工與處理問題；其他主管交辦事項。職務類別含軟體工程師、Internet 程式設計師、系統分析師，需求 1 人。
+- 條件與技能：必備：Java 開發並熟悉 Spring Boot；了解容器（Container）技術開發與部署；GCP 雲端系統開發或網路架構規劃實作其中一項經驗；RESTful API 開發。加分：系統分析經驗。104 擅長工具欄列 Java、Python、JavaScript。
+- 網址：https://www.104.com.tw/job/8eh4t
+- 104 上顯示的更新日：11/17
+
+### I193 資深JAVA工程師（7ndix）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：建置新創產品的營運網站，與產品 PM 規劃與設計產品功能；網站主要提供企業客戶資安與 AI 應用的新創產品服務，需與資安人員及 AI 工程師合作。工作包含需求訪談與技術評估、撰寫系統分析設計文件、Java 程式開發、網站與資料庫效能優化、與開發團隊討論系統整合架構與介接規格。需求 1 人。
+- 條件與技能：必備：精通 Java 並熟悉 Spring Boot；系統分析設計經驗、需求訪談與規格文件；HTML5、JavaScript、React.JS 開發經驗；關聯式資料庫與 SQL；2 年以上 Java 網站開發。加分：AWS 或 GCP 網站開發；善用 AI coding tools；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Java、Python、hadoop；工作技能欄列專案規劃執行／範圍管理。
+- 網址：https://www.104.com.tw/job/7ndix
+- 104 上顯示的更新日：11/17
+
+### I105 Python Web工程師（8i0ux）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：開發 Python Web 應用，架構為 Flask＋jQuery 單體，或 FastAPI＋ReactJS 前後端分離；另開發網路爬蟲程式。應用領域涵蓋科技新創服務、加值服務、通路營運、虛擬通路、企業創新服務。職務類別為軟體工程師，需求 1 人。
+- 條件與技能：必備：Python Web 開發（Flask 或 FastAPI 尤佳，Django 亦可）；jQuery 或 JS 前端開發經驗；網路爬蟲程式開發。加分：ReactJS；GCP／AWS／K8S；Java Web Application；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Python；工作技能欄列軟體工程系統開發、軟體程式設計。
+- 網址：https://www.104.com.tw/job/8i0ux
+- 104 上顯示的更新日：11/17
+
+### I137 Python全端工程師（8ntrt）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：系統全端程式開發，依規格規劃進行產品功能開發，包括資料庫架構設計、API 開發、整合雲端服務、串接第三方應用系統；對程式設計有熱忱並願意學習新技術。職務類別含軟體工程師、全端工程師、Internet 程式設計師，需求 1 人。
+- 條件與技能：必備：Python；HTML、JavaScript、CSS 與互動式網頁開發；物件導向程式設計。加分：完整參與專案的經驗；任一關聯式資料庫與 Linux；容器化相關知識；溝通與團隊協作；多益聽讀 550 以上。104 擅長工具欄列 C#、PostgreSQL、HTML、JavaScript、CSS、ReactJS、AngularJS、VueJS、Angular。
+- 網址：https://www.104.com.tw/job/8ntrt
+- 104 上顯示的更新日：11/16
+
+### I186 Python後端工程師（7wutt）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：系統全端程式開發，對程式設計有熱忱並願意學習新技術；依規格規劃進行產品功能開發，包括資料庫架構設計、API 開發、整合雲端服務、串接第三方應用系統。職務類別含軟體工程師、Internet 程式設計師、網頁設計師，需求 1 人。
+- 條件與技能：必備（內文全列為必備）：Python；Flask／FastAPI 框架；GCP／AWS 任一雲端服務；Git 版本控制；物件導向；完整參與專案的經驗；任一關聯式資料庫、Redis、Linux 使用經驗；容器化相關知識；溝通與團隊協作。104 擅長工具欄列 Linux、Python、AWS。
+- 網址：https://www.104.com.tw/job/7wutt
+- 104 上顯示的更新日：11/17
+
+### I186 Node.js後端工程師（85n5t）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：開發大型視訊會議系統，建立具高併發與高可用性的 Micro-services；設計與實作 WebSocket 與 RESTful API；研發並優化後端服務效能。職務類別含軟體工程師、Internet 程式設計師、網頁設計師，需求人數不限。
+- 條件與技能：必備：JavaScript 與 Node.js 框架；物件導向與 Git 版本控制流程；GCP／AWS 任一雲端服務；關聯式與非關聯式資料庫（MySQL、PostgreSQL、Redis 或 MongoDB）；Linux 與容器化；Express 與 Socket.io、WebSocket、WebRTC；Distributed／Micro-Service 系統開發；Scrum／Agile 與開源貢獻經驗。104 擅長工具欄列 Linux、MySQL、PostgreSQL、AWS、JavaScript、Node.js。
+- 網址：https://www.104.com.tw/job/85n5t
+- 104 上顯示的更新日：11/13
+
+### I112 Java/PHP/Python系統開發工程師（8bj3i）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：系統建置、維運、調校與監控；資料庫維運管理；功能問題排除與程式調整；開發自動化程式與系統報表。職務類別含軟體工程師、Internet 程式設計師、後端工程師，需求 1 人。
+- 條件與技能：前後端程式語言（Java／PHP／Python 擇一）與 Scripting language 能力；熟悉 SQL Command；熟悉 Linux 指令；溝通與表達能力；獨立思考與學習新技術能力。加分：雲端相關證照；電商網站相關經驗。104 擅長工具欄列 Java、PHP、Python。
+- 網址：https://www.104.com.tw/job/8bj3i
+- 104 上顯示的更新日：11/17
+
+### I90 通訊系統TPM（8sep4）
+- 公司：台灣大哥大股份有限公司　地點：雲林縣斗六市（內文：可依所在地協調台北、台中、雲林、高雄；部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：面議，依績效另有年終獎金與員工紅利）　經歷：8年以上　學歷：不拘
+- 工作內容：帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付；制定專案時程與資源分配；協調跨功能團隊，確保專案目標達成；提供 FreeSWITCH 與 VoIP 技術架構指導；檢核技術設計與程式碼品質；協助解決複雜的技術問題與系統整合。職務類別為軟體專案主管、系統分析師、軟體專案管理師，需求 1 人。
+- 條件與技能：必要：8 年以上軟體開發經驗，其中 5 年以上專案管理；深入了解 FreeSWITCH 架構與 VoIP；C/C++、Python、Lua；分散式系統、微服務架構與雲端技術；PostgreSQL、MySQL；Linux 系統管理與 DevOps。加分：SIP、RTP、WebRTC 協議；Docker、Kubernetes；ELK Stack、Prometheus；Scrum、Kanban。104 擅長工具欄列 Linux、MySQL、PostgreSQL、IMS、VoIP。
+- 網址：https://www.104.com.tw/job/8sep4
+- 104 上顯示的更新日：11/16
+
+### I92 通訊軟體工程師（8seot）
+- 公司：台灣大哥大股份有限公司　地點：雲林縣斗六市（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：協助開發與維護 FreeSWITCH 核心功能模組；開發 RESTful API 服務並與第三方系統整合；參與 PBX 系統規劃設計與自訂模組開發；協助資料庫設計與系統監控機制建立；撰寫測試程式與技術文件。職務類別為軟體工程師、後端工程師、通訊軟體工程師，需求 1 人。
+- 條件與技能：必要：任一程式語言熟練並具 Lua 基礎；SIP、RTP 等 VoIP 協議基礎；PostgreSQL 或 MySQL 使用經驗；Linux 命令列操作；Git 程式碼管理。加分：FreeSWITCH 開發或配置經驗；Docker 與 Kubernetes 容器化；Redis 與 RabbitMQ 等訊息佇列系統。104 擅長工具欄列 Linux、MySQL、PostgreSQL、IMS、VoIP。
+- 網址：https://www.104.com.tw/job/8seot
+- 104 上顯示的更新日：11/03
+
+### I103 iOS 開發工程師（7neau）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：iOS App 的開發、維護與升級；以 Swift／Objective-C 開發；設計 App 架構與框架；研究並導入新技術；串接第三方開發套件；撰寫技術文件。職務類別為軟體工程師、Internet 程式設計師，需求 1 人。
+- 條件與技能：必備：Swift／Objective-C；UI/UX 開發並做出穩定的 App；RESTful API 串接與 JSON 解析；Git。加分：App 上架與推播；Firebase、FB 等第三方 SDK；MVC／MVVM；UML 與 Design Pattern；SQLite／CoreData；In-App-Purchase；BLE／Socket 通訊協定與 Media player；CocoaPods；XCTest／Unit Test；CI/CD。104 擅長工具欄列 Objective-C、Swift。
+- 網址：https://www.104.com.tw/job/7neau
+- 104 上顯示的更新日：11/17
+
+### I104 Android App開發工程師（775u7）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：負責 Android App 的開發、上架、更新與維護；撰寫 App 自動化測試以強化品質；參與跨單位與外部客戶系統的需求開發設計與規劃；依內外部業務需求提供技術規劃與分析；領域涵蓋科技新創服務、加值服務、通路營運、虛擬通路、企業創新服務。
+- 條件與技能：必備：Kotlin（Coroutines、Extension Functions）；Android Framework 與 Jetpack（Navigation、Room、WorkManager、Compose）；MVVM、Repository Pattern、Hilt；Retrofit、OkHttp 與 JSON 解析；除錯與問題分析；Unit Test。加分：Kotlin Flow（StateFlow、SharedFlow）；Clean Architecture 與模組化；Profiler 效能調優；Android 安全機制（Keystore、runtime permissions）；Code Review；KMP；CI/CD；ART、Binder、渲染機制。104 擅長工具欄列 Android、Java、Kotlin。
+- 網址：https://www.104.com.tw/job/775u7
+- 104 上顯示的更新日：11/17
+
+### I108 LLM應用平台架構師（8b54k）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：設計並建置「AI 大腦平台」前後端分離的 Web 系統（前端 React.js、後端 Python），為智能客服與知識管理提供 AI 應答；整合 LLM，並用 RAG 結合檢索與生成以提高回答準確性；設計與優化 Agent Flow；應用 Agentic AI；監控並優化平台效能；與業務團隊與 RD 團隊協作；提供技術指導與培訓。職務類別為 AI 工程師、資料工程師，需求 1 人。
+- 條件與技能：必備：深度學習與機器學習；NLP、LLM、Transformer；Python、HTML、JavaScript，FastAPI、langchain（React.js 更佳）；SQL、Pandas、NumPy；大規模分散式系統設計；AWS／Google Cloud／Azure 至少一種；RAG 實作；2 年以上深度學習模型實戰開發。加分：PyTorch／TensorFlow；生成式 AI 於智能客服或知識管理；Agent Flow 與 Agentic AI；追蹤論文與開源；AI coding tools；多益聽讀 550 以上。語文：英文聽說讀寫中等。
+- 網址：https://www.104.com.tw/job/8b54k
+- 104 上顯示的更新日：11/17
+
+### I107 資料分析/數據工程師（7osnc）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：參與資料倉儲需求開發、資料分析與應用、大數據應用的專案開發與系統維運。資料工程部分：資料擷取與處理的 ETL 開發及維運、通路報表系統優化、通路業績日月報需求開發與維運、雲端通路即時戰報需求開發與維運。職務類別為軟體工程師、Internet 程式設計師，需求 1 人。
+- 條件與技能：必備：資料倉儲 ETL 開發；SQL 後端開發；BI Report 開發經驗。加分：Trinity ETL；Teradata SQL；SQL Server Reporting Service；Azure Power BI；SAP BOE；Python 後端；AI coding tools。語文：英文聽說讀寫中等。104 擅長工具欄列 Python、ETL、Django、Power BI；工作技能欄列軟體工程系統開發、軟體程式設計、Machine Learning、資料庫程式設計。
+- 網址：https://www.104.com.tw/job/7osnc
+- 104 上顯示的更新日：11/17
+
+### I93 雲端工程師（8lnko）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：規劃與設計企業內部公有／私有雲架構，打造穩定、可擴展的雲端環境，有機會參與電信業大規模架構的設計與維運；分析並強化雲端資安防護機制；推動公有雲成本治理，找出最適資源分配與優化方式；評估各類 SaaS 解決方案並提出導入建議；擔任重大專案的 SRE（Site Reliability Engineer）。職務類別含系統工程師，需求 1 人。
+- 條件與技能：必備：TCP/IP 協定與網路通訊原理；AWS、Azure、GCP 雲端平台架構與設計原則並有實際操作經驗；Windows 與 Linux 作業系統日常維運；獨立解決問題並與團隊合作。加分：英文基本聽說讀寫，多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、TCP/IP。
+- 網址：https://www.104.com.tw/job/8lnko
+- 104 上顯示的更新日：11/17
+
+### I97 Kubernetes 平台工程師（8xjjo）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（標題註明可部分遠端）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：規劃端到端交付流程（程式碼變更到可控發布、快速回滾、可追溯稽核）；建立可規模化的部署管理模式；推動平台標準化與模板化；與應用團隊設計並優化發布策略；建立權限控管、變更流程、憑證與密鑰使用規範、發布審批；處理交付與平台事件的根因分析並降低 MTTR；撰寫 Runbook、SOP 與上線檢核表。
+- 條件與技能：必備：3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes；GitOps；CI/CD 流水線（版本策略、Artifact/Registry、憑證／密鑰、部署與回滾）；Linux 與網路排障；Shell／Python／Ansible／Terraform 任一；WebLogic／JBoss／WildFly／Tomcat 任一的環境建置與維運。加分：自建或混合環境 Kubernetes；Argo CD、Flux、Jenkins、Bitbucket Pipelines、GitLab CI；Helm、Kustomize；OPA／Gatekeeper、Kyverno、映像掃描、SBOM；Metrics／Logs／Tracing；CKA／CKAD／CKS。104 擅長工具欄列 Jenkins、Python、Linux、Shell、Git。
+- 網址：https://www.104.com.tw/job/8xjjo
+- 104 上顯示的更新日：11/17
+
+### I162 科技服務管理暨維運工程師（8slgk）
+- 公司：台灣大哥大股份有限公司　地點：新北市三重區三重湯城（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：4年以上　學歷：不拘
+- 工作內容：維持 Linux 服務系統的高可用、擴展性與效能；建置與維護監控與告警；規劃並實作 CI/CD 自動化流程；做故障排除與根因分析（RCA）；GCP／AWS 雲端服務維運；協助開發團隊做效能監控與容量規劃；日常維運含監控、排程、備份策略、定期巡檢；分析 Log 並除錯；配合版本更新與功能部署。休假制度為排休，需求 1 人。
+- 條件與技能：必備：Linux 系統管理與指令；Web 應用服務架構（Web Service、Apache Tomcat 等中介平台）；Shell Script 或 Python 自動化；Troubleshooting；團隊溝通。加分：Incident Management；Zabbix／Nagios／Grafana／ELK Stack；Docker／Kubernetes；Jenkins／GitLab CI/CD；大型系統上線與維運流程規劃；Linux 或 GCP／AWS 證照；以 ChatGPT、LangChain、OpenAI API 等 AI 工具輔助維運。104 擅長工具與工作技能欄為不拘。
+- 網址：https://www.104.com.tw/job/8slgk
+- 104 上顯示的更新日：11/17
+
+### I91 中介軟體平台技術課主管（8t8wz）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪可達18個月以上）　經歷：8年以上　學歷：不拘
+- 工作內容：帶領 7–8 人的 K8S 平台團隊，規劃、建置、優化、維運與轉型 WebLogic、JBoss、WildFly、Tomcat 企業級中介軟體平台，並需理解 Oracle／PostgreSQL／MySQL／SQL Server 資料庫架構；推動 WildFly 轉 Tomcat、容器化與微服務遷移；與應用系統、資安、基礎架構團隊協作；建立標準化維運流程與容量、備援、容錯、效能監控策略；培育人才；制定安全與合規策略（稽核、加密、權限管理）。管理責任 5–8 人，需求 1 人。
+- 條件與技能：必備：8 年以上 IT 經驗與 3 年以上管理經驗；Kubernetes 實務（建置、調校、升級、故障處理、部署與回滾、資源與 RBAC 權限、跨層排障）；數位轉型或中介軟體遷移專案經驗；領導力與跨部門協作。加分：跨平台遷移或雲端專案；中介軟體或資料庫專業證照；API 管理或 ESB／MQ 整合平台；多益聽讀 600 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Tomcat、Google Cloud。
+- 網址：https://www.104.com.tw/job/8t8wz
+- 104 上顯示的更新日：11/17
+
+### I96 資深基礎架構整合工程師（8xjap）
+- 公司：台灣大哥大股份有限公司　地點：新北市三重區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：5年以上　學歷：不拘
+- 工作內容：擔任軟體開發團隊與基礎架構團隊的橋樑，協調需求與技術方案；主導 IT Infra 專案從規劃、執行到上線，掌控進度、品質與預算；協調多部門與跨區團隊資源，推動系統導入與流程優化；定期向主管彙報進度；確保伺服器、資料庫、網路等配置滿足應用系統需求，維持高可用與安全；撰寫並維護需求規格、技術方案與會議紀錄。職務類別為專案經理、系統工程師、MIS／網管主管，需求 1 人。
+- 條件與技能：必備：5 年以上 IT 基礎架構經驗（系統或網路工程背景）；作業系統、資料庫、網路、資訊安全知識與整體架構規劃；專案管理實務（進度、資源配置）；跨部門溝通；End 2 End 整合問題定位。加分：PMP 等專案管理證照或敏捷／DevOps 經驗；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/8xjap
+- 104 上顯示的更新日：11/17
+
+### I94 資深系統工程師（8b5sf）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：5年以上　學歷：不拘
+- 工作內容：加入 IT 基礎架構團隊：安裝、設定與維護 Linux／Windows 作業系統；維運 VMware、Nutanix 等私有雲平台；系統資源監控、異常排除與效能調校；備份、還原測試與災難復原規劃；資安防護作業（防火牆、權限控管、弱點掃描與漏洞修補）；管理伺服器與儲存設備；撰寫維運文件；評估導入 AI 與自動化等新技術。職務類別含系統工程師、MIS／網管主管，需求 1 人。
+- 條件與技能：使用技術：Linux（RHEL／Oracle Linux／Ubuntu）、Windows Server、VMware、Nutanix、K8s、Container、Zabbix、Nagios。期待：伺服器硬體與作業系統操作；VMware 或 Nutanix 虛擬化平台管理；獨立處理故障；自動化腳本或資安經驗佳。加分：RHCE、Linux+、VMware VCP、Nutanix NCP 證照；資料中心建置、遷移、DR 計畫；Docker、Kubernetes。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux。
+- 網址：https://www.104.com.tw/job/8b5sf
+- 104 上顯示的更新日：11/17
+
+### I100 IT基礎架構工程師（90j99）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：加入 IT 基礎架構團隊，負責企業內部伺服器與平台環境的日常維運，並參與監控優化、自動化、資安強化、備援驗證與平台標準化；不限定 Linux 或 Windows 單一背景。工作包含維護伺服器與虛擬化平台、處理監控與告警、系統更新與弱點修補與權限管理、備份還原與災難復原演練、維護 SOP 與技術文件、支援系統上線。需求 2 人。
+- 條件與技能：必備：3 年以上基礎架構、系統維運或平台管理；獨立執行伺服器或平台日常維護與排查；Zabbix、Nagios 等監控告警工具；系統更新、權限管理、備份還原、基礎資安；虛擬化或企業 IT 環境維運；文件撰寫與跨團隊協作。加分：Linux、Windows Server；Ansible、Shell Script、Python、PowerShell；VMware、Nutanix、Docker、PKI、憑證管理、災難復原；PostgreSQL、Microsoft SQL Server；生成式 AI 工具輔助排查與腳本；英文技術文件閱讀，多益 550 以上。104 擅長工具欄列 Linux、PostgreSQL。
+- 網址：https://www.104.com.tw/job/90j99
+- 104 上顯示的更新日：11/11
+
+### I201 GPU系統架構工程師（905ot）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（標題註明可部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：5年以上　學歷：不拘
+- 工作內容：加入 IT 基礎架構團隊，負責 x86 GPU 伺服器的安裝、設定與維護；與 AP 單位討論需求，規劃符合 AI 模型訓練與推論的系統架構；把 AI 基礎架構融入備份、還原等維運流程；監控 CPU、GPU 算力與顯存，排除異常並調校效能；評估與導入 AI、自動化與 MLOps 相關底層技術。職務類別為 AI 工程師、系統工程師、資訊設備管制人員，需求 1 人。
+- 條件與技能：必備：x86 伺服器硬體與作業系統操作；GPU 主機實務管理（資源切分、驅動與 CUDA 環境建置）；跨團隊溝通並轉化為 Infra 架構設計；獨立排除故障。加分：Docker、Kubernetes 與 GPU Operator 部署；AI／MLOps 開源工具底層架設；自動化腳本或資安實務；RHCE、Linux+ 證照；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、Shell、MLOps、LLM、AWS。
+- 網址：https://www.104.com.tw/job/905ot
+- 104 上顯示的更新日：11/17
+
+### I202 資料庫平台工程師（6xiif）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（標題註明可部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：建置並優化企業資料庫平台（PostgreSQL 為主，Oracle 為核心系統），涵蓋環境設計、參數基線、權限模型與安全防護；推動標準化與可複製交付（建置、變更、回滾流程與模板）；建立慢查治理、Top SQL 分析、容量預測、監控告警分級與 Runbook；規劃備份還原、還原驗證與 HA/DR 演練；與開發、平台、資安團隊協作；視需求參與 Hybrid Cloud 資料庫治理。職務類別為資料庫管理人員，需求 1 人。
+- 條件與技能：必備：PostgreSQL 或 Oracle 實務維運管理（其一即可）；Linux 基本操作與效能定位（CPU／Memory／IO／Network）；跨部門溝通；文件化與標準化習慣。加分：資料庫平台化、標準化、自動化；效能調校；HA/DR；雲端與混合雲資料庫治理；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、Oracle、PostgreSQL、AWS。
+- 網址：https://www.104.com.tw/job/6xiif
+- 104 上顯示的更新日：11/17
+
+### E161 系統維運工程師（93hps）
+- 公司：台灣大哥大股份有限公司　地點：新北市三重區（遠端工作欄未標示）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：2年以上　學歷：不拘
+- 工作內容：虛擬平台系統的維運管理與客訴處理；集中式儲存服務的維運管理；備份系統的維運管理。職務類別為系統工程師，工作性質全職、日班，休假依公司規定，需求 1 人。
+- 條件與技能：具 2 年以上系統維運相關工作經驗；熟悉 Windows、Linux 系統管理；熟悉 VMware 虛擬化與雲端平台維運管理；熟悉系統自動化工具（如 Power Automate、Python）；具 VMware 系統管理認證或 Linux 系統管理認證尤佳。語文：英文聽說讀寫略懂。104 擅長工具欄列 VMware、Linux；內文未列獨立的加分條件段落。
+- 網址：https://www.104.com.tw/job/93hps
+- 104 上顯示的更新日：11/17
+
+### I99 網路工程師（7oeca）
+- 公司：台灣大哥大股份有限公司　地點：新北市三重區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：參與企業級資安平台（防火牆、IPS、WAF、Proxy 等）的架構設計與管理，持續強化防禦層級；跨部門推動網路與資安整合專案，從需求分析到技術落地；主動偵測與分析網路異常，做問題定位與修復，維持關鍵業務不中斷。職務類別為系統工程師、資訊設備管制人員、網路管理工程師，需求 1 人。
+- 條件與技能：必備：Cisco、Juniper、D-Link 等網通設備的操作與維運實務，熟悉網路架構原理並能獨立作業；Check Point、Palo Alto、Juniper、Fortinet 等防火牆與資安防護設備（IPS、WAF、上網安全控管）的設定、策略管理與資安政策落地。加分：英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Linux、Cisco、Juniper、IPS。
+- 網址：https://www.104.com.tw/job/7oeca
+- 104 上顯示的更新日：11/17
+
+### I205 資安防禦工程師（8dpzu）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：協助企業內部資安防護與事件應變；建置與維護 OpenSearch 平台，做日誌收集、索引管理與異常偵測；導入與維護 EDR 工具、規劃端點防護策略並處理威脅事件；協助建立與維護資安監控平台；撰寫資安事件報告並提出改善建議。職務類別為資安工程師，需求 1 人。
+- 條件與技能：必備（以下五項至少具備二項）：Linux 系統管理與資安加固；OpenSearch 或 ELK Stack 平台建置與維護；EDR 工具導入與事件應變；MDR 分析與外部 SOC／MDR 平台協作；資安事件分析與解決。加分：SOC、SIEM、MDR 平台整合；CCNA、CCNP 網路認證；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/8dpzu
+- 104 上顯示的更新日：11/17
+
+### I206 資安工程師（滲透測試）（86xef）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：執行網站、Web API、主機與內部網路滲透測試；做弱點掃描、人工驗證、排除誤報與分級；分析弱點成因與影響，提出修補建議並複測；撰寫測試計畫、弱點證據與正式檢測報告；依專案參與 AD 安全測試、紅隊與攻防演練；研究最新漏洞與攻擊技術並優化檢測流程。
+- 條件與技能：必備（至少具備二項）：Web／API 滲透測試與 OWASP Top 10、OWASP API Security Top 10；Burp Suite、Nmap、Nuclei、Metasploit、SQLmap、Nessus、Acunetix；主機、網路設備或網站弱點掃描與人工驗證；Windows、Linux 與網路安全；內網或 Active Directory 測試；報告撰寫與改善建議；遵守測試授權範圍與保密要求。加分：金融、電信、政府機關或大型企業滲透測試；Mobile App、紅隊；MITRE ATT&CK、CVSS、EPSS、雲端安全測試；Python、PowerShell、Bash、n8n；SAST、DAST、SCA、DevSecOps；CTF、Hack The Box、TryHackMe、Bug Bounty；CEH、CPENT、OSCP、OSWE、OSEP、eJPT、PNPT、Security+、CISSP、CCNA、CCNP 等證照；多益聽讀 550 以上。
+- 網址：https://www.104.com.tw/job/86xef
+- 104 上顯示的更新日：11/17
+
+### I165 TPM 技術專案工程師（8qc2y）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：協助向外部客戶推介台灣大哥大開發的 AI 產品，做需求訪談與分析，把商業需求轉成技術規格，並與工程團隊討論 API 介接與系統架構；整合產品與技術，為客戶提供系統建置與解決方案；主導專案洽談與需求釐清，協調 RD、QA 團隊如期交付；用 JIRA、Trello 追蹤進度，確保需求變更與版本發布依計畫執行。職務類別為系統分析師、軟體專案管理師、軟體工程師，需求 1 人。
+- 條件與技能：3 年以上 TPM 或專案管理經驗；JIRA／Trello 與 SDLC、Agile；系統設計、API 介接、AWS／GCP／Azure 任一雲端的基本知識；溝通、跨部門協商與簡報。加分：PMP 或 AI 相關證照；政府標案或醫療資訊（HIS/PACS）專案；完整參與軟體專案從立案到結案。104 擅長工具欄列 Java、Python、ASP.NET、JIRA、AWS、Microsoft Azure；工作技能欄列專案管理軟體操作、系統架構規劃、軟體程式設計、軟體工程系統開發。
+- 網址：https://www.104.com.tw/job/8qc2y
+- 104 上顯示的更新日：11/17
+
+### I116 TPM技術專案工程師（95v6d）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：負責 AI 應用與數位應用專案，協調 RD、QA、雲端／資安、產品與業務單位，確保交付時程與品質；主持每日站會、Sprint Planning／Review／Retro；與產品經理拆解商業需求，訂定每個 Sprint 的上版項目；確保專案符合 ISO 27001、GDPR、金融法規等合規要求。職務類別為專案經理、軟體專案管理師，需求 1 人。
+- 條件與技能：必備：3 年以上 TPM 或專案管理；JIRA／Trello 與 SDLC、Agile；系統設計、API 介接、AWS／GCP／Azure 任一雲端的基本知識；溝通、跨部門協商與簡報。加分：PMP 或 AI 證照；政府標案或醫療資訊（HIS/PACS）專案；完整參與軟體專案從立案到結案。104 擅長工具欄列 Python、Java、JIRA。
+- 網址：https://www.104.com.tw/job/95v6d
+- 104 上顯示的更新日：11/17
+
+### D635 MyVideo 數據分析師（8ly9u）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：3年以上　學歷：不拘
+- 工作內容：為台灣大哥大旗下 OTT 串流平台 MyVideo 建立數據驅動的工作方式。用戶成長：分析全通路行銷成效與用戶來源、建立用戶旅程找出斷點、建立用戶分群了解輪廓、喜好與黏著度。產品優化：與產品團隊用數據提升拉新轉換與留存，追蹤訂閱率與觀看率等功能成效。內容策略：分析各類內容表現與用戶喜好，供內容授權單位建立內容策略參考。職務類別為數據分析師／資料分析師、商業分析師、網站行銷企劃，需求 2 人。
+- 條件與技能：3 年以上數據分析經驗；擅於思考分析架構，讓分析結果切合商業議題；擅長 SQL、Python／R；有使用 BI 工具建立數據儀表板的經驗，例如 Tableau；可團隊合作也可獨立作業。語文：英文聽說讀寫中等。104 擅長工具與工作技能欄為不拘。
+- 網址：https://www.104.com.tw/job/8ly9u
+- 104 上顯示的更新日：11/17
+
+### D429 產業研究分析師/數據分析師（8xx70）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：4年以上　學歷：不拘
+- 工作內容：依內外部業務需求提供數據分析與洞察；以商業應用角度解讀分析結果並提出對應策略建議；熟悉內部數據平台並對內與對外推廣使用；洽談跨部門、跨集團與外部的數據合作；執行主管交辦事項與專案。職務類別為商業分析師、數據分析師／資料分析師，需求 1 人。
+- 條件與技能：4 年以上數據分析相關工作經驗；intellectual curiosity、獨立思考；整合、邏輯分析與簡報能力；商業敏銳度；細心、有耐心並具溝通能力；多益 700 分以上。語文：英文聽說讀寫精通。104 擅長工具與工作技能欄為不拘，內文未指名 SQL、Python 等工具。
+- 網址：https://www.104.com.tw/job/8xx70
+- 104 上顯示的更新日：11/17
+
+### D429 資深產業研究分析師/數據分析師（8y933）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約90~108萬）　經歷：4年以上　學歷：不拘
+- 工作內容：與 8xx70 一般版相同：依內外部業務需求提供數據分析與洞察；以商業應用角度解讀分析結果並提出對應策略建議；熟悉內部數據平台並對內與對外推廣使用；洽談跨部門、跨集團與外部的數據合作；執行主管交辦事項與專案。職務類別為商業分析師、數據分析師／資料分析師，需求 1 人。
+- 條件與技能：4 年以上數據分析相關工作經驗；intellectual curiosity、獨立思考；整合、邏輯分析與簡報能力；商業敏銳度；細心、有耐心並具溝通能力；多益 700 分以上。語文：英文聽說讀寫精通。104 擅長工具與工作技能欄為不拘，內文未指名 SQL、Python 等工具。與一般版的差別只在內文年薪區間（90~108萬）。
+- 網址：https://www.104.com.tw/job/8y933
+- 104 上顯示的更新日：11/17
+
+### 數據研究暨管理主管（8hnwq）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（遠端工作欄未標示）　薪資：待遇面議（內文：績效達平均水準者年薪可達19個月以上）　經歷：10年以上　學歷：不拘
+- 工作內容：制定並執行數據戰略，涵蓋數據收集、處理、分析與應用的整體計畫；指導資料科學家、分析師與問卷調查團隊做數據分析，取得洞察以支持業務決策；管理並優化內部數據系統，確保運行效率與安全，支援各部門數據需求；領導數據團隊；與業務部門協作，讓數據戰略對齊業務目標並推動數據驅動決策；管理數據安全與數據隱私。職務類別為資料科學家、數據分析師／資料分析師，管理責任 13 人以上，需求 1 人。
+- 條件與技能：12 年以上資料分析或系統開發相關經驗；商業敏銳度與獨立思考；團隊領導與專案管理，協調跨部門資源；與技術及非技術團隊溝通數據價值；分析思維與解決問題能力；深入了解數據隱私保護與相關法規。104 擅長工具與工作技能欄為不拘，內文未指名程式語言或工具。
+- 網址：https://www.104.com.tw/job/8hnwq
+- 104 上顯示的更新日：11/17
+
+### 數據研究暨管理主管（8hsfv）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，一個月 10 天居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪可達19個月以上）　經歷：10年以上　學歷：不拘
+- 工作內容：與 8hnwq 同名職缺的內文相同：制定並執行數據戰略；指導資料科學家、分析師與問卷調查團隊做數據分析；管理並優化內部數據系統；領導數據團隊並與業務部門協作；管理數據安全與數據隱私。與 8hnwq 的差異在欄位：工作性質為高階，職務類別為經營管理高階主管、顧問師，並標示部分遠端；管理責任 13 人以上，需求 1 人。
+- 條件與技能：12 年以上資料分析或系統開發相關經驗；商業敏銳度與獨立思考；團隊領導與專案管理，協調跨部門資源；與技術及非技術團隊溝通數據價值；分析思維與解決問題能力；深入了解數據隱私保護與相關法規。104 擅長工具與工作技能欄為不拘，內文未指名程式語言或工具。
+- 網址：https://www.104.com.tw/job/8hsfv
+- 104 上顯示的更新日：11/17
+
+### 大哥付你分期數據分析人員（8yx2c）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班，新人期間以實體上班為主）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：2年以上　學歷：不拘
+- 工作內容：「大哥付你分期」是 BNPL（先買後付）服務。工作包含：維護額度模型與規則優化；跨部門挖掘電信大數據，提取具預測力的特徵並迭代模型；用 Tableau 與 AWS 建置即時監控儀表板；把地端（On-premise）原始資料導入 AWS 雲端中繼資料庫，排除異質資料源對接問題，維護 Data Pipeline；與產品、行銷等團隊協作並參與專案規劃；另負責大哥保與數據服務等專案的數據分析。需求 1 人。
+- 條件與技能：2 年以上數據分析或模型開發經驗；Python、R 或其他分析工具，與 SQL 查詢及資料處理；建模經驗，如回歸分析、決策樹、隨機森林等機器學習；邏輯思維並把數據轉成業務建議。加分：金融、支付或電信行業的數據分析或模型開發專案；熟悉授信策略與流程。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/8yx2c
+- 104 上顯示的更新日：11/17
+
+### D467 用戶行為分析人員（6k2q4）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班，新人期間以實體上班為主）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：2年以上　學歷：不拘
+- 工作內容：負責台灣大哥大既有用戶的續約分析與維運管理，結合資料分析結果改善用戶經營模式。工作包含：競業專案與市場資訊蒐集與分析；競業方案與市場動態分析及因應建議；續約用戶行為分析與經營優化（溝通、機制、成效分析）；其他既有用戶續約與使用趨勢分析。職務類別為行銷企劃、市場調查／市場分析，需求 1 人。
+- 條件與技能：2 年以上資料分析或資料庫行銷經驗；用戶行為分析或經營管理相關數據分析經驗；邏輯能力佳並可獨立作業；跨部門溝通協調與專案管理經驗；數據報表自動化經驗；數據分析與簡報能力。語文：英文聽說讀寫中等。104 擅長工具與工作技能欄為不拘，內文未指名程式語言或工具。
+- 網址：https://www.104.com.tw/job/6k2q4
+- 104 上顯示的更新日：11/17
+
+### F56 逾期用戶行為分析人員（891gm）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班，實際天數依部門規範）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：不拘　學歷：不拘
+- 工作內容：分析帳款逾期用戶的使用行為並歸納；找出影響用戶不繳費的關鍵因素；用 AI 工具設計並產出解決方案、更新既有作業流程，製作簡報提案並提供策略建議；協助技術團隊建立生成式 AI、大型語言模型（LLM）、AI Agent 等技術的工作應用。職務類別為統計精算人員、市場調查／市場分析、其他專案管理師，需求 1 人。
+- 條件與技能：邏輯清晰並喜歡解讀數據；具數據分析或演算法預測模型相關經驗，會用 Python 或 R 為加分；會用 Google Gemini、ChatGPT 等生成式 AI 工具；製作商業簡報能力為必備。語文：英文聽說讀寫中等。104 擅長工具欄列 Excel、PowerPoint。
+- 網址：https://www.104.com.tw/job/891gm
+- 104 上顯示的更新日：11/17
+
+### F56 資深逾期用戶行為分析人員（969iy）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班，實際天數依部門規範）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：4年以上　學歷：不拘
+- 工作內容：與 891gm 一般版內文相同：分析帳款逾期用戶的使用行為並歸納；找出影響用戶不繳費的關鍵因素；用 AI 工具產出解決方案、更新既有作業流程並製作簡報提案；參與協助技術團隊完成生成式 AI、LLM、AI Agent 等技術的工作應用。職務類別為統計精算人員、市場調查／市場分析、其他專案管理師，需求 1 人。
+- 條件與技能：邏輯清晰並喜歡解讀數據；具數據分析或演算法預測模型相關經驗，會用 Python 或 R 為加分；會用 Google Gemini、ChatGPT 等生成式 AI 工具；商業簡報能力為必備；另要求曾參與授信、風控、催費、帳務流程優化或演算法模型商轉相關專案。語文：英文聽說讀寫中等。104 擅長工具欄列 Excel、PowerPoint。
+- 網址：https://www.104.com.tw/job/969iy
+- 104 上顯示的更新日：11/12
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '20_補充_台灣大哥大.md' -Encoding UTF8 -Raw; Get-Content -LiteralPath '30_104職缺更新_台灣大哥大.md' -Encoding UTF8 | Select-Object -First 145" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 679ms:
+# 20 台灣大哥大 公開資料補充
+
+## 基本資料
+
+### 與台灣之星合併（2023-12-01 生效）
+
+台灣大哥大與台灣之星在 2023-12-01 正式合併。報導稱，合併後網內用戶一口氣擴大近千萬戶。頻譜方面，台灣大原有 3.5GHz 頻段 60MHz，再加上台灣之星的 40MHz，其中 40MHz 規劃用於企業專網與 5G AIoT。無線網路整併預計在 2024 年底前完成，5G 人口涵蓋率目標在 2025 年達 98%。董事長蔡明忠表示，台灣發展 5G 不應走「軍備競賽」，應進入「價值」競爭。他也提到，台灣大自 2016 年起倡議關閉 2G，並採「共享頻譜、網路與建設」的做法，估計每年可省電 1 億至 2 億度。總經理林之晨在合併當日午夜寫信給同仁，說產業正離開造成「499 之亂」的價格戰。合併承諾包括 149 元起的 4G／5G 方案，對象為身心障礙者、中低收入戶、清寒學生與年長者；台灣之星既有用戶維持原合約條件。
+來源：https://www.taiwannews.com.tw/zh/news/5050526（查詢日 2026-11-17）
+
+### 官網呈現的事業組成與徵才入口
+
+台灣大哥大官網載明公司總部在台北市信義區，股票代碼 3045，核心理念是「創造最佳客戶使用經驗」，業務涵蓋通訊與媒體服務。官網把客群分成個人、家庭、企業、中小企業四類，各有獨立入口。官網提到的品牌與關係企業包括「OP 響樂生活」、台灣大寬頻，以及台信電訊；台信電訊是 2026 年收購精誠資訊的出資主體。官網在 2026-11 的消息有：11-12 召開 115 年第三季法說會；11-12 第 5 度通過運動企業認證，獲頒「金質榮譽企業」；11-17 台灣大運動家族在名古屋亞洲運動會共獲 9 面獎牌（1 金、1 銀、7 銅）。官網另設「菁英招募」與「公司福利」入口，連到公司的人資系統 hrweb.taiwanmobile.com。官網首頁沒有列出沿革與員工數，只提供「大事紀」與「榮耀紀事」的連結。
+來源：https://corp.taiwanmobile.com/（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 2025 年第四季與全年細項
+
+2025 年全年合併營收 1,987.6 億元，EBITDA 431.7 億元，稅後純益 144.4 億元，EPS 4.77 元，現金股利每股 4.8 元（法說當日收盤 106.5 元，殖利率約 4.5%）。第四季合併營收 567.8 億元，年增 1.1%；EBITDA 114 億元；稅後純益 38.8 億元；EPS 1.28 元。行動業務方面，第四季月租型智慧型手機 ARPU 為 687 元，年增 3%；退租率降到 0.59%，為新低；月租型智慧型手機用戶的 5G 滲透率 44%，5G 營收年增 10%，占行動服務營收 68%。家用寬頻第四季營收年增 5%，300Mbps 以上方案用戶年增 27%。2026 年資本支出預計 82.4 億元，其中電信 61.3 億元、有線電視 10.3 億元、momo 與其他事業 10.8 億元。
+來源：https://uanalyze.com.tw/articles/5466548988（查詢日 2026-11-17）
+
+### 2026 年第三季電信本業
+
+台灣大在 2026-11-12 公布第三季財報。第三季合併營收 503.7 億元，年增 8.68%、季增 1.88%；EBITDA 113.14 億元，年增 6.45%；稅後純益 42.6 億元，年增 18.61%；EPS 1.4 元。前三季累計營收 1,495.8 億元，年增 5.36%；EBITDA 341.65 億元，年增 7.53%；稅後純益 129.5 億元，年增 22.87%；EPS 4.26 元。行動服務營收 170.5 億元，年增 3%，創歷史新高。月租型智慧型手機 ARPU 697 元，年增 3%；月租用戶退租率 0.48%。5G 滲透率升到 46%，4G 用戶升級 5G 後，月租費平均上升 47%。家計用戶事業收入年增 14%，寬頻營收年增 5%。
+來源：https://uanalyze.com.tw/articles/6148559244（查詢日 2026-11-17）
+
+### 2026 年第三季企業服務與新科技事業
+
+2026 年第三季，台灣大把企業電信相關事業稱為 Telco+，整體營收年增 34%。細項如下：AIDC 資料中心營收年增 1.4 倍；企業資通訊服務營收年增 2.84 倍；資安服務年增 53%；IoT 物聯網年增 23%；行動廣告聯播網年增 10%。中小企業一站式方案「OP 開店包」用戶數年增 37%。新科技電信事業（不含 momo）營收年增 14%，其中品牌電商營收年增 86%，OTT 服務與內容投資營收年增 26%。這些年增率的基期，法說報導並未揭露。報導也指出，AI 相關內容在此次法說文章中，主要體現在 AIDC 營收成長，沒有再列出其他 AI 業務的金額。
+來源：https://uanalyze.com.tw/articles/6148559244（查詢日 2026-11-17）
+
+### 公開收購精誠資訊的條件
+
+台灣大在 2026-08-12 公告，由百分之百持股的台信電訊公開收購精誠資訊（6214）。收購期間為 2026-08-18 至 2026-10-06，目標至少取得 39% 股權，加上原有的 11.86%，持股將過半。對價為股票與現金各半：每股精誠普通股換台灣大普通股 0.84 股，再加現金 92.5 元。以 8 月 12 日台灣大收盤價 109.5 元計，每股約 184.48 元，較精誠收盤價 142.5 元溢價約 29.5%。價金範圍為 195.8 億元（39%）至 291.3 億元（58%）。2024 年 9 月，台灣大曾以每股 123 元、共 39.72 億元取得精誠 32,298,154 股，當時只形成策略夥伴關係。精誠 2025 年營收 439.7 億元，EPS 7.91 元，歸屬母公司淨利 21.49 億元。第一個完整併表年度預計為 2027 年。
+來源：https://www.bnext.com.tw/article/91850/taiwan-mobile-systex-acquisition（查詢日 2026-11-17）
+
+### 精誠收購完成與整合方向
+
+精誠公開收購的有效應賣股數為 133,836,625 股，約占已發行股份 49.16%，加上原有 11.86%，台灣大總持股達 61.02%。對價包括現金約 123.8 億元與台灣大普通股約 1.124 億股，整體約當 273 億元。台灣大從 2024 年起與精誠合作，共推出近 50 項企業解決方案，合作案件數年增逾 10 倍。公司提出三大綜效：一是跨售，整合雙方客戶與產品，擴大雲端、資安與 ICT 業務；二是 AI，結合台灣大的電信、算力與 AI 技術，以及精誠在軟體開發與系統整合的經驗；三是區域化，利用精誠在日本、新加坡與東南亞的據點，把方案帶到海外。財務目標包括：企業服務營收三年內突破 1,000 億元，長期企業資服年複合成長率 20% 以上，六年內資訊服務市占率倍增。
+來源：https://uanalyze.com.tw/articles/8820058547（查詢日 2026-11-17）
+
+### 「黃金十年」宣示與 2020–2025 趨勢
+
+2026-04-29，台灣大宣示進入「黃金十年」，以三大引擎推動成長：Telco（電信本業）、Telco+（企業事業）、Telco+Tech（科技電信事業）。公司公布，2020 至 2025 年電信服務營收由 450 億元增至 639 億元，成長 42%；合併營收由 1,329 億元增至 1,988 億元，成長 50%；營業利益由 161 億元增至 215 億元，成長 34%。2025 年營業利益創 14 年新高，稅後純益創 9 年新高，每股現金股利 4.8 元，年增 7%，為 2019 年以來最高。2026 年第一季，電信營業利益年增 20%，EPS 1.37 元，科技電信事業（不含 momo）營收年增 32%。公司另提到，2025 年再生能源占比達 19%，今年將啟動「綠電共享」機制。
+來源：https://udn.com/news/story/7240/9471605（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### MyAgent 企業 AI 代理平台與工程師規模
+
+2026-09-08，台灣大舉辦第 4 屆 D.E.E.P. Tech Day，主題為 Agentic AI，展示 15 項 AI 成果，涵蓋 AI 基礎建設與企業應用。MyAgent 是企業 AI 代理平台，整合企業知識、模型、工具與工作流程，支援地端與私有雲部署、可切換模型，並內建企業治理機制。公司內部先用於知識管理與行政流程，估計知識查找與行政工作效率約提升 15%，端到端流程約提升 30%。公司表示，自研的 GenAIus 是 MyAgent 的核心。報導稱，公司員工逾 8,000 人，其中約 1,000 位軟體工程師、約 1,000 位電信與硬體工程師；98% 員工已部署 AI agent，並開發 22 項自有 AI 技術與服務。企業事業成長在第一季約 26%、第二季約 19%。
+來源：https://finance.technews.tw/2026/09/08/deep-tech-day-2026-agentic-ai/（查詢日 2026-11-17）
+
+### myVoca 語音辨識模型
+
+台灣大與長問科技在 2026-03-12 發表 ASR 語音辨識模型 myVoca，支援國語、台語、英語、客語混合辨識。分工上，台灣大負責擴充語料、資料清洗與標註，並提供醫療等產業資料；長問科技負責模型架構、訓練與演算法調校。公司自述，算力需求約為原來的八分之一，硬體成本降低約 88%；客製化後準確率最高可達 97%；即時轉寫在說話後約 1 秒內完成，回應速度約快 6 倍；並稱在算力、準確率與速度上超越 OpenAI Whisper-large-v3。這些數字為公司與合作方自述，報導沒有提供獨立測試。規劃的應用場景包括金融、醫療、製造與智慧政府，用途有客服、會議與工作流程管理。
+來源：https://technews.tw/?p=1524998（查詢日 2026-11-17）
+
+### 內部 AI 導入與 AI 算力服務
+
+台灣大在 2026-04-29 公布內部 AI 導入成果。研發領域超過 50% 的專案導入 AI Coding，開發產能提升至 1.3 倍。「超人計畫」進入第 2 年，完訓率 99.5%，實際應用比例 85.8%。大數據銷售系統「萬能大麥」帶動締結率成長 20%；客服系統「客服小麥」的自助率與滿意度皆達 97%。對外，公司正式推出 AI 算力服務，採用 NVIDIA 算力基礎設施，並建立超過 90 家合作夥伴的資料中心生態圈。企業服務聚焦 AI、ICT、資安、ESG 四大利基，鎖定製造、金融、政府與醫療產業。公司另表示，正結合 Agentic AI，從內部營運升級到服務客戶，但未提供具體數據。以上數字均為公司自述。
+來源：https://www.cna.com.tw/business/chinese/432126（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2026-03-02 與 AST SpaceMobile 簽署低軌衛星合作備忘錄
+
+台灣大在 2026-03-02，於世界行動通訊大會（MWC）期間，與 AST SpaceMobile 簽署「低軌衛星通訊服務策略合作備忘錄」。目標是在台灣推動太空基地台與既有行動網路協同運作，強化全時全地連網與通訊韌性。技術採手機直連衛星（D2C），用戶不必更換或加裝專用設備，即可在基地台覆蓋不到的地區或災害情境下維持基本連線。分工上，AST SpaceMobile 提供 BlueBird 衛星，發射台灣大的行動通訊訊號；台灣大提供行動網路與地面衛星站。衛星位於 500 公里以上高空，單顆 BlueBird 衛星的天線展開面積約 2,400 平方英尺。報導指出，AST 已與 AT&T、Verizon、Vodafone、Rakuten、Google 等業者建立合作。報導沒有提供商轉時程與頻譜安排。
+來源：https://finance.technews.tw/2026/03/02/taiwan-mobile-ast-spacemobile/（查詢日 2026-11-17）
+
+# 30 台灣大哥大 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+本次在台灣大哥大 104 公司頁（8 頁、共 151 筆列表）收錄 49 筆軟體相關職缺，包含 Java／.Net／Python／Node.js 後端與全端、iOS／Android、LLM 平台、資料與數據分析、雲端／Kubernetes／基礎架構、資料庫、資安，以及資訊類招募與實習計畫。列表其餘約 100 筆為業務、行政、行銷、產品經理、網路與基站維運等，未收錄。
+與舊檔（2026-11-16 的 補1／網址1）相比：
+- 新增職稱：I90 通訊系統TPM、I92 通訊軟體工程師、I99 網路工程師、I205 資安防禦工程師、I206 資安工程師（滲透測試）、E161 系統維運工程師、Taiwan Mobile 科技大神培育實習計畫（中文版與英文版各一筆）、第二筆同名的數據研究暨管理主管。
+- 舊檔有、但這次公司頁列表沒有出現：I150 Java影音串流工程師、台灣客服科技「台灣大哥大集團-資料數據分析師」（雇主為台灣客服科技，本來就不在此公司頁）。
+- 其餘舊檔職缺仍在列表；多數職缺的 104 更新日由 11/10 更新為 11/17。
+- 本次不收錄的相關職稱（偏產品與專案管理）：I110 AI 產品經理、I210 AI專案PM、I210 AI資安PM、D661／D662／D663／D666／D667／D665、AI 供應鏈系統規劃與導入專員、E164 網管系統工程師。
+- 內容取自 49 筆 104 內頁的完整文字（2026-11-17 逐筆開啟）。49 筆內頁都能正常開啟，沒有顯示「職缺已關閉」的職缺。
+### 職稱清單
+台灣大哥大在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 49 筆：
+- HIPO疾行軍招募計畫-資訊類（7m38q）
+- 新鮮人徵才計畫-資訊類（7lmd9）
+- 【Taiwan Mobile 科技大神培育實習計畫】Intern-IT（7oc7w）
+- 【Taiwan Mobile Internship】IT Tech Genius Internship Program（80paa）
+- I102 Java全端軟體工程師（7nebo）
+- I36 Java帳務工程師（8nami）
+- I37 Java帳務工程師（7wuwx）
+- I66 Java應用系統工程師（803gw）
+- I106 .Net工程師（47x1e）
+- I109 Java新創金流服務工程師（7kndd）
+- I113 (Sr.)軟體工程師, 全端開發（8tphn）
+- I165 Java資深工程師（8qbzy）
+- I187 Java開發工程師（8eh4t）
+- I193 資深JAVA工程師（7ndix）
+- I105 Python Web工程師（8i0ux）
+- I137 Python全端工程師（8ntrt）
+- I186 Python後端工程師（7wutt）
+- I186 Node.js後端工程師（85n5t）
+- I112 Java/PHP/Python系統開發工程師（8bj3i）
+- I90 通訊系統TPM（8sep4）
+- I92 通訊軟體工程師（8seot）
+- I103 iOS 開發工程師（7neau）
+- I104 Android App開發工程師（775u7）
+- I108 LLM應用平台架構師（8b54k）
+- I107 資料分析/數據工程師（7osnc）
+- I93 雲端工程師（8lnko）
+- I97 Kubernetes 平台工程師（8xjjo）
+- I162 科技服務管理暨維運工程師（8slgk）
+- I91 中介軟體平台技術課主管（8t8wz）
+- I96 資深基礎架構整合工程師（8xjap）
+- I94 資深系統工程師（8b5sf）
+- I100 IT基礎架構工程師（90j99）
+- I201 GPU系統架構工程師（905ot）
+- I202 資料庫平台工程師（6xiif）
+- E161 系統維運工程師（93hps）
+- I99 網路工程師（7oeca）
+- I205 資安防禦工程師（8dpzu）
+- I206 資安工程師（滲透測試）（86xef）
+- I165 TPM 技術專案工程師（8qc2y）
+- I116 TPM技術專案工程師（95v6d）
+- D635 MyVideo 數據分析師（8ly9u）
+- D429 產業研究分析師/數據分析師（8xx70）
+- D429 資深產業研究分析師/數據分析師（8y933）
+- 數據研究暨管理主管（8hnwq）
+- 數據研究暨管理主管（8hsfv）
+- 大哥付你分期數據分析人員（8yx2c）
+- D467 用戶行為分析人員（6k2q4）
+- F56 逾期用戶行為分析人員（891gm）
+- F56 資深逾期用戶行為分析人員（969iy）
+
+### HIPO疾行軍招募計畫-資訊類（7m38q）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：年薪1,200,000元以上（內文：績效優者年薪可達 120 萬以上）　經歷：不拘　學歷：不拘
+- 工作內容：台灣大哥大為 AI 世代與高潛力人才開的重點招募計畫，高中畢業的新世代程式人才與研發替代役也可應徵。新人在導師與團隊協作下參與跨單位與外部客戶的系統與數位服務開發，涵蓋 AI 應用、雲端系統、大數據處理與 App 服務；把業務需求轉成技術方案，並用 AI 工具提升開發與分析效率。發展領域分四類：AI 與智慧應用（AI 應用開發、資料處理、自動化）、雲端與系統開發（後端服務、平台建置）、App 與前端開發（iOS／Android／Web）、數位創新與新型服務。
+- 條件與技能：不需樣樣都會；具備部分以下經驗即為加分：Python、Java、JavaScript、SQL 等程式開發；使用或學習 AI 工具進行開發、分析或自動化；AWS／Azure／GCP 雲端學習或實作；side project、作品集、專題、競賽；邏輯思考與問題拆解；特定領域（機器人控制、WEB3、資安、AI 模型訓練）。104 擅長工具欄列 Java、Python、Objective-C、Swift、Kotlin、AWS、HTML、JavaScript、CSS、VueJS；語文與工作技能欄為不拘。
+- 網址：https://www.104.com.tw/job/7m38q
+- 104 上顯示的更新日：11/17
+
+### 新鮮人徵才計畫-資訊類（7lmd9）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：不拘　學歷：不拘
+- 工作內容：針對新鮮人的資訊類招募，分五個方向：Java 全端軟體工程師（系統需求開發、架構規劃）；Python Web 工程師（資料庫架構、API、雲端服務整合、串接第三方系統）；雲端工程師（公有／私有雲架構、雲端資安、成本治理、SaaS 評估、擔任 SRE）；科技服務管理暨維運工程師（監控告警、CI/CD、根因分析、容量規劃、Log 除錯）；.Net 工程師（ASP.NET MVC／Core、Web API、SQL 調校、資料建模）。
+- 條件與技能：語文為英文聽說讀寫中等。Java 全端：Java＋SQL、JavaScript／HTML5／CSS、SA/SD；加分 Spring Boot、Angular／React／Vue、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP。Python Web：Python、Flask／FastAPI、AWS／GCP、HTML／JavaScript／CSS、Git、物件導向、關聯式 DB／Redis／Linux／容器化。雲端：TCP/IP、AWS／Azure／GCP、Windows／Linux。維運：Linux、Shell Script／Python、Tomcat；加分 Zabbix／Nagios／Grafana。.Net：.NET Framework／Core、C#、WebForm、ASP.NET MVC／Core、jQuery、ADO.NET、Entity Framework Core；加分 Kafka、PostgreSQL／SQL Server、Redis、Docker、CI/CD、AI coding tools。
+- 網址：https://www.104.com.tw/job/7lmd9
+- 104 上顯示的更新日：11/17
+
+### 【Taiwan Mobile 科技大神培育實習計畫】Intern-IT（7oc7w）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端；線上或實體皆可）　薪資：時薪200~300元　經歷：不拘　學歷：不拘
+- 工作內容：不限國籍、實習時間不限寒暑假，由專屬導師帶領；收到履歷後由單位媒合到 16 個方向之一。技術類包含：與 AI 工具（ChatGPT、Copilot）協作開發、API 與後端整合；科技與 AI 服務開發測試（NoSQL 測試程式、資料搬移）；開源資料庫 DBA；M+ Meet 視訊會議（WebSocket／gRPC／RESTful）；語音 ASR／TTS 模型與 API；FinOps 與 CMDB；Terraform／Ansible 的 IaC 與 CI/CD；開源基礎設施 PoC；Unity 3D。另有資安專案管理、AI 訓練語料校正、AI 產品企劃等非開發方向。
+- 條件與技能：依方向不同。程式語言：Python、JavaScript、Java、Go、C#；Web／後端：Django、Node.js、Flask、RESTful API、GraphQL；資料庫：MySQL、PostgreSQL、MariaDB、SQL、NoSQL；工具：Docker、Linux、Shell Script、Git、Postman、Jira、Figma、Terraform、Ansible、Unity、K8s（加分）、AWS／GCP／Azure（加分）。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/7oc7w
+- 104 上顯示的更新日：11/17
+
+### 【Taiwan Mobile Internship】IT Tech Genius Internship Program（80paa）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端）　薪資：時薪200~300元　經歷：不拘　學歷：不拘
+- 工作內容：科技大神實習計畫的英文版，工作性質為兼職、時段彈性，不限國籍，線上或實體皆可，由專屬導師帶領。收到履歷後 HR 媒合四類職務：系統開發（新創科技服務、AI 視覺、影音視覺、語音辨識、雲端服務、資安、BNPL 支付、加密貨幣、海量資料分析）；資料建模（NLP 斷詞資料集、AI 多標籤分類模型、用戶特徵與品牌偏好標註）；系統測試（NoSQL／資料庫測試程式、資料搬移與效能測試、管理後台與 API 測試）；M+ 創新模組開發（小遊戲、會議 AI 影像處理）。
+- 條件與技能：系統開發：Java、HTML5 基礎、Docker 知識。資料建模：Python 基礎、AI／ML／DL 使用經驗。系統測試：Java 基礎、Linux 基本指令。M+ 模組：基礎程式經驗、對 AI 影像處理有興趣。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/80paa
+- 104 上顯示的更新日：11/17
+
+### I102 Java全端軟體工程師（7nebo）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（台北、高雄；部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：參與台灣大哥大跨單位與外部客戶系統的需求開發設計與架構規劃，並執行專案、提出可行方案。領域涵蓋科技新創服務、加值服務、通路營運、虛擬通路、客戶服務、企業創新服務。系統範例包含 MyCharge CPO 平台、訊息系統與優惠券系統、物聯網企業客戶平台、通路門市系統、客服中心系統、電商代運營平台、企業創新整合開發。需求 1~6 人。
+- 條件與技能：必備：Java 程式開發與 SQL 後端開發；JavaScript、HTML5、CSS 前端開發；系統分析／設計（SA/SD）經驗。加分：Spring、Spring Boot；Angular／React／Vue.js；Python／Shell Script；Redis；PostgreSQL；Docker 與 CI/CD；AWS、Azure、GCP 任一雲使用／開發／佈署；帶領開發小組；英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Java、Python、Spring、HTML、JavaScript、CSS。
+- 網址：https://www.104.com.tw/job/7nebo
+- 104 上顯示的更新日：11/17
+
+### I36 Java帳務工程師（8nami）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：4年以上　學歷：不拘
+- 工作內容：參與台灣大哥大跨單位系統的需求開發設計、架構規劃與功能測試；主動提出可行的建議方案；導入新技術（例如 AI 協作）並建立自動化測試流程。
+- 條件與技能：必備：Java、JSP/Servlet、Spring MVC／Spring Boot 架構，並具 RESTful API 設計開發經驗；Oracle 或 PostgreSQL 資料庫程式設計開發經驗；Linux Shell Script 撰寫能力；了解雲端系統開發架構；了解容器（Container）技術與應用服務部署。內文未列加分條件。104 擅長工具欄列 Java、JSP、Spring、Oracle、PostgreSQL。
+- 網址：https://www.104.com.tw/job/8nami
+- 104 上顯示的更新日：11/16
+
+### I37 Java帳務工程師（7wuwx）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（台北／高雄；部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：4年以上　學歷：不拘
+- 工作內容：負責帳務系統銷帳相關作業的開發與日常維運。
+- 條件與技能：必備：Java、JSP/Servlet、Spring MVC 架構，並具 RESTful API 設計開發經驗；Oracle 或 PostgreSQL 資料庫程式設計開發經驗；Linux Shell Script 撰寫能力；了解雲端系統開發架構；了解容器（Container）技術與應用服務部署。內文未列加分條件。104 擅長工具欄列 Linux、Shell、Java、Spring、Oracle。
+- 網址：https://www.104.com.tw/job/7wuwx
+- 104 上顯示的更新日：11/17
+
+### I66 Java應用系統工程師（803gw）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：負責集團 ERP 系統的開發、設計與維運，支援銷售管報系統與投資平台專案的系統功能建置與維運；同時支援集團新創服務專案需求與雲端服務系統的功能建置；參與並執行專案，從各種角度提出可行的建議方案。需求 1 人。
+- 條件與技能：必備：具 Java 開發經驗；了解 Oracle 或 PL/SQL 資料庫。加分：英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Java、Oracle、PL/SQL。
+- 網址：https://www.104.com.tw/job/803gw
+- 104 上顯示的更新日：11/17
+
+### I106 .Net工程師（47x1e）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：參與跨單位系統的需求架構規劃、設計與開發；用 C# .NET（ASP.NET MVC／ASP.NET Core）做後端開發，整合前後端並開發 Web API 與 RESTful API；進行 SQL 查詢、效能調優與資料建模。系統包含 CRM 用戶溝通與行銷平台、電信網路維護平台資料庫、客服中心與 AI 智能客服系統、集團 MIS 系統。
+- 條件與技能：必備：.NET Framework／.NET Core 與 SQL 後端；C#、WebForm、ASP.NET MVC、ASP.NET Core；JavaScript、HTML5、CSS、jQuery；Webservice、Web API、RESTful API 界接；ADO.NET、Entity Framework Core、Bootstrap-Vue。加分：Kafka；WinForm／Console；Angular／React／Vue.js；Data model、系統設計與 API Spec 設計；PostgreSQL／SQL Server；Redis；Docker、CI/CD；AWS／Azure／GCP；AI 開發與 AI coding tools；多益聽讀 550 以上。
+- 網址：https://www.104.com.tw/job/47x1e
+- 104 上顯示的更新日：11/17
+
+### I109 Java新創金流服務工程師（7kndd）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：為數百萬消費者與數千家商店使用的先買後付（BNPL）平台，建構高彈性的系統與周邊服務並持續優化。工作包含資訊系統程式開發、單元測試與功能測試撰寫、資料庫程式開發與維護、系統開發文件撰寫、系統維護管理與功能更新。需求 1 人。
+- 條件與技能：必備：Java 開發能力並熟悉 Spring Boot；JavaScript、HTML5、CSS 網頁開發；資料庫使用經驗；RESTful API 開發經驗。具 Docker、雲端服務使用經驗尤佳。語文：英文聽說讀寫中等。104 擅長工具欄列 Java、JavaScript、jQuery、CSS。
+- 網址：https://www.104.com.tw/job/7kndd
+- 104 上顯示的更新日：11/17
+
+### I113 (Sr.)軟體工程師, 全端開發（8tphn）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：參與核心產品與平台的設計與開發，從 UI 到系統核心邏輯做全端實作，可與 AI 團隊、雲端架構團隊、第三方應用整合協作。工作包含 Web／Server 程式設計與系統模組建構、依產品規格開發與整合功能模組、資料庫架構設計、RESTful API 開發、第三方系統串接，並與 UI/UX 設計師、產品經理、後端與雲端團隊協作；支援問題分析、技術除錯、設計審查與效能優化。需求 1 人。
+- 條件與技能：必備：至少一種後端語言（Java、Python、Go、C++）；JavaScript／TypeScript／HTML／CSS；Git 與 RESTful API 設計開發；溝通與獨立解決問題能力。加分：Spring Boot、Node.js、React、Vue、Angular 任一；CI/CD；AWS／GCP／Azure；資料結構與演算法、大型系統設計；技術文件與系統設計；對 AI 應用、資料視覺化、分散式系統有興趣。104 擅長工具欄列 Java、Python。
+- 網址：https://www.104.com.tw/job/8tphn
+- 104 上顯示的更新日：11/17
+
+### I165 Java資深工程師（8qbzy）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：6年以上　學歷：不拘
+- 工作內容：以 Java（Spring Boot）實作核心系統並重構既有程式碼；設計 API 規格，考量安全、授權與效能並產出技術文件；針對複雜業務邏輯寫高效能 SQL，以 SQL Tuning（Index 優化）處理資料庫瓶頸；撰寫 Docker 腳本或操作 Kubernetes，將應用程式部署到雲端；設定 Logging Tracking，以 ELK 等工具追蹤線上問題。職務類別含軟體工程師、測試人員，需求 1 人。
+- 條件與技能：必備：6 年以上 Java 開發；精通 Spring Boot／MVC；AWS／GCP／Azure 雲端實作與 Docker／K8s；SQL 優化；API Spec 設計、OWASP Top 10 與檢測工具；Code Review。加分：SD／SA 經驗；CI/CD 部署流程規劃；高併發系統或 AI 模型串接。104 擅長工具欄列 Java、Spring、AWS、Microsoft Azure。
+- 網址：https://www.104.com.tw/job/8qbzy
+- 104 上顯示的更新日：11/17
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '30_104職缺更新_台灣大哥大.md' -Encoding UTF8 | Select-Object -Skip 145 -First 145" in C:\claude\aipe04期末\履歷\廠商深查
+hook: PostToolUse
+ succeeded in 527ms:
+
+### I187 Java開發工程師（8eh4t）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：進行雲端與容器化平台的規劃分析、架構設計與佈署維運；發展與導入新創服務系統技術；引入或開發自動化部署、測試與監控工具（OpenTelemetry、Prometheus、Grafana）；建立監控與警報系統並整合 AI，及時發現、派工與處理問題；其他主管交辦事項。職務類別含軟體工程師、Internet 程式設計師、系統分析師，需求 1 人。
+- 條件與技能：必備：Java 開發並熟悉 Spring Boot；了解容器（Container）技術開發與部署；GCP 雲端系統開發或網路架構規劃實作其中一項經驗；RESTful API 開發。加分：系統分析經驗。104 擅長工具欄列 Java、Python、JavaScript。
+- 網址：https://www.104.com.tw/job/8eh4t
+- 104 上顯示的更新日：11/17
+
+### I193 資深JAVA工程師（7ndix）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：建置新創產品的營運網站，與產品 PM 規劃與設計產品功能；網站主要提供企業客戶資安與 AI 應用的新創產品服務，需與資安人員及 AI 工程師合作。工作包含需求訪談與技術評估、撰寫系統分析設計文件、Java 程式開發、網站與資料庫效能優化、與開發團隊討論系統整合架構與介接規格。需求 1 人。
+- 條件與技能：必備：精通 Java 並熟悉 Spring Boot；系統分析設計經驗、需求訪談與規格文件；HTML5、JavaScript、React.JS 開發經驗；關聯式資料庫與 SQL；2 年以上 Java 網站開發。加分：AWS 或 GCP 網站開發；善用 AI coding tools；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Java、Python、hadoop；工作技能欄列專案規劃執行／範圍管理。
+- 網址：https://www.104.com.tw/job/7ndix
+- 104 上顯示的更新日：11/17
+
+### I105 Python Web工程師（8i0ux）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：開發 Python Web 應用，架構為 Flask＋jQuery 單體，或 FastAPI＋ReactJS 前後端分離；另開發網路爬蟲程式。應用領域涵蓋科技新創服務、加值服務、通路營運、虛擬通路、企業創新服務。職務類別為軟體工程師，需求 1 人。
+- 條件與技能：必備：Python Web 開發（Flask 或 FastAPI 尤佳，Django 亦可）；jQuery 或 JS 前端開發經驗；網路爬蟲程式開發。加分：ReactJS；GCP／AWS／K8S；Java Web Application；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Python；工作技能欄列軟體工程系統開發、軟體程式設計。
+- 網址：https://www.104.com.tw/job/8i0ux
+- 104 上顯示的更新日：11/17
+
+### I137 Python全端工程師（8ntrt）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：系統全端程式開發，依規格規劃進行產品功能開發，包括資料庫架構設計、API 開發、整合雲端服務、串接第三方應用系統；對程式設計有熱忱並願意學習新技術。職務類別含軟體工程師、全端工程師、Internet 程式設計師，需求 1 人。
+- 條件與技能：必備：Python；HTML、JavaScript、CSS 與互動式網頁開發；物件導向程式設計。加分：完整參與專案的經驗；任一關聯式資料庫與 Linux；容器化相關知識；溝通與團隊協作；多益聽讀 550 以上。104 擅長工具欄列 C#、PostgreSQL、HTML、JavaScript、CSS、ReactJS、AngularJS、VueJS、Angular。
+- 網址：https://www.104.com.tw/job/8ntrt
+- 104 上顯示的更新日：11/16
+
+### I186 Python後端工程師（7wutt）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：系統全端程式開發，對程式設計有熱忱並願意學習新技術；依規格規劃進行產品功能開發，包括資料庫架構設計、API 開發、整合雲端服務、串接第三方應用系統。職務類別含軟體工程師、Internet 程式設計師、網頁設計師，需求 1 人。
+- 條件與技能：必備（內文全列為必備）：Python；Flask／FastAPI 框架；GCP／AWS 任一雲端服務；Git 版本控制；物件導向；完整參與專案的經驗；任一關聯式資料庫、Redis、Linux 使用經驗；容器化相關知識；溝通與團隊協作。104 擅長工具欄列 Linux、Python、AWS。
+- 網址：https://www.104.com.tw/job/7wutt
+- 104 上顯示的更新日：11/17
+
+### I186 Node.js後端工程師（85n5t）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：開發大型視訊會議系統，建立具高併發與高可用性的 Micro-services；設計與實作 WebSocket 與 RESTful API；研發並優化後端服務效能。職務類別含軟體工程師、Internet 程式設計師、網頁設計師，需求人數不限。
+- 條件與技能：必備：JavaScript 與 Node.js 框架；物件導向與 Git 版本控制流程；GCP／AWS 任一雲端服務；關聯式與非關聯式資料庫（MySQL、PostgreSQL、Redis 或 MongoDB）；Linux 與容器化；Express 與 Socket.io、WebSocket、WebRTC；Distributed／Micro-Service 系統開發；Scrum／Agile 與開源貢獻經驗。104 擅長工具欄列 Linux、MySQL、PostgreSQL、AWS、JavaScript、Node.js。
+- 網址：https://www.104.com.tw/job/85n5t
+- 104 上顯示的更新日：11/13
+
+### I112 Java/PHP/Python系統開發工程師（8bj3i）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：系統建置、維運、調校與監控；資料庫維運管理；功能問題排除與程式調整；開發自動化程式與系統報表。職務類別含軟體工程師、Internet 程式設計師、後端工程師，需求 1 人。
+- 條件與技能：前後端程式語言（Java／PHP／Python 擇一）與 Scripting language 能力；熟悉 SQL Command；熟悉 Linux 指令；溝通與表達能力；獨立思考與學習新技術能力。加分：雲端相關證照；電商網站相關經驗。104 擅長工具欄列 Java、PHP、Python。
+- 網址：https://www.104.com.tw/job/8bj3i
+- 104 上顯示的更新日：11/17
+
+### I90 通訊系統TPM（8sep4）
+- 公司：台灣大哥大股份有限公司　地點：雲林縣斗六市（內文：可依所在地協調台北、台中、雲林、高雄；部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：面議，依績效另有年終獎金與員工紅利）　經歷：8年以上　學歷：不拘
+- 工作內容：帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付；制定專案時程與資源分配；協調跨功能團隊，確保專案目標達成；提供 FreeSWITCH 與 VoIP 技術架構指導；檢核技術設計與程式碼品質；協助解決複雜的技術問題與系統整合。職務類別為軟體專案主管、系統分析師、軟體專案管理師，需求 1 人。
+- 條件與技能：必要：8 年以上軟體開發經驗，其中 5 年以上專案管理；深入了解 FreeSWITCH 架構與 VoIP；C/C++、Python、Lua；分散式系統、微服務架構與雲端技術；PostgreSQL、MySQL；Linux 系統管理與 DevOps。加分：SIP、RTP、WebRTC 協議；Docker、Kubernetes；ELK Stack、Prometheus；Scrum、Kanban。104 擅長工具欄列 Linux、MySQL、PostgreSQL、IMS、VoIP。
+- 網址：https://www.104.com.tw/job/8sep4
+- 104 上顯示的更新日：11/16
+
+### I92 通訊軟體工程師（8seot）
+- 公司：台灣大哥大股份有限公司　地點：雲林縣斗六市（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：協助開發與維護 FreeSWITCH 核心功能模組；開發 RESTful API 服務並與第三方系統整合；參與 PBX 系統規劃設計與自訂模組開發；協助資料庫設計與系統監控機制建立；撰寫測試程式與技術文件。職務類別為軟體工程師、後端工程師、通訊軟體工程師，需求 1 人。
+- 條件與技能：必要：任一程式語言熟練並具 Lua 基礎；SIP、RTP 等 VoIP 協議基礎；PostgreSQL 或 MySQL 使用經驗；Linux 命令列操作；Git 程式碼管理。加分：FreeSWITCH 開發或配置經驗；Docker 與 Kubernetes 容器化；Redis 與 RabbitMQ 等訊息佇列系統。104 擅長工具欄列 Linux、MySQL、PostgreSQL、IMS、VoIP。
+- 網址：https://www.104.com.tw/job/8seot
+- 104 上顯示的更新日：11/03
+
+### I103 iOS 開發工程師（7neau）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：iOS App 的開發、維護與升級；以 Swift／Objective-C 開發；設計 App 架構與框架；研究並導入新技術；串接第三方開發套件；撰寫技術文件。職務類別為軟體工程師、Internet 程式設計師，需求 1 人。
+- 條件與技能：必備：Swift／Objective-C；UI/UX 開發並做出穩定的 App；RESTful API 串接與 JSON 解析；Git。加分：App 上架與推播；Firebase、FB 等第三方 SDK；MVC／MVVM；UML 與 Design Pattern；SQLite／CoreData；In-App-Purchase；BLE／Socket 通訊協定與 Media player；CocoaPods；XCTest／Unit Test；CI/CD。104 擅長工具欄列 Objective-C、Swift。
+- 網址：https://www.104.com.tw/job/7neau
+- 104 上顯示的更新日：11/17
+
+### I104 Android App開發工程師（775u7）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：負責 Android App 的開發、上架、更新與維護；撰寫 App 自動化測試以強化品質；參與跨單位與外部客戶系統的需求開發設計與規劃；依內外部業務需求提供技術規劃與分析；領域涵蓋科技新創服務、加值服務、通路營運、虛擬通路、企業創新服務。
+- 條件與技能：必備：Kotlin（Coroutines、Extension Functions）；Android Framework 與 Jetpack（Navigation、Room、WorkManager、Compose）；MVVM、Repository Pattern、Hilt；Retrofit、OkHttp 與 JSON 解析；除錯與問題分析；Unit Test。加分：Kotlin Flow（StateFlow、SharedFlow）；Clean Architecture 與模組化；Profiler 效能調優；Android 安全機制（Keystore、runtime permissions）；Code Review；KMP；CI/CD；ART、Binder、渲染機制。104 擅長工具欄列 Android、Java、Kotlin。
+- 網址：https://www.104.com.tw/job/775u7
+- 104 上顯示的更新日：11/17
+
+### I108 LLM應用平台架構師（8b54k）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：設計並建置「AI 大腦平台」前後端分離的 Web 系統（前端 React.js、後端 Python），為智能客服與知識管理提供 AI 應答；整合 LLM，並用 RAG 結合檢索與生成以提高回答準確性；設計與優化 Agent Flow；應用 Agentic AI；監控並優化平台效能；與業務團隊與 RD 團隊協作；提供技術指導與培訓。職務類別為 AI 工程師、資料工程師，需求 1 人。
+- 條件與技能：必備：深度學習與機器學習；NLP、LLM、Transformer；Python、HTML、JavaScript，FastAPI、langchain（React.js 更佳）；SQL、Pandas、NumPy；大規模分散式系統設計；AWS／Google Cloud／Azure 至少一種；RAG 實作；2 年以上深度學習模型實戰開發。加分：PyTorch／TensorFlow；生成式 AI 於智能客服或知識管理；Agent Flow 與 Agentic AI；追蹤論文與開源；AI coding tools；多益聽讀 550 以上。語文：英文聽說讀寫中等。
+- 網址：https://www.104.com.tw/job/8b54k
+- 104 上顯示的更新日：11/17
+
+### I107 資料分析/數據工程師（7osnc）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：參與資料倉儲需求開發、資料分析與應用、大數據應用的專案開發與系統維運。資料工程部分：資料擷取與處理的 ETL 開發及維運、通路報表系統優化、通路業績日月報需求開發與維運、雲端通路即時戰報需求開發與維運。職務類別為軟體工程師、Internet 程式設計師，需求 1 人。
+- 條件與技能：必備：資料倉儲 ETL 開發；SQL 後端開發；BI Report 開發經驗。加分：Trinity ETL；Teradata SQL；SQL Server Reporting Service；Azure Power BI；SAP BOE；Python 後端；AI coding tools。語文：英文聽說讀寫中等。104 擅長工具欄列 Python、ETL、Django、Power BI；工作技能欄列軟體工程系統開發、軟體程式設計、Machine Learning、資料庫程式設計。
+- 網址：https://www.104.com.tw/job/7osnc
+- 104 上顯示的更新日：11/17
+
+### I93 雲端工程師（8lnko）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：規劃與設計企業內部公有／私有雲架構，打造穩定、可擴展的雲端環境，有機會參與電信業大規模架構的設計與維運；分析並強化雲端資安防護機制；推動公有雲成本治理，找出最適資源分配與優化方式；評估各類 SaaS 解決方案並提出導入建議；擔任重大專案的 SRE（Site Reliability Engineer）。職務類別含系統工程師，需求 1 人。
+- 條件與技能：必備：TCP/IP 協定與網路通訊原理；AWS、Azure、GCP 雲端平台架構與設計原則並有實際操作經驗；Windows 與 Linux 作業系統日常維運；獨立解決問題並與團隊合作。加分：英文基本聽說讀寫，多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、TCP/IP。
+- 網址：https://www.104.com.tw/job/8lnko
+- 104 上顯示的更新日：11/17
+
+### I97 Kubernetes 平台工程師（8xjjo）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（標題註明可部分遠端）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：規劃端到端交付流程（程式碼變更到可控發布、快速回滾、可追溯稽核）；建立可規模化的部署管理模式；推動平台標準化與模板化；與應用團隊設計並優化發布策略；建立權限控管、變更流程、憑證與密鑰使用規範、發布審批；處理交付與平台事件的根因分析並降低 MTTR；撰寫 Runbook、SOP 與上線檢核表。
+- 條件與技能：必備：3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes；GitOps；CI/CD 流水線（版本策略、Artifact/Registry、憑證／密鑰、部署與回滾）；Linux 與網路排障；Shell／Python／Ansible／Terraform 任一；WebLogic／JBoss／WildFly／Tomcat 任一的環境建置與維運。加分：自建或混合環境 Kubernetes；Argo CD、Flux、Jenkins、Bitbucket Pipelines、GitLab CI；Helm、Kustomize；OPA／Gatekeeper、Kyverno、映像掃描、SBOM；Metrics／Logs／Tracing；CKA／CKAD／CKS。104 擅長工具欄列 Jenkins、Python、Linux、Shell、Git。
+- 網址：https://www.104.com.tw/job/8xjjo
+- 104 上顯示的更新日：11/17
+
+### I162 科技服務管理暨維運工程師（8slgk）
+- 公司：台灣大哥大股份有限公司　地點：新北市三重區三重湯城（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：4年以上　學歷：不拘
+- 工作內容：維持 Linux 服務系統的高可用、擴展性與效能；建置與維護監控與告警；規劃並實作 CI/CD 自動化流程；做故障排除與根因分析（RCA）；GCP／AWS 雲端服務維運；協助開發團隊做效能監控與容量規劃；日常維運含監控、排程、備份策略、定期巡檢；分析 Log 並除錯；配合版本更新與功能部署。休假制度為排休，需求 1 人。
+- 條件與技能：必備：Linux 系統管理與指令；Web 應用服務架構（Web Service、Apache Tomcat 等中介平台）；Shell Script 或 Python 自動化；Troubleshooting；團隊溝通。加分：Incident Management；Zabbix／Nagios／Grafana／ELK Stack；Docker／Kubernetes；Jenkins／GitLab CI/CD；大型系統上線與維運流程規劃；Linux 或 GCP／AWS 證照；以 ChatGPT、LangChain、OpenAI API 等 AI 工具輔助維運。104 擅長工具與工作技能欄為不拘。
+- 網址：https://www.104.com.tw/job/8slgk
+- 104 上顯示的更新日：11/17
+
+### I91 中介軟體平台技術課主管（8t8wz）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪可達18個月以上）　經歷：8年以上　學歷：不拘
+- 工作內容：帶領 7–8 人的 K8S 平台團隊，規劃、建置、優化、維運與轉型 WebLogic、JBoss、WildFly、Tomcat 企業級中介軟體平台，並需理解 Oracle／PostgreSQL／MySQL／SQL Server 資料庫架構；推動 WildFly 轉 Tomcat、容器化與微服務遷移；與應用系統、資安、基礎架構團隊協作；建立標準化維運流程與容量、備援、容錯、效能監控策略；培育人才；制定安全與合規策略（稽核、加密、權限管理）。管理責任 5–8 人，需求 1 人。
+- 條件與技能：必備：8 年以上 IT 經驗與 3 年以上管理經驗；Kubernetes 實務（建置、調校、升級、故障處理、部署與回滾、資源與 RBAC 權限、跨層排障）；數位轉型或中介軟體遷移專案經驗；領導力與跨部門協作。加分：跨平台遷移或雲端專案；中介軟體或資料庫專業證照；API 管理或 ESB／MQ 整合平台；多益聽讀 600 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Tomcat、Google Cloud。
+- 網址：https://www.104.com.tw/job/8t8wz
+- 104 上顯示的更新日：11/17
+
+### I96 資深基礎架構整合工程師（8xjap）
+- 公司：台灣大哥大股份有限公司　地點：新北市三重區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：5年以上　學歷：不拘
+- 工作內容：擔任軟體開發團隊與基礎架構團隊的橋樑，協調需求與技術方案；主導 IT Infra 專案從規劃、執行到上線，掌控進度、品質與預算；協調多部門與跨區團隊資源，推動系統導入與流程優化；定期向主管彙報進度；確保伺服器、資料庫、網路等配置滿足應用系統需求，維持高可用與安全；撰寫並維護需求規格、技術方案與會議紀錄。職務類別為專案經理、系統工程師、MIS／網管主管，需求 1 人。
+- 條件與技能：必備：5 年以上 IT 基礎架構經驗（系統或網路工程背景）；作業系統、資料庫、網路、資訊安全知識與整體架構規劃；專案管理實務（進度、資源配置）；跨部門溝通；End 2 End 整合問題定位。加分：PMP 等專案管理證照或敏捷／DevOps 經驗；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/8xjap
+- 104 上顯示的更新日：11/17
+
+### I94 資深系統工程師（8b5sf）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：5年以上　學歷：不拘
+- 工作內容：加入 IT 基礎架構團隊：安裝、設定與維護 Linux／Windows 作業系統；維運 VMware、Nutanix 等私有雲平台；系統資源監控、異常排除與效能調校；備份、還原測試與災難復原規劃；資安防護作業（防火牆、權限控管、弱點掃描與漏洞修補）；管理伺服器與儲存設備；撰寫維運文件；評估導入 AI 與自動化等新技術。職務類別含系統工程師、MIS／網管主管，需求 1 人。
+- 條件與技能：使用技術：Linux（RHEL／Oracle Linux／Ubuntu）、Windows Server、VMware、Nutanix、K8s、Container、Zabbix、Nagios。期待：伺服器硬體與作業系統操作；VMware 或 Nutanix 虛擬化平台管理；獨立處理故障；自動化腳本或資安經驗佳。加分：RHCE、Linux+、VMware VCP、Nutanix NCP 證照；資料中心建置、遷移、DR 計畫；Docker、Kubernetes。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux。
+- 網址：https://www.104.com.tw/job/8b5sf
+- 104 上顯示的更新日：11/17
+
+### I100 IT基礎架構工程師（90j99）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：加入 IT 基礎架構團隊，負責企業內部伺服器與平台環境的日常維運，並參與監控優化、自動化、資安強化、備援驗證與平台標準化；不限定 Linux 或 Windows 單一背景。工作包含維護伺服器與虛擬化平台、處理監控與告警、系統更新與弱點修補與權限管理、備份還原與災難復原演練、維護 SOP 與技術文件、支援系統上線。需求 2 人。
+- 條件與技能：必備：3 年以上基礎架構、系統維運或平台管理；獨立執行伺服器或平台日常維護與排查；Zabbix、Nagios 等監控告警工具；系統更新、權限管理、備份還原、基礎資安；虛擬化或企業 IT 環境維運；文件撰寫與跨團隊協作。加分：Linux、Windows Server；Ansible、Shell Script、Python、PowerShell；VMware、Nutanix、Docker、PKI、憑證管理、災難復原；PostgreSQL、Microsoft SQL Server；生成式 AI 工具輔助排查與腳本；英文技術文件閱讀，多益 550 以上。104 擅長工具欄列 Linux、PostgreSQL。
+- 網址：https://www.104.com.tw/job/90j99
+- 104 上顯示的更新日：11/11
+
+### I201 GPU系統架構工程師（905ot）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（標題註明可部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：5年以上　學歷：不拘
+- 工作內容：加入 IT 基礎架構團隊，負責 x86 GPU 伺服器的安裝、設定與維護；與 AP 單位討論需求，規劃符合 AI 模型訓練與推論的系統架構；把 AI 基礎架構融入備份、還原等維運流程；監控 CPU、GPU 算力與顯存，排除異常並調校效能；評估與導入 AI、自動化與 MLOps 相關底層技術。職務類別為 AI 工程師、系統工程師、資訊設備管制人員，需求 1 人。
+- 條件與技能：必備：x86 伺服器硬體與作業系統操作；GPU 主機實務管理（資源切分、驅動與 CUDA 環境建置）；跨團隊溝通並轉化為 Infra 架構設計；獨立排除故障。加分：Docker、Kubernetes 與 GPU Operator 部署；AI／MLOps 開源工具底層架設；自動化腳本或資安實務；RHCE、Linux+ 證照；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、Shell、MLOps、LLM、AWS。
+
+hook: PostToolUse Completed
+codex
+已確認現有題庫問過 EPS、整體業務、自研語音模型及 Kubernetes 年資，會避開這些題意。職缺清單會採用範圍明確的條件，逐筆核對符合項目。
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '30_104職缺更新_台灣大哥大.md' -Encoding UTF8 | Select-Object -Skip 290; rg -n '員工旅遊|旅遊補助|旅遊津貼|生育補助|生育津貼|生育禮金' -g '*台灣大哥大*.md' ." in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 499ms:
+- 網址：https://www.104.com.tw/job/905ot
+- 104 上顯示的更新日：11/17
+
+### I202 資料庫平台工程師（6xiif）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（標題註明可部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：2年以上　學歷：不拘
+- 工作內容：建置並優化企業資料庫平台（PostgreSQL 為主，Oracle 為核心系統），涵蓋環境設計、參數基線、權限模型與安全防護；推動標準化與可複製交付（建置、變更、回滾流程與模板）；建立慢查治理、Top SQL 分析、容量預測、監控告警分級與 Runbook；規劃備份還原、還原驗證與 HA/DR 演練；與開發、平台、資安團隊協作；視需求參與 Hybrid Cloud 資料庫治理。職務類別為資料庫管理人員，需求 1 人。
+- 條件與技能：必備：PostgreSQL 或 Oracle 實務維運管理（其一即可）；Linux 基本操作與效能定位（CPU／Memory／IO／Network）；跨部門溝通；文件化與標準化習慣。加分：資料庫平台化、標準化、自動化；效能調校；HA/DR；雲端與混合雲資料庫治理；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、Oracle、PostgreSQL、AWS。
+- 網址：https://www.104.com.tw/job/6xiif
+- 104 上顯示的更新日：11/17
+
+### E161 系統維運工程師（93hps）
+- 公司：台灣大哥大股份有限公司　地點：新北市三重區（遠端工作欄未標示）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：2年以上　學歷：不拘
+- 工作內容：虛擬平台系統的維運管理與客訴處理；集中式儲存服務的維運管理；備份系統的維運管理。職務類別為系統工程師，工作性質全職、日班，休假依公司規定，需求 1 人。
+- 條件與技能：具 2 年以上系統維運相關工作經驗；熟悉 Windows、Linux 系統管理；熟悉 VMware 虛擬化與雲端平台維運管理；熟悉系統自動化工具（如 Power Automate、Python）；具 VMware 系統管理認證或 Linux 系統管理認證尤佳。語文：英文聽說讀寫略懂。104 擅長工具欄列 VMware、Linux；內文未列獨立的加分條件段落。
+- 網址：https://www.104.com.tw/job/93hps
+- 104 上顯示的更新日：11/17
+
+### I99 網路工程師（7oeca）
+- 公司：台灣大哥大股份有限公司　地點：新北市三重區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：不拘　學歷：不拘
+- 工作內容：參與企業級資安平台（防火牆、IPS、WAF、Proxy 等）的架構設計與管理，持續強化防禦層級；跨部門推動網路與資安整合專案，從需求分析到技術落地；主動偵測與分析網路異常，做問題定位與修復，維持關鍵業務不中斷。職務類別為系統工程師、資訊設備管制人員、網路管理工程師，需求 1 人。
+- 條件與技能：必備：Cisco、Juniper、D-Link 等網通設備的操作與維運實務，熟悉網路架構原理並能獨立作業；Check Point、Palo Alto、Juniper、Fortinet 等防火牆與資安防護設備（IPS、WAF、上網安全控管）的設定、策略管理與資安政策落地。加分：英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Linux、Cisco、Juniper、IPS。
+- 網址：https://www.104.com.tw/job/7oeca
+- 104 上顯示的更新日：11/17
+
+### I205 資安防禦工程師（8dpzu）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：協助企業內部資安防護與事件應變；建置與維護 OpenSearch 平台，做日誌收集、索引管理與異常偵測；導入與維護 EDR 工具、規劃端點防護策略並處理威脅事件；協助建立與維護資安監控平台；撰寫資安事件報告並提出改善建議。職務類別為資安工程師，需求 1 人。
+- 條件與技能：必備（以下五項至少具備二項）：Linux 系統管理與資安加固；OpenSearch 或 ELK Stack 平台建置與維護；EDR 工具導入與事件應變；MDR 分析與外部 SOC／MDR 平台協作；資安事件分析與解決。加分：SOC、SIEM、MDR 平台整合；CCNA、CCNP 網路認證；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/8dpzu
+- 104 上顯示的更新日：11/17
+
+### I206 資安工程師（滲透測試）（86xef）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：1年以上　學歷：不拘
+- 工作內容：執行網站、Web API、主機與內部網路滲透測試；做弱點掃描、人工驗證、排除誤報與分級；分析弱點成因與影響，提出修補建議並複測；撰寫測試計畫、弱點證據與正式檢測報告；依專案參與 AD 安全測試、紅隊與攻防演練；研究最新漏洞與攻擊技術並優化檢測流程。
+- 條件與技能：必備（至少具備二項）：Web／API 滲透測試與 OWASP Top 10、OWASP API Security Top 10；Burp Suite、Nmap、Nuclei、Metasploit、SQLmap、Nessus、Acunetix；主機、網路設備或網站弱點掃描與人工驗證；Windows、Linux 與網路安全；內網或 Active Directory 測試；報告撰寫與改善建議；遵守測試授權範圍與保密要求。加分：金融、電信、政府機關或大型企業滲透測試；Mobile App、紅隊；MITRE ATT&CK、CVSS、EPSS、雲端安全測試；Python、PowerShell、Bash、n8n；SAST、DAST、SCA、DevSecOps；CTF、Hack The Box、TryHackMe、Bug Bounty；CEH、CPENT、OSCP、OSWE、OSEP、eJPT、PNPT、Security+、CISSP、CCNA、CCNP 等證照；多益聽讀 550 以上。
+- 網址：https://www.104.com.tw/job/86xef
+- 104 上顯示的更新日：11/17
+
+### I165 TPM 技術專案工程師（8qc2y）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：協助向外部客戶推介台灣大哥大開發的 AI 產品，做需求訪談與分析，把商業需求轉成技術規格，並與工程團隊討論 API 介接與系統架構；整合產品與技術，為客戶提供系統建置與解決方案；主導專案洽談與需求釐清，協調 RD、QA 團隊如期交付；用 JIRA、Trello 追蹤進度，確保需求變更與版本發布依計畫執行。職務類別為系統分析師、軟體專案管理師、軟體工程師，需求 1 人。
+- 條件與技能：3 年以上 TPM 或專案管理經驗；JIRA／Trello 與 SDLC、Agile；系統設計、API 介接、AWS／GCP／Azure 任一雲端的基本知識；溝通、跨部門協商與簡報。加分：PMP 或 AI 相關證照；政府標案或醫療資訊（HIS/PACS）專案；完整參與軟體專案從立案到結案。104 擅長工具欄列 Java、Python、ASP.NET、JIRA、AWS、Microsoft Azure；工作技能欄列專案管理軟體操作、系統架構規劃、軟體程式設計、軟體工程系統開發。
+- 網址：https://www.104.com.tw/job/8qc2y
+- 104 上顯示的更新日：11/17
+
+### I116 TPM技術專案工程師（95v6d）
+- 公司：台灣大哥大股份有限公司　地點：台北市大安區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：3年以上　學歷：不拘
+- 工作內容：負責 AI 應用與數位應用專案，協調 RD、QA、雲端／資安、產品與業務單位，確保交付時程與品質；主持每日站會、Sprint Planning／Review／Retro；與產品經理拆解商業需求，訂定每個 Sprint 的上版項目；確保專案符合 ISO 27001、GDPR、金融法規等合規要求。職務類別為專案經理、軟體專案管理師，需求 1 人。
+- 條件與技能：必備：3 年以上 TPM 或專案管理；JIRA／Trello 與 SDLC、Agile；系統設計、API 介接、AWS／GCP／Azure 任一雲端的基本知識；溝通、跨部門協商與簡報。加分：PMP 或 AI 證照；政府標案或醫療資訊（HIS/PACS）專案；完整參與軟體專案從立案到結案。104 擅長工具欄列 Python、Java、JIRA。
+- 網址：https://www.104.com.tw/job/95v6d
+- 104 上顯示的更新日：11/17
+
+### D635 MyVideo 數據分析師（8ly9u）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：3年以上　學歷：不拘
+- 工作內容：為台灣大哥大旗下 OTT 串流平台 MyVideo 建立數據驅動的工作方式。用戶成長：分析全通路行銷成效與用戶來源、建立用戶旅程找出斷點、建立用戶分群了解輪廓、喜好與黏著度。產品優化：與產品團隊用數據提升拉新轉換與留存，追蹤訂閱率與觀看率等功能成效。內容策略：分析各類內容表現與用戶喜好，供內容授權單位建立內容策略參考。職務類別為數據分析師／資料分析師、商業分析師、網站行銷企劃，需求 2 人。
+- 條件與技能：3 年以上數據分析經驗；擅於思考分析架構，讓分析結果切合商業議題；擅長 SQL、Python／R；有使用 BI 工具建立數據儀表板的經驗，例如 Tableau；可團隊合作也可獨立作業。語文：英文聽說讀寫中等。104 擅長工具與工作技能欄為不拘。
+- 網址：https://www.104.com.tw/job/8ly9u
+- 104 上顯示的更新日：11/17
+
+### D429 產業研究分析師/數據分析師（8xx70）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：4年以上　學歷：不拘
+- 工作內容：依內外部業務需求提供數據分析與洞察；以商業應用角度解讀分析結果並提出對應策略建議；熟悉內部數據平台並對內與對外推廣使用；洽談跨部門、跨集團與外部的數據合作；執行主管交辦事項與專案。職務類別為商業分析師、數據分析師／資料分析師，需求 1 人。
+- 條件與技能：4 年以上數據分析相關工作經驗；intellectual curiosity、獨立思考；整合、邏輯分析與簡報能力；商業敏銳度；細心、有耐心並具溝通能力；多益 700 分以上。語文：英文聽說讀寫精通。104 擅長工具與工作技能欄為不拘，內文未指名 SQL、Python 等工具。
+- 網址：https://www.104.com.tw/job/8xx70
+- 104 上顯示的更新日：11/17
+
+### D429 資深產業研究分析師/數據分析師（8y933）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪約90~108萬）　經歷：4年以上　學歷：不拘
+- 工作內容：與 8xx70 一般版相同：依內外部業務需求提供數據分析與洞察；以商業應用角度解讀分析結果並提出對應策略建議；熟悉內部數據平台並對內與對外推廣使用；洽談跨部門、跨集團與外部的數據合作；執行主管交辦事項與專案。職務類別為商業分析師、數據分析師／資料分析師，需求 1 人。
+- 條件與技能：4 年以上數據分析相關工作經驗；intellectual curiosity、獨立思考；整合、邏輯分析與簡報能力；商業敏銳度；細心、有耐心並具溝通能力；多益 700 分以上。語文：英文聽說讀寫精通。104 擅長工具與工作技能欄為不拘，內文未指名 SQL、Python 等工具。與一般版的差別只在內文年薪區間（90~108萬）。
+- 網址：https://www.104.com.tw/job/8y933
+- 104 上顯示的更新日：11/17
+
+### 數據研究暨管理主管（8hnwq）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（遠端工作欄未標示）　薪資：待遇面議（內文：績效達平均水準者年薪可達19個月以上）　經歷：10年以上　學歷：不拘
+- 工作內容：制定並執行數據戰略，涵蓋數據收集、處理、分析與應用的整體計畫；指導資料科學家、分析師與問卷調查團隊做數據分析，取得洞察以支持業務決策；管理並優化內部數據系統，確保運行效率與安全，支援各部門數據需求；領導數據團隊；與業務部門協作，讓數據戰略對齊業務目標並推動數據驅動決策；管理數據安全與數據隱私。職務類別為資料科學家、數據分析師／資料分析師，管理責任 13 人以上，需求 1 人。
+- 條件與技能：12 年以上資料分析或系統開發相關經驗；商業敏銳度與獨立思考；團隊領導與專案管理，協調跨部門資源；與技術及非技術團隊溝通數據價值；分析思維與解決問題能力；深入了解數據隱私保護與相關法規。104 擅長工具與工作技能欄為不拘，內文未指名程式語言或工具。
+- 網址：https://www.104.com.tw/job/8hnwq
+- 104 上顯示的更新日：11/17
+
+### 數據研究暨管理主管（8hsfv）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，一個月 10 天居家上班）　薪資：待遇面議（內文：績效達平均水準者年薪可達19個月以上）　經歷：10年以上　學歷：不拘
+- 工作內容：與 8hnwq 同名職缺的內文相同：制定並執行數據戰略；指導資料科學家、分析師與問卷調查團隊做數據分析；管理並優化內部數據系統；領導數據團隊並與業務部門協作；管理數據安全與數據隱私。與 8hnwq 的差異在欄位：工作性質為高階，職務類別為經營管理高階主管、顧問師，並標示部分遠端；管理責任 13 人以上，需求 1 人。
+- 條件與技能：12 年以上資料分析或系統開發相關經驗；商業敏銳度與獨立思考；團隊領導與專案管理，協調跨部門資源；與技術及非技術團隊溝通數據價值；分析思維與解決問題能力；深入了解數據隱私保護與相關法規。104 擅長工具與工作技能欄為不拘，內文未指名程式語言或工具。
+- 網址：https://www.104.com.tw/job/8hsfv
+- 104 上顯示的更新日：11/17
+
+### 大哥付你分期數據分析人員（8yx2c）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班，新人期間以實體上班為主）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：2年以上　學歷：不拘
+- 工作內容：「大哥付你分期」是 BNPL（先買後付）服務。工作包含：維護額度模型與規則優化；跨部門挖掘電信大數據，提取具預測力的特徵並迭代模型；用 Tableau 與 AWS 建置即時監控儀表板；把地端（On-premise）原始資料導入 AWS 雲端中繼資料庫，排除異質資料源對接問題，維護 Data Pipeline；與產品、行銷等團隊協作並參與專案規劃；另負責大哥保與數據服務等專案的數據分析。需求 1 人。
+- 條件與技能：2 年以上數據分析或模型開發經驗；Python、R 或其他分析工具，與 SQL 查詢及資料處理；建模經驗，如回歸分析、決策樹、隨機森林等機器學習；邏輯思維並把數據轉成業務建議。加分：金融、支付或電信行業的數據分析或模型開發專案；熟悉授信策略與流程。104 擅長工具欄為不拘。
+- 網址：https://www.104.com.tw/job/8yx2c
+- 104 上顯示的更新日：11/17
+
+### D467 用戶行為分析人員（6k2q4）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班，新人期間以實體上班為主）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：2年以上　學歷：不拘
+- 工作內容：負責台灣大哥大既有用戶的續約分析與維運管理，結合資料分析結果改善用戶經營模式。工作包含：競業專案與市場資訊蒐集與分析；競業方案與市場動態分析及因應建議；續約用戶行為分析與經營優化（溝通、機制、成效分析）；其他既有用戶續約與使用趨勢分析。職務類別為行銷企劃、市場調查／市場分析，需求 1 人。
+- 條件與技能：2 年以上資料分析或資料庫行銷經驗；用戶行為分析或經營管理相關數據分析經驗；邏輯能力佳並可獨立作業；跨部門溝通協調與專案管理經驗；數據報表自動化經驗；數據分析與簡報能力。語文：英文聽說讀寫中等。104 擅長工具與工作技能欄為不拘，內文未指名程式語言或工具。
+- 網址：https://www.104.com.tw/job/6k2q4
+- 104 上顯示的更新日：11/17
+
+### F56 逾期用戶行為分析人員（891gm）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班，實際天數依部門規範）　薪資：待遇面議（內文：績效達平均水準者年薪約77~95萬）　經歷：不拘　學歷：不拘
+- 工作內容：分析帳款逾期用戶的使用行為並歸納；找出影響用戶不繳費的關鍵因素；用 AI 工具設計並產出解決方案、更新既有作業流程，製作簡報提案並提供策略建議；協助技術團隊建立生成式 AI、大型語言模型（LLM）、AI Agent 等技術的工作應用。職務類別為統計精算人員、市場調查／市場分析、其他專案管理師，需求 1 人。
+- 條件與技能：邏輯清晰並喜歡解讀數據；具數據分析或演算法預測模型相關經驗，會用 Python 或 R 為加分；會用 Google Gemini、ChatGPT 等生成式 AI 工具；製作商業簡報能力為必備。語文：英文聽說讀寫中等。104 擅長工具欄列 Excel、PowerPoint。
+- 網址：https://www.104.com.tw/job/891gm
+- 104 上顯示的更新日：11/17
+
+### F56 資深逾期用戶行為分析人員（969iy）
+- 公司：台灣大哥大股份有限公司　地點：台北市信義區（部分遠端，每月可申請 10 日居家上班，實際天數依部門規範）　薪資：待遇面議（內文：績效達平均水準者年薪約81~108萬）　經歷：4年以上　學歷：不拘
+- 工作內容：與 891gm 一般版內文相同：分析帳款逾期用戶的使用行為並歸納；找出影響用戶不繳費的關鍵因素；用 AI 工具產出解決方案、更新既有作業流程並製作簡報提案；參與協助技術團隊完成生成式 AI、LLM、AI Agent 等技術的工作應用。職務類別為統計精算人員、市場調查／市場分析、其他專案管理師，需求 1 人。
+- 條件與技能：邏輯清晰並喜歡解讀數據；具數據分析或演算法預測模型相關經驗，會用 Python 或 R 為加分；會用 Google Gemini、ChatGPT 等生成式 AI 工具；商業簡報能力為必備；另要求曾參與授信、風控、催費、帳務流程優化或演算法模型商轉相關專案。語文：英文聽說讀寫中等。104 擅長工具欄列 Excel、PowerPoint。
+- 網址：https://www.104.com.tw/job/969iy
+- 104 上顯示的更新日：11/12
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "@'
+import pathlib,re
+checks=[
+('30_104職缺更新_台灣大哥大.md','目前開放職缺 > E161 系統維運工程師（93hps）','績效達平均水準者年薪約77~95萬'),
+('30_104職缺更新_台灣大哥大.md','目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）','高中畢業的新世代程式人才與研發替代役也可應徵'),
+('20_補充_台灣大哥大.md','基本資料 > 官網呈現的事業組成與徵才入口','台灣大哥大官網載明公司總部在台北市信義區'),
+('20_補充_台灣大哥大.md','技術堆疊 > MyAgent 企業 AI 代理平台與工程師規模','公司表示，自研的 GenAIus 是 MyAgent 的核心。'),
+('20_補充_台灣大哥大.md','業務與財務 > 2026 年第三季企業服務與新科技事業','中小企業一站式方案「OP 開店包」用戶數年增 37%。'),
+('20_補充_台灣大哥大.md','業務與財務 > 2025 年第四季與全年細項','2026 年資本支出預計 82.4 億元'),
+('20_補充_台灣大哥大.md','近一年新聞 > 2026-03-02 與 AST SpaceMobile 簽署低軌衛星合作備忘錄','與 AST SpaceMobile 簽署「低軌衛星通訊服務策略合作備忘錄」'),
+('30_104職缺更新_台灣大哥大.md','目前開放職缺 > I103 iOS 開發工程師（7neau）','iOS App 的開發、維護與升級；以 Swift／Objective-C 開發'),
+('30_104職缺更新_台灣大哥大.md','目前開放職缺 > I104 Android App開發工程師（775u7）','負責 Android App 的開發、上架、更新與維護'),
+('30_104職缺更新_台灣大哥大.md','目前開放職缺 > I90 通訊系統TPM（8sep4）','帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付'),
+('30_104職缺更新_台灣大哥大.md','目前開放職缺 > I92 通訊軟體工程師（8seot）','協助開發與維護 FreeSWITCH 核心功能模組')]
+for f,h,q in checks:
+    stack=[]; chunks={}; current=None
+    for line in pathlib.Path(f).read_text(encoding='utf-8-sig').splitlines():
+        m=re.match(r'"'^(#{1,6}) (.+)$'"',line)
+        if m:
+            level=len(m[1]); stack=[(l,t) for l,t in stack if l<level]
+            stack.append((level,m[2]));current=' > '.join(t for l,t in stack if l>1);chunks.setdefault(current,[])
+        elif current:chunks[current].append(line)
+    assert 8<=len(q)<=60,(q,len(q))
+    assert any(q in line for line in chunks.get(h,[])),(f,h,q)
+print('11 gold excerpts: exact heading, single-line substring and length checks passed')
+s=pathlib.Path('30_104職缺更新_台灣大哥大.md').read_text(encoding='utf-8-sig')
+for m in re.finditer(r'"'^### (.+)'"\\n(.*?)(?="'^### |'"\\Z)',s,re.M|re.S):
+    if 'FreeSWITCH' in m[2]:print('FreeSWITCH:',m[1])
+'@ | python -" in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 494ms:
+Traceback (most recent call last):
+  File "<stdin>", line 16, in <module>
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1058, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 22] Invalid argument: '30_104????_?????.md'
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command '$checks = @'"'
+30_104職缺更新_台灣大哥大.md|E161 系統維運工程師（93hps）|績效達平均水準者年薪約77~95萬
+30_104職缺更新_台灣大哥大.md|HIPO疾行軍招募計畫-資訊類（7m38q）|高中畢業的新世代程式人才與研發替代役也可應徵
+20_補充_台灣大哥大.md|官網呈現的事業組成與徵才入口|台灣大哥大官網載明公司總部在台北市信義區
+20_補充_台灣大哥大.md|MyAgent 企業 AI 代理平台與工程師規模|公司表示，自研的 GenAIus 是 MyAgent 的核心。
+20_補充_台灣大哥大.md|2026 年第三季企業服務與新科技事業|中小企業一站式方案「OP 開店包」用戶數年增 37%。
+20_補充_台灣大哥大.md|2025 年第四季與全年細項|2026 年資本支出預計 82.4 億元
+20_補充_台灣大哥大.md|2026-03-02 與 AST SpaceMobile 簽署低軌衛星合作備忘錄|與 AST SpaceMobile 簽署「低軌衛星通訊服務策略合作備忘錄」
+30_104職缺更新_台灣大哥大.md|I103 iOS 開發工程師（7neau）|iOS App 的開發、維護與升級；以 Swift／Objective-C 開發
+30_104職缺更新_台灣大哥大.md|I104 Android App開發工程師（775u7）|負責 Android App 的開發、上架、更新與維護
+30_104職缺更新_台灣大哥大.md|I90 通訊系統TPM（8sep4）|帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付
+30_104職缺更新_台灣大哥大.md|I92 通訊軟體工程師（8seot）|協助開發與維護 FreeSWITCH 核心功能模組
+'@
+foreach ("'$row in ($checks -split "`n")) { $parts=$row.Trim() -split '"'\\|'; "'$source=Get-Content -LiteralPath $parts[0] -Encoding UTF8 -Raw; $pattern='"'(?m)"'^### '"'+[regex]::Escape("'$parts[1])+'"'\\r?\\n([\\s\\S]*?)(?="'^### |'"\\z)'; "'$section=[regex]::Match($source,$pattern); if (-not $section.Success -or -not $section.Groups[1].Value.Contains($parts[2]) -or $parts[2].Length -lt 8 -or $parts[2].Length -gt 60) { throw "Invalid excerpt: $row" } }; '"'All 11 gold excerpts passed section and length checks'; rg -n 'FreeSWITCH|"'^### .*iOS|''^### .*Android'"' -- '30_104職缺更新_台灣大哥大.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 584ms:
+All 11 gold excerpts passed section and length checks
+198:- 工作內容：帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付；制定專案時程與資源分配；協調跨功能團隊，確保專案目標達成；提供 FreeSWITCH 與 VoIP 技術架構指導；檢核技術設計與程式碼品質；協助解決複雜的技術問題與系統整合。職務類別為軟體專案主管、系統分析師、軟體專案管理師，需求 1 人。
+199:- 條件與技能：必要：8 年以上軟體開發經驗，其中 5 年以上專案管理；深入了解 FreeSWITCH 架構與 VoIP；C/C++、Python、Lua；分散式系統、微服務架構與雲端技術；PostgreSQL、MySQL；Linux 系統管理與 DevOps。加分：SIP、RTP、WebRTC 協議；Docker、Kubernetes；ELK Stack、Prometheus；Scrum、Kanban。104 擅長工具欄列 Linux、MySQL、PostgreSQL、IMS、VoIP。
+205:- 工作內容：協助開發與維護 FreeSWITCH 核心功能模組；開發 RESTful API 服務並與第三方系統整合；參與 PBX 系統規劃設計與自訂模組開發；協助資料庫設計與系統監控機制建立；撰寫測試程式與技術文件。職務類別為軟體工程師、後端工程師、通訊軟體工程師，需求 1 人。
+206:- 條件與技能：必要：任一程式語言熟練並具 Lua 基礎；SIP、RTP 等 VoIP 協議基礎；PostgreSQL 或 MySQL 使用經驗；Linux 命令列操作；Git 程式碼管理。加分：FreeSWITCH 開發或配置經驗；Docker 與 Kubernetes 容器化；Redis 與 RabbitMQ 等訊息佇列系統。104 擅長工具欄列 Linux、MySQL、PostgreSQL、IMS、VoIP。
+210:### I103 iOS 開發工程師（7neau）
+217:### I104 Android App開發工程師（775u7）
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+[
+  {
+    "question": "台灣大哥大E161系統維運工程師一般年薪多少？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > E161 系統維運工程師（93hps）",
+        "quote": "績效達平均水準者年薪約77~95萬"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大HIPO資訊招募高中畢業能報嗎？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）",
+        "quote": "高中畢業的新世代程式人才與研發替代役也可應徵"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大總部落在台北哪一區？",
+    "type": "單一公司",
+    "topic": "地點",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "基本資料 > 官網呈現的事業組成與徵才入口",
+        "quote": "台灣大哥大官網載明公司總部在台北市信義區"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大MyAgent底層核心叫什麼？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "技術堆疊 > MyAgent 企業 AI 代理平台與工程師規模",
+        "quote": "公司表示，自研的 GenAIus 是 MyAgent 的核心。"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大OP開店包主要賣給哪類企業？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "業務與財務 > 2026 年第三季企業服務與新科技事業",
+        "quote": "中小企業一站式方案「OP 開店包」用戶數年增 37%。"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大2026年打算花多少資本預算？",
+    "type": "單一公司",
+    "topic": "財務",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "業務與財務 > 2025 年第四季與全年細項",
+        "quote": "2026 年資本支出預計 82.4 億元"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大2026年找誰合作手機直連衛星？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "近一年新聞 > 2026-03-02 與 AST SpaceMobile 簽署低軌衛星合作備忘錄",
+        "quote": "與 AST SpaceMobile 簽署「低軌衛星通訊服務策略合作備忘錄」"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大有哪些專做手機App的工程師缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I103 iOS 開發工程師（7neau）",
+        "quote": "iOS App 的開發、維護與升級；以 Swift／Objective-C 開發"
+      },
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I104 Android App開發工程師（775u7）",
+        "quote": "負責 Android App 的開發、上架、更新與維護"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大哪些職缺要開發FreeSWITCH？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I90 通訊系統TPM（8sep4）",
+        "quote": "帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付"
+      },
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I92 通訊軟體工程師（8seot）",
+        "quote": "協助開發與維護 FreeSWITCH 核心功能模組"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大員工旅遊每人補貼多少？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "台灣大哥大",
+    "gold": [],
+    "absence_keywords": [
+      "員工旅遊",
+      "旅遊補助",
+      "旅遊津貼"
+    ]
+  },
+  {
+    "question": "台灣大哥大員工生小孩能領多少補助？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "台灣大哥大",
+    "gold": [],
+    "absence_keywords": [
+      "生育補助",
+      "生育津貼",
+      "生育禮金"
+    ]
+  }
+]
+hook: Stop
+hook: Stop Completed
+tokens used
+87,367
+[
+  {
+    "question": "台灣大哥大E161系統維運工程師一般年薪多少？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > E161 系統維運工程師（93hps）",
+        "quote": "績效達平均水準者年薪約77~95萬"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大HIPO資訊招募高中畢業能報嗎？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）",
+        "quote": "高中畢業的新世代程式人才與研發替代役也可應徵"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大總部落在台北哪一區？",
+    "type": "單一公司",
+    "topic": "地點",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "基本資料 > 官網呈現的事業組成與徵才入口",
+        "quote": "台灣大哥大官網載明公司總部在台北市信義區"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大MyAgent底層核心叫什麼？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "技術堆疊 > MyAgent 企業 AI 代理平台與工程師規模",
+        "quote": "公司表示，自研的 GenAIus 是 MyAgent 的核心。"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大OP開店包主要賣給哪類企業？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "業務與財務 > 2026 年第三季企業服務與新科技事業",
+        "quote": "中小企業一站式方案「OP 開店包」用戶數年增 37%。"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大2026年打算花多少資本預算？",
+    "type": "單一公司",
+    "topic": "財務",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "業務與財務 > 2025 年第四季與全年細項",
+        "quote": "2026 年資本支出預計 82.4 億元"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大2026年找誰合作手機直連衛星？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "20_補充_台灣大哥大.md",
+        "heading": "近一年新聞 > 2026-03-02 與 AST SpaceMobile 簽署低軌衛星合作備忘錄",
+        "quote": "與 AST SpaceMobile 簽署「低軌衛星通訊服務策略合作備忘錄」"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大有哪些專做手機App的工程師缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I103 iOS 開發工程師（7neau）",
+        "quote": "iOS App 的開發、維護與升級；以 Swift／Objective-C 開發"
+      },
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I104 Android App開發工程師（775u7）",
+        "quote": "負責 Android App 的開發、上架、更新與維護"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大哪些職缺要開發FreeSWITCH？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "台灣大哥大",
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I90 通訊系統TPM（8sep4）",
+        "quote": "帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付"
+      },
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I92 通訊軟體工程師（8seot）",
+        "quote": "協助開發與維護 FreeSWITCH 核心功能模組"
+      }
+    ]
+  },
+  {
+    "question": "台灣大哥大員工旅遊每人補貼多少？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "台灣大哥大",
+    "gold": [],
+    "absence_keywords": [
+      "員工旅遊",
+      "旅遊補助",
+      "旅遊津貼"
+    ]
+  },
+  {
+    "question": "台灣大哥大員工生小孩能領多少補助？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "台灣大哥大",
+    "gold": [],
+    "absence_keywords": [
+      "生育補助",
+      "生育津貼",
+      "生育禮金"
+    ]
+  }
+]

@@ -1,4 +1,4 @@
-"""票 41：對獨立測試題（票 39 的答案）跑 RAGAS。三個階段，各自可中斷續跑：
+"""對獨立測試題 100 題（run_heldout_answers.py 的答案）跑 RAGAS。三個階段，各自可中斷續跑：
   contexts  向主服務 /api/search 取回當時送進生成的段落，與票 39 的出處逐筆比對，一致才沿用舊答案（不呼叫 DeepSeek）；寫 eval/results_heldout_answers_v2.json
   score     用 .venv-ragas 對每題評分（DeepSeek 評審），每題寫完就存 dist/logs/ragas_heldout_progress.json；--metrics 可只跑 faithfulness
   report    讀進度檔，寫 eval/results_heldout_generation.txt／.json
@@ -21,11 +21,10 @@ NOT_FOUND = "查無"
 METRICS = ("faithfulness", "answer_relevancy")
 # 低於 0.9 的題原因：人工讀答案與段落後寫（RAGAS 沒有輸出逐句判定，原因是推論，不是評審的原話）
 REASONS = {
-    "h23": "跨公司 8 家。神通一行寫「公司自述的產品沒有寫 AI Agent」，但段落 [2] 的【自述】就列了 MiTAC Agent Builder，這句與段落相反；"
-           "其餘多行是「資料中沒有提到」這類沒有出處可對的否定句，評審難以認定有依據。其他正面陳述（凱基、叡揚、藍新）在段落找得到。",
-    "h24": "跨公司 8 家，答案 8 行裡有 6 行是「資料沒寫」；這類否定句沒有段落可對，評審多半判無依據，分數被拉低。正面陳述（聯合報、神通）在段落 [1][2][5] 找得到。",
-    "h25": "跨公司 8 家，答案 8 行裡有 4 行是「資料沒寫」（神通、台灣大哥大、藍新、聯合報），同樣沒有段落可對。凱基、叡揚、中華網龍、華電的 C# 陳述在段落找得到（華電那行結尾是段落被截斷的「Web A…」）。",
-}
+    "g019": "答案只列出一個職缺（資料科學資深經理，段落 [3] 寫地點在信義區基隆路），這句在段落找得到；另一句「其他職位的地點，資料中沒有提到」是否定句，沒有段落可對，評審可能判無依據。"
+            "另外，聯合報其他職缺的地點段落沒有進前 5 段，所以答案列不全（這是檢索面的限制，不是編造）。RAGAS 沒輸出逐句判定，以上是推論。",
+    "g057": "答案只有「大學、碩士 [1]」一個短句，段落 [1] 的 Python系統程式設計師職缺寫「學歷：大學、碩士」，內容對得上；答案太短，評審拆出的陳述可能把「最低」當成要另外證明的說法。RAGAS 沒輸出逐句判定，以上是推論。",
+}  # 人工讀答案與段落後寫；其餘忠實度低的題沒有逐題檢視，報告會寫「（尚未人工檢視）」
 
 
 def _get(base, path, **q):
@@ -119,7 +118,7 @@ def report(a):
            "stats": stat, "per_question": per, "low_ids": [i["id"] for i in low],
            "reasons": {i["id"]: REASONS.get(i["id"]) for i in low},
            "low_ar_ids": [i["id"] for i in low_ar],
-           "note": "答案相關性是第二次補量（先停掉主服務騰出記憶體，用本機 bge-m3 嵌入）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案是 2026-11-17 在新版語料上由 run_heldout_answers.py 重新生成的（K=5、補公司名、已指定公司門檻 0.62）。"}
+           "note": "忠實度與答案相關性在同一次 score 階段量完（用本機 bge-m3 嵌入；沒有停主服務）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。100 題的答案是 2026-11-17 在補完職稱清單的語料上由 run_heldout_answers.py 實跑一次生成的（K=5、補公司名、已指定公司門檻 0.62；DeepSeek 輸出可能隨機）。題目由 GPT 單一模型出、金標未經人工確認。"}
     OUT.with_suffix(".json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     f = lambda x: "-" if x is None else f"{x:.3f}"
     L = ["獨立測試題 RAGAS（現行設定：K=5、補公司名、已指定公司門檻 0.62；題組 eval/questions_heldout.json）",

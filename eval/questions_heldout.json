@@ -1,710 +1,2105 @@
 {
- "說明": "票 39：獨立測試題 40 題（原本有答案 25、沒答案 15；2026-11-17 因語料換新版，h40 改標為可回答，現為有答案 26、沒答案 14；gold 與關鍵字隨之更新，非為提高分數）。題目與金標在跑任何檢索評估之前寫定，之後不得為了結果改題。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（程式核對確實出現在公開段落）。沒有答案題的 absence_keywords 在整份語料（含排除段落）出現 0 次；trap＝相近主題但語料確實沒寫的陷阱題。核對狀態只有使用者能改成已確認。",
+ "說明": "獨立測試題 100 題（2026-11-17 取代原本的 40 題；舊的 40 題與舊結果在 eval/old_heldout40/）。由 Codex CLI 的 gpt-6.1-sol（單一模型，非 Claude）出題，出題時沒有看任何檢索結果；題目與金標在跑本批評估之前寫定，之後不得為了結果改題。題型：單一公司 56、職缺清單 16、跨公司 10、不可回答 18（含 2 題不指定公司）。company＝問題是在該公司頁內提的。跨公司題沒有單一金標，用 keywords 與 companies。不可回答題的 absence_keywords 在整份語料出現 0 次；trap＝相近主題但語料確實沒寫的題。每題 gold 的 quote 已用程式核對逐字在該標題段落內；但 gold 與題目未經人工確認，核對狀態只有使用者能改成已確認。",
  "questions": [
   {
-   "id": "h01",
-   "question": "EPS 多少？",
-   "type": "公司頁短問句",
-   "topic": "財務",
-   "answerable": true,
+   "id": "g001",
+   "question": "台灣大哥大E161系統維運工程師一般年薪多少？",
+   "type": "單一公司",
+   "topic": "薪資",
    "company": "台灣大哥大",
    "gold": [
     {
-     "file": "01_台灣大哥大.md",
-     "heading": "2. 業務與財務",
-     "quote": "EPS 4.77 元"
-    },
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > E161 系統維運工程師（93hps）",
+     "quote": "績效達平均水準者年薪約77~95萬"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g002",
+   "question": "台灣大哥大HIPO資訊招募高中畢業能報嗎？",
+   "type": "單一公司",
+   "topic": "學歷",
+   "company": "台灣大哥大",
+   "gold": [
     {
-     "file": "01_台灣大哥大.md",
-     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
-     "quote": "EPS 4.77 元，營收年減 0.31%"
-    },
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）",
+     "quote": "高中畢業的新世代程式人才與研發替代役也可應徵"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g003",
+   "question": "台灣大哥大總部落在台北哪一區？",
+   "type": "單一公司",
+   "topic": "地點",
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "基本資料 > 官網呈現的事業組成與徵才入口",
+     "quote": "台灣大哥大官網載明公司總部在台北市信義區"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g004",
+   "question": "台灣大哥大MyAgent底層核心叫什麼？",
+   "type": "單一公司",
+   "topic": "技術",
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "技術堆疊 > MyAgent 企業 AI 代理平台與工程師規模",
+     "quote": "公司表示，自研的 GenAIus 是 MyAgent 的核心。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g005",
+   "question": "台灣大哥大OP開店包主要賣給哪類企業？",
+   "type": "單一公司",
+   "topic": "業務",
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "業務與財務 > 2026 年第三季企業服務與新科技事業",
+     "quote": "中小企業一站式方案「OP 開店包」用戶數年增 37%。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g006",
+   "question": "台灣大哥大2026年打算花多少資本預算？",
+   "type": "單一公司",
+   "topic": "財務",
+   "company": "台灣大哥大",
+   "gold": [
     {
      "file": "20_補充_台灣大哥大.md",
      "heading": "業務與財務 > 2025 年第四季與全年細項",
-     "quote": "EPS 4.77 元"
+     "quote": "2026 年資本支出預計 82.4 億元"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h02",
-   "question": "用什麼雲端？",
-   "type": "公司頁短問句",
-   "topic": "技術",
+   "id": "g007",
+   "question": "台灣大哥大2026年找誰合作手機直連衛星？",
+   "type": "單一公司",
+   "topic": "新聞",
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "近一年新聞 > 2026-03-02 與 AST SpaceMobile 簽署低軌衛星合作備忘錄",
+     "quote": "與 AST SpaceMobile 簽署「低軌衛星通訊服務策略合作備忘錄」"
+    }
+   ],
    "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g008",
+   "question": "台灣大哥大有哪些專做手機App的工程師缺？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I103 iOS 開發工程師（7neau）",
+     "quote": "iOS App 的開發、維護與升級；以 Swift／Objective-C 開發"
+    },
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I104 Android App開發工程師（775u7）",
+     "quote": "負責 Android App 的開發、上架、更新與維護"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g009",
+   "question": "台灣大哥大哪些職缺要開發FreeSWITCH？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I90 通訊系統TPM（8sep4）",
+     "quote": "帶領 FreeSWITCH PBX 系統開發專案的規劃、執行與交付"
+    },
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I92 通訊軟體工程師（8seot）",
+     "quote": "協助開發與維護 FreeSWITCH 核心功能模組"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g010",
+   "question": "台灣大哥大員工旅遊每人補貼多少？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "台灣大哥大",
+   "gold": [],
+   "absence_keywords": [
+    "員工旅遊",
+    "旅遊補助",
+    "旅遊津貼"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g011",
+   "question": "台灣大哥大員工生小孩能領多少補助？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "台灣大哥大",
+   "gold": [],
+   "absence_keywords": [
+    "生育補助",
+    "生育津貼",
+    "生育禮金"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g012",
+   "question": "聯合報新聞部前端開發工程師月薪開多少？",
+   "type": "單一公司",
+   "topic": "薪資",
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+     "quote": "月薪 35,000~50,000 元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g013",
+   "question": "聯合報產品分析中心助理數據分析師要什麼學位？",
+   "type": "單一公司",
+   "topic": "學歷",
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】助理數據分析師－產品分析中心（70mim）",
+     "quote": "學歷：大學、碩士"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g014",
+   "question": "聯合報演算法工程師每天去哪裡上班？",
+   "type": "單一公司",
+   "topic": "地點",
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+     "quote": "地點：台北市信義區基隆路一段178號11樓"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g015",
+   "question": "聯合報哪年開始賣數位訂閱？",
+   "type": "單一公司",
+   "topic": "業務",
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "業務與財務 > 數位訂閱與歷年全球獎項",
+     "quote": "聯合報系 2020 年推出數位訂閱。"
+    },
+    {
+     "file": "02_聯合報.md",
+     "heading": "2. 業務與財務",
+     "quote": "聯合知識庫、訂閱產品（2020 起）"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g016",
+   "question": "聯合報登記的資本金有多少？",
+   "type": "單一公司",
+   "topic": "財務",
    "company": "聯合報",
    "gold": [
     {
      "file": "02_聯合報.md",
-     "heading": "5. 技術堆疊",
-     "quote": "Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）"
-    },
-    {
-     "file": "21_補充_聯合報.md",
-     "heading": "技術堆疊 > Google Cloud 資料與運算架構",
-     "quote": "使用的產品包括 BigQuery、Vertex AI、Compute Engine"
+     "heading": "1. 基本資料 > 1.2 聯合報股份有限公司",
+     "quote": "資本額：30.9 億元（已發行 309,000,000 股，面額 10 元）。"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h03",
-   "question": "董事長是誰？",
-   "type": "公司頁短問句",
-   "topic": "公司概況",
+   "id": "g017",
+   "question": "聯合報自動抓錯字的新聞平台是哪家公司做的？",
+   "type": "單一公司",
+   "topic": "技術",
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "技術堆疊 > Streamlined Newsroom 平台",
+     "quote": "平台由聯經數位推出"
+    },
+    {
+     "file": "02_聯合報.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Streamlined Newsroom（錯字偵測、圖片推薦、提示詞平台、跨通路發布）由聯經數位開發"
+    }
+   ],
    "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g018",
+   "question": "聯合報今年七月起引進哪家美國報紙的內容？",
+   "type": "單一公司",
+   "topic": "新聞",
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "近一年新聞 > 2026-07 聯合報數位版提供紐約時報國際內容",
+     "quote": "自 7 月 1 日起，聯合報數位版開始提供紐約時報的國際內容"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g019",
+   "question": "聯合報哪些職位的辦公室在信義區？",
+   "type": "職缺",
+   "topic": "地點",
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+     "quote": "地點：台北市信義區基隆路一段178號11樓"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+     "quote": "地點：台北市信義區基隆路一段178號11樓"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g020",
+   "question": "聯合報哪些職位讓沒工作經驗的人也能投？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】助理數據分析師－產品分析中心（70mim）",
+     "quote": "經歷：不拘　學歷：大學、碩士"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+     "quote": "經歷：不拘　學歷：大學以上"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+     "quote": "經歷：不拘　學歷：專科、大學、碩士"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【行動發展部】Android行動軟體開發工程師（8eulh）",
+     "quote": "經歷：不拘　學歷：專科、大學、碩士"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 數據應用工程師（8nf2t）",
+     "quote": "經歷：不拘　學歷：大學以上"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 數據系統開發工程師（JAVA）（8v5ma）",
+     "quote": "經歷：不拘　學歷：大學"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g021",
+   "question": "聯合報每年員工出遊補助多少錢？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "聯合報",
+   "gold": [],
+   "absence_keywords": [
+    "員工旅遊",
+    "旅遊補助"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g022",
+   "question": "聯合報有補貼員工寵物的醫療費嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "聯合報",
+   "gold": [],
+   "absence_keywords": [
+    "寵物醫療",
+    "寵物醫藥",
+    "寵物保險"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g023",
+   "question": "叡揚資訊的 API 治理系統工程師月薪開多少？",
+   "type": "單一公司",
+   "topic": "薪資",
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > 系統工程師_API治理(26050401)（915rx）",
+     "quote": "薪資：月薪 36,000~45,000 元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g024",
+   "question": "叡揚資訊的資安顧問至少要拿到什麼學位？",
+   "type": "單一公司",
+   "topic": "學歷",
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > 資安顧問(20042301A)（6xhv2）",
+     "quote": "學歷：碩士（資訊工程、資訊管理相關）"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g025",
+   "question": "叡揚資訊的高雄研發據點在哪一區？",
+   "type": "單一公司",
+   "topic": "地點",
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "基本資料 > 叡揚資訊的定位與據點",
+     "quote": "高雄研發中心（前鎮區中山二路）"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g026",
+   "question": "叡揚資訊的 Radar 是幫企業管哪一塊？",
+   "type": "單一公司",
+   "topic": "業務",
    "company": "叡揚資訊",
    "gold": [
     {
      "file": "03_叡揚資訊.md",
-     "heading": "1. 基本資料",
-     "quote": "張培鏞（代表人）／陳世安"
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "人資：Radar 睿達人力資源管理。"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h04",
-   "question": "公司在哪裡？",
-   "type": "公司頁短問句",
-   "topic": "公司概況",
+   "id": "g027",
+   "question": "叡揚資訊2025年研發花費占收入百分之多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "基本資料 > 成立與研發投入",
+     "quote": "2025 年研發費用占營收 11.04%。"
+    }
+   ],
    "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g028",
+   "question": "叡揚資訊2026年五月活動誰談多代理協作？",
+   "type": "單一公司",
+   "topic": "新聞",
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "近一年新聞 > 2026-05 GSS Solutions Day",
+     "quote": "前瞻技術研究所經理王麒詳（講多 Agent 協作的「Team Agent」概念）"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g029",
+   "question": "叡揚資訊的 BizForm 要接哪種代理協定？",
+   "type": "單一公司",
+   "topic": "技術",
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "技術堆疊 > Agentic AI、MCP 與 InsAI（2025-11 AI Solution Day）",
+     "quote": "BizForm 預計 2026 年第一季支援 MCP 伺服器"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g030",
+   "question": "叡揚資訊有哪些按小時計酬的職缺？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > [校園專區-高雄]實習生-助理程式設計師(26060102)（895mr）",
+     "quote": "薪資：時薪 220 元"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > [校園專區]實習生-助理程式設計師(26110401)（89fmq）",
+     "quote": "薪資：時薪 220 元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g031",
+   "question": "叡揚資訊哪些職缺月薪下限剛好三萬八？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > .NET 產品開發工程師(24052801)（8cgii）",
+     "quote": "薪資：月薪 38,000~69,000 元"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > [高雄]程式設計師(20020405A)（6uy40）",
+     "quote": "薪資：月薪 38,000~45,000 元"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > 程式設計師(20090801A)（71s0m）",
+     "quote": "薪資：月薪 38,000~45,000 元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g032",
+   "question": "叡揚資訊的內推獎金要等多久才入帳？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "叡揚資訊",
+   "gold": [],
+   "absence_keywords": [
+    "內推獎金",
+    "員工推薦"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g033",
+   "question": "叡揚資訊有沒有提供托育補助？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "叡揚資訊",
+   "gold": [],
+   "absence_keywords": [
+    "托育",
+    "育兒"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g034",
+   "question": "神通資訊資料庫工程師月薪從多少起？",
+   "type": "單一公司",
+   "topic": "薪資",
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > C016CCE_資料庫工程師（104 職缺代碼 8xvez）",
+     "quote": "薪資：月薪 46,000 元以上"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g035",
+   "question": "神通資訊的 DevOps 工程師最低要什麼學位？",
+   "type": "單一公司",
+   "topic": "學歷",
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）",
+     "quote": "學歷：高中、專科、大學、碩士"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g036",
+   "question": "神通資訊七月展出的伺服器用哪款處理器？",
+   "type": "單一公司",
+   "topic": "技術",
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "技術堆疊 > 2026-07 AI WAVE 展出的伺服器版本",
+     "quote": "AMD EPYC 9004／9005 系列處理器"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g037",
+   "question": "神通資訊讓旅客自助過關的系統叫什麼？",
+   "type": "單一公司",
+   "topic": "業務",
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "業務與財務 > 智慧交通與智慧政府產品",
+     "quote": "智慧政府方面有 E-Gate 自動通關系統"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g038",
+   "question": "神通資訊的護理行動車在哪家醫院啟用？",
+   "type": "單一公司",
+   "topic": "新聞",
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "近一年新聞 > 2026-01 至 2026-06 獎項與展出",
+     "quote": "6 月 16 日衛福部樂生醫院啟用 MiCart 智能護理行動車"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g039",
+   "question": "神通資訊員工裡做技術的大概占幾成？",
+   "type": "單一公司",
+   "topic": "其他",
    "company": "神通資訊",
    "gold": [
     {
      "file": "04_神通資訊.md",
      "heading": "1. 基本資料",
-     "quote": "台北市內湖區堤頂大道二段 187 號"
+     "quote": "約 1,000 人，技術人員約 80%"
+    },
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "基本資料 > 神通資訊的沿革與規模",
+     "quote": "員工約 1,000 人，其中技術人員占 80%"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h05",
-   "question": "什麼時候上櫃？",
-   "type": "公司頁短問句",
-   "topic": "公司概況",
+   "id": "g040",
+   "question": "神通資訊多久安排一次員工健康檢查？",
+   "type": "單一公司",
+   "topic": "福利規章",
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "基本資料 > 官方公開的招募與培訓",
+     "quote": "健身房、兩年一次健檢與定期醫師駐診"
+    }
+   ],
    "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g041",
+   "question": "神通資訊有哪些專做網頁前端的職缺？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+     "quote": "使用 Next.js 開發與維護平台型前端系統"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）",
+     "quote": "主導平台型前端系統（Next.js App Router）的架構設計與演進"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）",
+     "quote": "負責金融系統前端架構，用 Angular 開發響應式 SPA"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）",
+     "quote": "負責 Web 系統前端功能開發與維護"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g042",
+   "question": "神通資訊有哪些專門找軟體毛病的職缺？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > C023CHK_測試工程師（104 職缺代碼 8xz4m）",
+     "quote": "根據需求撰寫測試計畫與測試案例，執行功能、整合與回歸測試"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > C034CF1_測試工程師（104 職缺代碼 8zu68）",
+     "quote": "依產品規格擬定測試計畫與撰寫測試案例，錄製自動化測試腳本"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K011KBE_測試工程師（104 職缺代碼 961u4）",
+     "quote": "撰寫測試計畫與步驟文件，依軟體開發功能執行測試（含回歸測試）"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g043",
+   "question": "神通資訊的凍卵補助一年能申請多少？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "神通資訊",
+   "gold": [],
+   "absence_keywords": [
+    "凍卵",
+    "卵子冷凍"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g044",
+   "question": "神通資訊的員工生小孩能領多少補助？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "神通資訊",
+   "gold": [],
+   "absence_keywords": [
+    "生育補助",
+    "生育津貼",
+    "生產補助",
+    "新生兒"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g045",
+   "question": "藍新資訊的網路工程師一個月能領多少？",
+   "type": "單一公司",
+   "topic": "薪資",
    "company": "藍新資訊",
    "gold": [
     {
-     "file": "05_藍新資訊.md",
-     "heading": "1. 基本資料",
-     "quote": "2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元"
-    },
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > 網路工程師（7ystn）",
+     "quote": "薪資：月薪 40,000~60,000 元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g046",
+   "question": "藍新資訊的 AI 平台工程師最低要讀到哪？",
+   "type": "單一公司",
+   "topic": "學歷",
+   "company": "藍新資訊",
+   "gold": [
     {
-     "file": "05_藍新資訊.md",
-     "heading": "8. 近一年新聞",
-     "quote": "68 元掛牌上櫃，開盤 73.7 元"
-    },
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI平台工程師（95xqc）",
+     "quote": "學歷：大學（資訊工程相關、其他相關科系）"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g047",
+   "question": "藍新資訊在高雄的辦公室落在哪一區？",
+   "type": "單一公司",
+   "topic": "地點",
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "基本資料 > 據點配置與工程團隊",
+     "quote": "高雄市鼓山區的高雄辦公室"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g048",
+   "question": "藍新資訊的 UNIX 主機用哪個產品系列？",
+   "type": "單一公司",
+   "topic": "技術",
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "技術堆疊 > 代理與整合的原廠產品線",
+     "quote": "UNIX 平台為 IBM Power System。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g049",
+   "question": "藍新資訊把技術服務分成幾大類？",
+   "type": "單一公司",
+   "topic": "業務",
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "業務與財務 > 解決方案與專業服務",
+     "quote": "專業服務有六項：IT 機房建置及維運"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g050",
+   "question": "藍新資訊二〇二六年第三季每股賺多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "業務與財務 > 2026 年營收走勢與獲利指標",
+     "quote": "2026 年第 3 季 EPS 為 1.56 元，毛利率 30.14%，營業利益率 14.18%，淨利率 11.06%。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g051",
+   "question": "藍新資訊何時在官網加了給股東看的專區？",
+   "type": "單一公司",
+   "topic": "新聞",
+   "company": "藍新資訊",
+   "gold": [
     {
      "file": "24_補充_藍新資訊.md",
      "heading": "基本資料 > 設立與資本市場歷程",
-     "quote": "每股 68 元掛牌上櫃"
-    },
-    {
-     "file": "24_補充_藍新資訊.md",
-     "heading": "近一年新聞 > 2026 年上櫃審議到掛牌",
-     "quote": "承銷價每股 68 元掛牌上櫃"
+     "quote": "2025 年 10 月 28 日，官網新增投資人專區。"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h06",
-   "question": "海外有哪些據點？",
-   "type": "公司頁短問句",
-   "topic": "公司概況",
+   "id": "g052",
+   "question": "藍新資訊有哪些 AI 工程師職缺？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "職務類別 AI工程師。需求 2 人"
+    },
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI平台工程師（95xqc）",
+     "quote": "職務類別 AI工程師。需求 1~2 人"
+    }
+   ],
    "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g053",
+   "question": "藍新資訊在大安區有哪些駐點工程師缺？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）",
+     "quote": "地點：台北市大安區（派駐政府單位現場）"
+    },
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > 專案工程師-網路（大安區；正職，非約聘人員）（96vha）",
+     "quote": "地點：台北市大安區（派駐政府單位現場）"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g054",
+   "question": "藍新資訊照顧失能家人有照護津貼嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "藍新資訊",
+   "gold": [],
+   "absence_keywords": [
+    "長照補助",
+    "照護津貼"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g055",
+   "question": "藍新資訊辦員工出遊會補貼多少錢？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "藍新資訊",
+   "gold": [],
+   "absence_keywords": [
+    "員工旅遊",
+    "旅遊補助",
+    "旅遊津貼"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g056",
+   "question": "凱基證券軟體開發工程師薪水底線多少？",
+   "type": "單一公司",
+   "topic": "薪資",
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【資訊部】軟體開發工程師（8sf0e）",
+     "quote": "待遇面議（經常性薪資達 4 萬元或以上）"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g057",
+   "question": "凱基證券Python系統程式設計師最低要什麼學位？",
+   "type": "單一公司",
+   "topic": "學歷",
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【資訊部】Python系統程式設計師（7f0ui）",
+     "quote": "經歷：1 年以上　學歷：大學、碩士"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g058",
+   "question": "凱基證券資深系統分析師在哪上班？",
+   "type": "單一公司",
+   "topic": "地點",
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【資訊部】資深系統分析師（94cyw）",
+     "quote": "地點：台北市中山區明水路 700 號"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g059",
+   "question": "凱基證券新核心靠哪套容器平台運作？",
+   "type": "單一公司",
+   "topic": "技術",
    "company": "凱基證券",
    "gold": [
     {
      "file": "06_凱基證券.md",
-     "heading": "2. 業務與財務 > 業務",
-     "quote": "香港、泰國、新加坡、印尼、中國大陸"
+     "heading": "5. 技術堆疊",
+     "quote": "模組化平台；Kubernetes、微服務、DevOps；Cloud Ready"
+    },
+    {
+     "file": "25_補充_凱基證券.md",
+     "heading": "技術堆疊 > 核心系統轉型方向",
+     "quote": "以 Kubernetes 支援微服務與 DevOps"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h07",
-   "question": "客戶是哪些類型？",
-   "type": "公司頁短問句",
-   "topic": "公司概況",
+   "id": "g060",
+   "question": "凱基證券的凱富理財平台由哪家協助導入？",
+   "type": "單一公司",
+   "topic": "業務",
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "25_補充_凱基證券.md",
+     "heading": "業務與財務 > 財富管理布局與瑞銀平台",
+     "quote": "由 UBS 旗下子公司 UBS Partner 協助導入"
+    }
+   ],
    "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g061",
+   "question": "凱基證券三年聯貸最多能借多少錢？",
+   "type": "單一公司",
+   "topic": "財務",
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "25_補充_凱基證券.md",
+     "heading": "業務與財務 > 資金籌措與聯貸案",
+     "quote": "董事會通過 3 年期聯貸案，額度上限 213 億元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g062",
+   "question": "凱基證券智慧牧羊犬拿過哪個獎？",
+   "type": "單一公司",
+   "topic": "新聞",
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "「AI Agent 智慧牧羊犬」獲 2026 數位時代創新商務獎「最佳管理創新」銅獎"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g063",
+   "question": "凱基證券哪些缺需要用 C++ 寫程式？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【資訊部】Linux C++開發工程師（80kjb）",
+     "quote": "必備：Linux C++ 程式開發、Git 版本控制、MS-SQL 資料庫處理"
+    },
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【資訊部】C++ 交易系統程式設計師（857c8）",
+     "quote": "擅長工具 C++、Linux、Shell。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g064",
+   "question": "凱基證券數位創新部現在招哪些人？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Agent 應用開發工程師（8yxlh）",
+     "quote": "研發具自主決策能力的 AI Agent 系統"
+    },
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "規劃、開發與運維 Agentic AI 應用系統"
+    },
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI專案經理（8wlk6）",
+     "quote": "把 AI／ML 專案導入客戶經營、投資分析與風控等核心業務"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g065",
+   "question": "凱基證券員工旅遊一年補助多少？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "凱基證券",
+   "gold": [],
+   "absence_keywords": [
+    "員工旅遊",
+    "旅遊補助"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g066",
+   "question": "凱基證券的寵物喪假能請幾天？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "凱基證券",
+   "gold": [],
+   "absence_keywords": [
+    "寵物喪假",
+    "寵物喪葬假",
+    "寵物"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g067",
+   "question": "華電聯網夜班資安監控工程師月薪落在哪？",
+   "type": "單一公司",
+   "topic": "薪資",
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）",
+     "quote": "薪資：月薪45,000~60,000元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g068",
+   "question": "華電聯網桃園整合服務部系統工程師在哪辦公？",
+   "type": "單一公司",
+   "topic": "地點",
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）",
+     "quote": "地點：桃園市中壢區環西路121號5樓5B"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g069",
+   "question": "華電聯網資安檢測工程師最低要什麼學位？",
+   "type": "單一公司",
+   "topic": "學歷",
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資安檢測工程師（104 職缺代碼 7bebb）",
+     "quote": "學歷：大學、碩士"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g070",
+   "question": "華電聯網 FaceKey 靠哪種演算法認人？",
+   "type": "單一公司",
+   "topic": "技術",
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "技術堆疊 > FaceKey 人臉辨識與 Cyber Monitor 網管系統",
+     "quote": "FaceKey 是智慧人臉辨識整合系統，搭載 AI 深度學習人臉演算法"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g071",
+   "question": "華電聯網把資安生意交給哪家子公司主導？",
+   "type": "單一公司",
+   "topic": "業務",
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "基本資料 > 四大事業領域與人力規模",
+     "quote": "資安業務由 100% 持股的子公司開啟資安主導。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g072",
+   "question": "華電聯網二〇二六年股東會決定每股發多少現金？",
+   "type": "單一公司",
+   "topic": "財務",
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 2026 年營收與股東會決議",
+     "quote": "2026 年 6 月 26 日股東會通過配發現金股利 0.58 元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g073",
+   "question": "華電聯網成立碩維時砸了多少資金？",
+   "type": "單一公司",
+   "topic": "新聞",
    "company": "華電聯網",
    "gold": [
     {
      "file": "07_華電聯網.md",
-     "heading": "2. 業務與財務 > 主要客戶",
-     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
-    },
-    {
-     "file": "26_補充_華電聯網.md",
-     "heading": "基本資料 > 策略夥伴與客戶群",
-     "quote": "政府單位（交通部、國防單位、地方政府）、電信業"
-    },
-    {
-     "file": "26_補充_華電聯網.md",
-     "heading": "業務與財務 > 2025 年營收結構與客戶組成",
-     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+     "heading": "8. 近一年新聞",
+     "quote": "2026-10-06：宣布成立碩維（SureWin），投入 8,000 萬"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h08",
-   "question": "股利配多少？",
-   "type": "公司頁短問句",
-   "topic": "財務",
+   "id": "g074",
+   "question": "華電聯網在新竹有哪些技術職缺？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 儲存系統工程師（新竹）（104 職缺代碼 6jad5）",
+     "quote": "短期協助業務三處新竹地區專案的建置與維護（NetApp）。"
+    },
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 系統工程師（新竹）（104 職缺代碼 6ggg2）",
+     "quote": "擔任系統專家，提供技術專長與設計能力，支援系統維運。"
+    }
+   ],
    "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g075",
+   "question": "華電聯網哪些職缺會做車聯網開發？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）",
+     "quote": "負責智慧交通系統的規劃、設計、軟體開發與測試，車聯網整合服務的設計與開發"
+    },
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）",
+     "quote": "發展車聯網（C-V2X）智慧交通系統，設計、開發與整合軟體系統與應用程式。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g076",
+   "question": "華電聯網每年旅遊補助能領多少？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "華電聯網",
+   "gold": [],
+   "absence_keywords": [
+    "員工旅遊",
+    "旅遊補助"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g077",
+   "question": "華電聯網做滿幾年能申請留職進修？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "華電聯網",
+   "gold": [],
+   "absence_keywords": [
+    "留職進修",
+    "進修留停"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g078",
+   "question": "中華網龍AI應用遊戲工程師月薪落在哪？",
+   "type": "單一公司",
+   "topic": "薪資",
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI應用遊戲工程師（104 職缺代碼 95dlu）",
+     "quote": "薪資：月薪 30,000~55,000 元"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g079",
+   "question": "中華網龍飄流幻境遊戲測試最低要什麼學位？",
+   "type": "單一公司",
+   "topic": "學歷",
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > 遊戲測試-飄流幻境（104 職缺代碼 873it）",
+     "quote": "經歷：不拘　學歷：大學以上"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g080",
+   "question": "中華網龍登記在哪個行政區？",
+   "type": "單一公司",
+   "topic": "地點",
    "company": "中華網龍",
    "gold": [
     {
      "file": "09_中華網龍.md",
-     "heading": "2. 業務與財務 > 近 3 年營收",
-     "quote": "配發 0.33 元現金股利，12 年來首次配息"
-    },
-    {
-     "file": "09_中華網龍.md",
-     "heading": "8. 近一年新聞",
-     "quote": "2025 年首次配息 0.33 元"
-    }
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h09",
-   "question": "遠振資訊的資本額是多少？",
-   "type": "單一公司",
-   "topic": "公司概況",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "16_遠振資訊.md",
      "heading": "1. 基本資料",
-     "quote": "資本總額：20,000,000 元"
-    },
-    {
-     "file": "D_典凡_遠振.md",
-     "heading": "二、遠振資訊股份有限公司 > 公司簡介",
-     "quote": "資本額：1300 萬元"
+     "quote": "登記地：台北市南港區。"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h10",
-   "question": "數據立的續約率是多少？",
+   "id": "g081",
+   "question": "中華網龍2026年十月營業額多少？",
    "type": "單一公司",
    "topic": "財務",
-   "answerable": true,
+   "company": "中華網龍",
    "gold": [
     {
-     "file": "15_數據立.md",
-     "heading": "2. 業務與財務",
-     "quote": "續約率 90%、續費率 120%"
+     "file": "27_補充_中華網龍.md",
+     "heading": "業務與財務 > 2024 至 2026 年營收與獲利",
+     "quote": "2026 年資料：10 月營收 0.45 億元"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h11",
-   "question": "艾普特有哪四大事業群？",
+   "id": "g082",
+   "question": "中華網龍把吞食天地3放置版交給哪隊開發？",
    "type": "單一公司",
-   "topic": "公司概況",
-   "answerable": true,
+   "topic": "業務",
+   "company": "中華網龍",
    "gold": [
     {
-     "file": "12_艾普特.md",
-     "heading": "2. 業務與財務",
-     "quote": "廣告科技、行銷科技、管理科技、電商科技"
+     "file": "27_補充_中華網龍.md",
+     "heading": "業務與財務 > 吞食天地系列與授權合作",
+     "quote": "真好玩的團隊「無限製作所」負責研發與營運"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h12",
-   "question": "宏碁雲架構的母公司是誰？",
+   "id": "g083",
+   "question": "中華網龍的GAB提領走哪條鏈？",
    "type": "單一公司",
-   "topic": "公司概況",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "13_宏碁雲架構.md",
-     "heading": "1. 基本資料",
-     "quote": "安碁資訊股份有限公司（ACSI，6690）"
-    },
-    {
-     "file": "C_宏碁雲_尼諾思.md",
-     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
-     "quote": "安碁資訊（6690）的子公司"
-    }
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h13",
-   "question": "典凡科技的資深網路架構師年薪多少？",
-   "type": "職缺",
-   "topic": "薪資",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "補5_典凡_聯合報系.md",
-     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師",
-     "quote": "年薪 1,500,000 元以上"
-    },
-    {
-     "file": "網址4_聯合報系_典凡.md",
-     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
-     "quote": "年薪 1,500,000 以上"
-    }
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h14",
-   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
-   "type": "職缺",
-   "topic": "薪資",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "C_宏碁雲_尼諾思.md",
-     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
-     "quote": "薪資：月薪 37,000 以上"
-    },
-    {
-     "file": "網址5_宏碁雲_藍新_網龍.md",
-     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
-     "quote": "job/8x526 | 1 年以上 | 大學、碩士 | 月薪 37,000 以上"
-    }
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h15",
-   "question": "艾普特的 PM 專案規劃師月薪多少？",
-   "type": "職缺",
-   "topic": "薪資",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "E_華電_艾普特_醫宇宙.md",
-     "heading": "2. 艾普特 > 相關職缺",
-     "quote": "月薪 40,000~42,000"
-    },
-    {
-     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
-     "heading": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）",
-     "quote": "https://www.104.com.tw/job/8tpxn | 1 年以上 | 專科以上 | 月薪 40,000~42,000"
-    }
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h16",
-   "question": "數據立的產品維運工程師要會哪些工具？",
-   "type": "職缺",
    "topic": "技術",
-   "answerable": true,
+   "company": "中華網龍",
    "gold": [
     {
-     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
-     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師",
-     "quote": "精通 Docker、Grafana + Prometheus"
+     "file": "27_補充_中華網龍.md",
+     "heading": "技術堆疊 > 吞食天地虛擬世界的 Play to Earn 機制",
+     "quote": "並連接 MetaMask 錢包，使用 Polygon 網路。"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h17",
-   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "id": "g084",
+   "question": "中華網龍飄流幻境二十週年展哪天辦？",
    "type": "單一公司",
-   "topic": "公司概況",
-   "answerable": true,
+   "topic": "新聞",
+   "company": "中華網龍",
    "gold": [
     {
-     "file": "04_神通資訊.md",
-     "heading": "3. 業務與財務 > 產品與業務",
-     "quote": "MiTAC Agent Builder 企業 AI 一體機"
-    },
-    {
-     "file": "23_補充_神通資訊.md",
-     "heading": "技術堆疊 > Agent Builder 企業 AI 一體機的軟硬體",
-     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+     "file": "27_補充_中華網龍.md",
+     "heading": "近一年新聞 > 飄流幻境一周年與 20 周年紀念展",
+     "quote": "2026 年 6 月 6 日、7 日，網龍在台北西門地下市 3 號廣場舉辦"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
-  },
-  {
-   "id": "h18",
-   "question": "凱基證券 2026 上半年的稅後純益是多少？",
-   "type": "單一公司",
-   "topic": "財務",
    "answerable": true,
-   "gold": [
-    {
-     "file": "06_凱基證券.md",
-     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
-     "quote": "179.4 億，年增 383%"
-    },
-    {
-     "file": "06_凱基證券.md",
-     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
-     "quote": "上半年證券純益 179.4 億，年增 383%"
-    }
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h19",
-   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "id": "g085",
+   "question": "中華網龍有哪些軟體相關工作能投？",
    "type": "職缺",
-   "topic": "技術",
-   "answerable": true,
+   "topic": "職缺",
+   "company": "中華網龍",
    "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "串接 OpenAI、Anthropic、Google Gemini 等 LLM API，建立 AI 應用服務。"
+    },
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI應用遊戲工程師（104 職缺代碼 95dlu）",
+     "quote": "依遊戲需求開發並測試功能，使用 AI 工具進行遊戲的維護與開發"
+    },
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > 遊戲程式設計師-飄流幻境（104 職缺代碼 6fqjo）",
+     "quote": "負責《飄流幻境》的遊戲程式開發，內容細節未標示。"
+    },
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > Unity3D 工程師-吞食天地M（104 職缺代碼 6okd8）",
+     "quote": "根據企劃文件開發《吞食天地M》並測試功能，自行串接遠端 API 或服務"
+    },
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > 遊戲測試-飄流幻境（104 職缺代碼 873it）",
+     "quote": "進行《飄流幻境》的遊戲測試與 BUG 管理，並對 BUG 進行追蹤與回饋。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g086",
+   "question": "中華網龍哪些職缺是做飄流幻境的？",
+   "type": "職缺",
+   "topic": "職缺",
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > 遊戲程式設計師-飄流幻境（104 職缺代碼 6fqjo）",
+     "quote": "負責《飄流幻境》的遊戲程式開發，內容細節未標示。"
+    },
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > 遊戲測試-飄流幻境（104 職缺代碼 873it）",
+     "quote": "進行《飄流幻境》的遊戲測試與 BUG 管理，並對 BUG 進行追蹤與回饋。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g087",
+   "question": "中華網龍員工出遊每人補助多少？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "中華網龍",
+   "gold": [],
+   "absence_keywords": [
+    "員工旅遊",
+    "旅遊補助",
+    "旅遊津貼"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g088",
+   "question": "中華網龍考證照的報名費最多補助多少？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "company": "中華網龍",
+   "gold": [],
+   "absence_keywords": [
+    "證照報名費",
+    "考照補助",
+    "證照考試"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g089",
+   "question": "哪幾家公司徵才會看 React 的底子？",
+   "type": "跨公司",
+   "topic": "技術",
+   "keywords": [
+    "React"
+   ],
+   "companies": [
+    "台灣大哥大",
+    "聯合報",
+    "叡揚資訊",
+    "神通資訊",
+    "凱基證券"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+     "quote": "Angular／React／Vue、Python／Shell"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+     "quote": "Vue 或 React 其一（Vue 尤佳）"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）",
+     "quote": "加分：React 前後端整合"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+     "quote": "React 與 TypeScript、HTML／CSS、Git"
+    },
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【資訊部】C#/ASP.net全端工程師（87rsh）",
+     "quote": "Vue.js 或 React 或 RWD"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g090",
+   "question": "懂 Docker 能投哪幾家公司的職缺？",
+   "type": "跨公司",
+   "topic": "技術",
+   "keywords": [
+    "Docker"
+   ],
+   "companies": [
+    "台灣大哥大",
+    "叡揚資訊",
+    "神通資訊",
+    "藍新資訊",
+    "華電聯網",
+    "中華網龍"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+     "quote": "PostgreSQL、Docker、CI/CD"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > 系統網路資安工程師_資安系統(25021201)（8mdm2）",
+     "quote": "容器（Docker、Kubernetes）"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）",
+     "quote": "會 Docker 與 Linux 為佳"
+    },
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "Linux、Docker、Kubernetes"
+    },
     {
      "file": "36_104職缺更新_華電聯網.md",
-     "heading": "目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）",
-     "quote": "擅長工具欄為 MySQL、Oracle、PL/SQL"
-    }
-   ],
-   "split": "heldout",
-   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
-  },
-  {
-   "id": "h20",
-   "question": "叡揚資訊 2026 前三季的營收是多少？",
-   "type": "單一公司",
-   "topic": "財務",
-   "answerable": true,
-   "gold": [
-    {
-     "file": "03_叡揚資訊.md",
-     "heading": "2. 業務與財務 > 近年營收",
-     "quote": "15.34 億，年增 6.58%"
+     "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）",
+     "quote": "Docker 與 Kubernetes（含 Container Security）"
     },
     {
-     "file": "03_叡揚資訊.md",
-     "heading": "8. 近一年新聞",
-     "quote": "前三季營收年增 6.58%"
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "MCP、Docker、雲端、ComfyUI"
     }
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h21",
-   "question": "哪些公司的職缺要求 Spring Boot？",
-   "type": "跨公司",
-   "topic": "跨公司",
    "answerable": true,
-   "gold": [],
-   "keywords": [
-    "Spring Boot"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h22",
-   "question": "哪幾家公司的職缺會用到 VMware？",
+   "id": "g091",
+   "question": "哪幾家公司找懂 TypeScript 的人？",
    "type": "跨公司",
-   "topic": "跨公司",
-   "answerable": true,
-   "gold": [],
+   "topic": "技術",
    "keywords": [
-    "VMware"
+    "TypeScript"
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "companies": [
+    "台灣大哥大",
+    "聯合報",
+    "叡揚資訊",
+    "神通資訊",
+    "藍新資訊",
+    "中華網龍"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I113 (Sr.)軟體工程師, 全端開發（8tphn）",
+     "quote": "JavaScript／TypeScript／HTML／CSS"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+     "quote": "了解：TypeScript、Sass、SPA 下的 SEO 機制"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > .NET 產品開發工程師(24052801)（8cgii）",
+     "quote": "JavaScript、TypeScript、T-SQL"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+     "quote": "React 與 TypeScript、HTML／CSS、Git"
+    },
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "JavaScript/TypeScript、n8n、Elasticsearch、PostgreSQL"
+    },
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h23",
-   "question": "哪家公司有做 AI Agent 的產品？",
+   "id": "g092",
+   "question": "哪幾家的徵才條件提到亞馬遜雲經驗？",
    "type": "跨公司",
-   "topic": "跨公司",
-   "answerable": true,
-   "gold": [],
+   "topic": "技術",
    "keywords": [
-    "AI Agent"
+    "AWS"
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "companies": [
+    "台灣大哥大",
+    "聯合報",
+    "叡揚資訊",
+    "華電聯網"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）",
+     "quote": "AWS／Azure／GCP 雲端學習或實作"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+     "quote": "了解雲端資料平台（如 AWS）"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > MIS工程師(25041801)（8ox8m）",
+     "quote": "（GCP、Azure、AWS）"
+    },
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）",
+     "quote": "必備為至少一種公有雲平台實戰經驗"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h24",
-   "question": "哪些公司使用 Google Cloud？",
+   "id": "g093",
+   "question": "哪幾家公司的技術方向有碰到 MCP？",
    "type": "跨公司",
-   "topic": "跨公司",
-   "answerable": true,
-   "gold": [],
+   "topic": "技術",
    "keywords": [
-    "Google Cloud"
+    "MCP"
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "companies": [
+    "台灣大哥大",
+    "叡揚資訊",
+    "藍新資訊",
+    "凱基證券",
+    "中華網龍"
+   ],
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研 GenAIus、MCP、向量檢索 RAG"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）",
+     "quote": "目前正把產品發展到符合 MCP 協定，與企業內跨系統協作。"
+    },
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "MCP Connector，建置資料同步與事件驅動架構。"
+    },
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Agent 應用開發工程師（8yxlh）",
+     "quote": "了解 LLM、MCP、A2A"
+    },
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "Function Calling、Tool Calling、MCP"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h25",
-   "question": "哪些公司的職缺要會 C#？",
+   "id": "g094",
+   "question": "會 FastAPI 可以留意哪幾家的工作？",
    "type": "跨公司",
-   "topic": "跨公司",
-   "answerable": true,
-   "gold": [],
+   "topic": "技術",
    "keywords": [
-    "C#"
+    "FastAPI"
    ],
-   "split": "heldout",
-   "status": "待使用者確認"
+   "companies": [
+    "台灣大哥大",
+    "叡揚資訊",
+    "神通資訊"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+     "quote": "Python、Flask／FastAPI、AWS／GCP"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > Machine Learning Engineer (CV) 機器學習工程師 (電腦視覺)(24013102)（889ho）",
+     "quote": "Web API 工具（Flask、FastAPI）"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
   },
   {
-   "id": "h26",
-   "question": "有颱風假嗎？",
-   "type": "公司頁短問句",
-   "topic": "福利規章",
-   "answerable": false,
-   "company": "神通資訊",
-   "trap": false,
-   "gold": [],
-   "absence_keywords": [
-    "颱風假"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h27",
-   "question": "有員工持股信託嗎？",
-   "type": "公司頁短問句",
-   "topic": "福利規章",
-   "answerable": false,
-   "company": "凱基證券",
-   "trap": true,
-   "gold": [],
-   "absence_keywords": [
-    "持股信託",
-    "員工持股"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h28",
-   "question": "有交通津貼嗎？",
-   "type": "公司頁短問句",
-   "topic": "福利規章",
-   "answerable": false,
-   "company": "聯合報",
-   "trap": true,
-   "gold": [],
-   "absence_keywords": [
-    "交通津貼",
-    "交通補助"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h29",
-   "question": "數據立有提供員工心理諮商嗎？",
-   "type": "不可回答",
-   "topic": "福利規章",
-   "answerable": false,
-   "trap": true,
-   "gold": [],
-   "absence_keywords": [
-    "心理諮商"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h30",
-   "question": "遠振資訊的育嬰假可以休多久？",
-   "type": "不可回答",
-   "topic": "福利規章",
-   "answerable": false,
-   "trap": true,
-   "gold": [],
-   "absence_keywords": [
-    "育嬰"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h31",
-   "question": "典凡科技今年的營收目標是多少？",
-   "type": "不可回答",
-   "topic": "內部資訊",
-   "answerable": false,
-   "trap": true,
-   "gold": [],
-   "absence_keywords": [
-    "營收目標"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認",
-   "absence_reviewed": {
-    "營收目標": "2026-11-17 新語料命中：27 號中華網龍補充檔寫的是《吞食天地》放置版首月營收目標，不是典凡科技今年營收目標；題目仍無答案"
-   }
-  },
-  {
-   "id": "h32",
-   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
-   "type": "不可回答",
-   "topic": "內部資訊",
-   "answerable": false,
-   "trap": true,
-   "gold": [],
-   "absence_keywords": [
-    "下載次數",
-    "下載量",
-    "累計下載"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h33",
-   "question": "艾普特的 AI 部有幾位工程師？",
-   "type": "不可回答",
-   "topic": "內部資訊",
-   "answerable": false,
-   "trap": true,
-   "gold": [],
-   "absence_keywords": [
-    "AI 部有",
-    "AI 部人數",
-    "AI 部共"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h34",
-   "question": "廣達電腦有哪些 AI 工程師職缺？",
-   "type": "不可回答",
-   "topic": "其他公司",
-   "answerable": false,
-   "trap": false,
-   "gold": [],
-   "absence_keywords": [
-    "廣達"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h35",
-   "question": "鴻海的董事長是誰？",
-   "type": "不可回答",
-   "topic": "其他公司",
-   "answerable": false,
-   "trap": false,
-   "gold": [],
-   "absence_keywords": [
-    "鴻海"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h36",
-   "question": "富邦金控旗下有哪些子公司？",
-   "type": "不可回答",
-   "topic": "其他公司",
-   "answerable": false,
-   "trap": false,
-   "gold": [],
-   "absence_keywords": [
-    "富邦金控"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h37",
-   "question": "台北明天會下雨嗎？",
-   "type": "不可回答",
-   "topic": "語料外",
-   "answerable": false,
-   "trap": false,
-   "gold": [],
-   "absence_keywords": [
-    "天氣",
-    "氣象",
-    "下雨"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h38",
-   "question": "履歷的自傳要怎麼寫？",
-   "type": "不可回答",
-   "topic": "語料外",
-   "answerable": false,
-   "trap": false,
-   "gold": [],
-   "absence_keywords": [
-    "自傳",
-    "履歷範本"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認",
-   "absence_reviewed": {
-    "自傳": "2026-11-17 新語料命中：37 號中華網龍職缺條件提到自傳，沒有教人怎麼寫自傳；題目仍無答案"
-   }
-  },
-  {
-   "id": "h39",
-   "question": "哪些公司有哺乳室？",
-   "type": "不可回答",
-   "topic": "福利規章",
-   "answerable": false,
-   "trap": false,
-   "gold": [],
-   "absence_keywords": [
-    "哺乳室"
-   ],
-   "split": "heldout",
-   "status": "待使用者確認"
-  },
-  {
-   "id": "h40",
-   "question": "哪間公司有員工社團？",
+   "id": "g095",
+   "question": "哪幾家徵才會看 PostgreSQL 能力？",
    "type": "跨公司",
-   "topic": "福利規章",
-   "answerable": true,
-   "gold": [],
-   "split": "heldout",
-   "status": "待使用者確認（2026-11-17 因新語料已含答案，由不可回答改標為可回答，非為提高分數）",
+   "topic": "技術",
    "keywords": [
-    "家庭日、社團"
-   ]
+    "PostgreSQL"
+   ],
+   "companies": [
+    "台灣大哥大",
+    "聯合報",
+    "叡揚資訊",
+    "神通資訊",
+    "藍新資訊"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+     "quote": "Redis、PostgreSQL、Docker、CI/CD"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+     "quote": "擅長工具：Python、PostgreSQL。"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > 系統工程師(24100701)（8iig9）",
+     "quote": "MySQL、PostgreSQL 任一）"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "至少一種資料庫（PostgreSQL／MySQL／MongoDB）"
+    },
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "擅長工具 JavaScript、Python、PostgreSQL"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g096",
+   "question": "哪幾家公司有做程式建置和上線的自動化？",
+   "type": "跨公司",
+   "topic": "技術",
+   "keywords": [
+    "CI/CD"
+   ],
+   "companies": [
+    "台灣大哥大",
+    "叡揚資訊",
+    "神通資訊",
+    "藍新資訊"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+     "quote": "CI/CD、根因分析、容量規劃、Log 除錯"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > [校園專區]程式分析師（89sxv）",
+     "quote": "遵循並維護產品 CI/CD，建立自動化建構與部署程序。"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）",
+     "quote": "維護軟體工程自動化流程（CI/CD），開發自動化腳本（軟體安裝與設定）"
+    },
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "建置 CI/CD Pipeline，規劃 GitOps、IaC 與自動化部署。"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g097",
+   "question": "熟 TensorFlow 能留意哪幾家徵才？",
+   "type": "跨公司",
+   "topic": "技術",
+   "keywords": [
+    "TensorFlow"
+   ],
+   "companies": [
+    "台灣大哥大",
+    "聯合報"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I108 LLM應用平台架構師（8b54k）",
+     "quote": "加分：PyTorch／TensorFlow"
+    },
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+     "quote": "TensorFlow、PyTorch 或類似工具"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g098",
+   "question": "哪幾家公司找人時會看 Redis 經驗？",
+   "type": "跨公司",
+   "topic": "技術",
+   "keywords": [
+    "Redis"
+   ],
+   "companies": [
+    "台灣大哥大",
+    "叡揚資訊",
+    "神通資訊"
+   ],
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+     "quote": "Redis、PostgreSQL、Docker、CI/CD"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺 > [校園專區-台北]Java程式設計師（89d0n）",
+     "quote": "Redis、MongoDB、Cassandra"
+    },
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）",
+     "quote": "Redis；會 Docker 與 Linux 為佳"
+    }
+   ],
+   "answerable": true,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）"
+  },
+  {
+   "id": "g099",
+   "question": "哪些公司有提供員工宿舍可以住？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "gold": [],
+   "absence_keywords": [
+    "員工宿舍",
+    "員工住宿",
+    "宿舍補助"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
+  },
+  {
+   "id": "g100",
+   "question": "哪些公司有每週只上四天班的制度？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "gold": [],
+   "absence_keywords": [
+    "四天工作",
+    "四日工作",
+    "週休三日",
+    "每週四天"
+   ],
+   "answerable": false,
+   "split": "gen100",
+   "status": "待使用者確認（由 Codex CLI gpt-6.1-sol 單一模型出題，gold 未經人工確認）",
+   "trap": true
   }
  ]
 }

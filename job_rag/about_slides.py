@@ -162,7 +162,7 @@ def s_methods(d):
 
 
 def s_held(d):
-    """調參用 30 題對調完才測的 40 題（bge-m3，Hit@3 與 MRR，含 95% 區間）。缺任一邊的輸出就略過這頁。"""
+    """調參用 30 題對調完才測的 100 題（bge-m3，Hit@3 與 MRR，含 95% 區間）。缺任一邊的輸出就略過這頁。"""
     x = d.get("held")
     m3 = next((r for r in d["table"] if r["method"] == "bge-m3"), None)
     if not x or not m3:
@@ -173,7 +173,7 @@ def s_held(d):
     for i, (name, v1, c1, v2, c2) in enumerate(rows):
         y = y0 + i * pitch
         g.append(_t(0, y + 4, name, "bd"))
-        for j, (lab, v, ci, hot) in enumerate((("30 題", v1, c1, False), ("40 題", v2, c2, True))):
+        for j, (lab, v, ci, hot) in enumerate((("30 題", v1, c1, False), (f"{x['n']} 題", v2, c2, True))):
             yy = y + 12 + j * 26
             sx = lambda t: x0 + t * (x1 - x0)
             g.append(_t(x0 - 6, yy + 14, lab, "sm", "end")
@@ -183,14 +183,44 @@ def s_held(d):
     ya = y0 + len(rows) * pitch
     g.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{ya}" y2="{ya}"/>' + _ticks_h(x0, x1, ya, (0, .25, .5, .75, 1), lambda v: f"{v:g}")
              + _t(x0, ya + 34, "黑線是 95% 區間", "mu sm"))
-    fig = _svg(ya + 42, "調參用 30 題與調完才測 40 題的 Hit@3 與 MRR", "".join(g))
+    fig = _svg(ya + 42, f"調參用 30 題與調完才測 {x['n']} 題的 Hit@3 與 MRR", "".join(g))
     e = f"；端到端拒答 {x['e2e']['refused']}/{x['e2e']['n']}" if x["e2e"] else ""
-    notes = (f"<p><b>為什麼分兩組？</b>30 題像練習題：調參數時我一直看它，所以它的分數會偏高一點。<b>40 題</b>像考試題：調完才出，沒用來調任何東西，所以更能看出真實程度。"
-             f"結果考試題沒有比練習題差。</p>"
-             f"<p><b>怎麼讀圖：</b>Hit@3＝正確那一段有沒有排進前 3 名（越接近 1 越好）。MRR＝正確那段排第幾，越前面分數越高。黑線是 95% 區間，兩條線重疊就代表差距看不出來。</p>"
-             f"<p>算分用的題：30 題組 {d['n_answerable']} 題有答案；40 題組只用其中 {x['n_plain_answerable']} 題單一公司的有答案題。兩組題數不同，不能直接比大小。</p>"
-             f"<p>40 題裡 {x['n_unanswerable']} 題沒答案：檢索擋住 {x['blocked_u']}{e}。同一人出題，只能當方向。</p>")
-    return "調完才測，沒有變差", fig, notes, "held", "30 題對 40 題"
+    lo1, hi1 = m3["ci"]["hit@3"]
+    lo2, hi2 = x["hit3_ci"]
+    head = ("調完才測，差距看不出來" if lo2 <= hi1 and lo1 <= hi2 else ("調完才測，分數較高" if x["hit3"] > m3["hit@3"] else "調完才測，分數較低"))
+    bt = x.get("by_type") or {}
+    weak = "職缺清單題比單一公司題弱，是已知弱點。" if bt.get("職缺") and bt.get("單一公司") and bt["職缺"]["hit@3"] < bt["單一公司"]["hit@3"] else ""
+    parts = "；".join(f"{t} {v['n']} 題 Hit@3 {_f(v['hit@3'])}、MRR {_f(v['mrr'])}" for t, v in bt.items())
+    notes = (f"<p><b>為什麼分兩組</b></p><p>・30 題：調參數時一直看它，分數偏高。<br>・{x['n']} 題：調完才測，沒拿來調任何東西，較接近真實程度。<br>・{x['n']} 題由 GPT 出，不是我出的。</p>"
+             f"<p><b>怎麼讀圖</b></p><p>・Hit@3：正確那段有沒有進前 3 名，越接近 1 越好。<br>・MRR：正確那段排第幾，越前面越高。<br>・黑線重疊：差距看不出來。</p>"
+             + (f"<p><b>分題型</b></p><p>" + "<br>".join(f"・{escape(t)} {v['n']} 題：Hit@3 {_f(v['hit@3'])}" for t, v in bt.items()) + (f"<br>・跨公司 {x['cross_n']} 題：{x['cross_pass']} 題通過關鍵字檢查" if x.get("cross_n") else "") + f"<br>・沒答案 {x['n_unanswerable']} 題：端到端拒答 {x['e2e']['refused']}/{x['e2e']['n']}" * bool(x["e2e"]) + "</p>" if bt else "")
+             + f"<p><b>限制</b>：{x['n']} 題由單一模型出、標準答案沒人工確認，只能當方向。{weak}</p>")
+    return head, fig, notes, "held", f"30 題對 {x['n']} 題"
+
+
+def s_score(d):
+    """100 題分題型一眼看：每種題一條橫條（0～1），綠＝好、黃＝普通、紅＝弱。缺資料就略過。"""
+    x = d.get("held")
+    bt = (x or {}).get("by_type") or {}
+    if not x or not bt:
+        return None
+    rows = [(f"{t}　找得到前 3 名", v["hit@3"], f"{v['hit@3']:.2f}", v["n"]) for t, v in bt.items()]
+    if x.get("cross_n"):
+        rows.append(("跨公司　通過檢查", x["cross_pass"] / x["cross_n"], f"{x['cross_pass']}/{x['cross_n']}", x["cross_n"]))
+    if x.get("e2e"):
+        rows.append(("沒答案　有拒答", x["e2e"]["refused"] / x["e2e"]["n"], f"{x['e2e']['refused']}/{x['e2e']['n']}", x["e2e"]["n"]))
+    x0, x1, pitch, y0 = 8, 270, 46, 6
+    g = []
+    for i, (lab, v, txt, n) in enumerate(rows):
+        y = y0 + i * pitch
+        cls = "ok" if v >= .9 else ("mid" if v >= .6 else "bad")
+        g.append(_t(x0, y + 10, f"{lab}（{n} 題）", "sm")
+                 + f'<rect class="bar gx {cls}" data-k="{escape(lab)}" data-v="{v!r}" x="{x0}" y="{y + 16}" width="{max(v, .01) * (x1 - x0):.1f}" height="20" rx="4"/>'
+                 + _t(x1 + 8, y + 31, txt, "bd"))
+    fig = _svg(y0 + len(rows) * pitch, "100 題分題型成績", "".join(g))
+    notes = ("<p>・<b style='color:#2e8b57'>綠</b>：找得很準（0.9 以上）。<br>・<b style='color:#d98e04'>黃</b>：普通。<br>・<b style='color:#c0392b'>紅</b>：弱，是已知弱點。</p>"
+             f"<p>・{x['n']} 題由 GPT 出，標準答案沒人工確認，只能當方向。</p>")
+    return "哪裡強、哪裡弱", fig, notes, "score", f"{x['n']} 題成績"
 
 
 _KIND = {"職缺": ("問職缺", "有哪些職缺、要什麼條件"), "單一公司": ("問某一家公司的事實", "資本額、做什麼、技術"),
@@ -199,7 +229,7 @@ _KIND = {"職缺": ("問職缺", "有哪些職缺、要什麼條件"), "單一�
 
 
 def s_qset(d):
-    """這 70 題問什麼：兩組題各題型的題數與一個真實例題。沒有題檔就略過。"""
+    """這 130 題問什麼：兩組題各題型的題數與一個真實例題。沒有題檔就略過。"""
     q = d.get("qsets")
     if not q:
         return None
@@ -212,11 +242,10 @@ def s_qset(d):
         rows.append(f'<div class="qk"><p><b>{escape(name)}</b>　調參用 {a["n"] if a else 0} 題・調完才測 {b["n"] if b else 0} 題</p>'
                     f'<p class="mu">例：「{escape(ex)}」{("（" + escape(hint) + "）") if hint else ""}</p></div>')
     fig = "".join(rows)
-    notes = (f"<p>共 {q['tune']['n'] + q['held']['n']} 題，分兩組。<b>調參用 {q['tune']['n']} 題</b>像練習題：我調門檻、選找法時一直在看。"
-             f"<b>調完才測 {q['held']['n']} 題</b>像考試題：調完才出，沒用來調任何東西。</p>"
-             "<p>每題我都先標好「正確答案在哪一段」，所以可以算排名。「資料裡沒有答案」的題要測它會不會亂編，所以特別放進去。"
-             "題目都是我一個人出的，只能當方向。</p>")
-    return "這 70 題問什麼", fig, notes, "qset", "題目長什麼樣"
+    notes = (f"<p>共 {q['tune']['n'] + q['held']['n']} 題，分兩組：</p>"
+             f"<p>・調參用 {q['tune']['n']} 題：我一個人出，調門檻、選找法時一直在看。<br>・調完才測 {q['held']['n']} 題：GPT 出，沒拿來調任何東西。</p>"
+             "<p>・每題先標好「正確答案在哪一段」，才能算排名。<br>・刻意放「資料裡沒有答案」的題，測它會不會亂編。<br>・標準答案都沒人工確認，只能當方向。</p>")
+    return f"這 {q['tune']['n'] + q['held']['n']} 題問什麼", fig, notes, "qset", "題目長什麼樣"
 
 
 def _sgn(v):
@@ -379,7 +408,7 @@ def s_cross(d, n_companies, companies):
         cov = _svg(yb + 42, "每家取 1、2、3 段的涵蓋率", "".join(c))
         fig += f"<figure><figcaption>涵蓋率：每家取幾段</figcaption>{cov}</figure>"
         notes = (f"<p>涵蓋率：該出現的公司裡，取到正確段落的比例（{x['n_answerable']} 道有答案的題平均）。</p>"
-                 f"<p>{x['n']} 題中 {x['passed']} 題結果正確；查無常數 {x['floor']} 用同批題挑，偏樂觀。</p>")
+                 f"<p>{x['n']} 題中 {x['passed']} 題通過關鍵字檢查；查無常數 {x['floor']} 用同批題挑，偏樂觀。</p>")
     else:
         fig += '<figure><p class="miss">缺資料：eval/results_cross.json 找不到或已過期，涵蓋率圖略過，只留示意圖。</p></figure>'
     fig += "</div>"
@@ -422,7 +451,7 @@ ICONS = {"warn": _icon('<path d="M12 3 2.5 20h19z"/><path d="M12 10v5M12 17.5v.5
 
 def s_limits(d):
     na, nu = (d["n_answerable"], d["n_unanswerable"]) if d else (None, None)
-    lim = [f"題少：{na} 題有答案、{nu} 題沒答案" if d else "題少", "題目與語料同源" if not (d and d.get("held")) else "原題與語料同源；另有 40 題獨立測試題", "門檻用同批題挑，偏樂觀", "單機、單一存取碼"]
+    lim = [f"題少：{na} 題有答案、{nu} 題沒答案" if d else "題少", "題目與語料同源" if not (d and d.get("held")) else f"原題與語料同源；另有 {d['held']['n']} 題獨立測試題（單一模型出題、金標未人工確認）", "門檻用同批題挑，偏樂觀", "單機、單一存取碼"]
     undone = ["重排序模型", "向量資料庫", "微調模型", "線上監控"] + ([] if d and d.get("held") else ["獨立測試題"])
     nxt = ["近似索引，只編新段落", "PDF 與掃描檔解析", "改動後自動重考"]
     col = lambda ic, t, items, tag="": (f'<div class="col"><div class="ch">{ICONS[ic]}<h3>{escape(t)}</h3></div>{f"<em>{escape(tag)}</em>" if tag else ""}'
@@ -471,7 +500,7 @@ CSS = """body.sl{max-width:900px;padding:0 16px 168px}
 .sv text{font:12px/1 system-ui,-apple-system,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;fill:var(--fg)}
 .sv .mu{fill:var(--mute)}.sv .sm{font-size:11.5px}.sv .xs{font-size:10.5px;fill:var(--mute)}.sv .bd{font-weight:650}.sv .halo{stroke:var(--bg);stroke-width:5px;paint-order:stroke}
 .sv .ax{stroke:var(--mute);stroke-width:1}.sv .gl{stroke:var(--line);stroke-width:1}
-.sv .bar{fill:var(--acc)}.sv .bar.g{fill:var(--mute);fill-opacity:.55}
+.sv .bar{fill:var(--acc)}.sv .bar.g{fill:var(--mute);fill-opacity:.55}.sv .bar.ok{fill:#2e8b57}.sv .bar.mid{fill:#d98e04}.sv .bar.bad{fill:#c0392b}
 .sv .h1,.sv .h3,.sv .h5{fill:var(--acc);stroke:var(--acc);stroke-width:1}.sv .h1{fill-opacity:.25}.sv .h3{fill-opacity:.55}.sv .h5{fill-opacity:1}
 .sv .eb .h{stroke:var(--bg);stroke-width:4.5;stroke-linecap:round}.sv .eb .c{stroke:var(--fg);stroke-width:1.75;stroke-linecap:round}
 .sv .tk{fill:var(--card);stroke:var(--line)}
@@ -567,7 +596,7 @@ def render(data, error, n_segments, n_companies, lengths=None, companies=None) -
     sp = _speeches(say, data)
     builders = [lambda: s_cover(data, n_segments, n_companies), lambda: s_arch(data, n_segments, n_companies), lambda: s_chunk(data, lengths)]
     if data:
-        builders += [lambda: s_methods(data), lambda: s_held(data), lambda: s_qset(data), lambda: s_fixes(data), lambda: s_funnel(data, data.get("e2e")),
+        builders += [lambda: s_methods(data), lambda: s_held(data), lambda: s_score(data), lambda: s_qset(data), lambda: s_fixes(data), lambda: s_funnel(data, data.get("e2e")),
                      lambda: s_cross(data, n_companies, companies), lambda: s_ragas(data)]
     else:
         builders += [lambda: s_error(error)]

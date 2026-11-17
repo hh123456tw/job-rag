@@ -1,7 +1,11 @@
 {
  "date": "2026-11-17",
- "method": "真 DeepSeek；網站實際路徑 /api/search + /api/answer（新版語料）",
- "note": "11 題；同一人出題；只跑一次；拒答＝答案為查無或被檢索門檻擋下；r20 因新語料已含答案改標為可回答，不在此列",
+ "method": "真 DeepSeek；網站實際路徑 /api/search + /api/answer（補職稱清單後的語料）",
+ "note": "11 題；同一人出題；只跑一次；拒答＝答案為查無或被檢索門檻擋下",
+ "n": 11,
+ "refused": 11,
+ "by_gate": 1,
+ "by_answer_layer": 10,
  "rows": [
   {
    "id": "u02",
@@ -26,14 +30,14 @@
   },
   {
    "id": "u07",
-   "top_score": 0.6646136045455933,
+   "top_score": 0.6646134853363037,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "u08",
-   "top_score": 0.6622500419616699,
+   "top_score": 0.6622501611709595,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
@@ -54,7 +58,7 @@
   },
   {
    "id": "r16",
-   "top_score": 0.6573699116706848,
+   "top_score": 0.6573699712753296,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
@@ -70,19 +74,15 @@
    "id": "r18",
    "top_score": 0.513980507850647,
    "search_status": "low",
-   "answer": "查無",
+   "answer": "",
    "refused": true
   },
   {
    "id": "r19",
-   "top_score": 0.7309716939926147,
+   "top_score": 0.7309714555740356,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   }
- ],
- "n": 11,
- "refused": 11,
- "by_gate": 1,
- "by_answer_layer": 10
+ ]
 }

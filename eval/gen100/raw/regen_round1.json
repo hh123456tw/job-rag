@@ -1,0 +1,97 @@
+[
+ {
+  "question": "聯合報有補貼員工寵物的醫療費嗎？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "聯合報",
+  "gold": [],
+  "absence_keywords": [
+   "寵物醫療",
+   "寵物醫藥",
+   "寵物保險"
+  ]
+ },
+ {
+  "question": "叡揚資訊有補助員工寵物看病嗎？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "叡揚資訊",
+  "gold": [],
+  "absence_keywords": [
+   "寵物醫療",
+   "寵物補助",
+   "毛孩"
+  ]
+ },
+ {
+  "question": "神通資訊的凍卵補助一年能申請多少？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "神通資訊",
+  "gold": [],
+  "absence_keywords": [
+   "凍卵",
+   "卵子冷凍"
+  ]
+ },
+ {
+  "question": "神通資訊的員工生小孩能領多少補助？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "神通資訊",
+  "gold": [],
+  "absence_keywords": [
+   "生育補助",
+   "生育津貼",
+   "生產補助",
+   "新生兒"
+  ]
+ },
+ {
+  "question": "藍新資訊有補助員工的寵物醫療費嗎？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "藍新資訊",
+  "gold": [],
+  "absence_keywords": [
+   "寵物醫療",
+   "寵物保險"
+  ]
+ },
+ {
+  "question": "凱基證券的寵物喪假能請幾天？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "凱基證券",
+  "gold": [],
+  "absence_keywords": [
+   "寵物喪假",
+   "寵物喪葬假",
+   "寵物"
+  ]
+ },
+ {
+  "question": "華電聯網有補助寵物看病的費用嗎？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "華電聯網",
+  "gold": [],
+  "absence_keywords": [
+   "寵物醫療",
+   "寵物保險",
+   "毛孩補助"
+  ]
+ },
+ {
+  "question": "中華網龍有補助毛孩看醫生的費用嗎？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "中華網龍",
+  "gold": [],
+  "absence_keywords": [
+   "毛孩",
+   "寵物",
+   "寵物醫療"
+  ]
+ }
+]

@@ -30,7 +30,7 @@ def _gate_t(gt) -> str:
     return f"{gt['threshold']:.3f}" + (f"（已指定公司 {gt['scoped_threshold']:.3f}）" if gt.get("scoped_threshold") and gt.get("n_scoped") else "")
 
 
-GEN_NOTE = "RAGAS 與 GPT 複查都於 2026-11-17 在新版語料、K=5 設定重跑（GPT 單次輸出有隨機性）。"
+GEN_NOTE = "RAGAS 與 GPT 複查都於 2026-11-17～18 在補完職稱清單的語料、K=5 設定重跑（GPT 單次輸出有隨機性）。"
 
 
 def _e2e(d) -> str:
@@ -40,7 +40,15 @@ def _e2e(d) -> str:
 
 
 def _held_p(d) -> str:
-    return f"<p><b>獨立測試題</b>：{escape(_held_line(d))}。題少，同一人出題，只能當方向。</p>" if _held_line(d) else ""
+    return f"<p><b>獨立測試題</b>：{escape(_held_line(d))}。由單一模型出題、金標未經人工確認，只能當方向。</p>" if _held_line(d) else ""
+
+
+def _held_types(x) -> str:
+    """分題型與跨公司的一小段（輸出檔沒有就空）。職缺清單題、跨公司題各自的表現不混進總平均。"""
+    bt = x.get("by_type") or {}
+    t = "；".join(f"{k} {v['n']} 題 Hit@3 {_f(v['hit@3'])}、MRR {_f(v['mrr'])}" for k, v in bt.items())
+    c = f"跨公司題 {x['cross_pass']}/{x['cross_n']} 通過關鍵字檢查" if x.get("cross_n") else ""
+    return f"（分題型：{'；'.join(i for i in (t, c) if i)}）" if (t or c) else ""
 
 
 def _held_line(d) -> str:
@@ -50,7 +58,7 @@ def _held_line(d) -> str:
         return ""
     e = f"、端到端拒答 {x['e2e']['refused']}/{x['e2e']['n']}" if x["e2e"] else ""
     return (f"另有 {x['n']} 題獨立測試題（沒用來調參）：Hit@3 ＝ {_f(x['hit3'])}（95% 區間 {_f(x['hit3_ci'][0])}–{_f(x['hit3_ci'][1])}）、"
-            f"MRR ＝ {_f(x['mrr'])}（95% 區間 {_f(x['mrr_ci'][0])}–{_f(x['mrr_ci'][1])}）（Hit@3 與 MRR 只算 {x['n_plain_answerable']} 題單一公司的有答案題）、"
+            f"MRR ＝ {_f(x['mrr'])}（95% 區間 {_f(x['mrr_ci'][0])}–{_f(x['mrr_ci'][1])}）（Hit@3 與 MRR 只算 {x['n_plain_answerable']} 題單一公司與職缺清單的有答案題）{_held_types(x)}、"
             f"沒答案題檢索擋住 {x['blocked_u']}/{x['n_unanswerable']}{e}")
 
 
@@ -71,7 +79,7 @@ def _real_line(d) -> str:
     return _held_p(d) + (f"<p><b>另外 {x['n']} 道真實問法</b>（公司頁內短問句、單一公司、跨公司、語料沒有答案；同一人出題，題少，只能當方向）："
             f"非跨公司的有答案題 Hit@1 {_f(x['hit1'])}、Hit@3 {_f(x['hit3'])}、Hit@5 {_f(x['hit5'])}、MRR {_f(x['mrr'])}；"
             f"非跨公司的沒有答案題擋住 {x['blocked_u']}/{x['n_unanswerable']}{_e2e(d)}，有答案題誤擋 {x['blocked_a']}/{x['n_answerable']}；"
-            f"跨公司題 {x['cross_passed']}/{x['cross_n']} 結果正確。</p>")
+            f"跨公司題 {x['cross_passed']}/{x['cross_n']} 通過關鍵字檢查。</p>")
 
 
 def _details(d) -> str:
@@ -193,7 +201,7 @@ def _level(d) -> str:
     if c:
         done.append(f"換一個 AI 獨立複查：{c['claims']} 個說法中 {c['supported']} 個有依據")
     if x := d.get("cross_eval"):
-        done.append(f"跨公司提問：每家公司各找 {x['per']} 段再逐家整理；{x['n']} 題中 {x['passed']} 題結果正確（各家涵蓋率平均 {x['coverage']:.2f}）")
+        done.append(f"跨公司提問：每家公司各找 {x['per']} 段再逐家整理；{x['n']} 題中 {x['passed']} 題通過關鍵字檢查（各家涵蓋率平均 {x['coverage']:.2f}）")
     done.append(f"追問記憶：帶入最近 {memory.MAX_TURNS} 輪（簡單規則）")
     undone = ["重排序模型（reranker）", "向量資料庫（資料只有數百段，在記憶體內搜尋就夠）", "微調模型",
               "線上監控與使用者回饋"] + ([] if d.get("held") else ["獨立測試題（題目與語料同源）"])
@@ -472,7 +480,7 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             f"我原本以為{HYBRID}會更好。數據看不出來，所以選比較簡單的 bge-m3。" if df and df["lo"] <= 0 <= df["hi"] else None,
             f"問單一公司取前 {r.DEFAULT_K} 段；問全部公司，每家取 {r.PER_COMPANY} 段。"],
         4: ["找得到還不夠，答案也要有依據。",
-            f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是 2026-11-17 在新版語料、取前 5 段重跑的結果。" if g else None,
+            f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是 2026-11-17～18 在補完職稱清單的語料、取前 5 段重跑的結果。" if g else None,
             "但評審和生成都是 DeepSeek，可能偏愛自己的答案。" if g else None,
             f"所以另請 GPT 複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None,
             "這只量有沒有依據，不量對不對。" if g else None,
@@ -489,7 +497,7 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
         6: ["最後講限制。我不想講得太滿。",
             f"題目只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案，只能當方向。" if d else "題目很少，只能當方向。",
             (_held_line(d) + "。其餘題目與資料同源。") if _held_line(d) else "題目和資料同源，沒有獨立測試題。",
-            f"跨公司題 {x['n']} 題中 {x['passed']} 題結果正確。但它的門檻也用同一批題挑，偏樂觀。" if x else None,
+            f"跨公司題 {x['n']} 題中 {x['passed']} 題通過關鍵字檢查。但它的門檻也用同一批題挑，偏樂觀。" if x else None,
             "我刻意沒做：重排序模型、向量資料庫、微調模型、線上監控。沒做就是沒做。",
             "放大 100 倍會怎麼改，只是設計想法，我還沒有做。"],
     }

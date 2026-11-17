@@ -21,7 +21,7 @@ def held_files(root, digest=None, answers=True):  # noqa: F811
         "metrics": {"hit@1": 0.5, "hit@3": 0.75, "hit@5": 0.8, "mrr": 0.625}, "ci": {"hit@3": [0.5, 0.9], "mrr": [0.4, 0.8], "hit@1": [0, 1], "hit@5": [0, 1]},
         "unanswerable_blocked_total": 1, "unanswerable_total": 2,
         "scores": {"h01": 0.8, "h02": 0.7}, "routes": {"h01": "公司頁內提問", "h02": "偵測到公司"},
-        "cross": [{"id": "h03", "answerable": False, "top": 0.4, "status": "low"}, {"id": "h04", "answerable": True, "top": 0.6, "status": "ok"}]})
+        "cross": [{"id": "h03", "answerable": False, "top": 0.4, "status": "low", "pass": True}, {"id": "h04", "answerable": True, "top": 0.6, "status": "ok", "pass": False}]})
     if answers:
         put(root, "eval/results_heldout_answers.json", {"rows": [
             {"id": i, "question": next(q["question"] for q in QS if q["id"] == i), "answer_status": st, "answer": a} for i, st, a in ANS]})
@@ -73,3 +73,38 @@ def test_threshold_stale_held_output_is_reported_missing_not_drawn(client, root,
     held_files(root, digest="old")
     h = client[1].get("/threshold").get_data(as_text=True)
     assert "<rect class=d" not in h and "獨立測試題" in h and "過期" in h
+
+
+def test_by_type_and_cross_are_reported_separately_not_only_the_pooled_average(client, root):  # noqa: F811
+    held_files(root)
+    p = root / "eval/results_heldout.json"
+    r = json.loads(p.read_text(encoding="utf-8"))
+    r["by_type"] = {"單一公司": {"n": 3, "hit@3": 1.0, "mrr": 0.9}, "職缺": {"n": 2, "hit@3": 0.5, "mrr": 0.4}}
+    p.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
+    x = about._heldout(root)
+    assert x["cross_n"] == 1 and x["cross_pass"] == 0 and x["by_type"]["職缺"]["hit@3"] == 0.5
+    h = client[1].get("/about?all=1").get_data(as_text=True)
+    assert "分題型：單一公司 3 題 Hit@3 1.000、MRR 0.900；職缺 2 題 Hit@3 0.500、MRR 0.400；跨公司題 0/1 通過關鍵字檢查" in h
+
+
+def test_held_slide_names_the_real_question_count_and_splits_job_list_from_single_company(client, root):  # noqa: F811
+    held_files(root)
+    p = root / "eval/results_heldout.json"
+    r = json.loads(p.read_text(encoding="utf-8"))
+    r["by_type"] = {"單一公司": {"n": 3, "hit@3": 1.0, "mrr": 0.9}, "職缺": {"n": 2, "hit@3": 0.5, "mrr": 0.4}}
+    p.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
+    h = client[1].get("/about").get_data(as_text=True)
+    assert "30 題對 4 題" in h and "40 題" not in h
+    assert "職缺 2 題：Hit@3 0.500" in h and "單一公司 3 題：Hit@3 1.000" in h
+    assert "標準答案沒人工確認" in h
+
+
+def test_score_slide_has_one_bar_per_type_with_values(client, root):  # noqa: F811
+    held_files(root)
+    p = root / "eval/results_heldout.json"
+    r = json.loads(p.read_text(encoding="utf-8"))
+    r["by_type"] = {"單一公司": {"n": 3, "hit@3": 1.0, "mrr": 0.9}, "職缺": {"n": 2, "hit@3": 0.5, "mrr": 0.4}}
+    p.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
+    h = client[1].get("/about").get_data(as_text=True)
+    assert "哪裡強、哪裡弱" in h
+    assert 'class="bar gx ok"' in h and 'class="bar gx bad"' in h  # 1.0 綠、0.5 紅

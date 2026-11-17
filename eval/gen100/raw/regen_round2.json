@@ -1,0 +1,47 @@
+[
+ {
+  "question": "叡揚資訊的內推獎金要等多久才入帳？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "叡揚資訊",
+  "gold": [],
+  "absence_keywords": [
+   "內推獎金",
+   "員工推薦"
+  ]
+ },
+ {
+  "question": "藍新資訊的凍卵補助最多能領多少？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "藍新資訊",
+  "gold": [],
+  "absence_keywords": [
+   "凍卵",
+   "卵子冷凍"
+  ]
+ },
+ {
+  "question": "華電聯網有補助凍卵嗎？最多能領多少？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "華電聯網",
+  "gold": [],
+  "absence_keywords": [
+   "凍卵",
+   "卵子冷凍"
+  ]
+ },
+ {
+  "question": "中華網龍考證照的報名費最多補助多少？",
+  "type": "不可回答",
+  "topic": "福利規章",
+  "company": "中華網龍",
+  "gold": [],
+  "absence_keywords": [
+   "證照報名費",
+   "考照補助",
+   "證照考試"
+  ]
+ }
+]

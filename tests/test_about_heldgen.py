@@ -68,4 +68,4 @@ def test_real_outputs_judge_files_match_scored_ids_and_page_text_is_not_stale():
     assert h and h["n"] == d["held_gen"]["n"]  # 獨立題每一題都複查過
     assert d["cross"]["n"] == d["generation"]["scored"]  # 題組每一題都複查過
     from job_rag.about_page import GEN_NOTE
-    assert "沒有重跑" not in GEN_NOTE and "前一版語料" not in GEN_NOTE and "GPT 複查都於 2026-11-17" in GEN_NOTE
+    assert "沒有重跑" not in GEN_NOTE and "前一版語料" not in GEN_NOTE and "GPT 複查都於 2026-11-17～18" in GEN_NOTE

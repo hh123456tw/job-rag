@@ -1,0 +1,97 @@
+{
+ "scored_question_runs": 31,
+ "rows": {
+  "h01": {
+   "answer_relevancy": 0.6427273967422782,
+   "faithfulness": 1.0
+  },
+  "h02": {
+   "answer_relevancy": 0.7287511411891922,
+   "faithfulness": 1.0
+  },
+  "h03": {
+   "answer_relevancy": 0.9999999999996964,
+   "faithfulness": 1.0
+  },
+  "h04": {
+   "answer_relevancy": 0.8432248639450659,
+   "faithfulness": 1.0
+  },
+  "h05": {
+   "answer_relevancy": 0.7995483324716183,
+   "faithfulness": 1.0
+  },
+  "h06": {
+   "answer_relevancy": 0.7362387395596617,
+   "faithfulness": 1.0
+  },
+  "h07": {
+   "answer_relevancy": 0.5441685458580942,
+   "faithfulness": 1.0
+  },
+  "h08": {
+   "answer_relevancy": 0.7458650494837111,
+   "faithfulness": 1.0
+  },
+  "h09": {
+   "answer_relevancy": 1.0,
+   "faithfulness": 1.0
+  },
+  "h10": {
+   "answer_relevancy": 0.589211104058997,
+   "faithfulness": 1.0
+  },
+  "h12": {
+   "answer_relevancy": 0.9931817017405186,
+   "faithfulness": 1.0
+  },
+  "h13": {
+   "answer_relevancy": 0.9945265386556592,
+   "faithfulness": 1.0
+  },
+  "h14": {
+   "answer_relevancy": 0.9258509756771832,
+   "faithfulness": 1.0
+  },
+  "h15": {
+   "answer_relevancy": 0.9988780273899179,
+   "faithfulness": 1.0
+  },
+  "h16": {
+   "answer_relevancy": 0.9498081023007775,
+   "faithfulness": 1.0
+  },
+  "h17": {
+   "answer_relevancy": 0.8352797613273287,
+   "faithfulness": 1.0
+  },
+  "h18": {
+   "answer_relevancy": 0.9986405578687948,
+   "faithfulness": 1.0
+  },
+  "h19": {
+   "answer_relevancy": 0.9452585317128391,
+   "faithfulness": 1.0
+  },
+  "h20": {
+   "answer_relevancy": 0.9984539359763862,
+   "faithfulness": 1.0
+  },
+  "h22": {
+   "answer_relevancy": 0.8548984384393954,
+   "faithfulness": 1.0
+  },
+  "h23": {
+   "answer_relevancy": 0.8707567440947012,
+   "faithfulness": 0.8888888888888888
+  },
+  "h24": {
+   "answer_relevancy": 0.9335457076088457,
+   "faithfulness": 0.5714285714285714
+  },
+  "h25": {
+   "answer_relevancy": 0.9058978183478952,
+   "faithfulness": 0.6666666666666666
+  }
+ }
+}

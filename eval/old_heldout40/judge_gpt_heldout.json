@@ -1,0 +1,886 @@
+[
+ {
+  "id": "h01",
+  "claims": [
+   {
+    "text": "EPS 的數字依不同期間而不同。",
+    "supported": true,
+    "evidence": "EPS 4.77 元；EPS 1.28 元"
+   },
+   {
+    "text": "2025 年全年 EPS 為 4.77 元。",
+    "supported": true,
+    "evidence": "EPS 4.77 元"
+   },
+   {
+    "text": "2025 年第四季 EPS 為 1.28 元。",
+    "supported": true,
+    "evidence": "EPS 1.28 元"
+   },
+   {
+    "text": "2026 年第三季 EPS 為 1.4 元。",
+    "supported": true,
+    "evidence": "EPS 1.4 元"
+   },
+   {
+    "text": "2026 年前三季累計 EPS 為 4.26 元。",
+    "supported": true,
+    "evidence": "EPS 4.26 元"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h02",
+  "claims": [
+   {
+    "text": "聯合報系使用 Google Cloud。",
+    "supported": true,
+    "evidence": "選擇 Google Cloud"
+   },
+   {
+    "text": "聯合報系使用 BigQuery。",
+    "supported": true,
+    "evidence": "BigQuery 用於受眾與內容分析"
+   },
+   {
+    "text": "聯合報系使用 Vertex AI。",
+    "supported": true,
+    "evidence": "Vertex AI 用於機器學習模型開發"
+   },
+   {
+    "text": "聯合報系使用 Compute Engine。",
+    "supported": true,
+    "evidence": "虛擬機放在 Compute Engine"
+   },
+   {
+    "text": "聯合報系使用 Google Kubernetes Engine（GKE）。",
+    "supported": true,
+    "evidence": "容器化服務放在 GKE"
+   },
+   {
+    "text": "聯合報系使用 Cloud Functions。",
+    "supported": true,
+    "evidence": "無伺服器架構用 Cloud Functions"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h03",
+  "claims": [
+   {
+    "text": "叡揚資訊的董事長是張培鏞。",
+    "supported": true,
+    "evidence": "董事長／總經理 | 張培鏞"
+   },
+   {
+    "text": "張培鏞是叡揚資訊的代表人。",
+    "supported": true,
+    "evidence": "張培鏞（代表人）"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h04",
+  "claims": [
+   {
+    "text": "神通資訊位於台北市內湖區堤頂大道二段187號。",
+    "supported": true,
+    "evidence": "地點：台北市內湖區堤頂大道二段187號"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h05",
+  "claims": [
+   {
+    "text": "藍新資訊於 2026 年 10 月掛牌上櫃。",
+    "supported": true,
+    "evidence": "2026 年 10 月"
+   },
+   {
+    "text": "藍新資訊掛牌上櫃的承銷價為每股 68 元。",
+    "supported": true,
+    "evidence": "以承銷價每股 68 元掛牌上櫃"
+   },
+   {
+    "text": "依報導，藍新資訊的掛牌日為 2026-10-27。",
+    "supported": true,
+    "evidence": "2026-10-27 掛牌"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h06",
+  "claims": [
+   {
+    "text": "凱基證券的海外據點包括香港。",
+    "supported": true,
+    "evidence": "海外據點：香港"
+   },
+   {
+    "text": "凱基證券的海外據點包括泰國。",
+    "supported": true,
+    "evidence": "海外據點：香港、泰國"
+   },
+   {
+    "text": "凱基證券的海外據點包括新加坡。",
+    "supported": true,
+    "evidence": "海外據點：香港、泰國、新加坡"
+   },
+   {
+    "text": "凱基證券的海外據點包括印尼。",
+    "supported": true,
+    "evidence": "海外據點：香港、泰國、新加坡、印尼"
+   },
+   {
+    "text": "凱基證券的海外據點包括中國大陸。",
+    "supported": true,
+    "evidence": "新加坡、印尼、中國大陸。"
+   },
+   {
+    "text": "上述海外據點資訊屬於公司自述。",
+    "supported": true,
+    "evidence": "【自述，同上】"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h07",
+  "claims": [
+   {
+    "text": "華電聯網的客戶類型包括政府單位。",
+    "supported": true,
+    "evidence": "客戶群：政府單位"
+   },
+   {
+    "text": "華電聯網的客戶類型包括電信業。",
+    "supported": true,
+    "evidence": "電信業（中華電信、台灣大哥大、遠傳）"
+   },
+   {
+    "text": "華電聯網的客戶類型包括一般企業。",
+    "supported": true,
+    "evidence": "一般企業（聯發科、群創、旺宏）"
+   },
+   {
+    "text": "2025 年華電聯網客戶組成中，企業占 44.1%。",
+    "supported": true,
+    "evidence": "客戶組合 2025：企業 44.1%"
+   },
+   {
+    "text": "2025 年華電聯網客戶組成中，政府占 31.5%。",
+    "supported": true,
+    "evidence": "政府 31.5%"
+   },
+   {
+    "text": "2025 年華電聯網客戶組成中，電信占 24.4%。",
+    "supported": true,
+    "evidence": "電信 24.4%"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h08",
+  "claims": [
+   {
+    "text": "中華網龍 2025 年配發現金股利 0.33 元。",
+    "supported": true,
+    "evidence": "配發現金股利 0.33 元"
+   },
+   {
+    "text": "此次配息為中華網龍 12 年來首次配息。",
+    "supported": true,
+    "evidence": "為 12 年來首次配息"
+   },
+   {
+    "text": "中華網龍 2026 年股息除息日為 2026 年 7 月 17 日。",
+    "supported": true,
+    "evidence": "股息除息日為 2026 年 7 月 17 日"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h09",
+  "claims": [
+   {
+    "text": "段落對遠振資訊的資本額有兩種說法。",
+    "supported": true,
+    "evidence": "資本額：1300 萬元"
+   },
+   {
+    "text": "遠振資訊的資本總額為 20,000,000 元。",
+    "supported": true,
+    "evidence": "資本總額：20,000,000 元"
+   },
+   {
+    "text": "遠振資訊的實收資本額為 16,054,500 元。",
+    "supported": true,
+    "evidence": "實收資本額：16,054,500 元"
+   },
+   {
+    "text": "另一處資料記載遠振資訊的資本額為 1300 萬元。",
+    "supported": true,
+    "evidence": "資本額：1300 萬元"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h10",
+  "claims": [
+   {
+    "text": "Business Next 關於數據立的文章是廣編文章。",
+    "supported": true,
+    "evidence": "廣編／業配"
+   },
+   {
+    "text": "該文章提到數據立有 90% 續約。",
+    "supported": true,
+    "evidence": "文中稱創立六年、90% 續約"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h12",
+  "claims": [
+   {
+    "text": "宏碁雲架構的母公司是安碁資訊股份有限公司。",
+    "supported": true,
+    "evidence": "安碁資訊股份有限公司（ACSI，6690）"
+   },
+   {
+    "text": "安碁資訊股份有限公司的英文簡稱是 ACSI。",
+    "supported": true,
+    "evidence": "安碁資訊股份有限公司（ACSI，6690）"
+   },
+   {
+    "text": "安碁資訊的股票代號是 6690。",
+    "supported": true,
+    "evidence": "安碁資訊（6690）"
+   },
+   {
+    "text": "宏碁雲架構的公司自述稱其為安碁資訊的子公司。",
+    "supported": true,
+    "evidence": "安碁資訊（6690）的子公司"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h13",
+  "claims": [
+   {
+    "text": "典凡科技資深網路架構師的年薪為 1,500,000 元以上。",
+    "supported": true,
+    "evidence": "年薪 1,500,000 元以上"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h14",
+  "claims": [
+   {
+    "text": "宏碁雲架構的雲端維運工程師月薪為 37,000 元以上。",
+    "supported": true,
+    "evidence": "月薪 37,000 以上"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h15",
+  "claims": [
+   {
+    "text": "艾普特的 PM 專案規劃師月薪為 40,000~42,000 元。",
+    "supported": true,
+    "evidence": "月薪 40,000~42,000"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h16",
+  "claims": [
+   {
+    "text": "數據立產品維運工程師的必要條件包括精通 Linux。",
+    "supported": true,
+    "evidence": "必要：精通 Linux"
+   },
+   {
+    "text": "該職缺的必要條件包括精通 Docker。",
+    "supported": true,
+    "evidence": "精通 Docker"
+   },
+   {
+    "text": "該職缺的必要條件包括精通 Grafana。",
+    "supported": true,
+    "evidence": "Grafana + Prometheus"
+   },
+   {
+    "text": "該職缺的必要條件包括精通 Prometheus。",
+    "supported": true,
+    "evidence": "Grafana + Prometheus"
+   },
+   {
+    "text": "該職缺的必要工具包括 Kafka。",
+    "supported": true,
+    "evidence": "Kafka、Nginx、DNS／SSL"
+   },
+   {
+    "text": "該職缺的必要工具包括 Nginx。",
+    "supported": true,
+    "evidence": "Kafka、Nginx、DNS／SSL"
+   },
+   {
+    "text": "該職缺的必要條件包括 DNS。",
+    "supported": true,
+    "evidence": "DNS／SSL"
+   },
+   {
+    "text": "該職缺的必要條件包括 SSL。",
+    "supported": true,
+    "evidence": "DNS／SSL"
+   },
+   {
+    "text": "該職缺的必要條件包括 Shell。",
+    "supported": true,
+    "evidence": "Shell"
+   },
+   {
+    "text": "該職缺的必要條件包括 Python 3.9+。",
+    "supported": true,
+    "evidence": "Python 3.9+"
+   },
+   {
+    "text": "該職缺的必要條件包括 Java JDK 17+ 日誌排查。",
+    "supported": true,
+    "evidence": "Java JDK 17+ 日誌排查"
+   },
+   {
+    "text": "該職缺將 Hadoop 列為加分條件。",
+    "supported": true,
+    "evidence": "加分：Hadoop"
+   },
+   {
+    "text": "該職缺將 Elasticsearch 列為加分條件。",
+    "supported": true,
+    "evidence": "Elasticsearch"
+   },
+   {
+    "text": "該職缺將 Doris 列為加分條件。",
+    "supported": true,
+    "evidence": "Doris"
+   },
+   {
+    "text": "該職缺將 ClickHouse 列為加分條件。",
+    "supported": true,
+    "evidence": "ClickHouse"
+   },
+   {
+    "text": "該職缺將 Kibana 列為加分條件。",
+    "supported": true,
+    "evidence": "Kibana"
+   },
+   {
+    "text": "公司頁的產品維運工程師工具欄列有 Linux。",
+    "supported": true,
+    "evidence": "工具：Linux"
+   },
+   {
+    "text": "公司頁的產品維運工程師工具欄列有 Java。",
+    "supported": true,
+    "evidence": "Linux、Java、MySQL"
+   },
+   {
+    "text": "公司頁的產品維運工程師工具欄列有 MySQL。",
+    "supported": true,
+    "evidence": "Linux、Java、MySQL"
+   },
+   {
+    "text": "公司頁的產品維運工程師工具欄列有 Hadoop。",
+    "supported": true,
+    "evidence": "MySQL、Hadoop、K8s"
+   },
+   {
+    "text": "公司頁的產品維運工程師工具欄列有 K8s。",
+    "supported": true,
+    "evidence": "Hadoop、K8s、Shell"
+   },
+   {
+    "text": "公司頁的產品維運工程師工具欄列有 Shell。",
+    "supported": true,
+    "evidence": "K8s、Shell、LLM、Claude"
+   },
+   {
+    "text": "公司頁的產品維運工程師工具欄列有 LLM。",
+    "supported": true,
+    "evidence": "Shell、LLM、Claude"
+   },
+   {
+    "text": "公司頁的產品維運工程師工具欄列有 Claude。",
+    "supported": true,
+    "evidence": "Shell、LLM、Claude"
+   },
+   {
+    "text": "該職缺要求 3 年以上經驗。",
+    "supported": true,
+    "evidence": "3 年以上"
+   },
+   {
+    "text": "該職缺要求大學以上學歷。",
+    "supported": true,
+    "evidence": "大學以上"
+   },
+   {
+    "text": "該職缺待遇面議。",
+    "supported": true,
+    "evidence": "待遇面議"
+   },
+   {
+    "text": "該職缺的工作地點在中山區。",
+    "supported": true,
+    "evidence": "中山區"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h17",
+  "claims": [
+   {
+    "text": "神通資訊的 MiTAC Agent Builder 是企業 AI 一體機。",
+    "supported": true,
+    "evidence": "企業 AI 一體機"
+   },
+   {
+    "text": "MiTAC Agent Builder 於 2026 年 4 月 23 日發表。",
+    "supported": true,
+    "evidence": "2026 年 4 月 23 日"
+   },
+   {
+    "text": "MiTAC Agent Builder 由神通與 AMD 共同發表。",
+    "supported": true,
+    "evidence": "與 AMD 及撼訊科技共同發表"
+   },
+   {
+    "text": "MiTAC Agent Builder 由神通與撼訊科技共同發表。",
+    "supported": true,
+    "evidence": "與 AMD 及撼訊科技共同發表"
+   },
+   {
+    "text": "其軟體是零程式碼的 Agent 建立工具。",
+    "supported": true,
+    "evidence": "軟體是零程式碼的 Agent 建立工具"
+   },
+   {
+    "text": "使用其軟體不需要技術背景。",
+    "supported": true,
+    "evidence": "不需技術背景即可使用"
+   },
+   {
+    "text": "其決策脈絡可追溯。",
+    "supported": true,
+    "evidence": "決策脈絡、運作規則與資料來源可追溯"
+   },
+   {
+    "text": "其運作規則可追溯。",
+    "supported": true,
+    "evidence": "決策脈絡、運作規則與資料來源可追溯"
+   },
+   {
+    "text": "其資料來源可追溯。",
+    "supported": true,
+    "evidence": "決策脈絡、運作規則與資料來源可追溯"
+   },
+   {
+    "text": "其硬體採 AMD 平台。",
+    "supported": true,
+    "evidence": "硬體採 AMD 平台"
+   },
+   {
+    "text": "神通於 2026 年 7 月在 AI WAVE 展出伺服器版本。",
+    "supported": true,
+    "evidence": "2026-07 AI WAVE 展出的伺服器版本"
+   },
+   {
+    "text": "該伺服器版本採用神雲 TN85-B8261 機型。",
+    "supported": true,
+    "evidence": "TN85-B8261 2U 機型"
+   },
+   {
+    "text": "該伺服器機型為 2U。",
+    "supported": true,
+    "evidence": "TN85-B8261 2U 機型"
+   },
+   {
+    "text": "該伺服器搭配 AMD EPYC 9004／9005 系列處理器。",
+    "supported": true,
+    "evidence": "9004／9005 系列處理器"
+   },
+   {
+    "text": "該伺服器搭配 AMD Instinct MI350P 顯示卡。",
+    "supported": true,
+    "evidence": "MI350P PCIe 5.0 顯示卡"
+   },
+   {
+    "text": "該版本的軟體完全地端部署。",
+    "supported": true,
+    "evidence": "軟體面是完全地端部署"
+   },
+   {
+    "text": "該版本以 RAG 做知識檢索。",
+    "supported": true,
+    "evidence": "以 RAG 做知識檢索"
+   },
+   {
+    "text": "該版本提供低程式碼介面。",
+    "supported": true,
+    "evidence": "低程式碼／無程式碼的拖拉式介面"
+   },
+   {
+    "text": "該版本提供無程式碼介面。",
+    "supported": true,
+    "evidence": "低程式碼／無程式碼的拖拉式介面"
+   },
+   {
+    "text": "該版本的介面採拖拉式操作。",
+    "supported": true,
+    "evidence": "低程式碼／無程式碼的拖拉式介面"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h18",
+  "claims": [
+   {
+    "text": "凱基證券2026上半年的稅後純益為179.4億元。",
+    "supported": true,
+    "evidence": "179.4 億"
+   },
+   {
+    "text": "凱基證券2026上半年的稅後純益年增383%。",
+    "supported": true,
+    "evidence": "年增 383%"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h19",
+  "claims": [
+   {
+    "text": "華電聯網高級工程師（高雄）資料庫職缺要求Oracle與MySQL至少熟悉一種。",
+    "supported": true,
+    "evidence": "Oracle 與 MySQL 至少熟悉一種"
+   },
+   {
+    "text": "該職缺的擅長工具欄列出MySQL。",
+    "supported": true,
+    "evidence": "MySQL"
+   },
+   {
+    "text": "該職缺的擅長工具欄列出Oracle。",
+    "supported": true,
+    "evidence": "Oracle"
+   },
+   {
+    "text": "該職缺的擅長工具欄列出PL/SQL。",
+    "supported": true,
+    "evidence": "PL/SQL"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h20",
+  "claims": [
+   {
+    "text": "叡揚資訊2026前三季營收為15.34億元。",
+    "supported": true,
+    "evidence": "15.34 億"
+   },
+   {
+    "text": "叡揚資訊2026前三季營收年增6.58%。",
+    "supported": true,
+    "evidence": "年增 6.58%"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h22",
+  "claims": [
+   {
+    "text": "藍新資訊的平台包含VMware虛擬化。",
+    "supported": true,
+    "evidence": "VMware 虛擬化"
+   },
+   {
+    "text": "藍新資訊官網列出的虛擬化平台包括VMware。",
+    "supported": true,
+    "evidence": "虛擬化平台包括 VMware"
+   },
+   {
+    "text": "藍新資訊官網列出的虛擬化平台包括Hyper-V。",
+    "supported": true,
+    "evidence": "Hyper-V"
+   },
+   {
+    "text": "藍新資訊官網列出的虛擬化平台包括Nutanix KVM。",
+    "supported": true,
+    "evidence": "Nutanix KVM"
+   },
+   {
+    "text": "神通資訊職缺的擅長工具包含VMware。",
+    "supported": true,
+    "evidence": "VMware"
+   },
+   {
+    "text": "華電聯網雲端工程師職缺的擅長工具包含VMware。",
+    "supported": true,
+    "evidence": "Linux、VMware"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h23",
+  "claims": [
+   {
+    "text": "神通資訊有Agent Builder企業AI一體機。",
+    "supported": true,
+    "evidence": "Agent Builder 企業 AI 一體機"
+   },
+   {
+    "text": "神通資訊Agent Builder的軟體是零程式碼Agent建立工具。",
+    "supported": true,
+    "evidence": "軟體是零程式碼的 Agent 建立工具"
+   },
+   {
+    "text": "神通資訊Agent Builder的決策可稽核。",
+    "supported": true,
+    "evidence": "決策可稽核"
+   },
+   {
+    "text": "凱基證券有AI Agent智慧牧羊犬。",
+    "supported": true,
+    "evidence": "由凱基證券數位創新部開發"
+   },
+   {
+    "text": "AI Agent智慧牧羊犬整合AI Agent與RPA。",
+    "supported": true,
+    "evidence": "AI Agent 與既有的 RPA"
+   },
+   {
+    "text": "台灣大哥大有MyAgent企業AI代理平台。",
+    "supported": true,
+    "evidence": "MyAgent 是企業 AI 代理平台"
+   },
+   {
+    "text": "叡揚資訊的資料提到Agentic AI。",
+    "supported": true,
+    "evidence": "GenAI 到 Agentic AI"
+   },
+   {
+    "text": "叡揚資訊的資料提到InsAI。",
+    "supported": true,
+    "evidence": "InsAI"
+   },
+   {
+    "text": "叡揚資訊的資料提到公文Copilot。",
+    "supported": true,
+    "evidence": "升級為公文 Copilot"
+   },
+   {
+    "text": "叡揚資訊的資料介紹Agentic RAG。",
+    "supported": true,
+    "evidence": "以及 Agentic RAG"
+   },
+   {
+    "text": "叡揚資訊的資料介紹MCP。",
+    "supported": true,
+    "evidence": "支援 MCP 伺服器"
+   },
+   {
+    "text": "叡揚資訊的C.ai 3.0為Agentic Portal。",
+    "supported": true,
+    "evidence": "為 Agentic Portal"
+   },
+   {
+    "text": "華電聯網的SmartQ LAS提供對話式服務。",
+    "supported": true,
+    "evidence": "對話式服務"
+   },
+   {
+    "text": "華電聯網的SmartQ LAS提供任務自動化。",
+    "supported": true,
+    "evidence": "任務自動化"
+   },
+   {
+    "text": "藍新資訊的服務範圍包含AI Agent整合。",
+    "supported": true,
+    "evidence": "AI Agent 整合"
+   },
+   {
+    "text": "中華網龍將AI用於遊戲開發流程。",
+    "supported": true,
+    "evidence": "AI 已用在遊戲開發流程"
+   },
+   {
+    "text": "中華網龍將AI用於遊戲玩法。",
+    "supported": true,
+    "evidence": "把 AI 放進玩法"
+   },
+   {
+    "text": "中華網龍的《尋秦記》有AI夥伴。",
+    "supported": true,
+    "evidence": "《尋秦記》的 AI 夥伴"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h24",
+  "claims": [
+   {
+    "text": "聯合報系把新聞網站搬到Google Cloud。",
+    "supported": true,
+    "evidence": "把新聞網站與資料分析搬到 Google"
+   },
+   {
+    "text": "聯合報系把資料分析搬到Google Cloud。",
+    "supported": true,
+    "evidence": "資料分析搬到 Google Cloud"
+   },
+   {
+    "text": "聯合報系使用BigQuery。",
+    "supported": true,
+    "evidence": "使用的產品包括 BigQuery"
+   },
+   {
+    "text": "聯合報系使用Vertex AI。",
+    "supported": true,
+    "evidence": "Vertex AI"
+   },
+   {
+    "text": "聯合報系使用Compute Engine。",
+    "supported": true,
+    "evidence": "Compute Engine"
+   },
+   {
+    "text": "聯合報系使用GKE。",
+    "supported": true,
+    "evidence": "容器化服務放在 GKE"
+   },
+   {
+    "text": "聯合報系使用Cloud Functions。",
+    "supported": true,
+    "evidence": "Cloud Functions"
+   },
+   {
+    "text": "聯合報系的雲平台為Google Cloud。",
+    "supported": true,
+    "evidence": "雲：Google Cloud"
+   },
+   {
+    "text": "神通資訊自述代理產品包括Google Cloud。",
+    "supported": true,
+    "evidence": "代理產品：Google Cloud"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h25",
+  "claims": [
+   {
+    "text": "凱基證券【資訊部】C#全端技術工程師必備C#.NET開發經驗。",
+    "supported": true,
+    "evidence": "必備：C#.NET 開發經驗"
+   },
+   {
+    "text": "該職缺的擅長工具包含C#。",
+    "supported": true,
+    "evidence": "擅長工具 C#"
+   },
+   {
+    "text": "該職缺的擅長工具包含WinForm。",
+    "supported": true,
+    "evidence": "WinForm"
+   },
+   {
+    "text": "該職缺的擅長工具包含MS SQL。",
+    "supported": true,
+    "evidence": "MS SQL"
+   },
+   {
+    "text": "凱基證券【資訊部】C#/ASP.net全端工程師必備2年以上C#／ASP.NET（MVC或ASP.NET Core）技能。",
+    "supported": true,
+    "evidence": "必備：2 年以上 C#／ASP.NET"
+   },
+   {
+    "text": "華電聯網(C#)資深軟體工程師必備2年以上C#開發經驗。",
+    "supported": true,
+    "evidence": "必備為 C# 開發 2 年以上"
+   },
+   {
+    "text": "神通資訊C037CCE_駐點工程師使用C#做程式新增與修改。",
+    "supported": true,
+    "evidence": "以 C#、ASP.NET"
+   },
+   {
+    "text": "神通資訊C037CCE_駐點工程師使用ASP.NET做程式新增與修改。",
+    "supported": true,
+    "evidence": "以 C#、ASP.NET"
+   },
+   {
+    "text": "神通資訊C037CCE_駐點工程師的擅長工具包含C#。",
+    "supported": true,
+    "evidence": "擅長工具為 ASP.NET、C#"
+   },
+   {
+    "text": "中華網龍AI應用遊戲工程師要求熟悉或精通C++。",
+    "supported": true,
+    "evidence": "熟悉或精通 C++"
+   },
+   {
+    "text": "中華網龍AI應用遊戲工程師要求熟悉或精通C#。",
+    "supported": true,
+    "evidence": "熟悉或精通 C++、C# 程式語言"
+   },
+   {
+    "text": "叡揚資訊[校園專區-台北].NET程式設計師必備擅長C#.NET。",
+    "supported": true,
+    "evidence": "必備：擅長 C#.NET"
+   },
+   {
+    "text": "叡揚資訊[校園專區-台北].NET程式設計師的工具包含C#。",
+    "supported": true,
+    "evidence": "工具：C#"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "h40",
+  "claims": [
+   {
+    "text": "叡揚資訊有社團活動。",
+    "supported": true,
+    "evidence": "家庭日、社團、軟體工程師節等活動"
+   }
+  ],
+  "faithfulness": 1.0
+ }
+]

@@ -1,0 +1,321 @@
+[
+  {
+    "question": "哪幾家公司徵才會看 React 的底子？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["React"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "凱基證券"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Angular／React／Vue、Python／Shell"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "Vue 或 React 其一（Vue 尤佳）"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）",
+        "quote": "加分：React 前後端整合"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+        "quote": "React 與 TypeScript、HTML／CSS、Git"
+      },
+      {
+        "file": "35_104職缺更新_凱基證券.md",
+        "heading": "目前開放職缺 > 【資訊部】C#/ASP.net全端工程師（87rsh）",
+        "quote": "Vue.js 或 React 或 RWD"
+      }
+    ]
+  },
+  {
+    "question": "懂 Docker 能投哪幾家公司的職缺？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["Docker"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊", "藍新資訊", "華電聯網", "中華網龍"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 系統網路資安工程師_資安系統(25021201)（8mdm2）",
+        "quote": "容器（Docker、Kubernetes）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）",
+        "quote": "會 Docker 與 Linux 為佳"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "Linux、Docker、Kubernetes"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）",
+        "quote": "Docker 與 Kubernetes（含 Container Security）"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "MCP、Docker、雲端、ComfyUI"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司找懂 TypeScript 的人？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["TypeScript"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊", "中華網龍"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I113 (Sr.)軟體工程師, 全端開發（8tphn）",
+        "quote": "JavaScript／TypeScript／HTML／CSS"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "了解：TypeScript、Sass、SPA 下的 SEO 機制"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > .NET 產品開發工程師(24052801)（8cgii）",
+        "quote": "JavaScript、TypeScript、T-SQL"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+        "quote": "React 與 TypeScript、HTML／CSS、Git"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "JavaScript/TypeScript、n8n、Elasticsearch、PostgreSQL"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "必備 Python、TypeScript 或其他後端語言"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家的徵才條件提到亞馬遜雲經驗？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["AWS"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "華電聯網"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）",
+        "quote": "AWS／Azure／GCP 雲端學習或實作"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+        "quote": "了解雲端資料平台（如 AWS）"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > MIS工程師(25041801)（8ox8m）",
+        "quote": "（GCP、Azure、AWS）"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）",
+        "quote": "必備為至少一種公有雲平台實戰經驗"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司的技術方向有碰到 MCP？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["MCP"],
+    "companies": ["台灣大哥大", "叡揚資訊", "藍新資訊", "凱基證券", "中華網龍"],
+    "gold": [
+      {
+        "file": "01_台灣大哥大.md",
+        "heading": "5. 技術堆疊",
+        "quote": "自研 GenAIus、MCP、向量檢索 RAG"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）",
+        "quote": "目前正把產品發展到符合 MCP 協定，與企業內跨系統協作。"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "MCP Connector，建置資料同步與事件驅動架構。"
+      },
+      {
+        "file": "35_104職缺更新_凱基證券.md",
+        "heading": "目前開放職缺 > 【數位創新部】AI Agent 應用開發工程師（8yxlh）",
+        "quote": "了解 LLM、MCP、A2A"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "Function Calling、Tool Calling、MCP"
+      }
+    ]
+  },
+  {
+    "question": "會 FastAPI 可以留意哪幾家的工作？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["FastAPI"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Python、Flask／FastAPI、AWS／GCP"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > Machine Learning Engineer (CV) 機器學習工程師 (電腦視覺)(24013102)（889ho）",
+        "quote": "Web API 工具（Flask、FastAPI）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+        "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家徵才會看 PostgreSQL 能力？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["PostgreSQL"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Redis、PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "擅長工具：Python、PostgreSQL。"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 系統工程師(24100701)（8iig9）",
+        "quote": "MySQL、PostgreSQL 任一）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+        "quote": "至少一種資料庫（PostgreSQL／MySQL／MongoDB）"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "擅長工具 JavaScript、Python、PostgreSQL"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司有做程式建置和上線的自動化？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["CI/CD"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊", "藍新資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "CI/CD、根因分析、容量規劃、Log 除錯"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > [校園專區]程式分析師（89sxv）",
+        "quote": "遵循並維護產品 CI/CD，建立自動化建構與部署程序。"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）",
+        "quote": "維護軟體工程自動化流程（CI/CD），開發自動化腳本（軟體安裝與設定）"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "建置 CI/CD Pipeline，規劃 GitOps、IaC 與自動化部署。"
+      }
+    ]
+  },
+  {
+    "question": "熟 TensorFlow 能留意哪幾家徵才？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["TensorFlow"],
+    "companies": ["台灣大哥大", "聯合報"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I108 LLM應用平台架構師（8b54k）",
+        "quote": "加分：PyTorch／TensorFlow"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+        "quote": "TensorFlow、PyTorch 或類似工具"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司找人時會看 Redis 經驗？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["Redis"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Redis、PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > [校園專區-台北]Java程式設計師（89d0n）",
+        "quote": "Redis、MongoDB、Cassandra"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）",
+        "quote": "Redis；會 Docker 與 Linux 為佳"
+      }
+    ]
+  },
+  {
+    "question": "哪些公司有提供員工宿舍可以住？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "gold": [],
+    "absence_keywords": ["員工宿舍", "員工住宿", "宿舍補助"]
+  },
+  {
+    "question": "哪些公司有每週只上四天班的制度？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "gold": [],
+    "absence_keywords": ["四天工作", "四日工作", "週休三日", "每週四天"]
+  }
+]

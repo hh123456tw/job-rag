@@ -165,7 +165,7 @@ def _real_eval(root: Path):
         return None
 
 
-SWEEP_SETS = (("old30", "eval/questions.json"), ("real20", "eval/questions_real.json"), ("held40", "eval/questions_heldout.json"))
+SWEEP_SETS = (("old30", "eval/questions.json"), ("real20", "eval/questions_real.json"), ("held", "eval/questions_heldout.json"))
 
 
 def _sweep(root: Path):
@@ -196,7 +196,7 @@ def _e2e(root: Path):
 
 
 def _heldout(root: Path):
-    """獨立測試題 40 題（票 39）。檢索輸出檔缺、讀不了、或和題檔對不上（過期）回 None；端到端拒答另看答案檔，缺或對不上只少那一項。
+    """獨立測試題 100 題。檢索輸出檔缺、讀不了、或和題檔對不上（過期）回 None；端到端拒答另看答案檔，缺或對不上只少那一項。
     拒答＝被檢索門檻擋下，或答案恰為「查無」（與 results_endtoend.json 同一個算法）。"""
     try:
         r = json.loads((root / "eval/results_heldout.json").read_text(encoding="utf-8"))
@@ -205,7 +205,9 @@ def _heldout(root: Path):
             return None
         m, ci = r["metrics"], r["ci"]
         out = {"n": r["n"], "n_plain_answerable": r["n_answerable"], "hit3": m["hit@3"], "hit3_ci": ci["hit@3"], "mrr": m["mrr"], "mrr_ci": ci["mrr"],
-               "blocked_u": r["unanswerable_blocked_total"], "n_unanswerable": r["unanswerable_total"], "e2e": None}
+               "blocked_u": r["unanswerable_blocked_total"], "n_unanswerable": r["unanswerable_total"], "e2e": None,
+               "by_type": r.get("by_type") or {}, "cross_pass": sum(x["pass"] for x in r["cross"] if x["answerable"]),
+               "cross_n": sum(x["answerable"] for x in r["cross"])}
         if out["n_unanswerable"] != sum(not q["answerable"] for q in qs):
             return None
     except (OSError, ValueError, KeyError, TypeError):
@@ -224,7 +226,7 @@ def _heldout(root: Path):
 
 
 def _qsets(root: Path):
-    """調參用 30 題與調完才測 40 題各題型的題數與一個例題（說明頁「這 70 題問什麼」用）。題檔缺或讀不了回 None。"""
+    """調參用 30 題與調完才測 100 題各題型的題數與一個例題（說明頁「這 130 題問什麼」用）。題檔缺或讀不了回 None。"""
     try:
         out = {}
         for key, rel in (("tune", "eval/questions.json"), ("held", "eval/questions_heldout.json")):

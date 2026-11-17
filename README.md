@@ -56,6 +56,8 @@ python -X utf8 -m job_rag.evaluate             # 對預設方式（bge-m3）評�
 題目在 `eval/questions.json`（程式讀）與 `eval/questions.md`（人讀）。核對狀態一律是「待使用者確認」，只有使用者能改。
 金標用「檔名＋標題路徑」；命中＝前 k 個結果中有段落在金標標題之下。正確拒答率見下面「查無門檻」。
 
+獨立測試題 100 題：`eval/questions_heldout.json`（單一公司 56、職缺清單 16、跨公司 10、不可回答 18）。由 Codex CLI 的 gpt-6.1-sol 單一模型出題，金標未經人工確認（狀態一律「待使用者確認」）；出題與驗證過程見 `eval/gen100/README.md`。檢索評估 `python -X utf8 eval/run_heldout.py`，實跑答案 `eval/run_heldout_answers.py`，RAGAS `eval/run_heldout_ragas.py`；結果在 `eval/results_heldout*.{txt,json}`。舊的 40 題與舊結果留在 `eval/old_heldout40/`，不再引用。
+
 ## 向量檢索（票 03）
 模型放 `models/`（不進 git），`search(..., method=...)` 全在本機跑，不連網。段落向量快取在 `.cache/`（不進 git），語料內容變了才重算。
 ```
@@ -72,7 +74,7 @@ set JOB_RAG_MODELS_TEST=1 && python -m pytest tests/test_vector.py   # 真模型
 - 做法：最高分低於門檻，就判為「可能沒有答案」。介面顯示明確文字，原文以淡色照列，沒有「整理成答案」按鈕。`search()` 本身仍回空串列。
 - 門檻是 bge-m3 最高相似度 0.700（`retrieval.NOT_FOUND_THRESHOLD`）。混合用它的 bge-m3 最高分判斷；BM25、bge-small-zh、e5-large 分數尺度不同，沒做門檻。
 - 挑法：試每個相鄰分數的中點，選「可回答題放行率＋不可回答題擋住率」最高的。
-- 限制：門檻用評估的同一批 30 題挑，沒有獨立測試題，所以拒答率偏樂觀，只能當方向。可回答題被誤擋的比例見 `eval/results_methods.txt`。
+- 限制：門檻用評估的同一批 30 題挑，所以拒答率偏樂觀，只能當方向。另有調完才測的 100 題獨立測試題（見上面「獨立測試題 100 題」），沒用來挑門檻。可回答題被誤擋的比例見 `eval/results_methods.txt`。
 - 票 23 換掉 4 題可回答題後重挑：算出 0.7001，程式內仍用 0.700（沒改）。前後（同一個門檻 0.700）：不可回答題擋住 5/5 → 5/5；可回答題誤擋 5/25（c01、c06、s01、s11、j09）→ 3/25（c01、c06、s11）。誤擋變少是因為換掉的題裡，原本被擋的 s01、j09 換成沒被擋的題，不是門檻更準。
 
 ## 信賴區間

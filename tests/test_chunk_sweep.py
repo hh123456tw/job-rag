@@ -104,7 +104,7 @@ QS = {"questions_real.json": [{"id": "r1", "question": "乙？", "answerable": T
 def sweep_files(root, digest=None):  # noqa: F811
     from tests.test_about_data import QS4  # 舊 30 題檔沿用 root 已有的（改它會讓別的輸出檔過期）
     qs_all = {"questions.json": QS4} | QS
-    keys = dict(zip(("old30", "real20", "held40"), qs_all))
+    keys = dict(zip(("old30", "real20", "held"), qs_all))
     for f, qs in QS.items():
         put(root, f"eval/{f}", {"questions": qs})
     put(root, "eval/results_chunk_sweep.json", {

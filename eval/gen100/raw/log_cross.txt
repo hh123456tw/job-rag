@@ -1,0 +1,3168 @@
+OpenAI Codex v0.166.0
+--------
+workdir: C:\claude\aipe04期末\履歷\廠商深查
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1ea1a-8f2d-73a1-9c03-62bbe287cf66
+--------
+user
+你是求職情報問答 RAG 的「出題者」。只用讀檔（唯讀），不要改任何檔案，不要執行會連網的指令。
+語料資料夾就是目前工作目錄（C:/claude/aipe04期末/履歷/廠商深查）。現有題檔在 C:/claude/aipe04期末/job-rag/eval/questions_heldout.json 與 C:/claude/aipe04期末/job-rag/eval/questions.json（先讀，格式要沿用，題目不能和它們重複或高度相似）。
+
+【可用來源】
+- 公司頁（0N_公司.md）只能用這幾段：「1. 基本資料」「2. 業務與財務」「4. 職缺」「5. 技術堆疊」「8. 近一年新聞」。
+- 補充檔（2N_補充_公司.md）只能用標題不含下列字詞的公開事實段落。
+- 104 職缺更新檔（3N_104職缺更新_公司.md）。
+- 禁用字詞（標題或段落主旨含這些就不能用）：面試、評價、風險、判斷、推測、矛盾、限制、未查到、對應、作戰。
+- 禁用檔案：00_面談作戰卡.md、00_總報告.md、104/ 資料夾、selfdata、其他非列名的檔案。
+
+【口吻】像面試官現場用手機問的：短、口語、10–30 字，不要照抄原文用字（要換同義說法，避免只靠關鍵字比對就答得出來）。公司名可以直接講。題目本身不可寫「根據文件」「上面」之類字眼。
+
+【輸出格式】只輸出一個 JSON 陣列（不要 markdown 圍欄、不要說明文字）。每題一個物件：
+{"question": 題目, "type": 類型, "topic": 主題（薪資/技術/地點/學歷/業務/財務/新聞/職缺/福利規章/內部資訊/其他）, "company": 公司名（跨公司題省略）, "gold": [{"file": 檔名, "heading": 標題路徑, "quote": 原文片段}], ...}
+- heading 寫法：不含檔案最上面的 # 一級標題；把上層到該層的標題文字用 " > " 串起來（例如 "2. 業務與財務"、"目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）"），文字與檔案內完全一致（含編號、全形括號）。
+- quote：必須是該標題段落內「逐字存在」的連續原文，單行內、8–60 字、不要跨行、不要自己改標點或空白。程式會逐字比對，錯一個字就整題作廢。
+- 一題的 gold 可以多筆（例如同一事實在公司頁與補充檔都有就都列）。
+
+【你的任務】跨公司。8 家公司：台灣大哥大(01,20,30)、聯合報(02,21,31)、叡揚資訊(03,22,32)、神通資訊(04,23,33)、藍新資訊(05,24,34)、凱基證券(06,25,35)、華電聯網(07,26,36)、中華網龍(09,27,37)。共出 12 題：
+1) 10 題 type="跨公司"：像「哪些公司用 Python」「哪幾家公司的職缺要求 React」「哪些公司有用雲端」「哪些公司有做資安」之類，答案是多家公司。要先用 grep 掃描上述 8 家的可用來源，確認「所有」符合的公司都找出來（至少 2 家、最多 6 家），gold 為每家符合的公司各列一筆。另加 "keywords": [用於 grep 的 1–2 個關鍵字，原文寫法]、"companies": [符合的公司名清單]。題目要換不同技術/主題，不要和現有題的關鍵字重複（現有已用：Spring Boot、VMware、AI Agent、Google Cloud、C#、HPE/NetApp 夥伴獎、自研語音模型）。
+2) 2 題 type="不可回答"：不指定公司、問「哪些公司有 X」，但 X 是語料沒有寫的福利或制度（例如「哪些公司有員工持股信託」）。gold []，加 "absence_keywords": [2–4 個關鍵字]。先 grep 確認 8 家的檔案沒有。
+type 欄位的值只能是：跨公司、不可回答。
+
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+我會先讀現有題檔，再用唯讀搜尋掃描八家公司的可用段落，核對重複題、公司清單與逐字引文。
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions_heldout.json' -Encoding UTF8; Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions.json' -Encoding UTF8; rg --files -g '*.md' -g '"'!104/**'"' -g '"'!selfdata/**'"'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 686ms:
+{
+ "說明": "票 39：獨立測試題 40 題（原本有答案 25、沒答案 15；2026-11-17 因語料換新版，h40 改標為可回答，現為有答案 26、沒答案 14；gold 與關鍵字隨之更新，非為提高分數）。題目與金標在跑任何檢索評估之前寫定，之後不得為了結果改題。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（程式核對確實出現在公開段落）。沒有答案題的 absence_keywords 在整份語料（含排除段落）出現 0 次；trap＝相近主題但語料確實沒寫的陷阱題。核對狀態只有使用者能改成已確認。",
+ "questions": [
+  {
+   "id": "h01",
+   "question": "EPS 多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "EPS 4.77 元"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "EPS 4.77 元，營收年減 0.31%"
+    },
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "業務與財務 > 2025 年第四季與全年細項",
+     "quote": "EPS 4.77 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h02",
+   "question": "用什麼雲端？",
+   "type": "公司頁短問句",
+   "topic": "技術",
+   "answerable": true,
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）"
+    },
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "技術堆疊 > Google Cloud 資料與運算架構",
+     "quote": "使用的產品包括 BigQuery、Vertex AI、Compute Engine"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h03",
+   "question": "董事長是誰？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "張培鏞（代表人）／陳世安"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h04",
+   "question": "公司在哪裡？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "台北市內湖區堤頂大道二段 187 號"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h05",
+   "question": "什麼時候上櫃？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元"
+    },
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "68 元掛牌上櫃，開盤 73.7 元"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "基本資料 > 設立與資本市場歷程",
+     "quote": "每股 68 元掛牌上櫃"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2026 年上櫃審議到掛牌",
+     "quote": "承銷價每股 68 元掛牌上櫃"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h06",
+   "question": "海外有哪些據點？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 業務",
+     "quote": "香港、泰國、新加坡、印尼、中國大陸"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h07",
+   "question": "客戶是哪些類型？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 主要客戶",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "基本資料 > 策略夥伴與客戶群",
+     "quote": "政府單位（交通部、國防單位、地方政府）、電信業"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 2025 年營收結構與客戶組成",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h08",
+   "question": "股利配多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "配發 0.33 元現金股利，12 年來首次配息"
+    },
+    {
+     "file": "09_中華網龍.md",
+     "heading": "8. 近一年新聞",
+     "quote": "2025 年首次配息 0.33 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h09",
+   "question": "遠振資訊的資本額是多少？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "16_遠振資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "資本總額：20,000,000 元"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 公司簡介",
+     "quote": "資本額：1300 萬元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h10",
+   "question": "數據立的續約率是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "續約率 90%、續費率 120%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h11",
+   "question": "艾普特有哪四大事業群？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "廣告科技、行銷科技、管理科技、電商科技"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h12",
+   "question": "宏碁雲架構的母公司是誰？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "1. 基本資料",
+     "quote": "安碁資訊股份有限公司（ACSI，6690）"
+    },
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "安碁資訊（6690）的子公司"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h13",
+   "question": "典凡科技的資深網路架構師年薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師",
+     "quote": "年薪 1,500,000 元以上"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 1,500,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h14",
+   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "薪資：月薪 37,000 以上"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "job/8x526 | 1 年以上 | 大學、碩士 | 月薪 37,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h15",
+   "question": "艾普特的 PM 專案規劃師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "E_華電_艾普特_醫宇宙.md",
+     "heading": "2. 艾普特 > 相關職缺",
+     "quote": "月薪 40,000~42,000"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）",
+     "quote": "https://www.104.com.tw/job/8tpxn | 1 年以上 | 專科以上 | 月薪 40,000~42,000"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h16",
+   "question": "數據立的產品維運工程師要會哪些工具？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師",
+     "quote": "精通 Docker、Grafana + Prometheus"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h17",
+   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "3. 業務與財務 > 產品與業務",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    },
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "技術堆疊 > Agent Builder 企業 AI 一體機的軟硬體",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h18",
+   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "179.4 億，年增 383%"
+    },
+    {
+     "file": "06_凱基證券.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "上半年證券純益 179.4 億，年增 383%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h19",
+   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）",
+     "quote": "擅長工具欄為 MySQL、Oracle、PL/SQL"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "h20",
+   "question": "叡揚資訊 2026 前三季的營收是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "15.34 億，年增 6.58%"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "前三季營收年增 6.58%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h21",
+   "question": "哪些公司的職缺要求 Spring Boot？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Spring Boot"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h22",
+   "question": "哪幾家公司的職缺會用到 VMware？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "VMware"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h23",
+   "question": "哪家公司有做 AI Agent 的產品？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "AI Agent"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h24",
+   "question": "哪些公司使用 Google Cloud？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Google Cloud"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h25",
+   "question": "哪些公司的職缺要會 C#？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "C#"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h26",
+   "question": "有颱風假嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "神通資訊",
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "颱風假"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h27",
+   "question": "有員工持股信託嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "凱基證券",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "持股信託",
+    "員工持股"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h28",
+   "question": "有交通津貼嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "聯合報",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "交通津貼",
+    "交通補助"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h29",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "心理諮商"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h30",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "育嬰"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h31",
+   "question": "典凡科技今年的營收目標是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "營收目標"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "營收目標": "2026-11-17 新語料命中：27 號中華網龍補充檔寫的是《吞食天地》放置版首月營收目標，不是典凡科技今年營收目標；題目仍無答案"
+   }
+  },
+  {
+   "id": "h32",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "下載次數",
+    "下載量",
+    "累計下載"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h33",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "AI 部有",
+    "AI 部人數",
+    "AI 部共"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h34",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "廣達"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h35",
+   "question": "鴻海的董事長是誰？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "鴻海"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h36",
+   "question": "富邦金控旗下有哪些子公司？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "富邦金控"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h37",
+   "question": "台北明天會下雨嗎？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "天氣",
+    "氣象",
+    "下雨"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h38",
+   "question": "履歷的自傳要怎麼寫？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "自傳",
+    "履歷範本"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "自傳": "2026-11-17 新語料命中：37 號中華網龍職缺條件提到自傳，沒有教人怎麼寫自傳；題目仍無答案"
+   }
+  },
+  {
+   "id": "h39",
+   "question": "哪些公司有哺乳室？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "哺乳室"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h40",
+   "question": "哪間公司有員工社團？",
+   "type": "跨公司",
+   "topic": "福利規章",
+   "answerable": true,
+   "gold": [],
+   "split": "heldout",
+   "status": "待使用者確認（2026-11-17 因新語料已含答案，由不可回答改標為可回答，非為提高分數）",
+   "keywords": [
+    "家庭日、社團"
+   ]
+  }
+ ]
+}
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2025 年底原廠夥伴獎項",
+     "quote": "HPE FY25 最佳合作夥伴獎"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "c06",
+   "question": "哪一家公司有自研的語音模型？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研語音模型 myVoca"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "myVoca"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "神通資訊的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "額定 25 億；實收 21 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 標案占比（重點）",
+     "quote": "政府標案 110 件，總額近 83 億"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 政府標案與在手專案",
+     "quote": "110 件政府標案，得標總金額近 83 億元"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "20.19 億，年增 16.33%"
+    },
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "業務與財務 > 2025 年財務結果",
+     "quote": "20.19 億元，年增 16.33%"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "AltaBots.ai：企業級 No-Code AI Agent 平台"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "部門 2008 年成立"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "AI 智慧辨識（InsAI，VLM，支援地端）"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "InsAI 支援地端部署"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "InsAI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s11",
+   "question": "艾普特是做什麼的公司？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "數位行銷公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "2. 業務與財務 > 產品與服務（【自述】https://tftech.com.tw ）",
+     "quote": "企業級資料保護與雙活資料中心"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 公司簡介",
+     "quote": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+    },
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "2. 業務與財務",
+     "quote": "機房維運管理、雲端相關服務"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）",
+     "quote": "年薪 900,000~1,200,000"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
+     "quote": "薪資：年薪 900,000~1,200,000 元"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 900,000~1,200,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "Django"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I97 Kubernetes 平台工程師（8xjjo）",
+     "quote": "3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【戰略部】數據優化師(數據分析)（7qtdo）",
+     "quote": "月薪 35,000 元以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-1 AI 解決方案工程師（已讀單頁）",
+     "quote": "需出差，一年累積約三個月以下"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）",
+     "quote": "AI 解決方案工程師（技術）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）",
+     "quote": "不需出差"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）",
+     "quote": "必備為 Python 開發 3 年以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "3 年以上 AI 系統或大型軟體架構設計經驗"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "多益",
+    "TOEIC",
+    "英檢",
+    "英文能力"
+   ],
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "多益": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案",
+    "TOEIC": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案"
+   }
+  },
+  {
+   "id": "u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "月活躍",
+    "活躍玩家",
+    "MAU",
+    "DAU"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u06",
+   "question": "叡揚資訊的特休天數是幾天？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "特休",
+    "特別休假",
+    "休假天數"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u07",
+   "question": "藍新資訊可以在家上班嗎？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "在家上班",
+    "居家辦公",
+    "混合辦公",
+    "WFH",
+    "在家工作"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "平均年薪",
+    "平均薪資",
+    "薪資中位數"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}
+37_104職缺更新_中華網龍.md
+36_104職缺更新_華電聯網.md
+35_104職缺更新_凱基證券.md
+34_104職缺更新_藍新資訊.md
+33_104職缺更新_神通資訊.md
+32_104職缺更新_叡揚資訊.md
+31_104職缺更新_聯合報.md
+30_104職缺更新_台灣大哥大.md
+27_補充_中華網龍.md
+26_補充_華電聯網.md
+25_補充_凱基證券.md
+24_補充_藍新資訊.md
+23_補充_神通資訊.md
+22_補充_叡揚資訊.md
+21_補充_聯合報.md
+20_補充_台灣大哥大.md
+16_遠振資訊.md
+15_數據立.md
+14_典凡科技.md
+13_宏碁雲架構.md
+12_艾普特.md
+11_醫宇宙.md
+10_尼諾思科技.md
+09_中華網龍.md
+08_奧衍.md
+07_華電聯網.md
+06_凱基證券.md
+05_藍新資訊.md
+04_神通資訊.md
+03_叡揚資訊.md
+02_聯合報.md
+01_台灣大哥大.md
+00_面談作戰卡.md
+00_總報告.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "rg -n -i '"'^(#{1,6} )|Python|React|Docker|Kubernetes|Linux|SQL|TypeScript|Git|Azure|AWS|RAG|MCP|FastAPI|員工宿舍|寵物|生日假|四天工作|四日工作'"' --glob '0[1-7]_*.md' --glob '09_*.md' --glob '2[0-7]_*.md' --glob '3[0-7]_*.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 624ms:
+37_104職缺更新_中華網龍.md:1:# 37 中華網龍 104 職缺更新（查詢日 2026-11-17）
+37_104職缺更新_中華網龍.md:2:## 目前開放職缺
+37_104職缺更新_中華網龍.md:3:### 職缺總覽
+37_104職缺更新_中華網龍.md:6:### 職稱清單
+37_104職缺更新_中華網龍.md:14:### AI 應用研發工程師（104 職缺代碼 9523j）
+37_104職缺更新_中華網龍.md:16:- 工作內容：串接 OpenAI、Anthropic、Google Gemini 等 LLM API，建立 AI 應用服務。設計 Prompt、Context Engineering、RAG、向量資料庫與多階段檢索，開發可規劃任務、調用工具的 AI Agent（Function Calling、Tool Calling、MCP）。建立非同步處理、重試、Fallback、Token 計算與成本控制機制，並參與 Stable Diffusion、FLUX、LoRA、ControlNet、ComfyUI 工作流與 Custom Nodes。也把 AI 導入公司內部製程，並做新模型 POC 與技術文件。
+37_104職缺更新_中華網龍.md:17:- 條件與技能：必備 Python、TypeScript 或其他後端語言，REST API、JSON、非同步與服務整合；LLM、Agent、RAG 或生成式 AI 專案經驗；錯誤處理、測試、Log、Git。加分：Embedding、Vector DB、MCP、Docker、雲端、ComfyUI、模型微調（LoRA、QLoRA、PEFT、SFT）、GPU／CUDA。可附 LLM／Agent、RAG、MCP、ComfyUI 作品集。需求 1 人，日班，無需出差外派。
+37_104職缺更新_中華網龍.md:21:### AI應用遊戲工程師（104 職缺代碼 95dlu）
+37_104職缺更新_中華網龍.md:24:- 條件與技能：熟悉或精通 C++、C# 程式語言；熟悉或精通 Unity 開發引擎與 Git 版本控制；熟練至少一套 AI 編碼代理（Claude Code、Codex 等）；需附工作經歷與自傳，具良好溝通能力。加分：多人線上遊戲或手機遊戲開發經驗。語文條件為英文（聽中等、說讀寫略懂）。需求 1 人，日班，無需出差外派。擅長工具與工作技能欄位皆為不拘。
+37_104職缺更新_中華網龍.md:28:### 遊戲程式設計師-飄流幻境（104 職缺代碼 6fqjo）
+37_104職缺更新_中華網龍.md:35:### Unity3D 工程師-吞食天地M（104 職缺代碼 6okd8）
+37_104職缺更新_中華網龍.md:38:- 條件與技能：熟悉伺服器架構或用戶端架構；熟悉 Design Pattern、重視 Clean Code 者佳；需上傳近期寫的 Unity 相關程式碼（約 200 行）到 GitHub 或其他託管平台；具備與 AI 工具協作的能力，用於開發、除錯、設計或文件產出。加分：.Net Core 網頁開發經驗。需求 3 人，日班 09:30~18:00，週休二日，無需出差外派，歡迎應屆畢業生與二度就業。
+37_104職缺更新_中華網龍.md:42:### 遊戲測試-飄流幻境（104 職缺代碼 873it）
+36_104職缺更新_華電聯網.md:1:# 36 華電聯網 104 職缺更新（查詢日 2026-11-17）
+36_104職缺更新_華電聯網.md:2:## 目前開放職缺
+36_104職缺更新_華電聯網.md:3:### 職缺總覽
+36_104職缺更新_華電聯網.md:10:### 職稱清單
+36_104職缺更新_華電聯網.md:42:### 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）
+36_104職缺更新_華電聯網.md:44:- 工作內容：負責公有雲（AWS／GCP／Azure）的資安架構規劃與維運，包含 IAM 權限治理、VPC 網路隔離、WAF／DDoS 防護策略。參與公司內部資安產品研發，做雲服務與生成式 AI 安全防護機制的客製化開發與規則調校。也用雲端 AI／ML 服務為客戶建立應用。
+36_104職缺更新_華電聯網.md:45:- 條件與技能：必備為至少一種公有雲平台實戰經驗、Python 或 Shell Script、Docker 與 Kubernetes（含 Container Security）、Linux 與 TCP/IP。加分為持有經濟部 iPAS 證書。科系不拘，出差外派為無需出差外派，日班，週休二日。
+36_104職缺更新_華電聯網.md:49:### 資安工程師（技術服務二部／台中）（104 職缺代碼 7gani）
+36_104職缺更新_華電聯網.md:56:### 資安檢測工程師（104 職缺代碼 7bebb）
+36_104職缺更新_華電聯網.md:63:### 儲存系統工程師（新竹）（104 職缺代碼 6jad5）
+36_104職缺更新_華電聯網.md:66:- 條件與技能：必備為 NAS／SAN 磁碟陣列、儲存區域網路與資料備份相關系統的建置經驗，熟練使用 Linux 與 Windows。加分為熟悉虛擬化技術。出差外派欄為需出差，一年累積時間未定。具備駕照（普通重型機車、普通小型車）。
+36_104職缺更新_華電聯網.md:70:### 系統工程師（新竹）（104 職缺代碼 6ggg2）
+36_104職缺更新_華電聯網.md:77:### 【急徵】資安監控工程師（L1 SOC／MDR）夜間值班（104 職缺代碼 7yi2d）
+36_104職缺更新_華電聯網.md:80:- 條件與技能：必備為基本電腦操作能力，並能配合固定大夜班。科系為資訊管理、資訊工程、電機電子工程相關。加分為 TCP/IP、Linux、Windows、SOC／SIEM 經驗、Cortex XDR／XSIAM 操作，以及 CCNA、Security+、CEH 等證照。公司提供一個月教育訓練。
+36_104職缺更新_華電聯網.md:84:### 資安威脅獵捕分析師（104 職缺代碼 82lge）
+36_104職缺更新_華電聯網.md:87:- 條件與技能：必備為熟悉 Linux、Windows 資安事件調查指令，了解紅隊演練架構與工具，有數位鑑識調查實務，熟悉防火牆、IPS、WAF、NDR 等設備。加分為 CEH、CHFI、ECSA、ISO27001 等證照。出差外派為無需出差外派。
+36_104職缺更新_華電聯網.md:91:### 資安營運管理工程師（104 職缺代碼 7to9q）
+36_104職缺更新_華電聯網.md:98:### 雲端資安工程師（104 職缺代碼 7x0lv）
+36_104職缺更新_華電聯網.md:105:### 系統工程師－研發六部（汐止）（104 職缺代碼 8s06a）
+36_104職缺更新_華電聯網.md:108:- 條件與技能：擅長工具為 Linux、Java。科系為資訊工程、資訊管理、電機電子工程相關。要求注重軟體工程方法，樂於接受新技術。出差外派為無需出差外派，08:00~09:30 彈性上班。
+36_104職缺更新_華電聯網.md:112:### 軟體工程師－研發六部（汐止）（104 職缺代碼 864ko）
+36_104職缺更新_華電聯網.md:115:- 條件與技能：擅長工具為 C++、Java、Python、HTML、JavaScript，工作技能為軟體程式設計。要求熟悉物件導向技術。科系為資訊工程、資訊管理、電機電子工程相關。出差外派為無需出差外派，彈性上班。
+36_104職缺更新_華電聯網.md:119:### 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）
+36_104職缺更新_華電聯網.md:121:- 工作內容：負責專案資料庫的建置、管理與維護，Oracle 與 MySQL 至少熟悉一種。需熟悉 PL/SQL 或 T-SQL 語法，具備 1 年以上 Stored Procedure 實務經驗尤佳。可獨立作業或與團隊合作。
+36_104職缺更新_華電聯網.md:122:- 條件與技能：擅長工具欄為 MySQL、Oracle、PL/SQL。出差外派欄為需出差，一年累積時間未定，內文寫需配合專案任務出差。具備駕照（普通小型車）。科系不拘。
+36_104職缺更新_華電聯網.md:126:### 雲端工程師（104 職缺代碼 8feu3）
+36_104職缺更新_華電聯網.md:128:- 工作內容：負責 Azure 客戶支援，回應客戶需求並做基本問題排查，例如虛擬機啟動失敗、儲存存取問題。協助客戶配置 Azure 虛擬機、儲存帳號與網路，維護 FAQ 與知識庫，並提供 Azure 平台基本教育訓練。無法解決的案件升級給資深工程師並追蹤。
+36_104職缺更新_華電聯網.md:129:- 條件與技能：擅長工具為 Linux、VMware、PowerPoint、Word。工作技能為系統維護操作、系統架構規劃與維護、網路系統配置。證照欄為 Microsoft Certified Application Specialist、Azure 基礎知識認證、VCP。要求了解 IaaS／PaaS／SaaS、Azure Portal、虛擬網路、虛擬機與 Blob 儲存。出差外派為無需出差外派。
+36_104職缺更新_華電聯網.md:133:### 軟體工程師－軟體中心研發五部（台中）（104 職缺代碼 7q4uo）
+36_104職缺更新_華電聯網.md:140:### 資安工程師－技術服務一部（104 職缺代碼 7z5cx）
+36_104職缺更新_華電聯網.md:147:### 資安網路工程師（政府二部）（104 職缺代碼 8fefn）
+36_104職缺更新_華電聯網.md:154:### 資安人才：資安工程師／資安管理師／資安顧問（104 職缺代碼 77rqk）
+36_104職缺更新_華電聯網.md:161:### 系統工程師（政府二部）（104 職缺代碼 8ux1x）
+36_104職缺更新_華電聯網.md:168:### 系統工程師－技術服務一部（104 職缺代碼 8niie）
+36_104職缺更新_華電聯網.md:175:### 系統工程師（桃園整合服務部）（104 職缺代碼 7fal8）
+36_104職缺更新_華電聯網.md:177:- 工作內容：負責虛擬化系統的建置、維運與除錯，包含 VMware 虛擬系統。熟悉 Windows Server 與 Linux 作業系統，並做伺服器與儲存設備的整合建置與除錯。具備虛擬化平台維運經驗者佳。
+36_104職缺更新_華電聯網.md:182:### 資安檢測專案工程師（104 職缺代碼 8z1b1）
+36_104職缺更新_華電聯網.md:189:### 研發工程師－研發一部（104 職缺代碼 8zcjf）
+36_104職缺更新_華電聯網.md:196:### 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）
+36_104職缺更新_華電聯網.md:199:- 條件與技能：必備為 Python 開發 3 年以上並能獨立處理開源專案與環境問題，熟悉 Linux、Docker、Ubuntu CLI（Shell Script 佳）。擅長工具為 Python、Ubuntu、Docker。加分為統計與線性代數基礎、數位影像格式、ML 與影像辨識經驗。出差外派為無需出差外派。
+36_104職缺更新_華電聯網.md:203:### 建置工程師（網路／資安／智慧影像應用）（104 職缺代碼 90nok）
+36_104職缺更新_華電聯網.md:206:- 條件與技能：必備為網路建置經驗（TCP/IP）與防火牆設定經驗。加分為對 AWS、Azure、GCP 雲端服務有基礎概念，對 AI 影像辨識有興趣，具攝影機、NVR 或弱電系統經驗。出差外派為無需出差外派。
+36_104職缺更新_華電聯網.md:210:### (C#)資深軟體工程師（104 職缺代碼 94ew3）
+36_104職缺更新_華電聯網.md:213:- 條件與技能：必備為 C# 開發 2 年以上，熟悉 ASP.NET、Web API、MS SQL（Stored Procedure、T-SQL）、JavaScript／HTML／CSS／jQuery／Bootstrap、Git。加分為 WinForm、RESTful API 整合、SmartBPM 或 DIAWMS 經驗，以及使用 ChatGPT、GitHub Copilot 等 AI 輔助開發工具的經驗。
+36_104職缺更新_華電聯網.md:217:### 【2026 實習生／儲備人才招募計畫】資安實習生（104 職缺代碼 909n9）
+36_104職缺更新_華電聯網.md:220:- 條件與技能：對資訊安全有高度興趣，每週上班 4 至 5 天。加分為 iPAS 或 CEH 證照、漏洞提報經驗、CTF 競賽或 TryHackMe／Hack The Box 經驗，以及 Python、Java 等能寫自動化工具的開發能力。
+36_104職缺更新_華電聯網.md:224:### 資安技術經理（104 職缺代碼 96pla）
+36_104職缺更新_華電聯網.md:231:### 資深系統工程師（資訊部）（104 職缺代碼 89yhy）
+36_104職缺更新_華電聯網.md:233:- 工作內容：維運集團各點資訊機房與監控伺服器，規劃建置並維護 Proxmox VE、VMware ESXi 虛擬化平台。建置維護 Linux（Ubuntu、SUSE）與 Windows Server 虛擬主機，評估新技術與工具，並撰寫 ISO27001 相關文件與操作手冊。
+36_104職缺更新_華電聯網.md:234:- 條件與技能：必備為熟悉 LDAP，並有 AWS、Azure、GCP 雲端平台管理與建置經驗。加分為 Shell Script 或 PowerShell 基礎。科系為資訊管理、資訊工程相關。出差外派為無需出差外派。
+36_104職缺更新_華電聯網.md:238:### 資安工程師（資訊部）（104 職缺代碼 8q0mi）
+22_補充_叡揚資訊.md:1:# 22 叡揚資訊 公開資料補充
+22_補充_叡揚資訊.md:3:## 基本資料
+22_補充_叡揚資訊.md:5:### 叡揚資訊的定位與據點
+22_補充_叡揚資訊.md:9:### 成立與研發投入
+22_補充_叡揚資訊.md:13:### 官方公開的培訓與福利
+22_補充_叡揚資訊.md:14:叡揚官網徵才頁說明公司文化有三個關鍵詞：Community（關懷社區）、Convenience（以科技帶來便利）、Contribution（追求有益社會的利潤）。培訓方面，有新人茶會、輔導員制度、量身訂作的職涯藍圖，並設有四個學院：資訊學院、經營管理學院、領導管理學院、行銷銷售學院。福利包括端午、中秋與年終獎金、員工分紅、傑出貢獻獎金、員工介紹獎金、生日假、國內外員旅補助、新人與年度健康檢查，以及家庭日、社團、軟體工程師節等活動。徵才頁沒有直接列出職缺，只提供連到 104 人力銀行公司頁的連結，另有實習生計畫與校園徵才資訊。
+22_補充_叡揚資訊.md:17:## 業務與財務
+22_補充_叡揚資訊.md:19:### 2025 年財務結果
+22_補充_叡揚資訊.md:23:### 客戶產業與收入結構
+22_補充_叡揚資訊.md:27:### 官網列出的產品與服務
+22_補充_叡揚資訊.md:28:官網把產品分四類。企業 e 化：S.P.E.E.D. 公文線上簽核、Radar 睿達人力資源、C.ai 對話服務平台、Tracko 多源智慧追蹤平台、BoardOne 董事會管理、Vitals 系列、Openfind 網擎訊息安全。資安及治理：Mend.io、CodeSonar、Checkmarx、Digital.ai、Promon、Illumio、Bitsight、Azul Java JDK、Orca Security、Secure Code Warrior 等。企業數位化智慧維運：Axway、BMC Control-M、Dynatrace、ServiceNow、TIBCO、UiPath、Automation Anywhere 等。運帷服務：資訊系統維運與開發，另有 QuEye CIA 軟體變更衝擊分析器。AI 解決方案有 AI 智慧辨識、AI 財務報表辨識、AI 智慧公文、AI 知識管理。
+22_補充_叡揚資訊.md:31:### Vital 雲端產品線
+22_補充_叡揚資訊.md:35:## 技術堆疊
+22_補充_叡揚資訊.md:37:### AI 技術範圍與落地案例
+22_補充_叡揚資訊.md:41:### Agentic AI、MCP 與 InsAI（2025-11 AI Solution Day）
+22_補充_叡揚資訊.md:42:叡揚於 2025 年 11 月 14 日在台北國際會議中心舉辦 AI Solution Day，共 10 場演說。內容談 GenAI 到 Agentic AI 的差別，以及 Agentic RAG、Deep Research。導入原則有四點：加入人工審查、LLM 易於切換、先求工具價值再談自主、選擇彈性的平台。BizForm 預計 2026 年第一季支援 MCP 伺服器，並可串接 Zapier、n8n、Make.com；知識管理系統 200 多個 API 將打包成 MCP 伺服器。InsAI 是以 GenAI 為核心的智慧辨識系統，使用自研辨識模型，支援地端部署並可整合 LLM。公文系統的智慧助理「小鯨」升級為公文 Copilot。
+22_補充_叡揚資訊.md:45:### 資安產品與 Mend.io 的台灣雲端區域
+22_補充_叡揚資訊.md:46:叡揚是 Mend.io 在台灣的總代理。Mend.io 的 AppSec 平台涵蓋 SAST、SCA、容器與 AI 安全；Mend AI 提供 AI 元件與模型盤點、AI 紅隊演練與執行期防護。DIGITIMES 2026 年 11 月報導指出，Mend.io 的資料中心已落地台灣，原始碼掃描與分析資料可留在國內。叡揚官網 11 月 11 日的消息也提到，叡揚促成 Mend 台灣雲端區域上線。2026 年 8 月，Mend 推出 System Prompt Hardening，用 AIWE 框架給系統提示詞 1 到 100 分的嚴重性評分，叡揚提供在地顧問與導入服務。
+22_補充_叡揚資訊.md:47:來源：https://www.digitimes.com.tw/tech/dt/n/shwnws.asp?CnlID=13&id=773073 、https://www.cna.com.tw/business/chinese/442318 、https://www.gss.com.tw（查詢日 2026-11-17）
+22_補充_叡揚資訊.md:49:## 近一年新聞
+22_補充_叡揚資訊.md:51:### 2026-05 GSS Solutions Day
+22_補充_叡揚資訊.md:55:### 2026-10 微分段與零信任方案
+35_104職缺更新_凱基證券.md:1:# 35 凱基證券 104 職缺更新（查詢日 2026-11-17）
+35_104職缺更新_凱基證券.md:2:## 目前開放職缺
+35_104職缺更新_凱基證券.md:3:### 職缺總覽
+35_104職缺更新_凱基證券.md:12:### 職稱清單
+35_104職缺更新_凱基證券.md:16:- 【資訊部】Python系統程式設計師（7f0ui）
+35_104職缺更新_凱基證券.md:20:- 【資訊部】Linux C++開發工程師（80kjb）
+35_104職缺更新_凱基證券.md:28:### 【資訊部】軟體開發工程師（8sf0e）
+35_104職缺更新_凱基證券.md:31:- 條件與技能：擅長工具 C#、MS SQL、COBOL。必備：具 C#、SQL 程式開發能力，願意接受 COBOL 培訓。資訊或金融相關科系，或有資策會受訓證書者。頁面註明歡迎應屆畢業生，需求 1 人。
+35_104職缺更新_凱基證券.md:35:### 【2026 凱基證券數位科技人才培育計畫】軟體開發專才養成（911o4）
+35_104職缺更新_凱基證券.md:42:### 【資訊部】Python系統程式設計師（7f0ui）
+35_104職缺更新_凱基證券.md:44:- 工作內容：開發與維護 Python 工具程式，負責網站與 API 系統的維運管理，執行系統部署、版本更新與上線作業，並分析與排除系統異常。
+35_104職缺更新_凱基證券.md:45:- 條件與技能：擅長工具 Linux、Python、Git。必備：1 年以上 Python 開發經驗、1 年以上網站系統開發或維護經驗、熟悉軟體開發流程與 Git。加分：交易或行情程式、Web API 串接、Apache Tomcat 維運或部署、Linux 維運、廠商技術溝通經驗。英文聽說讀寫中等，需求 1 人。
+35_104職缺更新_凱基證券.md:49:### 【量化策略部】量化策略研究員（8ugm5）
+35_104職缺更新_凱基證券.md:51:- 工作內容：建構量化研究與預測模型所需的資料架構並維護系統，開發 Python 程式做數據分析與交易策略研究，參與資料收集、爬蟲、清理、轉換、挖掘與統計分析，運用時間序列分析、特徵工程與因子建模。
+35_104職缺更新_凱基證券.md:52:- 條件與技能：擅長工具不拘。必備：熟悉 SQL、Python，數據處理與分析能力，對金融交易市場有熱忱，需有投信投顧業務證照（可後補）。科系為資訊工程、數理統計或財稅金融相關，需求 1 人。
+35_104職缺更新_凱基證券.md:56:### 【資訊部】C# 全端技術工程師（92pjh）
+35_104職缺更新_凱基證券.md:58:- 工作內容：開發與維護證券衍生性商品與非交易系統，撰寫多來源資料轉檔功能與報表程式（輸出電子檔給其他系統），處理資料庫資料與修改 SQL 指令，並確認每日作業執行狀況、排除異常。
+35_104職缺更新_凱基證券.md:59:- 條件與技能：擅長工具 C#、WinForm、MS SQL。必備：C#.NET 開發經驗、T-SQL 語法與查詢效能問題排除經驗、能獨立完成程式並主動回報進度。加分：WinForm 開發經驗。科系為資訊工程或資訊管理相關，需求 1 人。
+35_104職缺更新_凱基證券.md:63:### 【資訊部】C#/ASP.net全端工程師（87rsh）
+35_104職缺更新_凱基證券.md:66:- 條件與技能：擅長工具 C#、ASP.NET、VueJS。必備：2 年以上 C#／ASP.NET（MVC 或 ASP.NET Core）、MS SQL、HTML5／CSS3／JavaScript／jQuery、Git。加分：.NET 6 以上、Vue.js 或 React 或 RWD、證券複委託與財管電子交易系統經驗。科系不拘，需求 1 至 3 人。
+35_104職缺更新_凱基證券.md:70:### 【資訊部】Linux C++開發工程師（80kjb）
+35_104職缺更新_凱基證券.md:73:- 條件與技能：擅長工具 MS SQL、Git、C++、Linux。必備：Linux C++ 程式開發、Git 版本控制、MS-SQL 資料庫處理，具團隊開發與獨立作業能力。加分：券商相關經驗。科系為資訊工程或資訊管理相關，英文聽說讀寫中等，需求 1 人。
+35_104職缺更新_凱基證券.md:77:### 【資訊部】C++ 交易系統程式設計師（857c8）
+35_104職缺更新_凱基證券.md:80:- 條件與技能：擅長工具 C++、Linux、Shell。必備：熟悉低延遲程式架構設計、Linux 操作與 Shell 指令編寫、具系統分析與系統設計能力、能獨立作業。加分：熟悉 FIX Protocol。科系為資訊工程或資訊管理相關，英文聽說讀寫中等，需求 1 至 2 人。
+35_104職缺更新_凱基證券.md:84:### 【資訊部】系統設計工程師SD（979cl）
+35_104職缺更新_凱基證券.md:87:- 條件與技能：擅長工具 C#、MS SQL、ASP.NET。必備：5 年以上軟體開發或系統設計經驗、C#／.NET Core／ASP.NET Core、RESTful API、Vue 3、MS SQL 設計與效能調校、設計文件與 Sequence Diagram、Git 與 Code Review。加分：金融證券、股務、系統轉型、資料移轉或 Technical Lead 經驗。需求 6 至 12 人。
+35_104職缺更新_凱基證券.md:91:### 【資訊部】資深系統分析師（94cyw）
+35_104職缺更新_凱基證券.md:94:- 條件與技能：擅長工具 C#、MS SQL。必備：SDLC 文件撰寫、Vue.js、.NET Core（C#）後端、微服務架構與 RESTful API、MS SQL 結構設計與效能調校。加分：金融核心系統轉換、資料移轉、UAT 與上線經驗、金融業 SA 經驗。需求 1 至 3 人。
+35_104職缺更新_凱基證券.md:98:### 【數位創新部】AI Agent 應用開發工程師（8yxlh）
+35_104職缺更新_凱基證券.md:101:- 條件與技能：擅長工具不拘。必備：資訊或相關科系大學以上，熟悉 Copilot Studio、Power Platform、Azure，了解 LLM、MCP、A2A，具 RPA 流程整合能力、能獨立完成模組開發及測試。加分：AI 專案、RPA 或 Power Platform 開發經驗。科系為資訊工程或財稅金融相關，英文中等，需求 1 人。
+35_104職缺更新_凱基證券.md:105:### 【數位創新部】AI Solution 工程師/架構師（91qox）
+35_104職缺更新_凱基證券.md:112:### 【數位創新部】AI專案經理（8wlk6）
+34_104職缺更新_藍新資訊.md:1:# 34 藍新資訊 104 職缺更新（查詢日 2026-11-17）
+34_104職缺更新_藍新資訊.md:2:## 目前開放職缺
+34_104職缺更新_藍新資訊.md:3:### 職缺總覽
+34_104職缺更新_藍新資訊.md:7:- 更新日有變動的職缺：AI前線部署工程師（11/09 變 11/16）、(AIX/Linux)系統工程師（10/29 變 11/16）、專案工程師-MIS（楠梓，11/09 變 11/16）、專案工程師-網路（大安區，11/11 變 11/12）。
+34_104職缺更新_藍新資訊.md:11:### 職稱清單
+34_104職缺更新_藍新資訊.md:18:- (AIX/Linux)系統工程師（6qc31）
+34_104職缺更新_藍新資訊.md:26:### AI前線部署工程師（8uol0）
+34_104職缺更新_藍新資訊.md:28:- 工作內容：參與客戶訪談與工作坊，分析作業流程與資訊系統，盤點 AI 自動化場景，撰寫需求規格與建議書。設計 Agentic AI、RAG 與 Workflow 架構，規劃企業知識庫與 AI 助理，協助客戶導入與驗證。串接 ERP、CRM、HR、電子簽核，開發 REST API、Webhook、MCP Connector，建置資料同步與事件驅動架構。建置 CI/CD Pipeline，規劃 GitOps、IaC 與自動化部署。
+34_104職缺更新_藍新資訊.md:29:- 條件與技能：擅長工具 JavaScript、Python、PostgreSQL；技能 AI、系統整合分析。專業知識 GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes。專業技能 Python、JavaScript/TypeScript、n8n、Elasticsearch、PostgreSQL。AI 相關證照尤佳（加分）。語文不拘。職務類別 AI工程師。需求 2 人；無需出差外派；日班 0900-1800；應徵 6~10 人。
+34_104職缺更新_藍新資訊.md:33:### AI平台工程師（95xqc）
+34_104職缺更新_藍新資訊.md:35:- 工作內容：研究、開發並部署 Proxmox VE（PVE）虛擬化平台；研究 Kubernetes（K8s）容器平台，負責叢集建置與故障排除；為客戶評估並導入雲端原生技術。為客戶導入 AI 解決方案，涵蓋模型部署、平台建置與應用整合；用 Zabbix、Prometheus、Grafana 建置監控系統，維持穩定與可觀測性；追蹤新技術並提供建議。另為公司內部同仁開發 AI 應用程式。
+34_104職缺更新_藍新資訊.md:36:- 條件與技能：擅長工具 Linux、VM；技能 AI。專業知識 Linux、虛擬化技術、Kubernetes、Generative AI、RAG、Python。專業技能 VM／Container 平台部署與管理、RAG 工具開發。證照（加分）CKA、LPIC、RHCSA。語文不拘。職務類別 AI工程師。需求 1~2 人；無需出差外派；日班 0900-1800；應徵 0~5 人。
+34_104職缺更新_藍新資訊.md:40:### 資訊助理工程師（中山區；正職，非約聘人員）（94ack）
+34_104職缺更新_藍新資訊.md:47:### 網路工程師（7ystn）
+34_104職缺更新_藍新資訊.md:54:### 系統工程師（69ejn）
+34_104職缺更新_藍新資訊.md:61:### (AIX/Linux)系統工程師（6qc31）
+34_104職缺更新_藍新資訊.md:63:- 工作內容：維護 IBM Server、Storage 等產品，做定期維護與系統專案建置。回覆客戶應用技術問題，提供產品技術諮詢。提供客戶技術服務，必要時外勤到客戶處安裝、檢修設備。內頁註明認真、負責、有自我學習能力者佳。
+34_104職缺更新_藍新資訊.md:64:- 條件與技能：擅長工具 AIX、Linux、UNIX。工作技能 伺服器網站管理維護、作業系統基本操作、資料備份與復原、電腦設備裝配、資訊設備操作檢修與環境設定、功能測試、問題追蹤處理（Bug tracking）、測試環境建置規劃、系統架構規劃與維護。英文 聽／說略懂、讀／寫中等。駕照 輕型機車、普通重型機車、普通小型車。其他條件欄位未填寫。職務類別 系統工程師、產品售後技術服務、電腦組裝／測試。需出差，一年累積約一個月以下；週休二日；需求 1~2 人；應徵 0~5 人。
+34_104職缺更新_藍新資訊.md:68:### 專案工程師-系統（中山區；正職，非約聘人員）（7qv1u）
+34_104職缺更新_藍新資訊.md:71:- 條件與技能：擅長工具 Windows Server 2019、MS SQL、VMware。工作技能 伺服器網站管理維護、作業系統基本操作、資料備份與復原、資訊設備操作檢修、系統維護操作、文書處理軟體操作。必備：具 VMware 或 Linux 或微軟作業系統擇一相關證照。加分：系統維護建置經驗、公（私）部門駐點經驗、ISO 27001 證照。職務類別 系統工程師、資訊設備管制人員、網路管理工程師。無需出差外派；日班 8:30-17:30；週休二日；需求 1 人；應徵 0~5 人；有後勤系統、雲端、網路專家支援，提供證照補助與內部輪調。
+34_104職缺更新_藍新資訊.md:75:### 專案工程師-MIS（大安區；正職，非約聘人員）（8yyz5）
+34_104職缺更新_藍新資訊.md:82:### 資深系統工程師（91vjx）
+34_104職缺更新_藍新資訊.md:85:- 條件與技能：擅長工具 VMware、DNS、DHCP、Linux。工作技能 系統維護操作、專案管理軟體操作、網路規劃管理、網路系統配置、系統架構規劃與維護、測試環境建置規劃、資料備份與復原、作業系統基本操作、專案溝通／整合管理、專案規劃執行／範圍管理、專案時間／進度控管。證照 VCP、CCNA、AZ-104 Azure 系統管理技術師、Red Hat 認證工程師。其他條件欄位未填寫。職務類別 系統工程師、業務支援工程師。無需出差外派；日班 09:00-18:00；週休二日；需求 1 人；可上班日不限；應徵 0~5 人。
+34_104職缺更新_藍新資訊.md:89:### 專案工程師-網路（大安區；正職，非約聘人員）（96vha）
+34_104職缺更新_藍新資訊.md:96:### 專案工程師-網路（中正區；正職，非約聘人員）（9793u）
+34_104職缺更新_藍新資訊.md:103:### 專案工程師-MIS（楠梓科技園區；正職，非約聘）（97ftl）
+34_104職缺更新_藍新資訊.md:105:- 工作內容：派駐客戶端駐點，排除客戶問題，需具 Windows、Linux、VMware 系統與伺服器維護經驗，能獨立查找並解決系統或硬體問題。處理客戶交辦事項與現場報修派工。撰寫並整理技術文件，如工作日誌與 FAQ。
+34_104職缺更新_藍新資訊.md:106:- 條件與技能：擅長工具 VMware、Linux、Windows 11、Windows 10；工作技能 硬體整合測試、資訊設備操作檢修、安裝與維護網路安全系統。其他條件：具個人電腦硬體、網路基礎知識；Windows、Linux、VMware 基本操作；電腦設備裝配、檢修與環境設定；2 年以上 HP、Dell、IBM 等 Wintel 伺服器維護經驗；證照 MCITP、HP Wintel 伺服器維護認證；另需具個人端電腦維護或公私部門駐點經驗至少一項。駕照 輕型機車、普通小型車。職務類別 網路管理工程師。無需出差外派；日班 8:00~18:00；週休二日；需求 2 人；應徵 0~5 人。
+33_104職缺更新_神通資訊.md:1:# 33 神通資訊 104 職缺更新（查詢日 2026-11-17）
+33_104職缺更新_神通資訊.md:2:## 目前開放職缺
+33_104職缺更新_神通資訊.md:3:### 職缺總覽
+33_104職缺更新_神通資訊.md:15:### 職稱清單
+33_104職缺更新_神通資訊.md:47:- 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）
+33_104職缺更新_神通資訊.md:54:### 60036X0_AI 工程師（決策導向／平台型系統）（104 職缺代碼 8y65v）
+33_104職缺更新_神通資訊.md:57:- 條件與技能：必備為 2 年以上軟體、系統或 AI 開發經驗，熟悉 Python 或 JavaScript 其一，具 API 設計或系統整合實務，並能向非技術角色說明技術取捨。加分為 AI／Chat／Agent／Workflow 經驗、B2B 或平台型產品經驗、規則引擎與治理機制設計經驗。擅長工具：Python、JavaScript。
+33_104職缺更新_神通資訊.md:61:### 60046X0_AI 資深工程師（決策導向／平台型系統）（104 職缺代碼 8y660）
+33_104職缺更新_神通資訊.md:64:- 條件與技能：必備為 5 年以上軟體、系統或 AI 開發經驗，曾參與平台型或企業級系統架構設計，熟悉 Python 或 JavaScript 其一，具 API 架構設計、系統整合或服務拆分實務。加分為 AI／Agent／Workflow／Decision System 實務、規則引擎／權限／稽核系統經驗、B2B 或 SaaS 整合經驗。
+33_104職缺更新_神通資訊.md:68:### 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）
+33_104職缺更新_神通資訊.md:71:- 條件與技能：必備為 2 年以上前端實務、Next.js 實際專案經驗、React 與 TypeScript、HTML／CSS、Git，並能與後端討論 API 與資料結構。加分為 Next.js App Router／Server Components、Tailwind CSS、Design System、B2B／SaaS 平台經驗、Chat UI 經驗。擅長工具：ReactJS。
+33_104職缺更新_神通資訊.md:75:### 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）
+33_104職缺更新_神通資訊.md:78:- 條件與技能：必備為 5 年以上前端實務、Next.js 平台型產品經驗、React 與 TypeScript、前端架構設計、狀態管理與模組拆分，並曾做過既有系統的前端重構或版本升級。擅長工具：ReactJS。工作技能欄標示 Next.js、React、TypeScript、前端架構設計、API 串接與整合。
+33_104職缺更新_神通資訊.md:82:### 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）
+33_104職缺更新_神通資訊.md:84:- 工作內容：用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端，設計 RESTful API 與服務模組。與前端定義 API 和資料結構，串接內外部系統處理資料流，並協助既有後端功能的重構與效能優化。
+33_104職缺更新_神通資訊.md:85:- 條件與技能：必備為 Node.js 平台型或企業系統經驗、JavaScript／TypeScript、API 架構設計與模組拆分、至少一種資料庫（PostgreSQL／MySQL／MongoDB）。加分為 NestJS／Express／Fastify／Go、B2B／SaaS 大型平台後端、非同步與事件驅動設計、API 版本控管經驗。擅長工具：JavaScript、Node.js。
+33_104職缺更新_神通資訊.md:89:### 60136X0_後端資深工程師（104 職缺代碼 8y6oq）
+33_104職缺更新_神通資訊.md:92:- 條件與技能：必備為 5 年以上後端經驗、Node.js 平台型或企業系統經驗、JavaScript／TypeScript、API 架構設計與系統整合、後端重構或效能優化經驗、至少一種資料庫。加分為 NestJS／Express／Fastify／Go、B2B／SaaS、排程與事件驅動設計、API 版本控管。
+33_104職缺更新_神通資訊.md:96:### 60146X1_高級程式設計師（104 職缺代碼 8zbla）
+33_104職缺更新_神通資訊.md:99:- 條件與技能：擅長工具為 Python、Visual C#、HTML、Angular。工作技能欄含軟體工程系統開發、資料庫系統管理、報表開發、人工智慧、系統架構規劃。需有網路程式開發經驗，熟悉 JavaScript／HTML／CSS 前端與後端網路架構及資料庫操作；英文中等。職務類別含全端工程師、資料工程師。需出差，一年累積約一個月以下。
+33_104職缺更新_神通資訊.md:103:### 60176Y2_全端工程師（104 職缺代碼 9290o）
+33_104職缺更新_神通資訊.md:106:- 條件與技能：擅長工具為 Git、Java、Python、Spring、MS SQL、PostgreSQL、HTML、JavaScript、jQuery、CSS。希望熟悉 Thymeleaf、Spring（Framework／JPA／MVC／Boot）、Redis；會 Docker 與 Linux 為佳；有 1 年以上實務開發經驗尤佳。職務類別為全端、前端、後端工程師。不需出差。
+33_104職缺更新_神通資訊.md:110:### 60186Y2_DevOps 工程師（104 職缺代碼 895j8）
+33_104職缺更新_神通資訊.md:113:- 條件與技能：擅長工具為 Linux、Shell、Jenkins、Git、Kubernetes、Windows Server 2019、DNS／DHCP／Firewall 等網路設定。需熟悉 Docker；會 Ansible 為佳；有 1 年以上實務經驗尤佳。週休二日。
+33_104職缺更新_神通資訊.md:117:### 60196Y2_Java 工程師（104 職缺代碼 895jc）
+33_104職缺更新_神通資訊.md:120:- 條件與技能：擅長工具為 Git、Java、Spring、MS SQL、MySQL、PostgreSQL、JavaScript、jQuery。希望熟悉 Thymeleaf、Spring（Framework／JPA／MVC／Boot）、Redis；會前端 HTML／CSS 為佳；有 1 年以上實際開發經驗尤佳。不需出差。
+33_104職缺更新_神通資訊.md:124:### 60226XF_技術支援工程師（104 職缺代碼 91pny）
+33_104職缺更新_神通資訊.md:131:### C003CDG_軟體工程師（104 職缺代碼 8xp1s）
+33_104職缺更新_神通資訊.md:134:- 條件與技能：擅長工具為 Java、MS SQL、MySQL、JavaScript、VueJS。需熟悉 Java 8 以上與常用設計模式、SQL 與關聯式資料庫、Git 協作，習慣閱讀英文技術文件；前端 JSP、jQuery、Vue 3 與 HTML／CSS 切版為佳。英文中等。不需出差。
+33_104職缺更新_神通資訊.md:138:### C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）
+33_104職缺更新_神通資訊.md:140:- 工作內容：負責金融系統前端架構，用 Angular 開發響應式 SPA，以 RxJS 處理資料串流與非同步 API，用 NgRx 或 Service 管理全域狀態。封裝可重用 UI 元件（SCSS／SASS），與 Java 後端對接 RESTful API，撰寫 Dockerfile（Nginx）佈署到 K8S，並落實 XSS／CSRF 防護。參與單體式架構遷移到微服務。
+33_104職缺更新_神通資訊.md:141:- 條件與技能：擅長工具為 Java、Spring、JavaScript、jQuery、Node.js、Angular。共同職能為 Git／Gitflow、程式碼審查、GitLab CI／Jenkins，以及撰寫規格書與 API 文件。
+33_104職缺更新_神通資訊.md:145:### C011CH2_後端開發工程師(java)（104 職缺代碼 8xzqd）
+33_104職缺更新_神通資訊.md:147:- 工作內容：用 Spring Boot 開發高可用、可擴展的金融後端微服務，處理高併發交易邏輯，設計 RESTful API 並以 Swagger／OpenAPI 提供文件。設計 RDBMS 結構與 SQL 優化，整合 Hazelcast 或 Redis 做分散式快取，用 RabbitMQ 或 Kafka 做非同步處理，並串接 SWIFT 訊息格式與 HSM 加密模組。
+33_104職缺更新_神通資訊.md:148:- 條件與技能：擅長工具為 Java、Spring、ANSI SQL、JDBC。需撰寫 Dockerfile 與 JVM 調優以在 K8S Pod 運行，寫 JUnit／Mockito 測試，並以 Prometheus 指標做監控；共同職能為 Git／Gitflow、GitLab CI／Jenkins。
+33_104職缺更新_神通資訊.md:152:### C016CCE_資料庫工程師（104 職缺代碼 8xvez）
+33_104職缺更新_神通資訊.md:154:- 工作內容：配合專案時程維護與營運大型資料庫，撰寫資料庫與維運的標準作業文件。執行資料庫效能監控與調校（含 Index 優化），規劃定期維護、備份還原與故障排除，需熟悉 Oracle 或 SQL Server 其中一種的操作與基礎管理。職務類別含資料庫管理人員、後端工程師。
+33_104職缺更新_神通資訊.md:155:- 條件與技能：擅長工具為 Linux、Windows Server 2019、MS SQL、PL/SQL。曾參與系統開發或有後端開發經驗，並有意深耕資料庫領域。104 列出的相關證照有 OCP／OCA DBA、DP-900。不需出差。
+33_104職缺更新_神通資訊.md:159:### C023CHK_測試工程師（104 職缺代碼 8xz4m）
+33_104職缺更新_神通資訊.md:161:- 工作內容：根據需求撰寫測試計畫與測試案例，執行功能、整合與回歸測試，撰寫測試文件、缺陷報告與測試報告並追蹤修復進度。用 SQL 做資料驗證與測試數據查詢，與開發、業務、維運團隊溝通測試結果。需求 10 人。
+33_104職缺更新_神通資訊.md:162:- 條件與技能：擅長工具為 Excel、PowerPoint、Word；資訊管理、企業管理、金融相關科系佳。需有邏輯分析與問題排查能力；會 SQL 查詢為加分。不需出差。
+33_104職缺更新_神通資訊.md:166:### C024CD3_系統分析師/程式設計工程師（104 職缺代碼 8xz6d）
+33_104職缺更新_神通資訊.md:169:- 條件與技能：擅長工具為 MS SQL。需熟悉 Java 或 C#、Vue.js、MS SQL 查詢語法與 Linux／Windows 作業系統；具 3 年以上數據分析實務經驗，並有統計或數據分析證照者尤佳。不需出差。
+33_104職缺更新_神通資訊.md:173:### C024CD3_資料分析（104 職缺代碼 8y7en）
+33_104職缺更新_神通資訊.md:175:- 工作內容：用 ETL 工具做資料處理、清理、驗證與品質檢查，以 SQL 查詢資料庫，用 Power BI、Tableau 等工具製作圖表與儀表板。產出定期與臨時分析報告，把分析結果轉成業務單位可讀的洞察，並建立與維護資料字典，遵循資料治理與隱私規範。
+33_104職缺更新_神通資訊.md:176:- 條件與技能：擅長工具為 Python、ETL、MS SQL、Power BI。具資訊工程、統計、數學、機器學習等相關學士以上學位，能用統計與機器學習演算法做資料建模與分析。英文中等。不需出差。
+33_104職缺更新_神通資訊.md:180:### C015CCF_系統工程師/虛擬化工程師（104 職缺代碼 8z1d1）
+33_104職缺更新_神通資訊.md:182:- 工作內容：參與企業 IT 基礎架構設計與維運，建置與管理虛擬化平台，維護虛擬主機作業系統（CentOS、Ubuntu、Windows Server），建置應用程式主機環境（Tomcat、Nginx、HAProxy、Mail Server、DNS），並管理 SQL Server 與儲存設備、規劃系統架構與應用程式更新。職務類別為系統工程師、雲端工程師。
+33_104職缺更新_神通資訊.md:183:- 條件與技能：擅長工具為 Linux、Windows Server 2019、VMware。104 列出的相關證照有 LPIC、MCSE、Red Hat 認證工程師、VCP、Azure AZ-900 與 Azure Developer Associate。不需出差。
+33_104職缺更新_神通資訊.md:187:### C033CF1_JAVA工程師（104 職缺代碼 8zu67）
+33_104職缺更新_神通資訊.md:190:- 條件與技能：具 Java 與 Spring Boot REST 基礎、SQL 基礎，熟悉物件導向程式開發（OOP），了解基本 Design Pattern。104 的擅長工具與工作技能欄標示不拘。不需出差。
+33_104職缺更新_神通資訊.md:194:### C034CF1_測試工程師（104 職缺代碼 8zu68）
+33_104職缺更新_神通資訊.md:197:- 條件與技能：擅長工具與工作技能欄標示不拘。其他條件為 1 年以上測試經驗，有網站前後端或 APP 測試經驗者、熟悉 Katalon Studio 及 Linux 基本指令者尤佳。不需出差。
+33_104職缺更新_神通資訊.md:201:### C037CCE_駐點工程師（104 職缺代碼 90qjq）
+33_104職缺更新_神通資訊.md:203:- 工作內容：以 C#、ASP.NET、HTML、JavaScript、CSS 與 .NET Framework 做程式新增與修改，使用 SQL Server T-SQL 查詢，並與客戶溝通協調需求。職務類別為軟體工程師、軟體助理工程師。
+33_104職缺更新_神通資訊.md:204:- 條件與技能：擅長工具為 ASP.NET、C#、MS SQL、HTML、JavaScript；英文略懂。104 的工作技能欄標示不拘。不需出差。
+33_104職缺更新_神通資訊.md:208:### K006KBF_軟體工程師（104 職缺代碼 8zble）
+33_104職缺更新_神通資訊.md:211:- 條件與技能：擅長工具為 Git、C#、C++、Visual Studio。需精通 C++ 或 C#，有 Git 與 Visual Studio 2019 以上使用經驗，熟悉多執行緒（Multi-threading）；有 Serial Port（RS-232）通訊開發經驗者尤佳。英文中等。
+33_104職缺更新_神通資訊.md:215:### K016KBH_車載軟體工程師（104 職缺代碼 8zm4z）
+33_104職缺更新_神通資訊.md:218:- 條件與技能：熟 C／C++，具記憶體管理與多執行緒開發經驗，熟悉 Linux System Programming 與 TCP/IP、HTTP、MQTT 協定；了解 UART、RS-485 串列通訊與 CAN Bus 概念；有 Git 經驗，熟悉 JSON／XML 解析。英文讀寫中等。
+33_104職缺更新_神通資訊.md:222:### K027KB0_軟體工程師（104 職缺代碼 92in9）
+33_104職缺更新_神通資訊.md:225:- 條件與技能：擅長工具為 C#、C++、MS SQL。需熟 C#.NET 與 C／C++，具多執行緒開發經驗，熟悉 Windows System Programming、TCP/IP、HTTP、MQTT 協定，了解 RS-422／485 串列通訊，有 Git 經驗並熟悉 JSON／XML 解析。
+33_104職缺更新_神通資訊.md:229:### P001PG2_工程師（104 職缺代碼 8xveo）
+33_104職缺更新_神通資訊.md:232:- 條件與技能：擅長工具為 Java、MySQL、PostgreSQL、JavaScript；工作技能含系統維護、系統整合分析、軟體程式設計。應屆畢業生可。日班有彈性上下班（08:00~17:00 或 10:00~19:00）。不需出差。
+33_104職缺更新_神通資訊.md:236:### P009PG1_系統分析師（月薪 38,000 以上版本）（104 職缺代碼 91pmr）
+33_104職缺更新_神通資訊.md:243:### P009PG1_系統分析師（待遇面議版本）（104 職缺代碼 93q8x）
+33_104職缺更新_神通資訊.md:250:### P011PG4_高級工程師（104 職缺代碼 932en）
+33_104職缺更新_神通資訊.md:257:### 【集團代招】Q010Q41_系統工程師（104 職缺代碼 8xz3l）
+33_104職缺更新_神通資訊.md:259:- 工作內容：以 C# 做軟體開發，搭配網頁 JavaScript／React，需理解資料庫運作原理與規劃、串流基本觀念，並了解 AI 開發，至少會一種主流開發方法。職務類別為軟體工程師。彈性上下班（8:00～10:00 上班），週休二日，不需出差。
+33_104職缺更新_神通資訊.md:264:### 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）
+33_104職缺更新_神通資訊.md:266:- 工作內容：負責 Web 系統前端功能開發與維護，參與前端架構與模組規劃，與 Python／Django 後端工程師對接 RESTful API 並制定資料串接規格。處理前端資料清洗、轉換與業務邏輯，實作 UI/UX 與響應式網頁（RWD）。需出差，一年累積約三個月以下。
+33_104職缺更新_神通資訊.md:267:- 條件與技能：熟悉 React、Vue、Angular 或 HTMX／Alpine.js 其一，JavaScript（ES6+）／TypeScript、HTML5、CSS3、RESTful API 與 HTTP、JSON 格式處理與狀態管理、Git 協作；有 Python／Django 後端串接經驗，具前端架構與元件庫設計能力者佳。週休二日。
+33_104職缺更新_神通資訊.md:271:### K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）
+33_104職缺更新_神通資訊.md:274:- 條件與技能：擅長工具為 Claude、C、C++、MS SQL；工作技能為軟體程式設計、生成式 AI。英文中等，應屆畢業生可。
+33_104職缺更新_神通資訊.md:278:### C066CHK_系統分析師（104 職缺代碼 93viz）
+33_104職缺更新_神通資訊.md:281:- 條件與技能：熟悉需求分析、流程設計與文件撰寫，能閱讀資料模型與資料庫設計並具 SQL 查詢能力，有跨部門溝通能力；金融系統、核心交易或流程系統經驗為加分。不需出差。
+33_104職缺更新_神通資訊.md:285:### 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）
+33_104職缺更新_神通資訊.md:287:- 工作內容：打造企業級生成式 AI 應用，用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API（OpenAI、Claude 等）與向量資料庫，設計並優化 RAG 架構。以 Pydantic 與 JSON Schema 控制資料型態以穩定 Structured Outputs，設計 Prompt 並拆解業務工作流，追蹤並實作新的生成式 AI 技術與論文演算法。
+33_104職缺更新_神通資訊.md:288:- 條件與技能：需有電機、資訊工程、資訊科學等相關學位背景，熟悉 Python 或 PyTorch，能讀論文並實作演算法；熟悉 Docker、Git、GitHub、Redmine 者佳；有 AI 開發或專案經驗者優先。職務類別為 AI 工程師、軟體工程師。不需出差。
+33_104職缺更新_神通資訊.md:292:### 實習生（Java／AI／C/C++）（104 職缺代碼 8zd2t）
+33_104職缺更新_神通資訊.md:299:### K011KBE_測試工程師（104 職缺代碼 961u4）
+32_104職缺更新_叡揚資訊.md:1:# 32 叡揚資訊 104 職缺更新（查詢日 2026-11-17）
+32_104職缺更新_叡揚資訊.md:2:## 目前開放職缺
+32_104職缺更新_叡揚資訊.md:3:### 職缺總覽
+32_104職缺更新_叡揚資訊.md:6:### 職稱清單
+32_104職缺更新_叡揚資訊.md:51:### 系統網路資安工程師_資安系統(25021201)（8mdm2）
+32_104職缺更新_叡揚資訊.md:53:- 工作內容：負責資安產品的功能測試與驗證，制定驗測計畫。設定網路設備，含 Routing、Switch、VLAN，並排除異常。在 Windows、Linux 安裝作業系統、套件與應用程式並完成部署。撰寫產品手冊、技術規格與教育訓練文件，支援客戶導入、技術問題排查與售後服務；可接受主管指派的臨時專案。
+32_104職缺更新_叡揚資訊.md:54:- 條件與技能：必備：能獨立作業並解決技術問題；英文聽說讀寫中等。工具：Linux、Windows Server 2008／2012／2019。技能：伺服器網站管理維護、資料備份與復原、資料庫系統管理維護、系統架構規劃與維護。加分：英文技術文件閱讀；資安經驗（系統規劃、漏洞修補、內部稽核）；專案管理與產品導入；雲地整合與雲端證照（Google Cloud、Azure）；虛擬化（VMware、Proxmox VE）；Unix（AIX、Solaris）；容器（Docker、Kubernetes）。
+32_104職缺更新_叡揚資訊.md:57:### 資安工程師(21042801)（79prn）
+32_104職缺更新_叡揚資訊.md:60:- 條件與技能：必備：多年程式開發或測試經驗；有 Web 伺服器端語言開發經驗（ASP.NET、C#、Java、Python、PHP）；了解 DevOps 工具；英文中等，能讀原廠說明書。工具：Linux、Windows Server、ASP.NET、Java、MS SQL。加分：企業資安產品導入經驗；證照 CISSP、CISA、CISM、CEH、CHFI、PMP；了解黑箱、白箱、灰箱檢測。
+32_104職缺更新_叡揚資訊.md:63:### 資安工程師(21012701A)（76fvf）
+32_104職缺更新_叡揚資訊.md:69:### 資安顧問(20042301A)（6xhv2）
+32_104職缺更新_叡揚資訊.md:72:- 條件與技能：必備：有實際開發經驗；熟悉資安產品規劃；善於溝通協調與團隊合作；英文聽說讀寫精通。工具：Linux、macOS、Windows Server、ASP.NET、C#、Java、Kotlin、MS SQL、JavaScript。加分：CISSP、CEH 或其他資安認證；TOEIC 或 TOEIC Bridge 成績。
+32_104職缺更新_叡揚資訊.md:75:### 產品開發工程師(21020201A)（76idx）
+32_104職缺更新_叡揚資訊.md:77:- 工作內容：加入 Vitals EIP 核心研發團隊。產品涵蓋企業入口（EIP）、單一簽入（SSO）、組織帳號治理（IAM）與零信任無密碼驗證。重視程式碼架構、自動化開發流程與軟體工法。目前正把產品發展到符合 MCP 協定，與企業內跨系統協作。
+32_104職缺更新_叡揚資訊.md:78:- 條件與技能：必備：C#、ASP.NET Core 運行機制；關聯式資料庫（MSSQL、Oracle、MySQL/MariaDB、SQLite）的 Schema 設計與查詢效能優化；Git 流程（Branching Strategy、Code Review）與持續整合；OOP 與 SOLID。工具：Windows Server 2012、ASP.NET。加分：React 前後端整合；CAS（Central Authentication Service）維護開發經驗。
+32_104職缺更新_叡揚資訊.md:81:### 系統分析師(21020802A)（7569z）
+32_104職缺更新_叡揚資訊.md:84:- 條件與技能：必備：熟悉資料庫設計與規劃分析，有資料庫系統開發經驗；問題分析與解決、溝通協調、團隊合作能力。工具：MS SQL、Oracle、HTML、JavaScript、jQuery。加分：程式語言開發經驗；銀行資訊系統導入經驗。語文：不拘。
+32_104職缺更新_叡揚資訊.md:87:### 資安系統_測試工程師(24012901)（886bj）
+32_104職缺更新_叡揚資訊.md:93:### [校園專區-台北]程式設計師（895i5）
+32_104職缺更新_叡揚資訊.md:96:- 條件與技能：必備：熟悉任一後端語言（.NET、Java、Python、PHP）；資料庫基本操作能力；對程式開發與解決問題有熱忱；熱衷學習、邏輯理解佳。工具與語文：不拘。加分：未標示。
+32_104職缺更新_叡揚資訊.md:99:### [校園專區-台北]資安工程師（89cyj）
+32_104職缺更新_叡揚資訊.md:102:- 條件與技能：必備：有 Web 伺服器端語言開發經驗（ASP.NET、C#、Java、Python、PHP）；了解 DevOps 工具，能獨立研究；英文中等，能讀原廠說明書。工具：Linux、Windows Server 2008／2012／2019、ASP.NET、Java、MS SQL。加分：企業資安產品導入經驗；網頁弱點挖掘、黑箱、白箱、灰箱檢測的興趣；證照 CISSP、CISA、CISM、CEH、CHFI、PMP。
+32_104職缺更新_叡揚資訊.md:105:### [校園專區-台北]資安軟體導入助理工程師（89cyk）
+32_104職缺更新_叡揚資訊.md:108:- 條件與技能：必備：英文中等以上；MS Office；熟悉 MS SQL，擅長 Linux 與 Windows Server；TCP/IP、IIS 設定與虛擬機管理；溝通協調能力佳。工具：Linux、Windows Server 2008／2012／2019、MS SQL、IIS、TCP/IP。技能：專案溝通／整合管理。加分：未標示。
+32_104職缺更新_叡揚資訊.md:111:### [校園專區-台北]Java程式設計師（89d0n）
+32_104職缺更新_叡揚資訊.md:114:- 條件與技能：必備：Java；工具 Linux、Java、JavaScript。加分：Agile（Scrum、Kanban）；REST API、Message Queue、WebSocket、Kafka；Spring Boot、Spring Security、AOP；Kubernetes、Docker Swarm；Elastic Stack、Prometheus；Redis、MongoDB、Cassandra；Ansible；設計模式（工廠、樣版、命令、策略）；單元與整合測試、Selenium IDE、Katalon。
+32_104職缺更新_叡揚資訊.md:117:### [校園專區-台北].NET程式設計師（89fmu）
+32_104職缺更新_叡揚資訊.md:120:- 條件與技能：必備：擅長 C#.NET、JavaScript；具 Office 應用能力。工具：C#、MS SQL、JavaScript。語文：不拘。加分：未標示。
+32_104職缺更新_叡揚資訊.md:123:### [校園專區]程式分析師（89sxv）
+32_104職缺更新_叡揚資訊.md:126:- 條件與技能：必備：熟悉 HTML、CSS、JavaScript、Java、C# 任一語言；熟悉 Oracle、MS SQL Server 任一資料庫與 SQL。工具：C#、Java、MS SQL、Oracle、HTML、JavaScript、CSS。加分：OOP、SOLID、Design Patterns、Refactoring；Spring、Hibernate、ASP.NET Boilerplate 框架。
+32_104職缺更新_叡揚資訊.md:129:### .NET軟體工程師(21012501A)（76azx）
+32_104職缺更新_叡揚資訊.md:132:- 條件與技能：必備：擅長 ASP.NET、MVC、C#.NET；有 .NET 應用系統開發經驗與 MS SQL 基礎能力。工具：ASP.NET、C#、JavaScript。加分：Web AP 維運經驗，或應用系統建置與維運經驗。
+32_104職缺更新_叡揚資訊.md:135:### 系統分析工程師(23020201)（7vx99）
+32_104職缺更新_叡揚資訊.md:138:- 條件與技能：必備：資料庫設計與系統開發經驗；問題分析與解決能力；主動、有耐心聆聽客戶需求；團隊合作與溝通協調。工具：Windows Server 2019、UML、ASP.NET、C#、MS SQL。加分：C#、ASP.NET MVC 開發經驗；MS SQL、ER Diagram、UML；程式開發經驗；對軟體開發與管理有興趣。
+32_104職缺更新_叡揚資訊.md:141:### 雲端資安工程師(24050601)（8bkvw）
+32_104職缺更新_叡揚資訊.md:147:### .NET 產品開發工程師(24052801)（8cgii）
+32_104職缺更新_叡揚資訊.md:150:- 條件與技能：必備：精通 C#、JavaScript、TypeScript、T-SQL；熟悉 ASP.NET MVC 與 ASP.NET Core；有 MS SQL 關聯式資料庫經驗；對軟體開發有熱忱、好奇心。工具：Windows Server 2008／2012／2019、C#、MS SQL、JavaScript。加分：未標示。
+32_104職缺更新_叡揚資訊.md:153:### .NET 軟體設計師(台北)(24070401)（8dsaf）
+32_104職缺更新_叡揚資訊.md:155:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery）與後端（C#.NET、VB.NET、.NET MVC）都有職缺。
+32_104職缺更新_叡揚資訊.md:156:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、ASP.NET、C#、VB.NET、MS SQL、PL/SQL。加分：政府機關或金融業系統開發經驗；前端 AJAX、React、jQuery、Webpack、npm；後端 .NET Core、ASP.NET Core MVC、Web API、Blazor、LINQ、SignalR；資料庫 MS SQL Server、Oracle（Stored Procedure、Trigger、Function、Cursor）。
+32_104職缺更新_叡揚資訊.md:159:### .NET 軟體設計師(高雄)(24070402)（8dscv）
+32_104職缺更新_叡揚資訊.md:161:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery）與後端（C#.NET、VB.NET、.NET MVC）都有職缺。
+32_104職缺更新_叡揚資訊.md:162:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、ASP.NET、C#、VB.NET、MS SQL、PL/SQL。加分：政府機關或金融業系統開發經驗；前端 AJAX、React、jQuery、Webpack、npm；後端 .NET Core、ASP.NET Core MVC、Web API、Blazor、LINQ、SignalR；資料庫 MS SQL Server、Oracle（Stored Procedure、Trigger、Function、Cursor）。
+32_104職缺更新_叡揚資訊.md:165:### JAVA 軟體設計師(台北)(24070403)（8dsdq）
+32_104職缺更新_叡揚資訊.md:167:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery）與後端（Spring Web MVC、Spring Boot、MyBatis）都有職缺。
+32_104職缺更新_叡揚資訊.md:168:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、Java、MS SQL、PL/SQL、JavaScript、Visual Basic .net。加分：政府機關或金融業系統開發經驗；前端 AJAX、React、jQuery、Webpack、npm；後端 Spring Web MVC、Spring Boot、MyBatis、Hibernate、Spring Data JPA、Python；資料庫 MS SQL Server、Oracle。
+32_104職缺更新_叡揚資訊.md:171:### JAVA 軟體設計師(新竹)(24070404)（8dsh6）
+32_104職缺更新_叡揚資訊.md:173:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery）與後端（Spring Web MVC、Spring Boot、MyBatis）都有職缺。
+32_104職缺更新_叡揚資訊.md:174:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、Java、MS SQL、PL/SQL、JavaScript。加分：政府機關或金融業系統開發經驗；前端 AJAX、React、jQuery、Webpack、npm；後端 Spring Web MVC、Spring Boot、MyBatis、Hibernate、Spring Data JPA、Python；資料庫 MS SQL Server、Oracle。
+32_104職缺更新_叡揚資訊.md:177:### JAVA 軟體設計師(高雄)(24070405)（8dshe）
+32_104職缺更新_叡揚資訊.md:179:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery）與後端（Spring Web MVC、Spring Boot、MyBatis）都有職缺。
+32_104職缺更新_叡揚資訊.md:180:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、Java、MS SQL、PL/SQL、JavaScript。加分：政府機關或金融業系統開發經驗；前端 AJAX、React、jQuery、Webpack、npm；後端 Spring Web MVC、Spring Boot、MyBatis、Hibernate、Spring Data JPA、Python；資料庫 MS SQL Server、Oracle。
+32_104職缺更新_叡揚資訊.md:183:### 系統分析師(24070407)（8dsio）
+32_104職缺更新_叡揚資訊.md:186:- 條件與技能：必備：資料庫設計與系統開發經驗；對軟體開發與資訊安全有基本認知；問題分析與解決、溝通、團隊合作。工具：Linux、Windows Server 2019、MS SQL、PL/SQL。加分：政府機關或金融業系統分析經驗；工作流程整合 AI 應用設計；開發團隊管理或 Scrum Master 經驗；程式設計經驗。
+32_104職缺更新_叡揚資訊.md:189:### 系統分析師(24030101)（897dg）
+32_104職缺更新_叡揚資訊.md:192:- 條件與技能：必備：5 年以上經驗，大學以上學歷。工具：Windows Server 2008／2012、ASP.NET、C#、MS SQL、JavaScript。加分：前後端開發經驗（C#、React）；微軟或 Java 等技術證照；PMP、ACP、Scrum 等專案管理證照；個人 Git 或 Blog 成果連結。
+32_104職缺更新_叡揚資訊.md:195:### 系統工程師(24100701)（8iig9）
+32_104職缺更新_叡揚資訊.md:198:- 條件與技能：必備：英文中等，能讀英文；MS Office。工具：Linux、Windows Server 2008／2012／2019、資料庫（MSSQL、Oracle、MySQL、PostgreSQL 任一）、虛擬主機（VMware、VirtualBox、Hyper-V）、程式語言（Java、Shell Script、Batch、PowerShell、SQL、Python、Perl 任一）。加分：未標示。
+32_104職缺更新_叡揚資訊.md:201:### 軟體工程師(25040801)（8ohp0）
+32_104職缺更新_叡揚資訊.md:204:- 條件與技能：必備：有其他系統維運經驗；下列任一項開發經驗：前端 React、Vue.js、jQuery；後端 .NET Core、ASP.NET Core MVC、Web API；資料庫 MS SQL Server、Oracle（Stored Procedure、Trigger、Function、Cursor）；負責任、主動學習、能與客戶溝通。工具：Windows Server 2008／2012、ASP.NET、MS SQL、Oracle、jQuery、ReactJS、VueJS。加分：資訊業客戶服務與維護經驗；KM 相關產業經驗。
+32_104職缺更新_叡揚資訊.md:207:### 系統工程師(25040802)（8ohp9）
+32_104職缺更新_叡揚資訊.md:210:- 條件與技能：必備：有其他系統維運經驗；基礎程式設計概念（C#），能理解技術文件；積極負責、主動學習。工具：Windows Server 2008／2012、ASP.NET、MS SQL。加分：網路概念與區域網故障排除；C#／.NET／RESTful API 後端；React、Vue.js、jQuery 前端；MSSQL、Oracle、MySQL；KM 相關產業經驗。
+32_104職缺更新_叡揚資訊.md:213:### MIS工程師(25041801)（8ox8m）
+32_104職缺更新_叡揚資訊.md:216:- 條件與技能：必備：3 年以上經驗；英文讀中等。工具：Linux、Windows Server 2019、Firewall、TCP/IP。技能：作業系統操作、資料備份與復原、資訊設備檢修與環境設定、系統架構規劃、軟硬體預算與採買規劃、防火牆與網路系統配置。加分：資安法規與標準（ISO 27001、個資法）；資安工具（端點偵測、弱掃、防火牆、防毒、SIEM）；Script（PowerShell、Shell、Python）；公有雲資安設定（GCP、Azure、AWS）。
+32_104職缺更新_叡揚資訊.md:219:### Java開發工程師 Full Stack developer(20022201B)（6vnww）
+32_104職缺更新_叡揚資訊.md:222:- 條件與技能：必備：Java、JavaScript（ES5/ES6）；關聯式資料庫 MySQL、MSSQL、PostgreSQL；OOP、ORM；Git、SVN 或 TFS；Ant、Maven 或 Gradle；Spring 4 以上（DI、IoC）；Angular、ReactJS 或 VueJS；CI/CD（GitLab CI、Jenkins、Drone、CircleCI）；Docker。加分：Agile（Scrum、Kanban）；REST API、Message Queue、WebSocket、Kafka；Spring Boot、Spring Security、AOP；Kubernetes；Elastic Stack、Prometheus；Redis、MongoDB、Cassandra；Ansible；Selenium IDE、Katalon。
+32_104職缺更新_叡揚資訊.md:225:### 資深系統工程師(25063002)（8reml）
+32_104職缺更新_叡揚資訊.md:231:### 系統工程師(25080401)（8skso）
+32_104職缺更新_叡揚資訊.md:234:- 條件與技能：必備：英文聽說讀寫中等；時間管理與學習規劃；軟體問題處理與解決；流程設計。工具：Windows Server 2008／2012／2019、ASP.NET、C#、MS SQL、Excel、PowerPoint、Word。技能：功能測試、軟體整合測試、測試環境建置規劃、測試計畫與報告撰寫、軟體程式設計。加分：軟體測試方法論與顧問能力；系統管理經驗；VB、C# 開發；API 開發；VBA 開發。
+32_104職缺更新_叡揚資訊.md:237:### [高雄]程式設計師(20020405A)（6uy40）
+32_104職缺更新_叡揚資訊.md:240:- 條件與技能：必備：對程式開發有熱忱；資料庫基本操作能力；邏輯與學習能力強；團隊合作開發；英文聽說讀寫略懂。工具：Linux、Windows Server 2008／2012、Windows 10、ASP.NET、C++.NET、Java、MS SQL、PL/SQL、PostgreSQL、JavaScript。加分：GitLab、Subversion、Jenkins 操作經驗；MVC 開發經驗（.NET 或 Java 擇一即可）。
+32_104職缺更新_叡揚資訊.md:243:### 程式設計師(20090801A)（71s0m）
+32_104職缺更新_叡揚資訊.md:246:- 條件與技能：必備：任一高階語言開發經驗（.NET、Java、Python、PHP、Node，.NET 與 Java 尤佳）；基本前端（HTML、CSS、JavaScript、jQuery）；任一關聯式資料庫（MSSQL、Oracle、MySQL、PostgreSQL）；英文讀中等。加分：框架（MVC、Spring、Flask、Laravel、Django、React、Angular、Vue）；版本控管（Git、SVN）或 SSDLC 開發流程。
+32_104職缺更新_叡揚資訊.md:249:### [校園專區-高雄]實習生-助理程式設計師(26060102)（895mr）
+32_104職缺更新_叡揚資訊.md:252:- 條件與技能：必備：熟悉任一後端語言（.NET、Java、Python、PHP）；資料庫基本操作能力；對程式開發與解決問題有熱忱；熱衷學習、邏輯佳。加分：Git 及 AI 輔助程式開發工具（GitHub Copilot、Codex、Claude Code）使用經驗。
+32_104職缺更新_叡揚資訊.md:255:### [校園專區]實習生-助理程式設計師(26110401)（89fmq）
+32_104職缺更新_叡揚資訊.md:258:- 條件與技能：必備：熟悉任一後端語言（.NET、Java、Python、PHP）；資料庫基本操作能力；對程式開發與解決問題有熱忱；熱衷學習、邏輯佳。加分：Git 及 AI 輔助程式開發工具（GitHub Copilot、Codex、Claude Code）使用經驗。
+32_104職缺更新_叡揚資訊.md:261:### 程式設計師(21020801B)（731o7）
+32_104職缺更新_叡揚資訊.md:264:- 條件與技能：必備：Web 網站與資料庫相關開發技術。工具：Windows Server 2019、C#、Java、VB.NET、MS SQL、Oracle、JavaScript、jQuery、CSS。加分：金融業系統開發或微服務開發經驗。
+32_104職缺更新_叡揚資訊.md:267:### 資深.NET專案工程師(21042301)（79j7b）
+32_104職缺更新_叡揚資訊.md:270:- 條件與技能：必備：3 年以上 .NET 後端開發或系統維護經驗，能獨立 Debug 與讀懂現有程式；能與客戶直接溝通。工具：Windows Server 2012／2019、ASP.NET、C#、MS SQL、MySQL、Oracle、XML Web services、jQuery。加分：知識管理（KM）產品、軟體系統維護或駐點服務經驗；C#、.NET、RESTful API；React、jQuery；MSSQL、Oracle、MySQL；Windows Server、IIS 與基本資訊安全管理。
+32_104職缺更新_叡揚資訊.md:273:### 系統工程師(26012901)（8y0dt）
+32_104職缺更新_叡揚資訊.md:275:- 工作內容：規劃伺服器、作業系統、儲存設備、虛擬化與雲端架構，評估效能、容量、可用性與擴充性，設計高可用（HA）、備援與容錯架構。安裝設定作業系統（以 Windows Server 為主），建置虛擬化平台（VMware、Hyper-V、KVM）與雲端平台（AWS、Azure），並做應用程式上線。負責監控、定期維護、系統調校、故障排除與安全修補（Patch）。需求 1 人。
+32_104職缺更新_叡揚資訊.md:276:- 條件與技能：工具：Windows Server 2008／2012／2019、MS SQL。技能：VMware、Hyper-V、KVM、AWS、Azure、系統監控、Patch、HA 與備援架構。條件：經歷不拘；語文不拘。加分：未標示。
+32_104職缺更新_叡揚資訊.md:279:### 系統分析師(26031701)（8zfwe）
+32_104職缺更新_叡揚資訊.md:282:- 條件與技能：必備：熟悉資料庫設計與規劃分析，有資料庫系統開發經驗；進取心、問題分析與解決、團隊合作、溝通協調。工具：Linux、Windows Server 2008／2012／2019、Java、MS SQL、PL/SQL。加分：程式語言開發經驗；Linux 與 Docker 基本指令與操作。
+32_104職缺更新_叡揚資訊.md:285:### 資安工程師(26042201)（90qze）
+32_104職缺更新_叡揚資訊.md:291:### 系統工程師_API治理(26050401)（915rx）
+32_104職缺更新_叡揚資訊.md:294:- 條件與技能：必備：英文聽說讀寫中等。工具：Linux。加分：NAT、DNS、Proxy、Load Balance、防火牆等網路基礎知識；虛擬主機、容器化服務、微服務的管理機制與技術。
+32_104職缺更新_叡揚資訊.md:297:### Machine Learning Engineer (CV) 機器學習工程師 (電腦視覺)(24013102)（889ho）
+32_104職缺更新_叡揚資訊.md:299:- 工作內容：加入 DCS（Department of Cognition and Sensing）團隊，做電腦視覺與多模態 AI。主題含 VDU、KIE、Image Captioning、Visual Search（Multi-RAG）、VQA。工作含模型訓練、包成 API，並在地端裝置與雲端最佳化與部署模型，也讀 SOTA 論文並套用到實際場景。需求 1~2 人。
+32_104職缺更新_叡揚資訊.md:300:- 條件與技能：必備：機器學習框架（PyTorch、HuggingFace、PyTorch Lightning）；Python、SQL、Git；Web API 工具（Flask、FastAPI）；有從實驗到部署的 ML 專案經驗；團隊合作與清楚溝通；英文聽說讀寫中等。工具：Python。加分：未標示。
+31_104職缺更新_聯合報.md:1:# 31 聯合報 104 職缺更新（查詢日 2026-11-17）
+31_104職缺更新_聯合報.md:2:## 目前開放職缺
+31_104職缺更新_聯合報.md:3:### 職缺總覽
+31_104職缺更新_聯合報.md:13:### 職稱清單
+31_104職缺更新_聯合報.md:24:- 系統工程師（MyData 平台維運）（8hsql）
+31_104職缺更新_聯合報.md:29:### 【數據發展部】數據分析師 - 事業發展中心（7o52w）
+31_104職缺更新_聯合報.md:32:- 條件與技能：能在 GCP 上獨立建構資料模型與分析流程（SQL／Python／LLM），對資料定義與計算邏輯敏感；具問題拆解與產品思維，能從模糊需求定義指標與驗證方式；交付前自行驗證與交叉檢核。擅長工具：Python、VBA、MS SQL、Excel、PowerPoint、Google Analytics、Looker Studio。科系：商管、數學及電算機科學、經濟社會及心理學科類。語文：中文精通、英文中等。職務類別為數據分析師／資料分析師、資料科學家。
+31_104職缺更新_聯合報.md:33:- 其他條件：需準備完整簡報作品（機敏資料請模糊化）；筆試含 SQL 測驗與新聞事件分析拆解；具跨單位協作與轉譯分析結果的能力。上班時段 09:00-18:00，日班，需求 1~2 人，管理責任無。
+31_104職缺更新_聯合報.md:37:### 【數據發展部】數據分析師（7vmmw）
+31_104職缺更新_聯合報.md:40:- 條件與技能：必備：熟悉 SQL 與 Python，能處理大型資料與多維分析；具 GCP 使用經驗（資料查詢、儲存、權限管理）。加分：Vertex AI 或其他大型語言模型（LLM）應用；數位廣告運作、成效分析與廣告指標判讀。擅長工具：Python、MS SQL、Excel、PowerPoint、Github、ANSI SQL。工作技能：專案規劃執行／範圍管理、數據分析。證照：Data Analysis Using Excel 國際證照（列於內頁）。科系：商管、數學及電算機科學、工程學科類。語文：不拘。
+31_104職缺更新_聯合報.md:45:### 【數據發展部】助理數據分析師－產品分析中心（70mim）
+31_104職缺更新_聯合報.md:47:- 工作內容：隸屬產品分析中心（聯合報系 AI 營收策略應用全球金獎專案的核心團隊）。使用 Python 或 SQL 進行數據處理、分析與報告撰寫；日常維護與更新數據報表；優化數據處理流程，建立自動化與監控機制；呈現數據洞察，並向非技術人員清楚說明分析結果；完成主管指派專案並如期交付。
+31_104職缺更新_聯合報.md:48:- 條件與技能：必備：基礎 SQL、Python 程式處理能力；樂於學習新技術。擅長工具：Python、MS SQL、Excel、PowerPoint。工作技能：專案規劃執行／範圍管理、數據分析。科系：商管、數學及電算機科學、工程學科類。語文：不拘。對新興技術有學習熱情，善於溝通，確保資訊準確傳遞。
+31_104職缺更新_聯合報.md:53:### 【數據發展部】演算法工程師（4u5lb）
+31_104職缺更新_聯合報.md:56:- 條件與技能：必備：紮實機器學習演算法基礎與開源數據工具操作能力；熟悉物件導向程式設計與 Python；具資料工程能力，用 SQL 操作大型資料庫做分析。加分：Google Cloud 佈署與應用；推薦系統、NLP 演算法與模型開發調參經驗；實驗設計（Experimental Design）與模型成效追蹤；設計思考與原型快速迭代；建置與維運數據應用系統經驗。擅長工具：Python、PostgreSQL。科系：商管、數學及電算機科學、工程學科類。語文：不拘。
+31_104職缺更新_聯合報.md:61:### 【數據發展部】資料科學資深經理（93f7l）
+31_104職缺更新_聯合報.md:64:- 條件與技能：需熟悉 GCP；熟悉資料科學、機器學習、推薦系統、NLP 或生成式 AI；熟悉 Python、SQL 與資料處理流程；熟悉 scikit-learn、XGBoost、LightGBM、TensorFlow、PyTorch 或類似工具；了解雲端資料平台（如 AWS）；具模型部署、MLOps、pipeline、API、batch inference、monitoring 等 production AI 經驗。英文中等。擅長工具欄：不拘。數位媒體、廣告科技、Martech 經驗尤佳。
+31_104職缺更新_聯合報.md:68:### 【新聞部數據中心】前端開發工程師（6i2tp）
+31_104職缺更新_聯合報.md:71:- 條件與技能：擅長：Vue 或 React 其一（Vue 尤佳）、HTML5／CSS、ECMAScript 6、RWD 與行動版切版、瀏覽器相容性調整、Git 版控。了解：TypeScript、Sass、SPA 下的 SEO 機制。略懂：Node.js（Express、Koa）、SSR。英文讀中等。擅長工具欄：不拘。科系：教育、數學及電算機科學、工程學科類。職務類別為前端工程師、軟體工程師。
+31_104職缺更新_聯合報.md:76:### 【行動發展部】Android行動軟體開發工程師（8eulh）
+31_104職缺更新_聯合報.md:79:- 條件與技能：必備：熟悉 Kotlin、Android Studio 與 Android 開發生態；熟悉 git、OOP 觀念、RESTful API。加分：JavaScript／HTML／CSS、前後端協同運作、Java、Firebase。需提供個人作品或足以證明研發能力的文件。擅長工具欄：不拘；科系：不拘；語文：不拘。
+31_104職缺更新_聯合報.md:84:### 數據應用工程師（8nf2t）
+31_104職缺更新_聯合報.md:87:- 條件與技能：必備：熟悉基礎 SQL 語法與 BigQuery 進階用法；具基礎 Python 開發能力。加分：提案與簡報技巧；GA4 BigQuery 原始資料萃取與清理經驗；Google Looker Studio 開發經驗；媒體或相關產業網站用戶行為數據處理經驗。需進行約 45 分鐘基礎與進階 SQL 筆試。擅長工具欄：不拘；科系：不拘；語文：不拘。
+31_104職缺更新_聯合報.md:92:### 數據系統開發工程師（JAVA）（8v5ma）
+31_104職缺更新_聯合報.md:95:- 條件與技能：必備：Java、JSP、Servlet 開發經驗；Tomcat 使用經驗；jQuery、Ajax、SQL 開發經驗；Spring、Struts Framework 開發經驗。加分：OCJP 證照。需進行約 45 分鐘 Java 基礎概念與 SQL 筆試。擅長工具欄：不拘；科系：不拘；語文：不拘。
+31_104職缺更新_聯合報.md:100:### 系統工程師（MyData 平台維運）（8hsql）
+31_104職缺更新_聯合報.md:103:- 條件與技能：基本條件：1 年以上 Spring Framework 實務開發經驗；熟悉 ORM（Hibernate／JPA）、JSP；API 對接與開發經驗；任一關聯式資料庫（MS-SQL／MySQL）；擅用 Git 版控。擅長工具：Git、JSP、MS SQL、MySQL、HTML、JavaScript、CSS。工作技能：伺服器網站管理維護、作業系統基本操作、資訊設備環境設定。科系：資訊管理、資訊工程相關。英文中等。
+31_104職缺更新_聯合報.md:105:- 網址：https://www.104.com.tw/job/8hsql
+31_104職缺更新_聯合報.md:108:### 系統分析師（84hd7）
+31_104職缺更新_聯合報.md:111:- 條件與技能：基本條件：熟悉 Windows／Linux 作業系統操作；具網路基本知識；VMware 虛擬化（ESXi、Windows Hyper-V）安裝與維護。加分：Google Cloud Platform、Microsoft Azure 雲端平台管理經驗；Kubernetes 部署與管理經驗。擅長工具：Linux、Windows Server 2019。工作技能：伺服器網站管理維護、作業系統基本操作、資訊設備環境設定。科系：資訊管理、資訊工程相關。英文中等。
+31_104職缺更新_聯合報.md:116:### 【戰略部】數據優化師(數據分析)（7qtdo）
+31_104職缺更新_聯合報.md:119:- 條件與技能：具 1 年以上營運數據分析與資料庫管理經驗；具 GA（Google Analytics）商業應用、數位行銷與流量分析經驗；能做基礎 GA 數據解讀。加分：GTM／SQL／Python 相關經驗。能獨立執行專案，擅長簡報與報表數據分析，有數位數據分析經驗為佳。擅長工具：MySQL、Excel、Google Analytics、Python。科系：不拘；語文：不拘。
+31_104職缺更新_聯合報.md:124:### 【戰略部】數據優化分析師（廣告投放）（8yvw2）
+30_104職缺更新_台灣大哥大.md:1:# 30 台灣大哥大 104 職缺更新（查詢日 2026-11-17）
+30_104職缺更新_台灣大哥大.md:2:## 目前開放職缺
+30_104職缺更新_台灣大哥大.md:3:### 職缺總覽
+30_104職缺更新_台灣大哥大.md:4:本次在台灣大哥大 104 公司頁（8 頁、共 151 筆列表）收錄 49 筆軟體相關職缺，包含 Java／.Net／Python／Node.js 後端與全端、iOS／Android、LLM 平台、資料與數據分析、雲端／Kubernetes／基礎架構、資料庫、資安，以及資訊類招募與實習計畫。列表其餘約 100 筆為業務、行政、行銷、產品經理、網路與基站維運等，未收錄。
+30_104職缺更新_台灣大哥大.md:11:### 職稱清單
+30_104職缺更新_台灣大哥大.md:27:- I105 Python Web工程師（8i0ux）
+30_104職缺更新_台灣大哥大.md:28:- I137 Python全端工程師（8ntrt）
+30_104職缺更新_台灣大哥大.md:29:- I186 Python後端工程師（7wutt）
+30_104職缺更新_台灣大哥大.md:31:- I112 Java/PHP/Python系統開發工程師（8bj3i）
+30_104職缺更新_台灣大哥大.md:39:- I97 Kubernetes 平台工程師（8xjjo）
+30_104職缺更新_台灣大哥大.md:63:### HIPO疾行軍招募計畫-資訊類（7m38q）
+30_104職缺更新_台灣大哥大.md:66:- 條件與技能：不需樣樣都會；具備部分以下經驗即為加分：Python、Java、JavaScript、SQL 等程式開發；使用或學習 AI 工具進行開發、分析或自動化；AWS／Azure／GCP 雲端學習或實作；side project、作品集、專題、競賽；邏輯思考與問題拆解；特定領域（機器人控制、WEB3、資安、AI 模型訓練）。104 擅長工具欄列 Java、Python、Objective-C、Swift、Kotlin、AWS、HTML、JavaScript、CSS、VueJS；語文與工作技能欄為不拘。
+30_104職缺更新_台灣大哥大.md:70:### 新鮮人徵才計畫-資訊類（7lmd9）
+30_104職缺更新_台灣大哥大.md:72:- 工作內容：針對新鮮人的資訊類招募，分五個方向：Java 全端軟體工程師（系統需求開發、架構規劃）；Python Web 工程師（資料庫架構、API、雲端服務整合、串接第三方系統）；雲端工程師（公有／私有雲架構、雲端資安、成本治理、SaaS 評估、擔任 SRE）；科技服務管理暨維運工程師（監控告警、CI/CD、根因分析、容量規劃、Log 除錯）；.Net 工程師（ASP.NET MVC／Core、Web API、SQL 調校、資料建模）。
+30_104職缺更新_台灣大哥大.md:73:- 條件與技能：語文為英文聽說讀寫中等。Java 全端：Java＋SQL、JavaScript／HTML5／CSS、SA/SD；加分 Spring Boot、Angular／React／Vue、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP。Python Web：Python、Flask／FastAPI、AWS／GCP、HTML／JavaScript／CSS、Git、物件導向、關聯式 DB／Redis／Linux／容器化。雲端：TCP/IP、AWS／Azure／GCP、Windows／Linux。維運：Linux、Shell Script／Python、Tomcat；加分 Zabbix／Nagios／Grafana。.Net：.NET Framework／Core、C#、WebForm、ASP.NET MVC／Core、jQuery、ADO.NET、Entity Framework Core；加分 Kafka、PostgreSQL／SQL Server、Redis、Docker、CI/CD、AI coding tools。
+30_104職缺更新_台灣大哥大.md:77:### 【Taiwan Mobile 科技大神培育實習計畫】Intern-IT（7oc7w）
+30_104職缺更新_台灣大哥大.md:79:- 工作內容：不限國籍、實習時間不限寒暑假，由專屬導師帶領；收到履歷後由單位媒合到 16 個方向之一。技術類包含：與 AI 工具（ChatGPT、Copilot）協作開發、API 與後端整合；科技與 AI 服務開發測試（NoSQL 測試程式、資料搬移）；開源資料庫 DBA；M+ Meet 視訊會議（WebSocket／gRPC／RESTful）；語音 ASR／TTS 模型與 API；FinOps 與 CMDB；Terraform／Ansible 的 IaC 與 CI/CD；開源基礎設施 PoC；Unity 3D。另有資安專案管理、AI 訓練語料校正、AI 產品企劃等非開發方向。
+30_104職缺更新_台灣大哥大.md:80:- 條件與技能：依方向不同。程式語言：Python、JavaScript、Java、Go、C#；Web／後端：Django、Node.js、Flask、RESTful API、GraphQL；資料庫：MySQL、PostgreSQL、MariaDB、SQL、NoSQL；工具：Docker、Linux、Shell Script、Git、Postman、Jira、Figma、Terraform、Ansible、Unity、K8s（加分）、AWS／GCP／Azure（加分）。104 擅長工具欄為不拘。
+30_104職缺更新_台灣大哥大.md:84:### 【Taiwan Mobile Internship】IT Tech Genius Internship Program（80paa）
+30_104職缺更新_台灣大哥大.md:86:- 工作內容：科技大神實習計畫的英文版，工作性質為兼職、時段彈性，不限國籍，線上或實體皆可，由專屬導師帶領。收到履歷後 HR 媒合四類職務：系統開發（新創科技服務、AI 視覺、影音視覺、語音辨識、雲端服務、資安、BNPL 支付、加密貨幣、海量資料分析）；資料建模（NLP 斷詞資料集、AI 多標籤分類模型、用戶特徵與品牌偏好標註）；系統測試（NoSQL／資料庫測試程式、資料搬移與效能測試、管理後台與 API 測試）；M+ 創新模組開發（小遊戲、會議 AI 影像處理）。
+30_104職缺更新_台灣大哥大.md:87:- 條件與技能：系統開發：Java、HTML5 基礎、Docker 知識。資料建模：Python 基礎、AI／ML／DL 使用經驗。系統測試：Java 基礎、Linux 基本指令。M+ 模組：基礎程式經驗、對 AI 影像處理有興趣。104 擅長工具欄為不拘。
+30_104職缺更新_台灣大哥大.md:91:### I102 Java全端軟體工程師（7nebo）
+30_104職缺更新_台灣大哥大.md:94:- 條件與技能：必備：Java 程式開發與 SQL 後端開發；JavaScript、HTML5、CSS 前端開發；系統分析／設計（SA/SD）經驗。加分：Spring、Spring Boot；Angular／React／Vue.js；Python／Shell Script；Redis；PostgreSQL；Docker 與 CI/CD；AWS、Azure、GCP 任一雲使用／開發／佈署；帶領開發小組；英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Java、Python、Spring、HTML、JavaScript、CSS。
+30_104職缺更新_台灣大哥大.md:98:### I36 Java帳務工程師（8nami）
+30_104職缺更新_台灣大哥大.md:101:- 條件與技能：必備：Java、JSP/Servlet、Spring MVC／Spring Boot 架構，並具 RESTful API 設計開發經驗；Oracle 或 PostgreSQL 資料庫程式設計開發經驗；Linux Shell Script 撰寫能力；了解雲端系統開發架構；了解容器（Container）技術與應用服務部署。內文未列加分條件。104 擅長工具欄列 Java、JSP、Spring、Oracle、PostgreSQL。
+30_104職缺更新_台灣大哥大.md:105:### I37 Java帳務工程師（7wuwx）
+30_104職缺更新_台灣大哥大.md:108:- 條件與技能：必備：Java、JSP/Servlet、Spring MVC 架構，並具 RESTful API 設計開發經驗；Oracle 或 PostgreSQL 資料庫程式設計開發經驗；Linux Shell Script 撰寫能力；了解雲端系統開發架構；了解容器（Container）技術與應用服務部署。內文未列加分條件。104 擅長工具欄列 Linux、Shell、Java、Spring、Oracle。
+30_104職缺更新_台灣大哥大.md:112:### I66 Java應用系統工程師（803gw）
+30_104職缺更新_台灣大哥大.md:115:- 條件與技能：必備：具 Java 開發經驗；了解 Oracle 或 PL/SQL 資料庫。加分：英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Java、Oracle、PL/SQL。
+30_104職缺更新_台灣大哥大.md:119:### I106 .Net工程師（47x1e）
+30_104職缺更新_台灣大哥大.md:121:- 工作內容：參與跨單位系統的需求架構規劃、設計與開發；用 C# .NET（ASP.NET MVC／ASP.NET Core）做後端開發，整合前後端並開發 Web API 與 RESTful API；進行 SQL 查詢、效能調優與資料建模。系統包含 CRM 用戶溝通與行銷平台、電信網路維護平台資料庫、客服中心與 AI 智能客服系統、集團 MIS 系統。
+30_104職缺更新_台灣大哥大.md:122:- 條件與技能：必備：.NET Framework／.NET Core 與 SQL 後端；C#、WebForm、ASP.NET MVC、ASP.NET Core；JavaScript、HTML5、CSS、jQuery；Webservice、Web API、RESTful API 界接；ADO.NET、Entity Framework Core、Bootstrap-Vue。加分：Kafka；WinForm／Console；Angular／React／Vue.js；Data model、系統設計與 API Spec 設計；PostgreSQL／SQL Server；Redis；Docker、CI/CD；AWS／Azure／GCP；AI 開發與 AI coding tools；多益聽讀 550 以上。
+30_104職缺更新_台灣大哥大.md:126:### I109 Java新創金流服務工程師（7kndd）
+30_104職缺更新_台灣大哥大.md:129:- 條件與技能：必備：Java 開發能力並熟悉 Spring Boot；JavaScript、HTML5、CSS 網頁開發；資料庫使用經驗；RESTful API 開發經驗。具 Docker、雲端服務使用經驗尤佳。語文：英文聽說讀寫中等。104 擅長工具欄列 Java、JavaScript、jQuery、CSS。
+30_104職缺更新_台灣大哥大.md:133:### I113 (Sr.)軟體工程師, 全端開發（8tphn）
+30_104職缺更新_台灣大哥大.md:136:- 條件與技能：必備：至少一種後端語言（Java、Python、Go、C++）；JavaScript／TypeScript／HTML／CSS；Git 與 RESTful API 設計開發；溝通與獨立解決問題能力。加分：Spring Boot、Node.js、React、Vue、Angular 任一；CI/CD；AWS／GCP／Azure；資料結構與演算法、大型系統設計；技術文件與系統設計；對 AI 應用、資料視覺化、分散式系統有興趣。104 擅長工具欄列 Java、Python。
+30_104職缺更新_台灣大哥大.md:140:### I165 Java資深工程師（8qbzy）
+30_104職缺更新_台灣大哥大.md:142:- 工作內容：以 Java（Spring Boot）實作核心系統並重構既有程式碼；設計 API 規格，考量安全、授權與效能並產出技術文件；針對複雜業務邏輯寫高效能 SQL，以 SQL Tuning（Index 優化）處理資料庫瓶頸；撰寫 Docker 腳本或操作 Kubernetes，將應用程式部署到雲端；設定 Logging Tracking，以 ELK 等工具追蹤線上問題。職務類別含軟體工程師、測試人員，需求 1 人。
+30_104職缺更新_台灣大哥大.md:143:- 條件與技能：必備：6 年以上 Java 開發；精通 Spring Boot／MVC；AWS／GCP／Azure 雲端實作與 Docker／K8s；SQL 優化；API Spec 設計、OWASP Top 10 與檢測工具；Code Review。加分：SD／SA 經驗；CI/CD 部署流程規劃；高併發系統或 AI 模型串接。104 擅長工具欄列 Java、Spring、AWS、Microsoft Azure。
+30_104職缺更新_台灣大哥大.md:147:### I187 Java開發工程師（8eh4t）
+30_104職缺更新_台灣大哥大.md:150:- 條件與技能：必備：Java 開發並熟悉 Spring Boot；了解容器（Container）技術開發與部署；GCP 雲端系統開發或網路架構規劃實作其中一項經驗；RESTful API 開發。加分：系統分析經驗。104 擅長工具欄列 Java、Python、JavaScript。
+30_104職缺更新_台灣大哥大.md:154:### I193 資深JAVA工程師（7ndix）
+30_104職缺更新_台灣大哥大.md:157:- 條件與技能：必備：精通 Java 並熟悉 Spring Boot；系統分析設計經驗、需求訪談與規格文件；HTML5、JavaScript、React.JS 開發經驗；關聯式資料庫與 SQL；2 年以上 Java 網站開發。加分：AWS 或 GCP 網站開發；善用 AI coding tools；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Java、Python、hadoop；工作技能欄列專案規劃執行／範圍管理。
+30_104職缺更新_台灣大哥大.md:161:### I105 Python Web工程師（8i0ux）
+30_104職缺更新_台灣大哥大.md:163:- 工作內容：開發 Python Web 應用，架構為 Flask＋jQuery 單體，或 FastAPI＋ReactJS 前後端分離；另開發網路爬蟲程式。應用領域涵蓋科技新創服務、加值服務、通路營運、虛擬通路、企業創新服務。職務類別為軟體工程師，需求 1 人。
+30_104職缺更新_台灣大哥大.md:164:- 條件與技能：必備：Python Web 開發（Flask 或 FastAPI 尤佳，Django 亦可）；jQuery 或 JS 前端開發經驗；網路爬蟲程式開發。加分：ReactJS；GCP／AWS／K8S；Java Web Application；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Python；工作技能欄列軟體工程系統開發、軟體程式設計。
+30_104職缺更新_台灣大哥大.md:168:### I137 Python全端工程師（8ntrt）
+30_104職缺更新_台灣大哥大.md:171:- 條件與技能：必備：Python；HTML、JavaScript、CSS 與互動式網頁開發；物件導向程式設計。加分：完整參與專案的經驗；任一關聯式資料庫與 Linux；容器化相關知識；溝通與團隊協作；多益聽讀 550 以上。104 擅長工具欄列 C#、PostgreSQL、HTML、JavaScript、CSS、ReactJS、AngularJS、VueJS、Angular。
+30_104職缺更新_台灣大哥大.md:175:### I186 Python後端工程師（7wutt）
+30_104職缺更新_台灣大哥大.md:178:- 條件與技能：必備（內文全列為必備）：Python；Flask／FastAPI 框架；GCP／AWS 任一雲端服務；Git 版本控制；物件導向；完整參與專案的經驗；任一關聯式資料庫、Redis、Linux 使用經驗；容器化相關知識；溝通與團隊協作。104 擅長工具欄列 Linux、Python、AWS。
+30_104職缺更新_台灣大哥大.md:182:### I186 Node.js後端工程師（85n5t）
+30_104職缺更新_台灣大哥大.md:185:- 條件與技能：必備：JavaScript 與 Node.js 框架；物件導向與 Git 版本控制流程；GCP／AWS 任一雲端服務；關聯式與非關聯式資料庫（MySQL、PostgreSQL、Redis 或 MongoDB）；Linux 與容器化；Express 與 Socket.io、WebSocket、WebRTC；Distributed／Micro-Service 系統開發；Scrum／Agile 與開源貢獻經驗。104 擅長工具欄列 Linux、MySQL、PostgreSQL、AWS、JavaScript、Node.js。
+30_104職缺更新_台灣大哥大.md:189:### I112 Java/PHP/Python系統開發工程師（8bj3i）
+30_104職缺更新_台灣大哥大.md:192:- 條件與技能：前後端程式語言（Java／PHP／Python 擇一）與 Scripting language 能力；熟悉 SQL Command；熟悉 Linux 指令；溝通與表達能力；獨立思考與學習新技術能力。加分：雲端相關證照；電商網站相關經驗。104 擅長工具欄列 Java、PHP、Python。
+30_104職缺更新_台灣大哥大.md:196:### I90 通訊系統TPM（8sep4）
+30_104職缺更新_台灣大哥大.md:199:- 條件與技能：必要：8 年以上軟體開發經驗，其中 5 年以上專案管理；深入了解 FreeSWITCH 架構與 VoIP；C/C++、Python、Lua；分散式系統、微服務架構與雲端技術；PostgreSQL、MySQL；Linux 系統管理與 DevOps。加分：SIP、RTP、WebRTC 協議；Docker、Kubernetes；ELK Stack、Prometheus；Scrum、Kanban。104 擅長工具欄列 Linux、MySQL、PostgreSQL、IMS、VoIP。
+30_104職缺更新_台灣大哥大.md:203:### I92 通訊軟體工程師（8seot）
+30_104職缺更新_台灣大哥大.md:206:- 條件與技能：必要：任一程式語言熟練並具 Lua 基礎；SIP、RTP 等 VoIP 協議基礎；PostgreSQL 或 MySQL 使用經驗；Linux 命令列操作；Git 程式碼管理。加分：FreeSWITCH 開發或配置經驗；Docker 與 Kubernetes 容器化；Redis 與 RabbitMQ 等訊息佇列系統。104 擅長工具欄列 Linux、MySQL、PostgreSQL、IMS、VoIP。
+30_104職缺更新_台灣大哥大.md:210:### I103 iOS 開發工程師（7neau）
+30_104職缺更新_台灣大哥大.md:213:- 條件與技能：必備：Swift／Objective-C；UI/UX 開發並做出穩定的 App；RESTful API 串接與 JSON 解析；Git。加分：App 上架與推播；Firebase、FB 等第三方 SDK；MVC／MVVM；UML 與 Design Pattern；SQLite／CoreData；In-App-Purchase；BLE／Socket 通訊協定與 Media player；CocoaPods；XCTest／Unit Test；CI/CD。104 擅長工具欄列 Objective-C、Swift。
+30_104職缺更新_台灣大哥大.md:217:### I104 Android App開發工程師（775u7）
+30_104職缺更新_台灣大哥大.md:224:### I108 LLM應用平台架構師（8b54k）
+30_104職缺更新_台灣大哥大.md:226:- 工作內容：設計並建置「AI 大腦平台」前後端分離的 Web 系統（前端 React.js、後端 Python），為智能客服與知識管理提供 AI 應答；整合 LLM，並用 RAG 結合檢索與生成以提高回答準確性；設計與優化 Agent Flow；應用 Agentic AI；監控並優化平台效能；與業務團隊與 RD 團隊協作；提供技術指導與培訓。職務類別為 AI 工程師、資料工程師，需求 1 人。
+30_104職缺更新_台灣大哥大.md:227:- 條件與技能：必備：深度學習與機器學習；NLP、LLM、Transformer；Python、HTML、JavaScript，FastAPI、langchain（React.js 更佳）；SQL、Pandas、NumPy；大規模分散式系統設計；AWS／Google Cloud／Azure 至少一種；RAG 實作；2 年以上深度學習模型實戰開發。加分：PyTorch／TensorFlow；生成式 AI 於智能客服或知識管理；Agent Flow 與 Agentic AI；追蹤論文與開源；AI coding tools；多益聽讀 550 以上。語文：英文聽說讀寫中等。
+30_104職缺更新_台灣大哥大.md:231:### I107 資料分析/數據工程師（7osnc）
+30_104職缺更新_台灣大哥大.md:234:- 條件與技能：必備：資料倉儲 ETL 開發；SQL 後端開發；BI Report 開發經驗。加分：Trinity ETL；Teradata SQL；SQL Server Reporting Service；Azure Power BI；SAP BOE；Python 後端；AI coding tools。語文：英文聽說讀寫中等。104 擅長工具欄列 Python、ETL、Django、Power BI；工作技能欄列軟體工程系統開發、軟體程式設計、Machine Learning、資料庫程式設計。
+30_104職缺更新_台灣大哥大.md:238:### I93 雲端工程師（8lnko）
+30_104職缺更新_台灣大哥大.md:241:- 條件與技能：必備：TCP/IP 協定與網路通訊原理；AWS、Azure、GCP 雲端平台架構與設計原則並有實際操作經驗；Windows 與 Linux 作業系統日常維運；獨立解決問題並與團隊合作。加分：英文基本聽說讀寫，多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、TCP/IP。
+30_104職缺更新_台灣大哥大.md:245:### I97 Kubernetes 平台工程師（8xjjo）
+30_104職缺更新_台灣大哥大.md:248:- 條件與技能：必備：3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes；GitOps；CI/CD 流水線（版本策略、Artifact/Registry、憑證／密鑰、部署與回滾）；Linux 與網路排障；Shell／Python／Ansible／Terraform 任一；WebLogic／JBoss／WildFly／Tomcat 任一的環境建置與維運。加分：自建或混合環境 Kubernetes；Argo CD、Flux、Jenkins、Bitbucket Pipelines、GitLab CI；Helm、Kustomize；OPA／Gatekeeper、Kyverno、映像掃描、SBOM；Metrics／Logs／Tracing；CKA／CKAD／CKS。104 擅長工具欄列 Jenkins、Python、Linux、Shell、Git。
+30_104職缺更新_台灣大哥大.md:252:### I162 科技服務管理暨維運工程師（8slgk）
+30_104職缺更新_台灣大哥大.md:254:- 工作內容：維持 Linux 服務系統的高可用、擴展性與效能；建置與維護監控與告警；規劃並實作 CI/CD 自動化流程；做故障排除與根因分析（RCA）；GCP／AWS 雲端服務維運；協助開發團隊做效能監控與容量規劃；日常維運含監控、排程、備份策略、定期巡檢；分析 Log 並除錯；配合版本更新與功能部署。休假制度為排休，需求 1 人。
+30_104職缺更新_台灣大哥大.md:255:- 條件與技能：必備：Linux 系統管理與指令；Web 應用服務架構（Web Service、Apache Tomcat 等中介平台）；Shell Script 或 Python 自動化；Troubleshooting；團隊溝通。加分：Incident Management；Zabbix／Nagios／Grafana／ELK Stack；Docker／Kubernetes；Jenkins／GitLab CI/CD；大型系統上線與維運流程規劃；Linux 或 GCP／AWS 證照；以 ChatGPT、LangChain、OpenAI API 等 AI 工具輔助維運。104 擅長工具與工作技能欄為不拘。
+30_104職缺更新_台灣大哥大.md:259:### I91 中介軟體平台技術課主管（8t8wz）
+30_104職缺更新_台灣大哥大.md:261:- 工作內容：帶領 7–8 人的 K8S 平台團隊，規劃、建置、優化、維運與轉型 WebLogic、JBoss、WildFly、Tomcat 企業級中介軟體平台，並需理解 Oracle／PostgreSQL／MySQL／SQL Server 資料庫架構；推動 WildFly 轉 Tomcat、容器化與微服務遷移；與應用系統、資安、基礎架構團隊協作；建立標準化維運流程與容量、備援、容錯、效能監控策略；培育人才；制定安全與合規策略（稽核、加密、權限管理）。管理責任 5–8 人，需求 1 人。
+30_104職缺更新_台灣大哥大.md:262:- 條件與技能：必備：8 年以上 IT 經驗與 3 年以上管理經驗；Kubernetes 實務（建置、調校、升級、故障處理、部署與回滾、資源與 RBAC 權限、跨層排障）；數位轉型或中介軟體遷移專案經驗；領導力與跨部門協作。加分：跨平台遷移或雲端專案；中介軟體或資料庫專業證照；API 管理或 ESB／MQ 整合平台；多益聽讀 600 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Tomcat、Google Cloud。
+30_104職缺更新_台灣大哥大.md:266:### I96 資深基礎架構整合工程師（8xjap）
+30_104職缺更新_台灣大哥大.md:273:### I94 資深系統工程師（8b5sf）
+30_104職缺更新_台灣大哥大.md:275:- 工作內容：加入 IT 基礎架構團隊：安裝、設定與維護 Linux／Windows 作業系統；維運 VMware、Nutanix 等私有雲平台；系統資源監控、異常排除與效能調校；備份、還原測試與災難復原規劃；資安防護作業（防火牆、權限控管、弱點掃描與漏洞修補）；管理伺服器與儲存設備；撰寫維運文件；評估導入 AI 與自動化等新技術。職務類別含系統工程師、MIS／網管主管，需求 1 人。
+30_104職缺更新_台灣大哥大.md:276:- 條件與技能：使用技術：Linux（RHEL／Oracle Linux／Ubuntu）、Windows Server、VMware、Nutanix、K8s、Container、Zabbix、Nagios。期待：伺服器硬體與作業系統操作；VMware 或 Nutanix 虛擬化平台管理；獨立處理故障；自動化腳本或資安經驗佳。加分：RHCE、Linux+、VMware VCP、Nutanix NCP 證照；資料中心建置、遷移、DR 計畫；Docker、Kubernetes。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux。
+30_104職缺更新_台灣大哥大.md:280:### I100 IT基礎架構工程師（90j99）
+30_104職缺更新_台灣大哥大.md:282:- 工作內容：加入 IT 基礎架構團隊，負責企業內部伺服器與平台環境的日常維運，並參與監控優化、自動化、資安強化、備援驗證與平台標準化；不限定 Linux 或 Windows 單一背景。工作包含維護伺服器與虛擬化平台、處理監控與告警、系統更新與弱點修補與權限管理、備份還原與災難復原演練、維護 SOP 與技術文件、支援系統上線。需求 2 人。
+30_104職缺更新_台灣大哥大.md:283:- 條件與技能：必備：3 年以上基礎架構、系統維運或平台管理；獨立執行伺服器或平台日常維護與排查；Zabbix、Nagios 等監控告警工具；系統更新、權限管理、備份還原、基礎資安；虛擬化或企業 IT 環境維運；文件撰寫與跨團隊協作。加分：Linux、Windows Server；Ansible、Shell Script、Python、PowerShell；VMware、Nutanix、Docker、PKI、憑證管理、災難復原；PostgreSQL、Microsoft SQL Server；生成式 AI 工具輔助排查與腳本；英文技術文件閱讀，多益 550 以上。104 擅長工具欄列 Linux、PostgreSQL。
+30_104職缺更新_台灣大哥大.md:287:### I201 GPU系統架構工程師（905ot）
+30_104職缺更新_台灣大哥大.md:290:- 條件與技能：必備：x86 伺服器硬體與作業系統操作；GPU 主機實務管理（資源切分、驅動與 CUDA 環境建置）；跨團隊溝通並轉化為 Infra 架構設計；獨立排除故障。加分：Docker、Kubernetes 與 GPU Operator 部署；AI／MLOps 開源工具底層架設；自動化腳本或資安實務；RHCE、Linux+ 證照；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、Shell、MLOps、LLM、AWS。
+30_104職缺更新_台灣大哥大.md:294:### I202 資料庫平台工程師（6xiif）
+30_104職缺更新_台灣大哥大.md:296:- 工作內容：建置並優化企業資料庫平台（PostgreSQL 為主，Oracle 為核心系統），涵蓋環境設計、參數基線、權限模型與安全防護；推動標準化與可複製交付（建置、變更、回滾流程與模板）；建立慢查治理、Top SQL 分析、容量預測、監控告警分級與 Runbook；規劃備份還原、還原驗證與 HA/DR 演練；與開發、平台、資安團隊協作；視需求參與 Hybrid Cloud 資料庫治理。職務類別為資料庫管理人員，需求 1 人。
+30_104職缺更新_台灣大哥大.md:297:- 條件與技能：必備：PostgreSQL 或 Oracle 實務維運管理（其一即可）；Linux 基本操作與效能定位（CPU／Memory／IO／Network）；跨部門溝通；文件化與標準化習慣。加分：資料庫平台化、標準化、自動化；效能調校；HA/DR；雲端與混合雲資料庫治理；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄列 Linux、Oracle、PostgreSQL、AWS。
+30_104職缺更新_台灣大哥大.md:301:### E161 系統維運工程師（93hps）
+30_104職缺更新_台灣大哥大.md:304:- 條件與技能：具 2 年以上系統維運相關工作經驗；熟悉 Windows、Linux 系統管理；熟悉 VMware 虛擬化與雲端平台維運管理；熟悉系統自動化工具（如 Power Automate、Python）；具 VMware 系統管理認證或 Linux 系統管理認證尤佳。語文：英文聽說讀寫略懂。104 擅長工具欄列 VMware、Linux；內文未列獨立的加分條件段落。
+30_104職缺更新_台灣大哥大.md:308:### I99 網路工程師（7oeca）
+30_104職缺更新_台灣大哥大.md:311:- 條件與技能：必備：Cisco、Juniper、D-Link 等網通設備的操作與維運實務，熟悉網路架構原理並能獨立作業；Check Point、Palo Alto、Juniper、Fortinet 等防火牆與資安防護設備（IPS、WAF、上網安全控管）的設定、策略管理與資安政策落地。加分：英文基本聽說讀寫，多益聽讀 550 以上。104 擅長工具欄列 Linux、Cisco、Juniper、IPS。
+30_104職缺更新_台灣大哥大.md:315:### I205 資安防禦工程師（8dpzu）
+30_104職缺更新_台灣大哥大.md:318:- 條件與技能：必備（以下五項至少具備二項）：Linux 系統管理與資安加固；OpenSearch 或 ELK Stack 平台建置與維護；EDR 工具導入與事件應變；MDR 分析與外部 SOC／MDR 平台協作；資安事件分析與解決。加分：SOC、SIEM、MDR 平台整合；CCNA、CCNP 網路認證；多益聽讀 550 以上。語文：英文聽說讀寫中等。104 擅長工具欄為不拘。
+30_104職缺更新_台灣大哥大.md:322:### I206 資安工程師（滲透測試）（86xef）
+30_104職缺更新_台灣大哥大.md:325:- 條件與技能：必備（至少具備二項）：Web／API 滲透測試與 OWASP Top 10、OWASP API Security Top 10；Burp Suite、Nmap、Nuclei、Metasploit、SQLmap、Nessus、Acunetix；主機、網路設備或網站弱點掃描與人工驗證；Windows、Linux 與網路安全；內網或 Active Directory 測試；報告撰寫與改善建議；遵守測試授權範圍與保密要求。加分：金融、電信、政府機關或大型企業滲透測試；Mobile App、紅隊；MITRE ATT&CK、CVSS、EPSS、雲端安全測試；Python、PowerShell、Bash、n8n；SAST、DAST、SCA、DevSecOps；CTF、Hack The Box、TryHackMe、Bug Bounty；CEH、CPENT、OSCP、OSWE、OSEP、eJPT、PNPT、Security+、CISSP、CCNA、CCNP 等證照；多益聽讀 550 以上。
+30_104職缺更新_台灣大哥大.md:329:### I165 TPM 技術專案工程師（8qc2y）
+30_104職缺更新_台灣大哥大.md:332:- 條件與技能：3 年以上 TPM 或專案管理經驗；JIRA／Trello 與 SDLC、Agile；系統設計、API 介接、AWS／GCP／Azure 任一雲端的基本知識；溝通、跨部門協商與簡報。加分：PMP 或 AI 相關證照；政府標案或醫療資訊（HIS/PACS）專案；完整參與軟體專案從立案到結案。104 擅長工具欄列 Java、Python、ASP.NET、JIRA、AWS、Microsoft Azure；工作技能欄列專案管理軟體操作、系統架構規劃、軟體程式設計、軟體工程系統開發。
+30_104職缺更新_台灣大哥大.md:336:### I116 TPM技術專案工程師（95v6d）
+30_104職缺更新_台灣大哥大.md:339:- 條件與技能：必備：3 年以上 TPM 或專案管理；JIRA／Trello 與 SDLC、Agile；系統設計、API 介接、AWS／GCP／Azure 任一雲端的基本知識；溝通、跨部門協商與簡報。加分：PMP 或 AI 證照；政府標案或醫療資訊（HIS/PACS）專案；完整參與軟體專案從立案到結案。104 擅長工具欄列 Python、Java、JIRA。
+30_104職缺更新_台灣大哥大.md:343:### D635 MyVideo 數據分析師（8ly9u）
+30_104職缺更新_台灣大哥大.md:346:- 條件與技能：3 年以上數據分析經驗；擅於思考分析架構，讓分析結果切合商業議題；擅長 SQL、Python／R；有使用 BI 工具建立數據儀表板的經驗，例如 Tableau；可團隊合作也可獨立作業。語文：英文聽說讀寫中等。104 擅長工具與工作技能欄為不拘。
+30_104職缺更新_台灣大哥大.md:350:### D429 產業研究分析師/數據分析師（8xx70）
+30_104職缺更新_台灣大哥大.md:353:- 條件與技能：4 年以上數據分析相關工作經驗；intellectual curiosity、獨立思考；整合、邏輯分析與簡報能力；商業敏銳度；細心、有耐心並具溝通能力；多益 700 分以上。語文：英文聽說讀寫精通。104 擅長工具與工作技能欄為不拘，內文未指名 SQL、Python 等工具。
+30_104職缺更新_台灣大哥大.md:357:### D429 資深產業研究分析師/數據分析師（8y933）
+30_104職缺更新_台灣大哥大.md:360:- 條件與技能：4 年以上數據分析相關工作經驗；intellectual curiosity、獨立思考；整合、邏輯分析與簡報能力；商業敏銳度；細心、有耐心並具溝通能力；多益 700 分以上。語文：英文聽說讀寫精通。104 擅長工具與工作技能欄為不拘，內文未指名 SQL、Python 等工具。與一般版的差別只在內文年薪區間（90~108萬）。
+30_104職缺更新_台灣大哥大.md:364:### 數據研究暨管理主管（8hnwq）
+30_104職缺更新_台灣大哥大.md:371:### 數據研究暨管理主管（8hsfv）
+30_104職缺更新_台灣大哥大.md:378:### 大哥付你分期數據分析人員（8yx2c）
+30_104職缺更新_台灣大哥大.md:380:- 工作內容：「大哥付你分期」是 BNPL（先買後付）服務。工作包含：維護額度模型與規則優化；跨部門挖掘電信大數據，提取具預測力的特徵並迭代模型；用 Tableau 與 AWS 建置即時監控儀表板；把地端（On-premise）原始資料導入 AWS 雲端中繼資料庫，排除異質資料源對接問題，維護 Data Pipeline；與產品、行銷等團隊協作並參與專案規劃；另負責大哥保與數據服務等專案的數據分析。需求 1 人。
+30_104職缺更新_台灣大哥大.md:381:- 條件與技能：2 年以上數據分析或模型開發經驗；Python、R 或其他分析工具，與 SQL 查詢及資料處理；建模經驗，如回歸分析、決策樹、隨機森林等機器學習；邏輯思維並把數據轉成業務建議。加分：金融、支付或電信行業的數據分析或模型開發專案；熟悉授信策略與流程。104 擅長工具欄為不拘。
+30_104職缺更新_台灣大哥大.md:385:### D467 用戶行為分析人員（6k2q4）
+30_104職缺更新_台灣大哥大.md:392:### F56 逾期用戶行為分析人員（891gm）
+30_104職缺更新_台灣大哥大.md:395:- 條件與技能：邏輯清晰並喜歡解讀數據；具數據分析或演算法預測模型相關經驗，會用 Python 或 R 為加分；會用 Google Gemini、ChatGPT 等生成式 AI 工具；製作商業簡報能力為必備。語文：英文聽說讀寫中等。104 擅長工具欄列 Excel、PowerPoint。
+30_104職缺更新_台灣大哥大.md:399:### F56 資深逾期用戶行為分析人員（969iy）
+30_104職缺更新_台灣大哥大.md:402:- 條件與技能：邏輯清晰並喜歡解讀數據；具數據分析或演算法預測模型相關經驗，會用 Python 或 R 為加分；會用 Google Gemini、ChatGPT 等生成式 AI 工具；商業簡報能力為必備；另要求曾參與授信、風控、催費、帳務流程優化或演算法模型商轉相關專案。語文：英文聽說讀寫中等。104 擅長工具欄列 Excel、PowerPoint。
+27_補充_中華網龍.md:1:# 27 中華網龍 公開資料補充
+27_補充_中華網龍.md:3:## 基本資料
+27_補充_中華網龍.md:5:### 公司沿革與發展階段
+27_補充_中華網龍.md:9:### 集團歸屬與智冠生態系
+27_補充_中華網龍.md:13:### 核心 IP 組合
+27_補充_中華網龍.md:17:## 業務與財務
+27_補充_中華網龍.md:19:### 營收來源與商業模式
+27_補充_中華網龍.md:23:### 2024 至 2026 年營收與獲利
+27_補充_中華網龍.md:27:### 飄流幻境 Re:星之方舟
+27_補充_中華網龍.md:31:### 吞食天地系列與授權合作
+27_補充_中華網龍.md:35:## 技術堆疊
+27_補充_中華網龍.md:37:### AI 導入遊戲研發流程與玩法
+27_補充_中華網龍.md:41:### 吞食天地虛擬世界的 Play to Earn 機制
+27_補充_中華網龍.md:45:## 近一年新聞
+27_補充_中華網龍.md:47:### 尋秦記手遊的發行與上市
+27_補充_中華網龍.md:51:### 智冠成立 AI 發展中心
+27_補充_中華網龍.md:55:### 飄流幻境一周年與 20 周年紀念展
+26_補充_華電聯網.md:1:# 26 華電聯網 公開資料補充
+26_補充_華電聯網.md:3:## 基本資料
+26_補充_華電聯網.md:5:### 公司沿革與系統整合經歷
+26_補充_華電聯網.md:9:### 四大事業領域與人力規模
+26_補充_華電聯網.md:13:### 策略夥伴與客戶群
+26_補充_華電聯網.md:14:2025 年 12 月法說會備忘錄列出華電聯網的客戶群：政府單位（交通部、國防單位、地方政府）、電信業（中華電信、台灣大哥大、遠傳）、一般企業（聯發科、群創、旺宏）。策略夥伴為大股東研華科技。公司也與 Cisco、Nokia、Microsoft、Palo Alto Networks 合作。2026 年法說會另提到，長期計畫是與 Nokia、AWS、Cisco、Dell 等國際大廠合作，打造高效能、高韌性的網路與算力基礎設施。公司自評為台灣網路建置規模第一、系統整合規模前三大。公司說明，會藉由大型專案爭取更多國內外標案，並把研華科技列為戰略夥伴，在邊緣運算與車聯網領域合作。
+26_補充_華電聯網.md:17:## 業務與財務
+26_補充_華電聯網.md:19:### 2025 年營收結構與客戶組成
+26_補充_華電聯網.md:23:### 政府標案與在手專案
+26_補充_華電聯網.md:27:### 2026 年營收與股東會決議
+26_補充_華電聯網.md:31:## 技術堆疊
+26_補充_華電聯網.md:33:### SmartQ LAS 企業專屬生成式 AI 平台
+26_補充_華電聯網.md:37:### FaceKey 人臉辨識與 Cyber Monitor 網管系統
+26_補充_華電聯網.md:41:### 智慧交通與車聯網平台
+26_補充_華電聯網.md:45:### AI 應用案例與技術架構
+26_補充_華電聯網.md:49:### AI 基礎建設與數位孿生
+26_補充_華電聯網.md:53:## 近一年新聞
+26_補充_華電聯網.md:55:### 2025 年 12 月法說會與第三季轉盈
+26_補充_華電聯網.md:59:### 2026 年 3 月 AI 服務提供商轉型與智慧城市展
+26_補充_華電聯網.md:63:### 2026 年 8 月分割案與 10 月成立碩維
+26_補充_華電聯網.md:67:### 官網公開的人力資源方向
+21_補充_聯合報.md:1:# 21 聯合報 公開資料補充
+21_補充_聯合報.md:3:## 基本資料
+21_補充_聯合報.md:5:### 聯合報系沿革與事業版圖
+21_補充_聯合報.md:10:### 官網公布的數位規模數字
+21_補充_聯合報.md:15:### 2023 年聯合招募的職類與規模
+21_補充_聯合報.md:20:## 業務與財務
+21_補充_聯合報.md:22:### 數據驅動廣告服務
+21_補充_聯合報.md:27:### 以數據製作內容與個人化推薦
+21_補充_聯合報.md:32:### 數位訂閱與歷年全球獎項
+21_補充_聯合報.md:37:## 技術堆疊
+21_補充_聯合報.md:39:### Google Cloud 資料與運算架構
+21_補充_聯合報.md:41:聯合報系 2018 年把新聞網站與資料分析搬到 Google Cloud，主要考量是長期可擴充的成本、技術與資安規範，以及與 Google Ad Manager 的整合。使用的產品包括 BigQuery、Vertex AI、Compute Engine、Google Kubernetes Engine（GKE）與 Cloud Functions。運算依產品性質分配：虛擬機放在 Compute Engine，容器化服務放在 GKE，無伺服器架構用 Cloud Functions，以因應流量波動。公司稱，遷移後新聞網站沒有發生過停機，雲端服務已運行超過 5 年。Vertex AI 用於機器學習模型開發，BigQuery 用於受眾與內容分析。案例以聯合報系 COO Apollo Sun 與數據部門 Data General Manager Anson Mok 的說法為主。
+21_補充_聯合報.md:44:### Publish X 新聞室 AI 輔助決策系統
+21_補充_聯合報.md:49:### Streamlined Newsroom 平台
+21_補充_聯合報.md:54:## 近一年新聞
+21_補充_聯合報.md:56:### 2026-06 世界新聞年會與 AI 授權議題
+21_補充_聯合報.md:61:### 2026-05-22 聯合線上與 Readmoo 推出「琅琅讀墨」
+21_補充_聯合報.md:66:### 2026-07 聯合報數位版提供紐約時報國際內容
+25_補充_凱基證券.md:1:# 25 凱基證券 公開資料補充
+25_補充_凱基證券.md:3:## 基本資料
+25_補充_凱基證券.md:5:### 中華開發金控取得控制權的過程
+25_補充_凱基證券.md:9:### 分公司據點與服務空間
+25_補充_凱基證券.md:13:## 業務與財務
+25_補充_凱基證券.md:15:### 2026 年前 8 月獲利與金控現金增資
+25_補充_凱基證券.md:19:### 資金籌措與聯貸案
+25_補充_凱基證券.md:23:### 財富管理布局與瑞銀平台
+25_補充_凱基證券.md:27:### 國際獎項與數位投資工具
+25_補充_凱基證券.md:31:### 凱基金控 2026 年度徵才方向
+25_補充_凱基證券.md:35:## 技術堆疊
+25_補充_凱基證券.md:37:### 核心系統轉型方向
+25_補充_凱基證券.md:38:凱基證券在 2023 年宣布核心系統轉型，目標是縮短新業務的技術開發時間。亞太區資訊長黃榮林在 2024 年 6 月的專訪中說，公司成立超過 30 年，長期在既有架構上疊加新模組，導致維運困難。當時系統有 2 款 APP，運行在 Windows 與 Linux，使用 4 種開發語言與 5 種資料庫。新架構採模組化平台，以 Kubernetes 支援微服務與 DevOps，並採 Cloud Ready 設計，逐模組、逐階段上線。新系統的評估面向有五項：敏捷性、準確性、穩定性、創新性與安全性。公司也導入 OCP 提升可觀測性，並善用開源社群資源。
+25_補充_凱基證券.md:41:### 資安防護與 DDoS 防禦
+25_補充_凱基證券.md:45:### AI 組織、資料平台與前線 AI Agent
+25_補充_凱基證券.md:49:### AI Agent 智慧牧羊犬的功能
+25_補充_凱基證券.md:53:## 近一年新聞
+25_補充_凱基證券.md:55:### 2026 年永續報告書與忠孝分公司開幕
+24_補充_藍新資訊.md:1:# 24 藍新資訊 公開資料補充
+24_補充_藍新資訊.md:3:## 基本資料
+24_補充_藍新資訊.md:5:### 設立與資本市場歷程
+24_補充_藍新資訊.md:9:### 據點配置與工程團隊
+24_補充_藍新資訊.md:13:## 業務與財務
+24_補充_藍新資訊.md:15:### 解決方案與專業服務
+24_補充_藍新資訊.md:19:### 客戶結構與持續性收入
+24_補充_藍新資訊.md:22:### 年度營收與股利
+24_補充_藍新資訊.md:26:### 2026 年營收走勢與獲利指標
+24_補充_藍新資訊.md:30:### 智能應用發展部與 AI 營收占比
+24_補充_藍新資訊.md:34:## 技術堆疊
+24_補充_藍新資訊.md:36:### 代理與整合的原廠產品線
+24_補充_藍新資訊.md:40:### AI 基礎設施與企業 LLM 私有化服務
+24_補充_藍新資訊.md:44:### 資安架構與機房升級方向
+24_補充_藍新資訊.md:48:## 近一年新聞
+24_補充_藍新資訊.md:50:### 2025 年底原廠夥伴獎項
+24_補充_藍新資訊.md:54:### 2026 年上櫃審議到掛牌
+20_補充_台灣大哥大.md:1:# 20 台灣大哥大 公開資料補充
+20_補充_台灣大哥大.md:3:## 基本資料
+20_補充_台灣大哥大.md:5:### 與台灣之星合併（2023-12-01 生效）
+20_補充_台灣大哥大.md:10:### 官網呈現的事業組成與徵才入口
+20_補充_台灣大哥大.md:15:## 業務與財務
+20_補充_台灣大哥大.md:17:### 2025 年第四季與全年細項
+20_補充_台灣大哥大.md:22:### 2026 年第三季電信本業
+20_補充_台灣大哥大.md:27:### 2026 年第三季企業服務與新科技事業
+20_補充_台灣大哥大.md:32:### 公開收購精誠資訊的條件
+20_補充_台灣大哥大.md:37:### 精誠收購完成與整合方向
+20_補充_台灣大哥大.md:42:### 「黃金十年」宣示與 2020–2025 趨勢
+20_補充_台灣大哥大.md:47:## 技術堆疊
+20_補充_台灣大哥大.md:49:### MyAgent 企業 AI 代理平台與工程師規模
+20_補充_台灣大哥大.md:54:### myVoca 語音辨識模型
+20_補充_台灣大哥大.md:59:### 內部 AI 導入與 AI 算力服務
+20_補充_台灣大哥大.md:64:## 近一年新聞
+20_補充_台灣大哥大.md:66:### 2026-03-02 與 AST SpaceMobile 簽署低軌衛星合作備忘錄
+23_補充_神通資訊.md:1:# 23 神通資訊 公開資料補充
+23_補充_神通資訊.md:3:## 基本資料
+23_補充_神通資訊.md:5:### 神通資訊的沿革與規模
+23_補充_神通資訊.md:9:### 集團關係與公開出現的單位名稱
+23_補充_神通資訊.md:13:### 官方公開的招募與培訓
+23_補充_神通資訊.md:17:## 業務與財務
+23_補充_神通資訊.md:19:### 智慧交通與智慧政府產品
+23_補充_神通資訊.md:23:### 智慧製造、企業、金融與服務產品
+23_補充_神通資訊.md:27:### 神通 AI 數位學院與教育布局
+23_補充_神通資訊.md:31:## 技術堆疊
+23_補充_神通資訊.md:33:### Agent Builder 企業 AI 一體機的軟硬體
+23_補充_神通資訊.md:37:### 2026-07 AI WAVE 展出的伺服器版本
+23_補充_神通資訊.md:38:2026 年 7 月 30 日的報導描述神通在 AI WAVE 展 AMD 專區的展出。底層伺服器是神雲 MiTAC TN85-B8261 2U 機型，搭配 AMD EPYC 9004／9005 系列處理器與 AMD Instinct MI350P PCIe 5.0 顯示卡。部署規格從迷你與標準工作站到高階伺服器都有。軟體面是完全地端部署、以 RAG 做知識檢索、低程式碼／無程式碼的拖拉式介面。通用 Agent 涵蓋產、銷、人、發、財五大職能；範例包括 ESG 溫室氣體盤查助理（串接 IoT 能源資料與碳法規知識庫）、履歷篩選、專利分析、發票 OCR 與財務異常偵測。
+23_補充_神通資訊.md:41:### MiEcoMatrix 與 MiEMS 微電網
+23_補充_神通資訊.md:45:## 近一年新聞
+23_補充_神通資訊.md:47:### 2026-01 至 2026-06 獎項與展出
+23_補充_神通資訊.md:51:### 2026-08 與資策會 MIC 的高階主管論壇
+04_神通資訊.md:1:# 神通資訊科技股份有限公司（MiTAC Information Technology）深查
+04_神通資訊.md:10:## 先看這 6 點
+04_神通資訊.md:16:5. 【第三方】資料型、Java 型職缺的面試以手寫基礎題為主（Java、SQL、HTML/Vue）。
+04_神通資訊.md:21:## 1. 基本資料
+04_神通資訊.md:39:## 2. 集團關係
+04_神通資訊.md:48:## 3. 業務與財務
+04_神通資訊.md:50:### 產品與業務
+04_神通資訊.md:60:### 主要客戶
+04_神通資訊.md:65:### 營收（近 3 年）
+04_神通資訊.md:69:### 標案比例
+04_神通資訊.md:74:## 4. 報名部門：新興應用部
+04_神通資訊.md:84:## 5. 職缺
+04_神通資訊.md:89:- 結論：目前 AI／Python／後端／資料職缺清單查無。職稱、薪資、發布日皆查無。
+04_神通資訊.md:94:## 6. 技術堆疊
+04_神通資訊.md:101:- 【第三方】面試題顯示常見語言：Java、SQL、HTML/Vue。https://interview.tw/c/gXRQ
+04_神通資訊.md:103:- 技術部落格、GitHub：沒查到公司官方技術部落格或 GitHub 組織。
+04_神通資訊.md:104:- 【推測】新興應用部可能偏 AI 應用整合，但語言（Python？）不確定。要在面談確認。
+04_神通資訊.md:106:## 7. 面試流程與常見題目
+04_神通資訊.md:108:### 樣本數
+04_神通資訊.md:115:### 流程（第三方，多為 Java／全端職缺，不一定適用你）
+04_神通資訊.md:119:- 近期 Java 工程師筆試約 18 題手寫：Map vs Set、checked vs runtime exception、String/StringBuilder、SQL join／GROUP BY／HAVING、v-if vs v-show。https://interview.tw/c/gXRQ
+04_神通資訊.md:122:### 資料工程師面試
+04_神通資訊.md:125:### 負面
+04_神通資訊.md:128:### 對你的意義
+04_神通資訊.md:130:- 要做的準備：複習 SQL（JOIN、GROUP BY）、Python、REST。
+04_神通資訊.md:132:## 8. 工作評價
+04_神通資訊.md:134:### GoodJob（第三方，匿名，未證實）
+04_神通資訊.md:139:### 加班（多來源交叉）
+04_神通資訊.md:152:### 薪資（GoodJob 單一心得，月薪）
+04_神通資訊.md:158:### 主管
+04_神通資訊.md:161:### 離職原因
+04_神通資訊.md:164:### 其他
+04_神通資訊.md:169:## 9. 近一年新聞
+04_神通資訊.md:184:## 10. 給求職者的判斷
+04_神通資訊.md:186:### (a) 適合度與理由
+04_神通資訊.md:188:- 合：你有 Gemini 應用、OpenCV 影像、Flask＋MySQL 的實作；公司剛推地端 AI Agent，缺能做 AI 應用整合與 PoC 的人。
+04_神通資訊.md:190:- 不合：公司主力是 Java、駐點、政府專案。你的 Python 路線可能與多數職缺不同。
+04_神通資訊.md:193:### (b) 風險
+04_神通資訊.md:200:### (c) 5 個該問的問題
+04_神通資訊.md:202:2. 這個職位主要寫什麼語言？有沒有 Python？AI 用哪個模型（雲端或地端）？
+04_神通資訊.md:207:### (d) 最能對上的專案，與不要誇大的事
+04_神通資訊.md:210:- 停車推薦系統（Flask＋MySQL）可證明你會做後端與資料庫，對上他們的 SQL 基礎要求。
+04_神通資訊.md:212:  - 不要說自己會私有化 LLM 部署、Kubernetes、AMD 推論最佳化。你沒有。
+04_神通資訊.md:213:  - 程式碼主要由 AI Agent 產生：直接說「我負責需求與驗收」，並準備能講清楚資料流、錯誤處理與驗收方式。公司面試有手寫 SQL／Java 基礎題，被問到答不出來會扣分。
+04_神通資訊.md:219:## 11. 未查到與限制
+04_神通資訊.md:221:- 查無：新興應用部的任何公開資料；營收（近 3 年）；標案占營收比例；2025 以後的標案得標清單；具名付費客戶；官網與第三方平台的 AI／Python／後端職缺；離職原因；PTT Soft_Job、Dcard、Glassdoor 的神通資訊心得；裁員、融資、訴訟（未見報導）。
+09_中華網龍.md:1:# 中華網龍股份有限公司（3083）深查
+09_中華網龍.md:9:## 1. 基本資料
+09_中華網龍.md:26:## 2. 業務與財務
+09_中華網龍.md:28:### 業務
+09_中華網龍.md:41:### 近 3 年營收
+09_中華網龍.md:56:## 3. 報名部門（技術研發部）在做什麼
+09_中華網龍.md:68:## 4. 職缺
+09_中華網龍.md:73:- Yourator、CakeResume、1111：搜尋「網龍／中華網龍＋Python／AI／後端」都沒有找到網龍職缺。查無。
+09_中華網龍.md:75:- 結論：AI／Python／後端／資料職缺的職稱、技能、薪資、發布日：查無。
+09_中華網龍.md:77:## 5. 技術堆疊
+09_中華網龍.md:84:- GitHub、技術部落格、技術分享活動：搜尋沒找到網龍的。查無。
+09_中華網龍.md:88:- 【推測】網龍技術偏遊戲 client（Unity／C#）。你的 Python／Flask／Gemini 背景與此不同。需當天確認。
+09_中華網龍.md:90:## 6. 面試流程與常見題目
+09_中華網龍.md:105:- 提到：問玩過哪些遊戲、是否玩過公司遊戲、Git 熟悉度（單一心得，2021）。
+09_中華網龍.md:108:- 沒有 AI／Python 職位的面試題樣本。
+09_中華網龍.md:111:## 7. 工作評價
+09_中華網龍.md:129:## 8. 近一年新聞
+09_中華網龍.md:142:## 9. 給求職者的判斷
+09_中華網龍.md:144:### (a) 適合度
+09_中華網龍.md:151:### (b) 風險
+09_中華網龍.md:156:- 你沒有私有化 LLM、Kubernetes 經驗。若職缺要求，要直說。
+09_中華網龍.md:158:### (c) 5 個該問的問題
+09_中華網龍.md:165:### (d) 最能對上的專案與不要誇大的事
+09_中華網龍.md:171:  - 不說有私有化 LLM、Kubernetes 經驗。
+09_中華網龍.md:177:## 未查到與限制
+03_叡揚資訊.md:1:# 叡揚資訊股份有限公司（GSS，6752）廠商深查
+03_叡揚資訊.md:6:## 0. 先看這 5 點
+03_叡揚資訊.md:11:- 公開職缺偏 Java／Spring Boot。Python 只出現在「加分」。
+03_叡揚資訊.md:12:- 你的 Python+Flask+Gemini 經驗不是他們的主力技術。要誠實談。
+03_叡揚資訊.md:14:## 1. 基本資料
+03_叡揚資訊.md:33:## 2. 業務與財務
+03_叡揚資訊.md:35:### 產品【自述】https://www.gss.com.tw
+03_叡揚資訊.md:46:### 主要客戶
+03_叡揚資訊.md:50:### 近年營收
+03_叡揚資訊.md:63:## 3. 報名部門在做什麼
+03_叡揚資訊.md:75:## 4. 職缺
+03_叡揚資訊.md:86:| JAVA 軟體設計師（台北） | 工作含 LLM、電腦視覺、ML 應用；全端；加分：Spring Boot、MyBatis、Hibernate、JPA、Python、React、jQuery、SQL Server、Oracle | 月薪 35,000–55,000 | 更新 2025-04-01，發布日未標，狀態「停止招募」 | https://www.yourator.co/companies/gss/jobs/36883 |
+03_叡揚資訊.md:87:| 資安工程師 | 要 DevOps 工具；Java／Python 等後端經驗（搜尋摘要） | 未取得 | 未取得 | https://www.yourator.co/companies/gss/jobs/36847 |
+03_叡揚資訊.md:91:## 5. 技術堆疊
+03_叡揚資訊.md:93:- 後端：Java、Spring Boot、Spring MVC、MyBatis、Hibernate、JPA。Python 為加分。【第三方，職缺】https://www.yourator.co/companies/gss/jobs/36883
+03_叡揚資訊.md:94:- 前端：React、jQuery、AJAX、Webpack。同上。
+03_叡揚資訊.md:95:- 資料庫：MS SQL Server、Oracle。同上。
+03_叡揚資訊.md:97:- 筆試：C 語言演算法、網頁、SQL。【第三方，單一心得】https://www.goodjob.life/experiences/65b367ba3729c6fca6db6c05
+03_叡揚資訊.md:100:- GitHub、技術部落格：沒有查。查無。
+03_叡揚資訊.md:102:## 6. 面試流程與常見題目
+03_叡揚資訊.md:108:- 先筆試：C 語言簡單演算法、網頁題、SQL 題。
+03_叡揚資訊.md:117:## 7. 工作評價
+03_叡揚資訊.md:134:## 8. 近一年新聞
+03_叡揚資訊.md:141:- 2026：CRA 合規、零信任、Digital.ai 等資安活動新聞。https://www.cna.com.tw/business/chinese/446310
+03_叡揚資訊.md:144:## 9. 給求職者的判斷
+03_叡揚資訊.md:146:### (a) 適合度
+03_叡揚資訊.md:150:- 減分：主力是 Java／Spring Boot。你的主力是 Python。
+03_叡揚資訊.md:153:### (b) 風險
+03_叡揚資訊.md:159:- 你沒有 Java 經驗。要先確認是否接受 Python 或培訓。
+03_叡揚資訊.md:161:### (c) 5 個該問的問題
+03_叡揚資訊.md:164:3. 這個職位主要寫 Java 還是 Python？AI 專案是否交給這個部門？
+03_叡揚資訊.md:168:### (d) 最能對上的專案與不要誇大
+03_叡揚資訊.md:170:- 次要：Flask＋MySQL＋Gemini 停車推薦系統。可談 SQL、API、資料庫。對應他們的 SQL 筆試重點。
+03_叡揚資訊.md:174:  - 沒有私有化 LLM 部署、Kubernetes 經驗。他們的 InsAI 主打地端部署，要說「沒做過，願意學」。
+03_叡揚資訊.md:178:## 10. 未查到與限制
+03_叡揚資訊.md:189:- CakeResume、1111、LinkedIn、PTT Soft_Job、Dcard、Glassdoor、GitHub、技術部落格：沒有逐一查。查無。
+07_華電聯網.md:1:# 07 華電聯網股份有限公司（Hwacom，6163）深查
+07_華電聯網.md:6:## 0. 一頁結論
+07_華電聯網.md:14:## 1. 基本資料
+07_華電聯網.md:31:## 2. 業務與財務
+07_華電聯網.md:33:### 產品與服務
+07_華電聯網.md:45:### 主要客戶
+07_華電聯網.md:50:### 營收（核對結果）
+07_華電聯網.md:63:### 標案占比（重點）
+07_華電聯網.md:70:## 3. 報名部門（營運處人資部）在做什麼
+07_華電聯網.md:76:## 4. 職缺
+07_華電聯網.md:82:- 1111、LinkedIn：搜尋沒有找到華電聯網的 AI／Python／後端／資料職缺。
+07_華電聯網.md:85:- 結論：AI／Python／後端／資料職缺，查無公開刊登。請當天直接問。
+07_華電聯網.md:87:## 5. 技術堆疊
+07_華電聯網.md:89:- 公開資料查無語言、框架、雲、資料庫。查了：官網、職缺平台、搜尋 GitHub 與技術部落格（沒有找到公司帳號）。
+07_華電聯網.md:92:- 【推測】主體是網路、資通訊、雲端基礎建設整合。軟體多為自有產品與專案客製。Python 比重不明。
+07_華電聯網.md:94:## 6. 面試流程與常見題目
+07_華電聯網.md:108:## 7. 工作評價
+07_華電聯網.md:121:## 8. 近一年新聞
+07_華電聯網.md:132:## 9. 給求職者的判斷
+07_華電聯網.md:134:### (a) 適合度
+07_華電聯網.md:141:- 不適合的部分：公開資料看不到 Python／後端職缺，也沒有 LLM 私有化部署。
+07_華電聯網.md:143:### (b) 風險
+07_華電聯網.md:152:### (c) 5 個該問的問題
+07_華電聯網.md:159:### (d) 最能對上的專案與不要誇大
+07_華電聯網.md:162:- 停車推薦系統（Flask＋MySQL）：對應智慧城市、交通場景。
+07_華電聯網.md:169:## 10. 未查到與限制
+02_聯合報.md:1:# 02 聯合報／聯合報系（udngroup）深查
+02_聯合報.md:5:## 0. 報名資料與矛盾
+02_聯合報.md:12:## 1. 基本資料
+02_聯合報.md:14:### 1.1 法人關係（重點）
+02_聯合報.md:29:### 1.2 聯合報股份有限公司
+02_聯合報.md:42:### 1.3 聯合線上股份有限公司
+02_聯合報.md:51:### 1.4 集團（公司自述）
+02_聯合報.md:56:## 2. 業務與財務
+02_聯合報.md:64:## 3. 數據發展部在做什麼
+02_聯合報.md:72:  - 2026-06-02 在法國馬賽獲 WAN-IFRA 2026 Digital Media Awards「最佳創新數位產品」金獎。811 件參賽，50 件入圍。連三年金獎。
+02_聯合報.md:77:【推測】部門分兩塊：(a) 廣告／受眾資料與分析（SQL、BigQuery）；(b) 新聞室 AI 產品（Publish X 類）。依據是上列事實，不是部門自述。
+02_聯合報.md:79:## 4. 職缺
+02_聯合報.md:86:- 間接線索：GoodJob 面試心得有「AI 工程師」（2025-01 面試，2026-02-09 發文），考 SQL 與 Python LeetCode Easy。https://www.goodjob.life/companies/聯合報股份有限公司/interview-experiences
+02_聯合報.md:88:## 5. 技術堆疊
+02_聯合報.md:91:- 語言／框架：筆試線索只見 SQL 與 Python。其餘【查無】。
+02_聯合報.md:92:- GitHub、技術部落格、技術分享：搜尋一次，未找到數據發展部的公開技術文章。【查無】
+02_聯合報.md:94:- Publish X 底層（模型、RAG、框架）：【查無】。
+02_聯合報.md:96:## 6. 面試流程與題目
+02_聯合報.md:102:- 數據分析師，2026-10-11 發文（2026-07 面）：SQL 筆試後與主管面談；月薪 4.5 萬；沒通知。GoodJob。
+02_聯合報.md:104:- 數據分析師，2026-04-30 發文：會議室筆試（SQL、行銷基礎、新聞議題申論）再面談；錄取；月薪 4.5 萬。GoodJob。
+02_聯合報.md:105:- AI 工程師，2026-02-09 發文（2025-01 面）：SQL 與觀念筆試，Python 寫 LeetCode Easy；沒通知；月薪 4.2 萬。GoodJob。
+02_聯合報.md:112:- 常見流程：SQL 筆試 → 主管面談；部分要作品集簡報。
+02_聯合報.md:117:## 7. 工作評價
+02_聯合報.md:131:## 8. 近一年新聞
+02_聯合報.md:137:## 9. 給求職者的判斷
+02_聯合報.md:139:### (a) 適合度
+02_聯合報.md:142:  - 面試重點是專案說明與 SQL。他有完整專案可講。
+02_聯合報.md:146:### (b) 風險
+02_聯合報.md:152:- 他沒有 BigQuery／GCP 經驗（他的專案是 Flask+MySQL、Next.js+Gemini）。
+02_聯合報.md:154:### (c) 5 個該問的問題
+02_聯合報.md:158:4. 筆試考什麼？SQL 之外要不要 Python？
+02_聯合報.md:161:### (d) 最能對上的專案與不要誇大
+02_聯合報.md:162:- 最對上：和泰 AI 黑客松 15 強（Next.js+Gemini）。對應 Publish X「AI 輔助決策」。次要：停車推薦系統（推薦、MySQL、資料）。
+02_聯合報.md:168:## 10. 未查到與限制
+01_台灣大哥大.md:1:# 01 台灣大哥大 廠商深查
+01_台灣大哥大.md:8:## 1. 基本資料
+01_台灣大哥大.md:25:## 2. 業務與財務
+01_台灣大哥大.md:51:## 3. 報名部門在做什麼（企業服務應用部）
+01_台灣大哥大.md:61:    - 以自研 GenAIus 為核心，用 MCP 串向量檢索、系統操作、人工協作。
+01_台灣大哥大.md:70:## 4. 職缺
+01_台灣大哥大.md:79:| 107 資料分析／數據工程師（可遠端） | Python、SQL；PostgreSQL 或 SQL Server；ETL、BI 必備；CI/CD、Docker、MLOps；TensorFlow、PyTorch、Scikit-learn、Pandas；AWS/GCP/Azure 加分；Teradata 加分；LLM 知識加分 | 年薪 81–108 萬（績效平均） | Yourator 頁更新 2026-01-30（無刊登日） | https://www.yourator.co/companies/taiwanmobile/jobs/25039 |
+01_台灣大哥大.md:80:| I113 (Sr.) 軟體工程師，全端（可遠端） | 全端框架；CI/CD；AWS/GCP/Azure 加分（搜尋摘要） | 年薪約 81–108 萬（搜尋摘要） | 1111 更新 2026-03-09（搜尋摘要） | https://www.1111.com.tw/job/132136774/ |
+01_台灣大哥大.md:81:| I106 .NET 工程師（可遠端） | .NET、SQL；AI 開發經驗加分（搜尋摘要） | 查無 | 舊刊登 | https://www.yourator.co/companies/taiwanmobile/jobs/24249 |
+01_台灣大哥大.md:84:| 實習：AI 應用／資料建模 | 基礎 Python；AI／ML／DL 經驗 | 時薪 200–300 元 | 政大平台 2025-03-18 | https://cd.nccu.edu.tw/job/view/3695 |
+01_台灣大哥大.md:88:## 5. 技術堆疊
+01_台灣大哥大.md:90:- 來自職缺【第三方平台，公司刊登】：Python、SQL、PostgreSQL／SQL Server、Teradata、Docker、CI/CD、MLOps、Spark（標籤）、Java、C#／.NET、Spring Boot（面試題）、AWS／GCP／Azure。
+01_台灣大哥大.md:91:- 來自公司發表【自述】：自研 GenAIus、MCP、向量檢索 RAG、NVIDIA GB300 算力、自研語音模型 myVoca。
+01_台灣大哥大.md:93:- GitHub、技術部落格：未查。
+01_台灣大哥大.md:94:- 【推測】企業端偏 Java／.NET 與資料倉儲；AI 端有 Python。企業服務應用部實際語言查無。
+01_台灣大哥大.md:96:## 6. 面試流程與常見題目
+01_台灣大哥大.md:106:  - 題目：自我介紹、Spring Boot 自評 1–5、Docker 自評 1–5、優缺點、能否加班。
+01_台灣大哥大.md:113:## 7. 工作評價
+01_台灣大哥大.md:127:## 8. 近一年新聞（2025-11 至 2026-11）
+01_台灣大哥大.md:142:## 9. 給求職者的判斷
+01_台灣大哥大.md:144:### (a) 適合度
+01_台灣大哥大.md:146:  - 公司正把資源投向企業 AI（算力、MyAgent、RAG、MCP）。【自述】
+01_台灣大哥大.md:147:  - 你的 Gemini 應用經驗屬於「應用層」，與 MyAgent 的 RAG／Agent 方向相近。【推測】
+01_台灣大哥大.md:148:  - 招募標籤偏 Java／.NET 與資料倉儲，與你的 Python／Flask 不完全對齊。【推測】
+01_台灣大哥大.md:151:### (b) 風險
+01_台灣大哥大.md:158:### (c) 5 個該問的問題
+01_台灣大哥大.md:165:### (d) 最能對上的專案與不能誇大的事
+01_台灣大哥大.md:166:- 最對上：Flask＋MySQL＋Gemini 停車推薦系統。
+01_台灣大哥大.md:167:  - 對應 Python 後端、資料庫、LLM 應用，且可說明需求拆解與驗收方法。
+01_台灣大哥大.md:177:## 未查到與限制
+05_藍新資訊.md:1:# 藍新資訊股份有限公司（NEWEB Information，6938）深查
+05_藍新資訊.md:6:## 0. 先釐清：藍新資訊 vs 藍新金流（NewebPay）
+05_藍新資訊.md:16:## 1. 基本資料
+05_藍新資訊.md:37:### 母公司／集團（有矛盾，要小心）
+05_藍新資訊.md:45:## 2. 業務與財務
+05_藍新資訊.md:47:### 業務【公司自述】
+05_藍新資訊.md:49:- 平台：UNIX、AIX、Linux、NT；虛擬化、資料庫、儲存、備份、網路資安。
+05_藍新資訊.md:56:### 客戶【公司自述】
+05_藍新資訊.md:63:### 營收與獲利（數字不一致，不要引用成定論）
+05_藍新資訊.md:78:## 3. 智能應用發展部在做什麼
+05_藍新資訊.md:88:  - 可能重視 on-prem、RAG、Agent、權限與資料治理，少做 SaaS 產品。
+05_藍新資訊.md:92:## 4. 職缺
+05_藍新資訊.md:97:  - 技能標籤：Python、Linux、MySQL、PostgreSQL、Github、VMware、EMC、Firewall、Cisco、Checkpoint、Fortinet。
+05_藍新資訊.md:103:- AI／Python／後端／資料職缺：查無公開頁面。不能確認職缺要求。
+05_藍新資訊.md:105:## 5. 技術堆疊
+05_藍新資訊.md:108:  - 平台：UNIX、AIX、Linux、Windows Server、VMware 虛擬化。
+05_藍新資訊.md:111:  - 104 網路工程師標籤有 Python、MySQL、PostgreSQL（見第 4 節）。
+05_藍新資訊.md:113:- 技術部落格、GitHub、活動分享：搜尋未發現。查無。
+05_藍新資訊.md:114:- 【推測】AI 部門技術用 Python、Docker、vLLM／Ollama 一類推論工具。這是我的猜測，沒有來源。
+05_藍新資訊.md:116:## 6. 面試流程與常見題目
+05_藍新資訊.md:127:  - 2023-10 AIX/Linux 系統工程師，月薪 40,000，5.0 分，人資與部門主管輪流問。
+05_藍新資訊.md:131:- 樣本數很小。AI 或 Python 職缺的面試題：查無。
+05_藍新資訊.md:133:## 7. 工作評價
+05_藍新資訊.md:142:## 8. 近一年新聞
+05_藍新資訊.md:151:## 9. 給求職者的判斷
+05_藍新資訊.md:153:### (a) 適合度
+05_藍新資訊.md:159:  - 你沒有 on-prem LLM、Kubernetes 經驗。而他們的賣點正是私有化。落差大。
+05_藍新資訊.md:162:### (b) 風險
+05_藍新資訊.md:170:### (c) 該問的 5 個問題
+05_藍新資訊.md:172:2. 部門現在幾人？已有哪幾個客戶案例？用什麼模型與框架（vLLM、RAG、Agent 框架）？
+05_藍新資訊.md:173:3. 私有化專案裡，我需要自己懂 GPU、Linux、容器，還是有基礎架構團隊配合？
+05_藍新資訊.md:177:### (d) 最對得上的專案，與不要誇大的事
+05_藍新資訊.md:178:- 最對：Gemini 專案裡的 RAG／Agent 部分，以及和泰黑客松 15 強（Next.js + Gemini，有決賽經驗）。
+05_藍新資訊.md:180:- 次要：停車推薦系統（Flask + MySQL）：證明你有資料庫與後端交付經驗。
+05_藍新資訊.md:184:  - 不要說「懂 Kubernetes」「懂 GPU 叢集」。
+05_藍新資訊.md:189:## 10. 未查到與限制
+05_藍新資訊.md:199:- 具名客戶、技術部落格、GitHub：查無。
+06_凱基證券.md:1:# 凱基證券股份有限公司（KGI Securities）廠商深查
+06_凱基證券.md:14:## 1. 基本資料
+06_凱基證券.md:37:## 2. 業務與財務
+06_凱基證券.md:39:### 業務
+06_凱基證券.md:45:### 近 3 年獲利（稅後純益）
+06_凱基證券.md:62:## 3. 報名部門（人資部）在做什麼
+06_凱基證券.md:73:## 4. 職缺（AI／Python／後端／資料）
+06_凱基證券.md:98:## 5. 技術堆疊
+06_凱基證券.md:102:| 現行系統 | Windows 與 Linux；2 個 APP；4 種開發語言；5 種資料庫 | https://www.cio.com.tw/interview-huang-ronglin-cio-cio-asia-pacific-region-kaki-securities/ | 自述（亞太區資訊長專訪，2024-06） |
+06_凱基證券.md:103:| 新核心系統方向 | 模組化平台；Kubernetes、微服務、DevOps；Cloud Ready | 同上 | 自述 |
+06_凱基證券.md:110:| 對外 API | 搜尋摘要稱凱基證券提供 Python API 與量化課程。我沒有取得原始網址 | 查無可驗證網址 | 未驗證 |
+06_凱基證券.md:113:- 雲供應商（GCP／Azure／AWS）：查無。
+06_凱基證券.md:114:- 技術部落格、GitHub：查無凱基證券官方帳號與技術分享。
+06_凱基證券.md:115:- 重點【推測】：證券核心交易系統偏傳統（C#／Java／Windows）。Python 與 LLM 較可能出現在 AI 團隊（直屬資訊長）與數位創新部。
+06_凱基證券.md:119:## 6. 面試流程與常見題目
+06_凱基證券.md:121:### 樣本數
+06_凱基證券.md:129:### 資訊類心得（面試趣，全部是單一心得，共 7 則可見）
+06_凱基證券.md:143:### GoodJob 面試（2026-10，全是單一心得）
+06_凱基證券.md:149:### 轉職者進證券業 IT 的門檻
+06_凱基證券.md:159:## 7. 工作評價
+06_凱基證券.md:161:### GoodJob（匿名自填，樣本小）
+06_凱基證券.md:167:### 資訊與資料相關（全是單一心得）
+06_凱基證券.md:180:### 其他
+06_凱基證券.md:189:## 8. 近一年新聞（2025-11 至 2026-11）
+06_凱基證券.md:209:## 9. 給求職者的判斷
+06_凱基證券.md:211:### (a) 適合度與理由
+06_凱基證券.md:214:- 減分：技術職缺清單查不到；IT 偏傳統系統（Windows、C#／Java、Kubernetes 轉型中）；你沒有 K8s、私有化 LLM 經驗。
+06_凱基證券.md:217:### (b) 風險
+06_凱基證券.md:218:- 查無現行 AI／Python 職缺。可能只是泛招人才。
+06_凱基證券.md:226:### (c) 5 個該問的問題
+06_凱基證券.md:229:3. 資訊處日常主要語言與框架是什麼？新核心系統的 Kubernetes 改造進度如何？
+06_凱基證券.md:233:### (d) 最能對上的專案與不要誇大的事
+06_凱基證券.md:236:2. **Flask＋MySQL＋Gemini 停車推薦系統**。對應「後端＋資料庫＋LLM 串接」，是最接近 Python 後端職缺的證據。
+06_凱基證券.md:241:- 沒有私有化 LLM、Kubernetes 經驗。凱基新核心系統以 Kubernetes 為基礎，直接說明「沒做過，有學習意願與規劃」。
+06_凱基證券.md:248:## 10. 未查到與限制
+06_凱基證券.md:258:- 現行職缺的內部 Python／LLM 技術堆疊、雲供應商、GitHub：查無。
+06_凱基證券.md:259:- 內部 ChatGPT、Python API、黑客松等數項來自搜尋摘要，原始頁面部分 404 或未打開，已標「未驗證」。
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "@'
+from pathlib import Path
+import re,json
+ban=re.compile('面試|評價|風險|判斷|推測|矛盾|限制|未查到|對應|作戰')
+rows=[]
+for p in sorted(Path('.').glob('*.md')):
+ n=p.name[:2]
+ if n not in ['01','02','03','04','05','06','07','09','20','21','22','23','24','25','26','27','30','31','32','33','34','35','36','37']:continue
+ stack=[]
+ for i,line in enumerate(p.read_text(encoding='utf-8-sig').splitlines(),1):
+  m=re.match(r'"'^(#{1,6}) (.*)'"',line)
+  if m:
+   lev=len(m[1]);stack=[s for s in stack if s[0]<lev]+[(lev,m[2])];continue
+  heads=[v for l,v in stack if l>1]
+  if not heads or ban.search(' > '.join(heads)) or ban.search(line):continue
+  if n.startswith('0') and not re.match(r'"'^(1|2|4|5|8)'"\\. ',heads[0]):continue
+  rows.append((p.name,i,' > '.join(heads),line))
+keys=['React','Docker','Kubernetes','Linux','TypeScript','Git','Azure','AWS','RAG','MCP','FastAPI','PostgreSQL','MySQL','Oracle','CI/CD','TensorFlow','PyTorch','LangChain','Redis','C++','JavaScript','資安','員工宿舍','寵物','四天工作','四日工作','生育補助','生育津貼']
+for k in keys:
+ hits=[r for r in rows if k.lower() in r[3].lower()]
+ print(k,','.join(sorted(set(r[0].split('_')[-1][:-3] for r in hits))),len(hits))
+for r in rows:
+ if any(k.lower() in r[3].lower() for k in ['React','TypeScript','FastAPI','PostgreSQL','CI/CD','TensorFlow','PyTorch','LangChain','Redis','MCP']):
+  print(json.dumps(r,ensure_ascii=False))
+'@ | python -" in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 540ms:
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "C:\Program Files\Python311\Lib\re\__init__.py", line 227, in compile
+    return _compile(pattern, flags)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\re\__init__.py", line 294, in _compile
+    p = _compiler.compile(pattern, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\re\_compiler.py", line 745, in compile
+    p = _parser.parse(p, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\re\_parser.py", line 989, in parse
+    p = _parse_sub(source, state, flags & SRE_FLAG_VERBOSE, 0)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\re\_parser.py", line 464, in _parse_sub
+    itemsappend(_parse(source, state, verbose, nested + 1,
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\re\_parser.py", line 691, in _parse
+    raise source.error("nothing to repeat",
+re.error: nothing to repeat at position 0
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+已確認現有跨公司題的主題。我正逐項篩選新候選，排除禁用段落，並核對每個主題是否涵蓋所有符合的公司。
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command '$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+@'"'
+from pathlib import Path
+import re,json
+ban=re.compile('面試|評價|風險|判斷|推測|矛盾|限制|未查到|對應|作戰')
+rows=[]
+for p in sorted(Path('.').glob('*.md')):
+ n=p.name[:2]
+ if n not in ['01','02','03','04','05','06','07','09','20','21','22','23','24','25','26','27','30','31','32','33','34','35','36','37']:continue
+ stack=[]
+ for i,line in enumerate(p.read_text(encoding='utf-8-sig').splitlines(),1):
+  m=re.match(r'"'^(#{1,6}) (.*)'"',line)
+  if m:
+   lev=len(m[1]);stack=[s for s in stack if s[0]<lev]+[(lev,m[2])];continue
+  heads=[v for l,v in stack if l>1]
+  if not heads or ban.search(' > '.join(heads)) or ban.search(line):continue
+  if n.startswith('0') and not re.match(r'"'^(1|2|4|5|8)'"\\. ',heads[0]):continue
+  rows.append((p.name,i,' > '.join(heads),line))
+keys=['React','Docker','Kubernetes','Linux','TypeScript','Git','Azure','AWS','RAG','MCP','FastAPI','PostgreSQL','MySQL','Oracle','CI/CD','TensorFlow','PyTorch','LangChain','Redis','C++','JavaScript']
+for k in keys:
+ hits=[r for r in rows if k.lower() in r[3].lower()]
+ print(k,','.join(sorted(set(r[0].split('_')[-1][:-3] for r in hits))),len(hits))
+for r in rows:
+ if any(k.lower() in r[3].lower() for k in ['React','TypeScript','FastAPI','PostgreSQL','CI/CD','TensorFlow','PyTorch','LangChain','Redis','MCP']):
+  print(json.dumps(r,ensure_ascii=False))
+'@ | python -" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 562ms:
+React �Ͱ��Ҩ�,������T,�x�W�j���j,���q��T,�p�X�� 35
+Docker ���غ��s,������T,�x�W�j���j,���q��T,�عq�p��,�ŷs��T 28
+Kubernetes �Ͱ��Ҩ�,������T,�x�W�j���j,���q��T,�p�X��,�عq�p��,�ŷs��T 22
+Linux �Ͱ��Ҩ�,������T,�x�W�j���j,���q��T,�p�X��,�عq�p��,�ŷs��T 73
+TypeScript ���غ��s,������T,�x�W�j���j,���q��T,�p�X��,�ŷs��T 11
+Git ���غ��s,�Ͱ��Ҩ�,������T,�x�W�j���j,���q��T,�p�X��,�عq�p��,�ŷs��T 54
+Azure �Ͱ��Ҩ�,������T,�x�W�j���j,���q��T,�p�X��,�عq�p��,�ŷs��T 28
+AWS �Ͱ��Ҩ�,������T,�x�W�j���j,�p�X��,�عq�p�� 31
+RAG ���غ��s,������T,�x�W�j���j,���q��T,�p�X��,�ŷs��T 14
+MCP ���غ��s,�Ͱ��Ҩ�,������T,�x�W�j���j,�ŷs��T 8
+FastAPI ������T,�x�W�j���j,���q��T 7
+PostgreSQL ������T,�x�W�j���j,���q��T,�p�X��,�ŷs��T 27
+MySQL ������T,�x�W�j���j,���q��T,�p�X��,�عq�p��,�ŷs��T 21
+Oracle ������T,�x�W�j���j,���q��T,�عq�p�� 26
+CI/CD ������T,�x�W�j���j,���q��T,�ŷs��T 20
+TensorFlow �x�W�j���j,�p�X�� 3
+PyTorch ������T,�x�W�j���j,���q��T,�p�X�� 5
+LangChain �x�W�j���j 2
+Redis ������T,�x�W�j���j,���q��T 11
+C++ ���غ��s,�Ͱ��Ҩ�,������T,�x�W�j���j,���q��T,�عq�p�� 19
+JavaScript �Ͱ��Ҩ�,������T,�x�W�j���j,���q��T,�p�X��,�عq�p��,�ŷs��T 57
+["01_�x�W�j���j.md", 79, "4. ¾��", "| 107 ��Ƥ��R���ƾڤu�{�v�]�i���ݡ^ | Python�BSQL�FPostgreSQL �� SQL Server�FETL�BBI ���ơFCI/CD�BDocker�BMLOps�FTensorFlow�BPyTorch�BScikit-learn�BPandas�FAWS/GCP/Azure �[���FTeradata �[���FLLM ���ѥ[�� | �~�~ 81�V108 �U�]�Z�ĥ����^ | Yourator ����s 2026-01-30�]�L�Z�n��^ | https://www.yourator.co/companies/taiwanmobile/jobs/25039 |"]
+["01_�x�W�j���j.md", 80, "4. ¾��", "| I113 (Sr.) �n��u�{�v�A���ݡ]�i���ݡ^ | ���ݮج[�FCI/CD�FAWS/GCP/Azure �[���]�j�M�K�n�^ | �~�~�� 81�V108 �U�]�j�M�K�n�^ | 1111 ��s 2026-03-09�]�j�M�K�n�^ | https://www.1111.com.tw/job/132136774/ |"]
+["01_�x�W�j���j.md", 91, "5. �޳N���|", "- �Ӧۤ��q�o���i�ۭz�j�G�۬� GenAIus�BMCP�B�V�q�˯� RAG�BNVIDIA GB300 ��O�B�۬�y���ҫ� myVoca�C"]
+["03_������T.md", 86, "4. ¾��", "| JAVA �n��]�p�v�]�x�_�^ | �u�@�t LLM�B�q����ı�BML ���ΡF���ݡF�[���GSpring Boot�BMyBatis�BHibernate�BJPA�BPython�BReact�BjQuery�BSQL Server�BOracle | ���~ 35,000�V55,000 | ��s 2025-04-01�A�o���饼�СA���A�u����۶ҡv | https://www.yourator.co/companies/gss/jobs/36883 |"]
+["03_������T.md", 94, "5. �޳N���|", "- �e�ݡGReact�BjQuery�BAJAX�BWebpack�C�P�W�C"]
+["05_�ŷs��T.md", 97, "4. ¾��", "  - �ޯ���ҡGPython�BLinux�BMySQL�BPostgreSQL�BGithub�BVMware�BEMC�BFirewall�BCisco�BCheckpoint�BFortinet�C"]
+["05_�ŷs��T.md", 111, "5. �޳N���|", "  - 104 �����u�{�v���Ҧ� Python�BMySQL�BPostgreSQL�]���� 4 �`�^�C"]
+["22_�ɥR_������T.md", 42, "�޳N���| > Agentic AI�BMCP �P InsAI�]2025-11 AI Solution Day�^", "������ 2025 �~ 11 �� 14 ��b�x�_��ڷ|ĳ�����|�� AI Solution Day�A�@ 10 ���t���C���e�� GenAI �� Agentic AI ���t�O�A�H�� Agentic RAG�BDeep Research�C�ɤJ��h���|�I�G�[�J�H�u�f�d�BLLM ��������B���D�u����ȦA�ͦۥD�B��ܼu�ʪ����x�CBizForm �w�p 2026 �~�Ĥ@�u�䴩 MCP ���A���A�åi�걵 Zapier�Bn8n�BMake.com�F���Ѻ޲z�t�� 200 �h�� API �N���]�� MCP ���A���CInsAI �O�H GenAI ���֤ߪ����z���Ѩt�ΡA�ϥΦ۬���Ѽҫ��A�䴩�a�ݳ��p�åi��X LLM�C����t�Ϊ����z�U�z�u�p�H�v�ɯŬ����� Copilot�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 72, "�ثe�}��¾�� > �s�A�H�x�~�p�e-��T���]7lmd9�^", "- �u�@���e�G�w��s�A�H����T���۶ҡA�����Ӥ�V�GJava ���ݳn��u�{�v�]�t�λݨD�}�o�B�[�c�W���^�FPython Web �u�{�v�]��Ʈw�[�c�BAPI�B���ݪA�Ⱦ�X�B�걵�ĤT��t�Ρ^�F���ݤu�{�v�]�������p�����[�c�B���ݸ�w�B�����v�z�BSaaS �����B��� SRE�^�F��ުA�Ⱥ޲z�[���B�u�{�v�]�ʱ��iĵ�BCI/CD�B�ڦ]���R�B�e�q�W���BLog �����^�F.Net �u�{�v�]ASP.NET MVC��Core�BWeb API�BSQL �ծաB��ƫؼҡ^�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 73, "�ثe�}��¾�� > �s�A�H�x�~�p�e-��T���]7lmd9�^", "- ����P�ޯ�G�y�嬰�^��ť��Ū�g�����CJava ���ݡGJava��SQL�BJavaScript��HTML5��CSS�BSA/SD�F�[�� Spring Boot�BAngular��React��Vue�BPython��Shell�BRedis�BPostgreSQL�BDocker�BCI/CD�BAWS��Azure��GCP�CPython Web�GPython�BFlask��FastAPI�BAWS��GCP�BHTML��JavaScript��CSS�BGit�B����ɦV�B���p�� DB��Redis��Linux���e���ơC���ݡGTCP/IP�BAWS��Azure��GCP�BWindows��Linux�C���B�GLinux�BShell Script��Python�BTomcat�F�[�� Zabbix��Nagios��Grafana�C.Net�G.NET Framework��Core�BC#�BWebForm�BASP.NET MVC��Core�BjQuery�BADO.NET�BEntity Framework Core�F�[�� Kafka�BPostgreSQL��SQL Server�BRedis�BDocker�BCI/CD�BAI coding tools�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 79, "�ثe�}��¾�� > �iTaiwan Mobile ��ޤj�����|��߭p�e�jIntern-IT�]7oc7w�^", "- �u�@���e�G�������y�B��߮ɶ������H�����A�ѱM�ݾɮv�a��F����i����ѳ��C�X�� 16 �Ӥ�V���@�C�޳N���]�t�G�P AI �u��]ChatGPT�BCopilot�^��@�}�o�BAPI �P��ݾ�X�F��޻P AI �A�ȶ}�o���ա]NoSQL ���յ{���B��Ʒh���^�F�}����Ʈw DBA�FM+ Meet ���T�|ĳ�]WebSocket��gRPC��RESTful�^�F�y�� ASR��TTS �ҫ��P API�FFinOps �P CMDB�FTerraform��Ansible �� IaC �P CI/CD�F�}����¦�]�I PoC�FUnity 3D�C�t����w�M�׺޲z�BAI �V�m�y�Ʈե��BAI ���~�������D�}�o��V�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 80, "�ثe�}��¾�� > �iTaiwan Mobile ��ޤj�����|��߭p�e�jIntern-IT�]7oc7w�^", "- ����P�ޯ�G�̤�V���P�C�{���y���GPython�BJavaScript�BJava�BGo�BC#�FWeb����ݡGDjango�BNode.js�BFlask�BRESTful API�BGraphQL�F��Ʈw�GMySQL�BPostgreSQL�BMariaDB�BSQL�BNoSQL�F�u��GDocker�BLinux�BShell Script�BGit�BPostman�BJira�BFigma�BTerraform�BAnsible�BUnity�BK8s�]�[���^�BAWS��GCP��Azure�]�[���^�C104 �ժ��u���欰����C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 94, "�ثe�}��¾�� > I102 Java���ݳn��u�{�v�]7nebo�^", "- ����P�ޯ�G���ơGJava �{���}�o�P SQL ��ݶ}�o�FJavaScript�BHTML5�BCSS �e�ݶ}�o�F�t�Τ��R���]�p�]SA/SD�^�g��C�[���GSpring�BSpring Boot�FAngular��React��Vue.js�FPython��Shell Script�FRedis�FPostgreSQL�FDocker �P CI/CD�FAWS�BAzure�BGCP ���@���ϥΡ��}�o���G�p�F�a��}�o�p�աF�^���ť��Ū�g�A�h�qťŪ 550 �H�W�C104 �ժ��u����C Java�BPython�BSpring�BHTML�BJavaScript�BCSS�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 101, "�ثe�}��¾�� > I36 Java�b�Ȥu�{�v�]8nami�^", "- ����P�ޯ�G���ơGJava�BJSP/Servlet�BSpring MVC��Spring Boot �[�c�A�è� RESTful API �]�p�}�o�g��FOracle �� PostgreSQL ��Ʈw�{���]�p�}�o�g��FLinux Shell Script ���g��O�F�F�Ѷ��ݨt�ζ}�o�[�c�F�F�Ѯe���]Container�^�޳N�P���ΪA�ȳ��p�C���奼�C�[������C104 �ժ��u����C Java�BJSP�BSpring�BOracle�BPostgreSQL�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 108, "�ثe�}��¾�� > I37 Java�b�Ȥu�{�v�]7wuwx�^", "- ����P�ޯ�G���ơGJava�BJSP/Servlet�BSpring MVC �[�c�A�è� RESTful API �]�p�}�o�g��FOracle �� PostgreSQL ��Ʈw�{���]�p�}�o�g��FLinux Shell Script ���g��O�F�F�Ѷ��ݨt�ζ}�o�[�c�F�F�Ѯe���]Container�^�޳N�P���ΪA�ȳ��p�C���奼�C�[������C104 �ժ��u����C Linux�BShell�BJava�BSpring�BOracle�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 122, "�ثe�}��¾�� > I106 .Net�u�{�v�]47x1e�^", "- ����P�ޯ�G���ơG.NET Framework��.NET Core �P SQL ��ݡFC#�BWebForm�BASP.NET MVC�BASP.NET Core�FJavaScript�BHTML5�BCSS�BjQuery�FWebservice�BWeb API�BRESTful API �ɱ��FADO.NET�BEntity Framework Core�BBootstrap-Vue�C�[���GKafka�FWinForm��Console�FAngular��React��Vue.js�FData model�B�t�γ]�p�P API Spec �]�p�FPostgreSQL��SQL Server�FRedis�FDocker�BCI/CD�FAWS��Azure��GCP�FAI �}�o�P AI coding tools�F�h�qťŪ 550 �H�W�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 136, "�ثe�}��¾�� > I113 (Sr.)�n��u�{�v, ���ݶ}�o�]8tphn�^", "- ����P�ޯ�G���ơG�ܤ֤@�ث�ݻy���]Java�BPython�BGo�BC++�^�FJavaScript��TypeScript��HTML��CSS�FGit �P RESTful API �]�p�}�o�F���q�P�W�߸ѨM���D��O�C�[���GSpring Boot�BNode.js�BReact�BVue�BAngular ���@�FCI/CD�FAWS��GCP��Azure�F��Ƶ��c�P�t��k�B�j���t�γ]�p�F�޳N���P�t�γ]�p�F�� AI ���ΡB��Ƶ�ı�ơB�������t�Φ�����C104 �ժ��u����C Java�BPython�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 143, "�ثe�}��¾�� > I165 Java��`�u�{�v�]8qbzy�^", "- ����P�ޯ�G���ơG6 �~�H�W Java �}�o�F��q Spring Boot��MVC�FAWS��GCP��Azure ���ݹ�@�P Docker��K8s�FSQL �u�ơFAPI Spec �]�p�BOWASP Top 10 �P�˴��u��FCode Review�C�[���GSD��SA �g��FCI/CD ���p�y�{�W���F���ֵo�t�Ω� AI �ҫ��걵�C104 �ժ��u����C Java�BSpring�BAWS�BMicrosoft Azure�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 157, "�ثe�}��¾�� > I193 ��`JAVA�u�{�v�]7ndix�^", "- ����P�ޯ�G���ơG��q Java �ü��x Spring Boot�F�t�Τ��R�]�p�g��B�ݨD�X�ͻP�W����FHTML5�BJavaScript�BReact.JS �}�o�g��F���p����Ʈw�P SQL�F2 �~�H�W Java �����}�o�C�[���GAWS �� GCP �����}�o�F���� AI coding tools�F�h�qťŪ 550 �H�W�C�y��G�^��ť��Ū�g�����C104 �ժ��u����C Java�BPython�Bhadoop�F�u�@�ޯ���C�M�׳W��������d��޲z�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 163, "�ثe�}��¾�� > I105 Python Web�u�{�v�]8i0ux�^", "- �u�@���e�G�}�o Python Web ���ΡA�[�c�� Flask��jQuery ����A�� FastAPI��ReactJS �e��ݤ����F�t�}�o�������ε{���C���λ��[�\��޷s�ЪA�ȡB�[�ȪA�ȡB�q����B�B�����q���B���~�зs�A�ȡC¾�����O���n��u�{�v�A�ݨD 1 �H�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 164, "�ثe�}��¾�� > I105 Python Web�u�{�v�]8i0ux�^", "- ����P�ޯ�G���ơGPython Web �}�o�]Flask �� FastAPI �רΡADjango ��i�^�FjQuery �� JS �e�ݶ}�o�g��F�������ε{���}�o�C�[���GReactJS�FGCP��AWS��K8S�FJava Web Application�F�h�qťŪ 550 �H�W�C�y��G�^��ť��Ū�g�����C104 �ժ��u����C Python�F�u�@�ޯ���C�n��u�{�t�ζ}�o�B�n��{���]�p�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 171, "�ثe�}��¾�� > I137 Python���ݤu�{�v�]8ntrt�^", "- ����P�ޯ�G���ơGPython�FHTML�BJavaScript�BCSS �P���ʦ������}�o�F����ɦV�{���]�p�C�[���G����ѻP�M�ת��g��F���@���p����Ʈw�P Linux�F�e���Ƭ������ѡF���q�P�ζ���@�F�h�qťŪ 550 �H�W�C104 �ժ��u����C C#�BPostgreSQL�BHTML�BJavaScript�BCSS�BReactJS�BAngularJS�BVueJS�BAngular�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 178, "�ثe�}��¾�� > I186 Python��ݤu�{�v�]7wutt�^", "- ����P�ޯ�G���ơ]������C�����ơ^�GPython�FFlask��FastAPI �ج[�FGCP��AWS ���@���ݪA�ȡFGit ��������F����ɦV�F����ѻP�M�ת��g��F���@���p����Ʈw�BRedis�BLinux �ϥθg��F�e���Ƭ������ѡF���q�P�ζ���@�C104 �ժ��u����C Linux�BPython�BAWS�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 185, "�ثe�}��¾�� > I186 Node.js��ݤu�{�v�]85n5t�^", "- ����P�ޯ�G���ơGJavaScript �P Node.js �ج[�F����ɦV�P Git ��������y�{�FGCP��AWS ���@���ݪA�ȡF���p���P�D���p����Ʈw�]MySQL�BPostgreSQL�BRedis �� MongoDB�^�FLinux �P�e���ơFExpress �P Socket.io�BWebSocket�BWebRTC�FDistributed��Micro-Service �t�ζ}�o�FScrum��Agile �P�}���^�m�g��C104 �ժ��u����C Linux�BMySQL�BPostgreSQL�BAWS�BJavaScript�BNode.js�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 199, "�ثe�}��¾�� > I90 �q�T�t��TPM�]8sep4�^", "- ����P�ޯ�G���n�G8 �~�H�W�n��}�o�g��A�䤤 5 �~�H�W�M�׺޲z�F�`�J�F�� FreeSWITCH �[�c�P VoIP�FC/C++�BPython�BLua�F�������t�ΡB�L�A�Ȭ[�c�P���ݧ޳N�FPostgreSQL�BMySQL�FLinux �t�κ޲z�P DevOps�C�[���GSIP�BRTP�BWebRTC ��ĳ�FDocker�BKubernetes�FELK Stack�BPrometheus�FScrum�BKanban�C104 �ժ��u����C Linux�BMySQL�BPostgreSQL�BIMS�BVoIP�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 206, "�ثe�}��¾�� > I92 �q�T�n��u�{�v�]8seot�^", "- ����P�ޯ�G���n�G���@�{���y�����m�è� Lua ��¦�FSIP�BRTP �� VoIP ��ĳ��¦�FPostgreSQL �� MySQL �ϥθg��FLinux �R�O�C�ާ@�FGit �{���X�޲z�C�[���GFreeSWITCH �}�o�ΰt�m�g��FDocker �P Kubernetes �e���ơFRedis �P RabbitMQ ���T����C�t�ΡC104 �ժ��u����C Linux�BMySQL�BPostgreSQL�BIMS�BVoIP�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 213, "�ثe�}��¾�� > I103 iOS �}�o�u�{�v�]7neau�^", "- ����P�ޯ�G���ơGSwift��Objective-C�FUI/UX �}�o�ð��Xí�w�� App�FRESTful API �걵�P JSON �ѪR�FGit�C�[���GApp �W�[�P�����FFirebase�BFB ���ĤT�� SDK�FMVC��MVVM�FUML �P Design Pattern�FSQLite��CoreData�FIn-App-Purchase�FBLE��Socket �q�T��w�P Media player�FCocoaPods�FXCTest��Unit Test�FCI/CD�C104 �ժ��u����C Objective-C�BSwift�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 220, "�ثe�}��¾�� > I104 Android App�}�o�u�{�v�]775u7�^", "- ����P�ޯ�G���ơGKotlin�]Coroutines�BExtension Functions�^�FAndroid Framework �P Jetpack�]Navigation�BRoom�BWorkManager�BCompose�^�FMVVM�BRepository Pattern�BHilt�FRetrofit�BOkHttp �P JSON �ѪR�F�����P���D���R�FUnit Test�C�[���GKotlin Flow�]StateFlow�BSharedFlow�^�FClean Architecture �P�ҲդơFProfiler �į���u�FAndroid �w������]Keystore�Bruntime permissions�^�FCode Review�FKMP�FCI/CD�FART�BBinder�B��V����C104 �ժ��u����C Android�BJava�BKotlin�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 226, "�ثe�}��¾�� > I108 LLM���Υ��x�[�c�v�]8b54k�^", "- �u�@���e�G�]�p�ëظm�uAI �j�����x�v�e��ݤ����� Web �t�Ρ]�e�� React.js�B��� Python�^�A������ȪA�P���Ѻ޲z���� AI �����F��X LLM�A�å� RAG ���X�˯��P�ͦ��H�����^���ǽT�ʡF�]�p�P�u�� Agent Flow�F���� Agentic AI�F�ʱ����u�ƥ��x�į�F�P�~�ȹζ��P RD �ζ���@�F���ѧ޳N���ɻP���V�C¾�����O�� AI �u�{�v�B��Ƥu�{�v�A�ݨD 1 �H�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 227, "�ثe�}��¾�� > I108 LLM���Υ��x�[�c�v�]8b54k�^", "- ����P�ޯ�G���ơG�`�׾ǲ߻P�����ǲߡFNLP�BLLM�BTransformer�FPython�BHTML�BJavaScript�AFastAPI�Blangchain�]React.js ��Ρ^�FSQL�BPandas�BNumPy�F�j�W�Ҥ������t�γ]�p�FAWS��Google Cloud��Azure �ܤ֤@�ءFRAG ��@�F2 �~�H�W�`�׾ǲ߼ҫ���Զ}�o�C�[���GPyTorch��TensorFlow�F�ͦ��� AI �󴼯�ȪA�Ϊ��Ѻ޲z�FAgent Flow �P Agentic AI�F�l�ܽפ�P�}���FAI coding tools�F�h�qťŪ 550 �H�W�C�y��G�^��ť��Ū�g�����C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 248, "�ثe�}��¾�� > I97 Kubernetes ���x�u�{�v�]8xjjo�^", "- ����P�ޯ�G���ơG3 �~�H�W DevOps��SRE�����x�u�{�P 2 �~�H�W Kubernetes�FGitOps�FCI/CD �y���u�]���������BArtifact/Registry�B���ҡ��K�_�B���p�P�^�u�^�FLinux �P�����ƻ١FShell��Python��Ansible��Terraform ���@�FWebLogic��JBoss��WildFly��Tomcat ���@�����ҫظm�P���B�C�[���G�۫ةβV�X���� Kubernetes�FArgo CD�BFlux�BJenkins�BBitbucket Pipelines�BGitLab CI�FHelm�BKustomize�FOPA��Gatekeeper�BKyverno�B�M�����y�BSBOM�FMetrics��Logs��Tracing�FCKA��CKAD��CKS�C104 �ժ��u����C Jenkins�BPython�BLinux�BShell�BGit�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 254, "�ثe�}��¾�� > I162 ��ުA�Ⱥ޲z�[���B�u�{�v�]8slgk�^", "- �u�@���e�G���� Linux �A�Ȩt�Ϊ����i�ΡB�X�i�ʻP�į�F�ظm�P���@�ʱ��P�iĵ�F�W���ù�@ CI/CD �۰ʤƬy�{�F���G�ٱư��P�ڦ]���R�]RCA�^�FGCP��AWS ���ݪA�Ⱥ��B�F��U�}�o�ζ����į�ʱ��P�e�q�W���F��`���B�t�ʱ��B�Ƶ{�B�ƥ������B�w�����ˡF���R Log �ð����F�t�X������s�P�\�ೡ�p�C�𰲨�׬��ƥ�A�ݨD 1 �H�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 255, "�ثe�}��¾�� > I162 ��ުA�Ⱥ޲z�[���B�u�{�v�]8slgk�^", "- ����P�ޯ�G���ơGLinux �t�κ޲z�P���O�FWeb ���ΪA�Ȭ[�c�]Web Service�BApache Tomcat ���������x�^�FShell Script �� Python �۰ʤơFTroubleshooting�F�ζ����q�C�[���GIncident Management�FZabbix��Nagios��Grafana��ELK Stack�FDocker��Kubernetes�FJenkins��GitLab CI/CD�F�j���t�ΤW�u�P���B�y�{�W���FLinux �� GCP��AWS �ҷӡF�H ChatGPT�BLangChain�BOpenAI API �� AI �u�㻲�U���B�C104 �ժ��u��P�u�@�ޯ��欰����C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 261, "�ثe�}��¾�� > I91 �����n�饭�x�޳N�ҥD�ޡ]8t8wz�^", "- �u�@���e�G�a�� 7�V8 �H�� K8S ���x�ζ��A�W���B�ظm�B�u�ơB���B�P�૬ WebLogic�BJBoss�BWildFly�BTomcat ���~�Ť����n�饭�x�A�ûݲz�� Oracle��PostgreSQL��MySQL��SQL Server ��Ʈw�[�c�F���� WildFly �� Tomcat�B�e���ƻP�L�A�ȾE���F�P���Ψt�ΡB��w�B��¦�[�c�ζ���@�F�إ߼зǤƺ��B�y�{�P�e�q�B�ƴ��B�e���B�į�ʱ������F���|�H�~�F��w�w���P�X�W�����]�]�֡B�[�K�B�v���޲z�^�C�޲z�d�� 5�V8 �H�A�ݨD 1 �H�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 283, "�ثe�}��¾�� > I100 IT��¦�[�c�u�{�v�]90j99�^", "- ����P�ޯ�G���ơG3 �~�H�W��¦�[�c�B�t�κ��B�Υ��x�޲z�F�W�߰�����A���Υ��x��`���@�P�Ƭd�FZabbix�BNagios ���ʱ��iĵ�u��F�t�Χ�s�B�v���޲z�B�ƥ��٭�B��¦��w�F�����ƩΥ��~ IT ���Һ��B�F��󼶼g�P��ζ���@�C�[���GLinux�BWindows Server�FAnsible�BShell Script�BPython�BPowerShell�FVMware�BNutanix�BDocker�BPKI�B���Һ޲z�B�a���_��FPostgreSQL�BMicrosoft SQL Server�F�ͦ��� AI �u�㻲�U�Ƭd�P�}���F�^��޳N���\Ū�A�h�q 550 �H�W�C104 �ժ��u����C Linux�BPostgreSQL�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 296, "�ثe�}��¾�� > I202 ��Ʈw���x�u�{�v�]6xiif�^", "- �u�@���e�G�ظm���u�ƥ��~��Ʈw���x�]PostgreSQL ���D�AOracle ���֤ߨt�Ρ^�A�[�\���ҳ]�p�B�Ѽư�u�B�v���ҫ��P�w�����@�F���ʼзǤƻP�i�ƻs��I�]�ظm�B�ܧ�B�^�u�y�{�P�ҪO�^�F�إߺC�d�v�z�BTop SQL ���R�B�e�q�w���B�ʱ��iĵ���ŻP Runbook�F�W���ƥ��٭�B�٭����һP HA/DR �t�m�F�P�}�o�B���x�B��w�ζ���@�F���ݨD�ѻP Hybrid Cloud ��Ʈw�v�z�C¾�����O����Ʈw�޲z�H���A�ݨD 1 �H�C"]
+["30_104¾�ʧ�s_�x�W�j���j.md", 297, "�ثe�}��¾�� > I202 ��Ʈw���x�u�{�v�]6xiif�^", "- ����P�ޯ�G���ơGPostgreSQL �� Oracle ��Ⱥ��B�޲z�]��@�Y�i�^�FLinux �򥻾ާ@�P�į�w��]CPU��Memory��IO��Network�^�F�󳡪����q�F���ƻP�зǤƲߺD�C�[���G��Ʈw���x�ơB�зǤơB�۰ʤơF�į�ծաFHA/DR�F���ݻP�V�X����Ʈw�v�z�F�h�qťŪ 550 �H�W�C�y��G�^��ť��Ū�g�����C104 �ժ��u����C Linux�BOracle�BPostgreSQL�BAWS�C"]
+["31_104¾�ʧ�s_�p�X��.md", 56, "�ثe�}��¾�� > �i�ƾڵo�i���j�t��k�u�{�v�]4u5lb�^", "- ����P�ޯ�G���ơG�Ϲ�����ǲߺt��k��¦�P�}���ƾڤu��ާ@��O�F���x����ɦV�{���]�p�P Python�F���Ƥu�{��O�A�� SQL �ާ@�j����Ʈw�����R�C�[���GGoogle Cloud �G�p�P���ΡF���˨t�ΡBNLP �t��k�P�ҫ��}�o�հѸg��F����]�p�]Experimental Design�^�P�ҫ����İl�ܡF�]�p��һP�쫬�ֳt���N�F�ظm�P���B�ƾ����Ψt�θg��C�ժ��u��GPython�BPostgreSQL�C��t�G�ӺޡB�ƾǤιq�����ǡB�u�{�Ǭ����C�y��G����C"]
+["31_104¾�ʧ�s_�p�X��.md", 64, "�ثe�}��¾�� > �i�ƾڵo�i���j��Ƭ�Ǹ�`�g�z�]93f7l�^", "- ����P�ޯ�G�ݼ��x GCP�F���x��Ƭ�ǡB�����ǲߡB���˨t�ΡBNLP �Υͦ��� AI�F���x Python�BSQL �P��ƳB�z�y�{�F���x scikit-learn�BXGBoost�BLightGBM�BTensorFlow�BPyTorch �������u��F�F�Ѷ��ݸ�ƥ��x�]�p AWS�^�F��ҫ����p�BMLOps�Bpipeline�BAPI�Bbatch inference�Bmonitoring �� production AI �g��C�^�夤���C�ժ��u����G����C�Ʀ�C��B�s�i��ޡBMartech �g��רΡC"]
+["31_104¾�ʧ�s_�p�X��.md", 71, "�ثe�}��¾�� > �i�s�D���ƾڤ��ߡj�e�ݶ}�o�u�{�v�]6i2tp�^", "- ����P�ޯ�G�ժ��GVue �� React ��@�]Vue �רΡ^�BHTML5��CSS�BECMAScript 6�BRWD �P��ʪ������B�s�����ۮe�ʽվ�BGit �����C�F�ѡGTypeScript�BSass�BSPA �U�� SEO ����C�����GNode.js�]Express�BKoa�^�BSSR�C�^��Ū�����C�ժ��u����G����C��t�G�Ш|�B�ƾǤιq�����ǡB�u�{�Ǭ����C¾�����O���e�ݤu�{�v�B�n��u�{�v�C"]
+["32_104¾�ʧ�s_������T.md", 77, "�ثe�}��¾�� > ���~�}�o�u�{�v(21020201A)�]76idx�^", "- �u�@���e�G�[�J Vitals EIP �֤߬�o�ζ��C���~�[�\���~�J�f�]EIP�^�B��@ñ�J�]SSO�^�B��´�b���v�z�]IAM�^�P�s�H���L�K�X���ҡC�����{���X�[�c�B�۰ʤƶ}�o�y�{�P�n��u�k�C�ثe���ⲣ�~�o�i��ŦX MCP ��w�A�P���~����t�Ψ�@�C"]
+["32_104¾�ʧ�s_������T.md", 78, "�ثe�}��¾�� > ���~�}�o�u�{�v(21020201A)�]76idx�^", "- ����P�ޯ�G���ơGC#�BASP.NET Core �B�����F���p����Ʈw�]MSSQL�BOracle�BMySQL/MariaDB�BSQLite�^�� Schema �]�p�P�d�߮į��u�ơFGit �y�{�]Branching Strategy�BCode Review�^�P�����X�FOOP �P SOLID�C�u��GWindows Server 2012�BASP.NET�C�[���GReact �e��ݾ�X�FCAS�]Central Authentication Service�^���@�}�o�g��C"]
+["32_104¾�ʧ�s_������T.md", 114, "�ثe�}��¾�� > [�ն�M��-�x�_]Java�{���]�p�v�]89d0n�^", "- ����P�ޯ�G���ơGJava�F�u�� Linux�BJava�BJavaScript�C�[���GAgile�]Scrum�BKanban�^�FREST API�BMessage Queue�BWebSocket�BKafka�FSpring Boot�BSpring Security�BAOP�FKubernetes�BDocker Swarm�FElastic Stack�BPrometheus�FRedis�BMongoDB�BCassandra�FAnsible�F�]�p�Ҧ��]�u�t�B�˪��B�R�O�B�����^�F�椸�P��X���աBSelenium IDE�BKatalon�C"]
+["32_104¾�ʧ�s_������T.md", 125, "�ثe�}��¾�� > [�ն�M��]�{�����R�v�]89sxv�^", "- �u�@���e�G�[�J�ӱ��}�o�ζ��}�o�n�鲣�~�A�P Product Owner �� UI/UX �u�{�v���q�\��W��P�����C�ĥ� Scrum �P PDCA�A�F���U sprint �ؼСC�� OOP�BSOLID�BDesign Patterns �P Refactoring �}�o�C�޳N�Ū��n��C���`�ú��@���~ CI/CD�A�إߦ۰ʤƫغc�P���p�{�ǡC"]
+["32_104¾�ʧ�s_������T.md", 149, "�ثe�}��¾�� > .NET ���~�}�o�u�{�v(24052801)�]8cgii�^", "- �u�@���e�G�]�p�B�}�o�P���@�H�O�귽�޲z�t�Ρ]HR ���~�^�A�ѻP�t�ά[�c�]�p�A�U�ήį�Bí�w�P�X�R�C�P���~�g�z�M�H���U�ݦX�@���ݨD���R�ô��X�޳N��סC��`�t�{���}�o�BCode Review�B���c�B�椸���ջP�۰ʤƴ��աA�����P�G�ٱư��A�� CI/CD �u��۰ʳ��p�A�óB�z�u�W���D�C�ݨD 1~3 �H�C"]
+["32_104¾�ʧ�s_������T.md", 150, "�ثe�}��¾�� > .NET ���~�}�o�u�{�v(24052801)�]8cgii�^", "- ����P�ޯ�G���ơG��q C#�BJavaScript�BTypeScript�BT-SQL�F���x ASP.NET MVC �P ASP.NET Core�F�� MS SQL ���p����Ʈw�g��F��n��}�o�����աB�n�_�ߡC�u��GWindows Server 2008��2012��2019�BC#�BMS SQL�BJavaScript�C�[���G���ХܡC"]
+["32_104¾�ʧ�s_������T.md", 155, "�ثe�}��¾�� > .NET �n��]�p�v(�x�_)(24070401)�]8dsaf�^", "- �u�@���e�G�̭ӤH�M���P�N�@������M�׶}�o�β��~��o�ζ��A�t�d�{���]�p�C�b DevSecOps ���Ҽ��g���յ{���B����椸���աA�����{���X�~��P��w���D�C��ڧ� LLM�BCV�BML �� AI ��k��i�t�Χ@�~�y�{�C�����ݶ}�o�A�e�ݡ]JavaScript�BReact�BjQuery�^�P��ݡ]C#.NET�BVB.NET�B.NET MVC�^����¾�ʡC"]
+["32_104¾�ʧ�s_������T.md", 156, "�ثe�}��¾�� > .NET �n��]�p�v(�x�_)(24070401)�]8dsaf�^", "- ����P�ޯ�G���ơG��n��}�o�����ۨë���ǲߡF���D���R�P�B�z��O�F���F���q�P�ζ��X�@�F�ѻP Code Review�C�u��GWindows Server 2019�BASP.NET�BC#�BVB.NET�BMS SQL�BPL/SQL�C�[���G�F�������Ϊ��ķ~�t�ζ}�o�g��F�e�� AJAX�BReact�BjQuery�BWebpack�Bnpm�F��� .NET Core�BASP.NET Core MVC�BWeb API�BBlazor�BLINQ�BSignalR�F��Ʈw MS SQL Server�BOracle�]Stored Procedure�BTrigger�BFunction�BCursor�^�C"]
+["32_104¾�ʧ�s_������T.md", 161, "�ثe�}��¾�� > .NET �n��]�p�v(����)(24070402)�]8dscv�^", "- �u�@���e�G�̭ӤH�M���P�N�@������M�׶}�o�β��~��o�ζ��A�t�d�{���]�p�C�b DevSecOps ���Ҽ��g���յ{���B����椸���աA�����{���X�~��P��w���D�C��ڧ� LLM�BCV�BML �� AI ��k��i�t�Χ@�~�y�{�C�����ݶ}�o�A�e�ݡ]JavaScript�BReact�BjQuery�^�P��ݡ]C#.NET�BVB.NET�B.NET MVC�^����¾�ʡC"]
+["32_104¾�ʧ�s_������T.md", 162, "�ثe�}��¾�� > .NET �n��]�p�v(����)(24070402)�]8dscv�^", "- ����P�ޯ�G���ơG��n��}�o�����ۨë���ǲߡF���D���R�P�B�z��O�F���F���q�P�ζ��X�@�F�ѻP Code Review�C�u��GWindows Server 2019�BASP.NET�BC#�BVB.NET�BMS SQL�BPL/SQL�C�[���G�F�������Ϊ��ķ~�t�ζ}�o�g��F�e�� AJAX�BReact�BjQuery�BWebpack�Bnpm�F��� .NET Core�BASP.NET Core MVC�BWeb API�BBlazor�BLINQ�BSignalR�F��Ʈw MS SQL Server�BOracle�]Stored Procedure�BTrigger�BFunction�BCursor�^�C"]
+["32_104¾�ʧ�s_������T.md", 167, "�ثe�}��¾�� > JAVA �n��]�p�v(�x�_)(24070403)�]8dsdq�^", "- �u�@���e�G�̭ӤH�M���P�N�@������M�׶}�o�β��~��o�ζ��A�t�d�{���]�p�C�b DevSecOps ���Ҽ��g���յ{���B����椸���աA�����{���X�~��P��w���D�C��ڧ� LLM�BCV�BML �� AI ��k��i�t�Χ@�~�y�{�C�����ݶ}�o�A�e�ݡ]JavaScript�BReact�BjQuery�^�P��ݡ]Spring Web MVC�BSpring Boot�BMyBatis�^����¾�ʡC"]
+["32_104¾�ʧ�s_������T.md", 168, "�ثe�}��¾�� > JAVA �n��]�p�v(�x�_)(24070403)�]8dsdq�^", "- ����P�ޯ�G���ơG��n��}�o�����ۨë���ǲߡF���D���R�P�B�z��O�F���F���q�P�ζ��X�@�F�ѻP Code Review�C�u��GWindows Server 2019�BJava�BMS SQL�BPL/SQL�BJavaScript�BVisual Basic .net�C�[���G�F�������Ϊ��ķ~�t�ζ}�o�g��F�e�� AJAX�BReact�BjQuery�BWebpack�Bnpm�F��� Spring Web MVC�BSpring Boot�BMyBatis�BHibernate�BSpring Data JPA�BPython�F��Ʈw MS SQL Server�BOracle�C"]
+["32_104¾�ʧ�s_������T.md", 173, "�ثe�}��¾�� > JAVA �n��]�p�v(�s��)(24070404)�]8dsh6�^", "- �u�@���e�G�̭ӤH�M���P�N�@������M�׶}�o�β��~��o�ζ��A�t�d�{���]�p�C�b DevSecOps ���Ҽ��g���յ{���B����椸���աA�����{���X�~��P��w���D�C��ڧ� LLM�BCV�BML �� AI ��k��i�t�Χ@�~�y�{�C�����ݶ}�o�A�e�ݡ]JavaScript�BReact�BjQuery�^�P��ݡ]Spring Web MVC�BSpring Boot�BMyBatis�^����¾�ʡC"]
+["32_104¾�ʧ�s_������T.md", 174, "�ثe�}��¾�� > JAVA �n��]�p�v(�s��)(24070404)�]8dsh6�^", "- ����P�ޯ�G���ơG��n��}�o�����ۨë���ǲߡF���D���R�P�B�z��O�F���F���q�P�ζ��X�@�F�ѻP Code Review�C�u��GWindows Server 2019�BJava�BMS SQL�BPL/SQL�BJavaScript�C�[���G�F�������Ϊ��ķ~�t�ζ}�o�g��F�e�� AJAX�BReact�BjQuery�BWebpack�Bnpm�F��� Spring Web MVC�BSpring Boot�BMyBatis�BHibernate�BSpring Data JPA�BPython�F��Ʈw MS SQL Server�BOracle�C"]
+["32_104¾�ʧ�s_������T.md", 179, "�ثe�}��¾�� > JAVA �n��]�p�v(����)(24070405)�]8dshe�^", "- �u�@���e�G�̭ӤH�M���P�N�@������M�׶}�o�β��~��o�ζ��A�t�d�{���]�p�C�b DevSecOps ���Ҽ��g���յ{���B����椸���աA�����{���X�~��P��w���D�C��ڧ� LLM�BCV�BML �� AI ��k��i�t�Χ@�~�y�{�C�����ݶ}�o�A�e�ݡ]JavaScript�BReact�BjQuery�^�P��ݡ]Spring Web MVC�BSpring Boot�BMyBatis�^����¾�ʡC"]
+["32_104¾�ʧ�s_������T.md", 180, "�ثe�}��¾�� > JAVA �n��]�p�v(����)(24070405)�]8dshe�^", "- ����P�ޯ�G���ơG��n��}�o�����ۨë���ǲߡF���D���R�P�B�z��O�F���F���q�P�ζ��X�@�F�ѻP Code Review�C�u��GWindows Server 2019�BJava�BMS SQL�BPL/SQL�BJavaScript�C�[���G�F�������Ϊ��ķ~�t�ζ}�o�g��F�e�� AJAX�BReact�BjQuery�BWebpack�Bnpm�F��� Spring Web MVC�BSpring Boot�BMyBatis�BHibernate�BSpring Data JPA�BPython�F��Ʈw MS SQL Server�BOracle�C"]
+["32_104¾�ʧ�s_������T.md", 192, "�ثe�}��¾�� > �t�Τ��R�v(24030101)�]897dg�^", "- ����P�ޯ�G���ơG5 �~�H�W�g��A�j�ǥH�W�Ǿ��C�u��GWindows Server 2008��2012�BASP.NET�BC#�BMS SQL�BJavaScript�C�[���G�e��ݶ}�o�g��]C#�BReact�^�F�L�n�� Java ���޳N�ҷӡFPMP�BACP�BScrum ���M�׺޲z�ҷӡF�ӤH Git �� Blog ���G�s���C"]
+["32_104¾�ʧ�s_������T.md", 198, "�ثe�}��¾�� > �t�Τu�{�v(24100701)�]8iig9�^", "- ����P�ޯ�G���ơG�^�夤���A��Ū�^��FMS Office�C�u��GLinux�BWindows Server 2008��2012��2019�B��Ʈw�]MSSQL�BOracle�BMySQL�BPostgreSQL ���@�^�B�����D���]VMware�BVirtualBox�BHyper-V�^�B�{���y���]Java�BShell Script�BBatch�BPowerShell�BSQL�BPython�BPerl ���@�^�C�[���G���ХܡC"]
+["32_104¾�ʧ�s_������T.md", 204, "�ثe�}��¾�� > �n��u�{�v(25040801)�]8ohp0�^", "- ����P�ޯ�G���ơG����L�t�κ��B�g��F�U�C���@���}�o�g��G�e�� React�BVue.js�BjQuery�F��� .NET Core�BASP.NET Core MVC�BWeb API�F��Ʈw MS SQL Server�BOracle�]Stored Procedure�BTrigger�BFunction�BCursor�^�F�t�d���B�D�ʾǲߡB��P�Ȥ᷾�q�C�u��GWindows Server 2008��2012�BASP.NET�BMS SQL�BOracle�BjQuery�BReactJS�BVueJS�C�[���G��T�~�Ȥ�A�ȻP���@�g��FKM �������~�g��C"]
+["32_104¾�ʧ�s_������T.md", 210, "�ثe�}��¾�� > �t�Τu�{�v(25040802)�]8ohp9�^", "- ����P�ޯ�G���ơG����L�t�κ��B�g��F��¦�{���]�p�����]C#�^�A��z�ѧ޳N���F�n���t�d�B�D�ʾǲߡC�u��GWindows Server 2008��2012�BASP.NET�BMS SQL�C�[���G���������P�ϰ���G�ٱư��FC#��.NET��RESTful API ��ݡFReact�BVue.js�BjQuery �e�ݡFMSSQL�BOracle�BMySQL�FKM �������~�g��C"]
+["32_104¾�ʧ�s_������T.md", 221, "�ثe�}��¾�� > Java�}�o�u�{�v Full Stack developer(20022201B)�]6vnww�^", "- �u�@���e�G�b�����ζ��X�@�B���V�L�A�Ȫ����Ψt�ζ}�o�ζ����A�}�o��X��w�P�t�ιB�w���@�ɯųn�骺���x�C�t�d�t�ζ}�o�]�p�B�ظm�P���@�A�]�p�P��@�s�\�઺�t�ΡB��Ʈw�P API�A���@�çﵽ CI/CD �y�{�A�ð��Ȥ�����ҫظm�C�ݨD 1 �H�C"]
+["32_104¾�ʧ�s_������T.md", 222, "�ثe�}��¾�� > Java�}�o�u�{�v Full Stack developer(20022201B)�]6vnww�^", "- ����P�ޯ�G���ơGJava�BJavaScript�]ES5/ES6�^�F���p����Ʈw MySQL�BMSSQL�BPostgreSQL�FOOP�BORM�FGit�BSVN �� TFS�FAnt�BMaven �� Gradle�FSpring 4 �H�W�]DI�BIoC�^�FAngular�BReactJS �� VueJS�FCI/CD�]GitLab CI�BJenkins�BDrone�BCircleCI�^�FDocker�C�[���GAgile�]Scrum�BKanban�^�FREST API�BMessage Queue�BWebSocket�BKafka�FSpring Boot�BSpring Security�BAOP�FKubernetes�FElastic Stack�BPrometheus�FRedis�BMongoDB�BCassandra�FAnsible�FSelenium IDE�BKatalon�C"]
+["32_104¾�ʧ�s_������T.md", 240, "�ثe�}��¾�� > [����]�{���]�p�v(20020405A)�]6uy40�^", "- ����P�ޯ�G���ơG��{���}�o�����աF��Ʈw�򥻾ާ@��O�F�޿�P�ǲ߯�O�j�F�ζ��X�@�}�o�F�^��ť��Ū�g�����C�u��GLinux�BWindows Server 2008��2012�BWindows 10�BASP.NET�BC++.NET�BJava�BMS SQL�BPL/SQL�BPostgreSQL�BJavaScript�C�[���GGitLab�BSubversion�BJenkins �ާ@�g��FMVC �}�o�g��].NET �� Java �ܤ@�Y�i�^�C"]
+["32_104¾�ʧ�s_������T.md", 246, "�ثe�}��¾�� > �{���]�p�v(20090801A)�]71s0m�^", "- ����P�ޯ�G���ơG���@�����y���}�o�g��].NET�BJava�BPython�BPHP�BNode�A.NET �P Java �רΡ^�F�򥻫e�ݡ]HTML�BCSS�BJavaScript�BjQuery�^�F���@���p����Ʈw�]MSSQL�BOracle�BMySQL�BPostgreSQL�^�F�^��Ū�����C�[���G�ج[�]MVC�BSpring�BFlask�BLaravel�BDjango�BReact�BAngular�BVue�^�F�������ޡ]Git�BSVN�^�� SSDLC �}�o�y�{�C"]
+["32_104¾�ʧ�s_������T.md", 270, "�ثe�}��¾�� > ��`.NET�M�פu�{�v(21042301)�]79j7b�^", "- ����P�ޯ�G���ơG3 �~�H�W .NET ��ݶ}�o�Ψt�κ��@�g��A��W�� Debug �PŪ���{���{���F��P�Ȥ᪽�����q�C�u��GWindows Server 2012��2019�BASP.NET�BC#�BMS SQL�BMySQL�BOracle�BXML Web services�BjQuery�C�[���G���Ѻ޲z�]KM�^���~�B�n��t�κ��@�ξn�I�A�ȸg��FC#�B.NET�BRESTful API�FReact�BjQuery�FMSSQL�BOracle�BMySQL�FWindows Server�BIIS �P�򥻸�T�w���޲z�C"]
+["32_104¾�ʧ�s_������T.md", 300, "�ثe�}��¾�� > Machine Learning Engineer (CV) �����ǲߤu�{�v (�q����ı)(24013102)�]889ho�^", "- ����P�ޯ�G���ơG�����ǲ߮ج[�]PyTorch�BHuggingFace�BPyTorch Lightning�^�FPython�BSQL�BGit�FWeb API �u��]Flask�BFastAPI�^�F���q����쳡�p�� ML �M�׸g��F�ζ��X�@�P�M�����q�F�^��ť��Ū�g�����C�u��GPython�C�[���G���ХܡC"]
+["33_104¾�ʧ�s_���q��T.md", 71, "�ثe�}��¾�� > 60056X0_�e�ݤu�{�v�]Next.js�����x���t�Ρ^�]104 ¾�ʥN�X 8y663�^", "- ����P�ޯ�G���Ƭ� 2 �~�H�W�e�ݹ�ȡBNext.js ��ڱM�׸g��BReact �P TypeScript�BHTML��CSS�BGit�A�ï�P��ݰQ�� API �P��Ƶ��c�C�[���� Next.js App Router��Server Components�BTailwind CSS�BDesign System�BB2B��SaaS ���x�g��BChat UI �g��C�ժ��u��GReactJS�C"]
+["33_104¾�ʧ�s_���q��T.md", 78, "�ثe�}��¾�� > 60066X0_�e�ݸ�`�u�{�v�]Next.js�����x���t�Ρ^�]104 ¾�ʥN�X 8y66b�^", "- ����P�ޯ�G���Ƭ� 5 �~�H�W�e�ݹ�ȡBNext.js ���x�����~�g��BReact �P TypeScript�B�e�ݬ[�c�]�p�B���A�޲z�P�Ҳթ���A�ô����L�J���t�Ϊ��e�ݭ��c�Ϊ����ɯšC�ժ��u��GReactJS�C�u�@�ޯ���Х� Next.js�BReact�BTypeScript�B�e�ݬ[�c�]�p�BAPI �걵�P��X�C"]
+["33_104¾�ʧ�s_���q��T.md", 84, "�ثe�}��¾�� > 60076X0_��ݤu�{�v(Node.js)�]104 ¾�ʥN�X 8y67b�^", "- �u�@���e�G�� Node.js�]JavaScript��TypeScript�^�}�o�P���@���~�ť��x��ݡA�]�p RESTful API �P�A�ȼҲաC�P�e�ݩw�q API �M��Ƶ��c�A�걵���~���t�γB�z��Ƭy�A�è�U�J����ݥ\�઺���c�P�į��u�ơC"]
+["33_104¾�ʧ�s_���q��T.md", 85, "�ثe�}��¾�� > 60076X0_��ݤu�{�v(Node.js)�]104 ¾�ʥN�X 8y67b�^", "- ����P�ޯ�G���Ƭ� Node.js ���x���Υ��~�t�θg��BJavaScript��TypeScript�BAPI �[�c�]�p�P�Ҳթ���B�ܤ֤@�ظ�Ʈw�]PostgreSQL��MySQL��MongoDB�^�C�[���� NestJS��Express��Fastify��Go�BB2B��SaaS �j�����x��ݡB�D�P�B�P�ƥ��X�ʳ]�p�BAPI �������޸g��C�ժ��u��GJavaScript�BNode.js�C"]
+["33_104¾�ʧ�s_���q��T.md", 92, "�ثe�}��¾�� > 60136X0_��ݸ�`�u�{�v�]104 ¾�ʥN�X 8y6oq�^", "- ����P�ޯ�G���Ƭ� 5 �~�H�W��ݸg��BNode.js ���x���Υ��~�t�θg��BJavaScript��TypeScript�BAPI �[�c�]�p�P�t�ξ�X�B��ݭ��c�ήį��u�Ƹg��B�ܤ֤@�ظ�Ʈw�C�[���� NestJS��Express��Fastify��Go�BB2B��SaaS�B�Ƶ{�P�ƥ��X�ʳ]�p�BAPI �������ޡC"]
+["33_104¾�ʧ�s_���q��T.md", 106, "�ثe�}��¾�� > 60176Y2_���ݤu�{�v�]104 ¾�ʥN�X 9290o�^", "- ����P�ޯ�G�ժ��u�㬰 Git�BJava�BPython�BSpring�BMS SQL�BPostgreSQL�BHTML�BJavaScript�BjQuery�BCSS�C�Ʊ���x Thymeleaf�BSpring�]Framework��JPA��MVC��Boot�^�BRedis�F�| Docker �P Linux ���ΡF�� 1 �~�H�W��ȶ}�o�g��רΡC¾�����O�����ݡB�e�ݡB��ݤu�{�v�C���ݥX�t�C"]
+["33_104¾�ʧ�s_���q��T.md", 112, "�ثe�}��¾�� > 60186Y2_DevOps �u�{�v�]104 ¾�ʥN�X 895j8�^", "- �u�@���e�G���@�n��u�{�۰ʤƬy�{�]CI/CD�^�A�}�o�۰ʤƸ}���]�n��w�˻P�]�w�^�A�޲z�L�A�ȥ��x���B�A�ظm�������һP�w�˳n��C�ݨ�Ȥ�ݰ��t�����ҫظm�P�n��w�ˡA�ݥX�t�A�@�~�ֿn�ɶ����w�C"]
+["33_104¾�ʧ�s_���q��T.md", 120, "�ثe�}��¾�� > 60196Y2_Java �u�{�v�]104 ¾�ʥN�X 895jc�^", "- ����P�ޯ�G�ժ��u�㬰 Git�BJava�BSpring�BMS SQL�BMySQL�BPostgreSQL�BJavaScript�BjQuery�C�Ʊ���x Thymeleaf�BSpring�]Framework��JPA��MVC��Boot�^�BRedis�F�|�e�� HTML��CSS ���ΡF�� 1 �~�H�W��ڶ}�o�g��רΡC���ݥX�t�C"]
+["33_104¾�ʧ�s_���q��T.md", 147, "�ثe�}��¾�� > C011CH2_��ݶ}�o�u�{�v(java)�]104 ¾�ʥN�X 8xzqd�^", "- �u�@���e�G�� Spring Boot �}�o���i�ΡB�i�X�i�����ī�ݷL�A�ȡA�B�z���ֵo����޿�A�]�p RESTful API �åH Swagger��OpenAPI ���Ѥ��C�]�p RDBMS ���c�P SQL �u�ơA��X Hazelcast �� Redis ���������֨��A�� RabbitMQ �� Kafka ���D�P�B�B�z�A�æ걵 SWIFT �T���榡�P HSM �[�K�ҲաC"]
+["33_104¾�ʧ�s_���q��T.md", 232, "�ثe�}��¾�� > P001PG2_�u�{�v�]104 ¾�ʥN�X 8xveo�^", "- ����P�ޯ�G�ժ��u�㬰 Java�BMySQL�BPostgreSQL�BJavaScript�F�u�@�ޯ�t�t�κ��@�B�t�ξ�X���R�B�n��{���]�p�C�������~�ͥi�C��Z���u�ʤW�U�Z�]08:00~17:00 �� 10:00~19:00�^�C���ݥX�t�C"]
+["33_104¾�ʧ�s_���q��T.md", 259, "�ثe�}��¾�� > �i���ΥN�ۡjQ010Q41_�t�Τu�{�v�]104 ¾�ʥN�X 8xz3l�^", "- �u�@���e�G�H C# ���n��}�o�A�f�t���� JavaScript��React�A�ݲz�Ѹ�Ʈw�B�@��z�P�W���B��y���[���A�äF�� AI �}�o�A�ܤַ|�@�إD�y�}�o��k�C¾�����O���n��u�{�v�C�u�ʤW�U�Z�]8:00��10:00 �W�Z�^�A�g��G��A���ݥX�t�C"]
+["33_104¾�ʧ�s_���q��T.md", 267, "�ثe�}��¾�� > �i���ΥN�ۡjQ014Q61_�u�{�v�]�e�ݡA�t�X Python��Django ��ݡ^�]104 ¾�ʥN�X 8xz51�^", "- ����P�ޯ�G���x React�BVue�BAngular �� HTMX��Alpine.js ��@�AJavaScript�]ES6+�^��TypeScript�BHTML5�BCSS3�BRESTful API �P HTTP�BJSON �榡�B�z�P���A�޲z�BGit ��@�F�� Python��Django ��ݦ걵�g��A��e�ݬ[�c�P����w�]�p��O�̨ΡC�g��G��C"]
+["33_104¾�ʧ�s_���q��T.md", 287, "�ثe�}��¾�� > 60296BD_AI �u�{�v�]�ͦ��� AI�^�]104 ¾�ʥN�X 94rqp�^", "- �u�@���e�G���y���~�ťͦ��� AI ���ΡA�� Python �P FastAPI �غc��� API �P AI �A�ȡA�걵 LLM API�]OpenAI�BClaude ���^�P�V�q��Ʈw�A�]�p���u�� RAG �[�c�C�H Pydantic �P JSON Schema �����ƫ��A�Hí�w Structured Outputs�A�]�p Prompt �é�ѷ~�Ȥu�@�y�A�l�ܨù�@�s���ͦ��� AI �޳N�P�פ�t��k�C"]
+["33_104¾�ʧ�s_���q��T.md", 288, "�ثe�}��¾�� > 60296BD_AI �u�{�v�]�ͦ��� AI�^�]104 ¾�ʥN�X 94rqp�^", "- ����P�ޯ�G�ݦ��q���B��T�u�{�B��T��ǵ������Ǧ�I���A���x Python �� PyTorch�A��Ū�פ�ù�@�t��k�F���x Docker�BGit�BGitHub�BRedmine �̨ΡF�� AI �}�o�αM�׸g����u���C¾�����O�� AI �u�{�v�B�n��u�{�v�C���ݥX�t�C"]
+["34_104¾�ʧ�s_�ŷs��T.md", 28, "�ثe�}��¾�� > AI�e�u���p�u�{�v�]8uol0�^", "- �u�@���e�G�ѻP�Ȥ�X�ͻP�u�@�{�A���R�@�~�y�{�P��T�t�ΡA�L�I AI �۰ʤƳ����A���g�ݨD�W��P��ĳ�ѡC�]�p Agentic AI�BRAG �P Workflow �[�c�A�W�����~���Ѯw�P AI �U�z�A��U�Ȥ�ɤJ�P���ҡC�걵 ERP�BCRM�BHR�B�q�lñ�֡A�}�o REST API�BWebhook�BMCP Connector�A�ظm��ƦP�B�P�ƥ��X�ʬ[�c�C�ظm CI/CD Pipeline�A�W�� GitOps�BIaC �P�۰ʤƳ��p�C"]
+["34_104¾�ʧ�s_�ŷs��T.md", 29, "�ثe�}��¾�� > AI�e�u���p�u�{�v�]8uol0�^", "- ����P�ޯ�G�ժ��u�� JavaScript�BPython�BPostgreSQL�F�ޯ� AI�B�t�ξ�X���R�C�M�~���� GenAI�BAgentic AI�BRAG�BMCP�BREST API�BLinux�BDocker�BKubernetes�C�M�~�ޯ� Python�BJavaScript/TypeScript�Bn8n�BElasticsearch�BPostgreSQL�CAI �����ҷӤרΡ]�[���^�C�y�夣��C¾�����O AI�u�{�v�C�ݨD 2 �H�F�L�ݥX�t�~���F��Z 0900-1800�F���x 6~10 �H�C"]
+["35_104¾�ʧ�s_�Ͱ��Ҩ�.md", 66, "�ثe�}��¾�� > �i��T���jC#/ASP.net���ݤu�{�v�]87rsh�^", "- ����P�ޯ�G�ժ��u�� C#�BASP.NET�BVueJS�C���ơG2 �~�H�W C#��ASP.NET�]MVC �� ASP.NET Core�^�BMS SQL�BHTML5��CSS3��JavaScript��jQuery�BGit�C�[���G.NET 6 �H�W�BVue.js �� React �� RWD�B�Ҩ�Ʃe�U�P�]�޹q�l����t�θg��C��t����A�ݨD 1 �� 3 �H�C"]
+["35_104¾�ʧ�s_�Ͱ��Ҩ�.md", 101, "�ثe�}��¾�� > �i�Ʀ�зs���jAI Agent ���ζ}�o�u�{�v�]8yxlh�^", "- ����P�ޯ�G�ժ��u�㤣��C���ơG��T�ά�����t�j�ǥH�W�A���x Copilot Studio�BPower Platform�BAzure�A�F�� LLM�BMCP�BA2A�A�� RPA �y�{��X��O�B��W�ߧ����Ҳն}�o�δ��աC�[���GAI �M�סBRPA �� Power Platform �}�o�g��C��t����T�u�{�ΰ]�|���Ĭ����A�^�夤���A�ݨD 1 �H�C"]
+["37_104¾�ʧ�s_���غ��s.md", 16, "�ثe�}��¾�� > AI ���ά�o�u�{�v�]104 ¾�ʥN�X 9523j�^", "- �u�@���e�G�걵 OpenAI�BAnthropic�BGoogle Gemini �� LLM API�A�إ� AI ���ΪA�ȡC�]�p Prompt�BContext Engineering�BRAG�B�V�q��Ʈw�P�h���q�˯��A�}�o�i�W�����ȡB�եΤu�㪺 AI Agent�]Function Calling�BTool Calling�BMCP�^�C�إ߫D�P�B�B�z�B���աBFallback�BToken �p��P�����������A�ðѻP Stable Diffusion�BFLUX�BLoRA�BControlNet�BComfyUI �u�@�y�P Custom Nodes�C�]�� AI �ɤJ���q�����s�{�A�ð��s�ҫ� POC �P�޳N���C"]
+["37_104¾�ʧ�s_���غ��s.md", 17, "�ثe�}��¾�� > AI ���ά�o�u�{�v�]104 ¾�ʥN�X 9523j�^", "- ����P�ޯ�G���� Python�BTypeScript �Ψ�L��ݻy���AREST API�BJSON�B�D�P�B�P�A�Ⱦ�X�FLLM�BAgent�BRAG �Υͦ��� AI �M�׸g��F���~�B�z�B���աBLog�BGit�C�[���GEmbedding�BVector DB�BMCP�BDocker�B���ݡBComfyUI�B�ҫ��L�ա]LoRA�BQLoRA�BPEFT�BSFT�^�BGPU��CUDA�C�i�� LLM��Agent�BRAG�BMCP�BComfyUI �@�~���C�ݨD 1 �H�A��Z�A�L�ݥX�t�~���C"]
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command '$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$env:PYTHONIOENCODING = '"'utf-8'
+@'
+from pathlib import Path
+import re,json
+ban=re.compile('面試|評價|風險|判斷|推測|矛盾|限制|未查到|對應|作戰')
+rows=[];files=[]
+for p in sorted(Path('.').glob('*.md'),reverse=True):
+ n=p.name[:2]
+ if n not in ['01','02','03','04','05','06','07','09','20','21','22','23','24','25','26','27','30','31','32','33','34','35','36','37']:continue
+ files.append(p);stack=[]
+ for i,line in enumerate(p.read_text(encoding='utf-8-sig').splitlines(),1):
+  m=re.match(r'"'^(#{1,6}) (.*)'"',line)
+  if m:
+   lev=len(m[1]);stack=[s for s in stack if s[0]<lev]+[(lev,m[2])];continue
+  heads=[v for l,v in stack if l>1]
+  if not heads or ban.search(' > '.join(heads)) or ban.search(line):continue
+  if n.startswith('0') and not re.match(r'"'^(1|2|4|5|8)'"\\. ',heads[0]):continue
+  rows.append((p.name,i,' > '.join(heads),line))
+for k in ['React','Docker','TypeScript','AWS','MCP','FastAPI','PostgreSQL','CI/CD','TensorFlow','Redis']:
+ selected={}
+ for f,i,h,line in rows:
+  if k.lower() not in line.lower():continue
+  c=f.split('_')[-1][:-3]
+  if c in selected:continue
+  j=line.lower().index(k.lower());start=max(0,j-12);end=min(len(line),start+58)
+  selected[c]={'file':f,'heading':h,'quote':line[start:end]}
+ print(json.dumps({'keyword':k,'gold':selected},ensure_ascii=False))
+for k in ['員工宿舍','員工住宿','宿舍補助','寵物假','寵物照護假','寵物喪假','四天工作','四日工作','週休三日','每週四天']:
+ hits=[p.name for p in files if k in p.read_text(encoding='utf-8-sig')]
+ print(json.dumps({'absence':k,'hits':hits},ensure_ascii=False))
+'@ | python -" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 603ms:
+{"keyword": "React", "gold": {"凱基證券": {"file": "35_104職缺更新_凱基證券.md", "heading": "目前開放職缺 > 【資訊部】C#/ASP.net全端工程師（87rsh）", "quote": "以上、Vue.js 或 React 或 RWD、證券複委託與財管電子交易系統經驗。科系不拘，需求 1 至 3 人。"}, "神通資訊": {"file": "33_104職缺更新_神通資訊.md", "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）", "quote": "t.js 實際專案經驗、React 與 TypeScript、HTML／CSS、Git，並能與後端討論 API 與資"}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）", "quote": "、ASP.NET。加分：React 前後端整合；CAS（Central Authentication Service"}, "聯合報": {"file": "31_104職缺更新_聯合報.md", "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）", "quote": "技能：擅長：Vue 或 React 其一（Vue 尤佳）、HTML5／CSS、ECMAScript 6、RWD 與行"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）", "quote": "oot、Angular／React／Vue、Python／Shell、Redis、PostgreSQL、Docker"}}}
+{"keyword": "Docker", "gold": {"中華網龍": {"file": "37_104職缺更新_中華網龍.md", "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）", "quote": "ctor DB、MCP、Docker、雲端、ComfyUI、模型微調（LoRA、QLoRA、PEFT、SFT）、GP"}, "華電聯網": {"file": "36_104職缺更新_華電聯網.md", "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）", "quote": "hell Script、Docker 與 Kubernetes（含 Container Security）、Linu"}, "藍新資訊": {"file": "34_104職缺更新_藍新資訊.md", "heading": "目前開放職缺 > AI前線部署工程師（8uol0）", "quote": "T API、Linux、Docker、Kubernetes。專業技能 Python、JavaScript/TypeS"}, "神通資訊": {"file": "33_104職缺更新_神通資訊.md", "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）", "quote": "ot）、Redis；會 Docker 與 Linux 為佳；有 1 年以上實務開發經驗尤佳。職務類別為全端、前端、後"}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > 系統網路資安工程師_資安系統(25021201)（8mdm2）", "quote": "Solaris）；容器（Docker、Kubernetes）。"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）", "quote": "、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP。Python Web：Python、F"}}}
+{"keyword": "TypeScript", "gold": {"中華網龍": {"file": "37_104職缺更新_中華網龍.md", "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）", "quote": "能：必備 Python、TypeScript 或其他後端語言，REST API、JSON、非同步與服務整合；LLM、"}, "藍新資訊": {"file": "34_104職缺更新_藍新資訊.md", "heading": "目前開放職缺 > AI前線部署工程師（8uol0）", "quote": "、JavaScript/TypeScript、n8n、Elasticsearch、PostgreSQL。AI 相關證"}, "神通資訊": {"file": "33_104職缺更新_神通資訊.md", "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）", "quote": "案經驗、React 與 TypeScript、HTML／CSS、Git，並能與後端討論 API 與資料結構。加分為 "}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > .NET 產品開發工程師(24052801)（8cgii）", "quote": "、JavaScript、TypeScript、T-SQL；熟悉 ASP.NET MVC 與 ASP.NET Core"}, "聯合報": {"file": "31_104職缺更新_聯合報.md", "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）", "quote": "整、Git 版控。了解：TypeScript、Sass、SPA 下的 SEO 機制。略懂：Node.js（Expre"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > I113 (Sr.)軟體工程師, 全端開發（8tphn）", "quote": "；JavaScript／TypeScript／HTML／CSS；Git 與 RESTful API 設計開發；溝通與"}}}
+{"keyword": "AWS", "gold": {"華電聯網": {"file": "36_104職缺更新_華電聯網.md", "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）", "quote": " 工作內容：負責公有雲（AWS／GCP／Azure）的資安架構規劃與維運，包含 IAM 權限治理、VPC 網路隔離、"}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > MIS工程師(25041801)（8ox8m）", "quote": "定（GCP、Azure、AWS）。"}, "聯合報": {"file": "31_104職缺更新_聯合報.md", "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）", "quote": "；了解雲端資料平台（如 AWS）；具模型部署、MLOps、pipeline、API、batch inference、"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）", "quote": "進行開發、分析或自動化；AWS／Azure／GCP 雲端學習或實作；side project、作品集、專題、競賽；邏"}, "凱基證券": {"file": "06_凱基證券.md", "heading": "5. 技術堆疊", "quote": "商（GCP／Azure／AWS）：查無。"}}}
+{"keyword": "MCP", "gold": {"中華網龍": {"file": "37_104職缺更新_中華網龍.md", "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）", "quote": "ool Calling、MCP）。建立非同步處理、重試、Fallback、Token 計算與成本控制機制，並參與 S"}, "凱基證券": {"file": "35_104職缺更新_凱基證券.md", "heading": "目前開放職缺 > 【數位創新部】AI Agent 應用開發工程師（8yxlh）", "quote": "zure，了解 LLM、MCP、A2A，具 RPA 流程整合能力、能獨立完成模組開發及測試。加分：AI 專案、RPA"}, "藍新資訊": {"file": "34_104職缺更新_藍新資訊.md", "heading": "目前開放職缺 > AI前線部署工程師（8uol0）", "quote": "API、Webhook、MCP Connector，建置資料同步與事件驅動架構。建置 CI/CD Pipeline，"}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）", "quote": "目前正把產品發展到符合 MCP 協定，與企業內跨系統協作。"}, "台灣大哥大": {"file": "01_台灣大哥大.md", "heading": "5. 技術堆疊", "quote": "：自研 GenAIus、MCP、向量檢索 RAG、NVIDIA GB300 算力、自研語音模型 myVoca。"}}}
+{"keyword": "FastAPI", "gold": {"神通資訊": {"file": "33_104職缺更新_神通資訊.md", "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）", "quote": "，用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API（OpenAI、Cla"}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > Machine Learning Engineer (CV) 機器學習工程師 (電腦視覺)(24013102)（889ho）", "quote": "PI 工具（Flask、FastAPI）；有從實驗到部署的 ML 專案經驗；團隊合作與清楚溝通；英文聽說讀寫中等。工"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）", "quote": "ython、Flask／FastAPI、AWS／GCP、HTML／JavaScript／CSS、Git、物件導向、關"}}}
+{"keyword": "PostgreSQL", "gold": {"藍新資訊": {"file": "34_104職缺更新_藍新資訊.md", "heading": "目前開放職缺 > AI前線部署工程師（8uol0）", "quote": "ript、Python、PostgreSQL；技能 AI、系統整合分析。專業知識 GenAI、Agentic AI、"}, "神通資訊": {"file": "33_104職缺更新_神通資訊.md", "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）", "quote": "組拆分、至少一種資料庫（PostgreSQL／MySQL／MongoDB）。加分為 NestJS／Express／F"}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > 系統工程師(24100701)（8iig9）", "quote": "racle、MySQL、PostgreSQL 任一）、虛擬主機（VMware、VirtualBox、Hyper-V）"}, "聯合報": {"file": "31_104職缺更新_聯合報.md", "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）", "quote": "擅長工具：Python、PostgreSQL。科系：商管、數學及電算機科學、工程學科類。語文：不拘。"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）", "quote": "Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP。Python W"}}}
+{"keyword": "CI/CD", "gold": {"藍新資訊": {"file": "34_104職缺更新_藍新資訊.md", "heading": "目前開放職缺 > AI前線部署工程師（8uol0）", "quote": "步與事件驅動架構。建置 CI/CD Pipeline，規劃 GitOps、IaC 與自動化部署。"}, "神通資訊": {"file": "33_104職缺更新_神通資訊.md", "heading": "目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）", "quote": "維護軟體工程自動化流程（CI/CD），開發自動化腳本（軟體安裝與設定），管理微服務平台維運，建置測試環境與安裝軟體。"}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > [校園專區]程式分析師（89sxv）", "quote": "的軟體。遵循並維護產品 CI/CD，建立自動化建構與部署程序。"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）", "quote": "暨維運工程師（監控告警、CI/CD、根因分析、容量規劃、Log 除錯）；.Net 工程師（ASP.NET MVC／C"}}}
+{"keyword": "TensorFlow", "gold": {"聯合報": {"file": "31_104職缺更新_聯合報.md", "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）", "quote": "st、LightGBM、TensorFlow、PyTorch 或類似工具；了解雲端資料平台（如 AWS）；具模型部署"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > I108 LLM應用平台架構師（8b54k）", "quote": "。加分：PyTorch／TensorFlow；生成式 AI 於智能客服或知識管理；Agent Flow 與 Agen"}}}
+{"keyword": "Redis", "gold": {"神通資訊": {"file": "33_104職缺更新_神通資訊.md", "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）", "quote": "A／MVC／Boot）、Redis；會 Docker 與 Linux 為佳；有 1 年以上實務開發經驗尤佳。職務類別"}, "叡揚資訊": {"file": "32_104職缺更新_叡揚資訊.md", "heading": "目前開放職缺 > [校園專區-台北]Java程式設計師（89d0n）", "quote": "、Prometheus；Redis、MongoDB、Cassandra；Ansible；設計模式（工廠、樣版、命令、"}, "台灣大哥大": {"file": "30_104職缺更新_台灣大哥大.md", "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）", "quote": "ython／Shell、Redis、PostgreSQL、Docker、CI/CD、AWS／Azure／GCP。Py"}}}
+{"absence": "員工宿舍", "hits": []}
+{"absence": "員工住宿", "hits": []}
+{"absence": "宿舍補助", "hits": []}
+{"absence": "寵物假", "hits": []}
+{"absence": "寵物照護假", "hits": []}
+{"absence": "寵物喪假", "hits": []}
+{"absence": "四天工作", "hits": []}
+{"absence": "四日工作", "hits": []}
+{"absence": "週休三日", "hits": []}
+{"absence": "每週四天", "hits": []}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "rg -n -i 'React|Docker|TypeScript|AWS|MCP|FastAPI|PostgreSQL|CI/CD|TensorFlow|Redis' --glob '3[0-7]_*.md' --max-columns 140 --max-columns-preview
+rg -n '員工宿舍|員工住宿|宿舍補助|四天工作|四日工作|週休三日|每週四天' --glob '0[1-7]_*.md' --glob '09_*.md' --glob '2[0-7]_*.md' --glob '3[0-7]_*.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 637ms:
+37_104職缺更新_中華網龍.md:16:- 工作內容：串接 OpenAI、Anthropic、Google Gemini 等 LLM API，建立 AI 應用服務。設計 Prompt、Context Engineering、RAG、向量資料庫與多階段檢索，開發可規劃任務、調用工具的 AI Agent（Function  [... omitted end of long line]
+37_104職缺更新_中華網龍.md:17:- 條件與技能：必備 Python、TypeScript 或其他後端語言，REST API、JSON、非同步與服務整合；LLM、Agent、RAG 或生成式 AI 專案經驗；錯誤處理、測試、Log、Git。加分：Embedding、Vector DB、MCP、Docker、雲端、 [... omitted end of long line]
+36_104職缺更新_華電聯網.md:44:- 工作內容：負責公有雲（AWS／GCP／Azure）的資安架構規劃與維運，包含 IAM 權限治理、VPC 網路隔離、WAF／DDoS 防護策略。參與公司內部資安產品研發，做雲服務與生成式 AI 安全防護機制的客製化開發與規則調校。也用雲端 AI／ML 服務為客戶建立應用。 [... omitted end of long line]
+36_104職缺更新_華電聯網.md:45:- 條件與技能：必備為至少一種公有雲平台實戰經驗、Python 或 Shell Script、Docker 與 Kubernetes（含 Container Security）、Linux 與 TCP/IP。加分為持有經濟部 iPAS 證書。科系不拘，出差外派為無需出差外派，日班 [... omitted end of long line]
+36_104職缺更新_華電聯網.md:199:- 條件與技能：必備為 Python 開發 3 年以上並能獨立處理開源專案與環境問題，熟悉 Linux、Docker、Ubuntu CLI（Shell Script 佳）。擅長工具為 Python、Ubuntu、Docker。加分為統計與線性代數基礎、數位影像格式、ML 與影像辨 [... omitted end of long line]
+36_104職缺更新_華電聯網.md:206:- 條件與技能：必備為網路建置經驗（TCP/IP）與防火牆設定經驗。加分為對 AWS、Azure、GCP 雲端服務有基礎概念，對 AI 影像辨識有興趣，具攝影機、NVR 或弱電系統經驗。出差外派為無需出差外派。 [... omitted end of long line]
+36_104職缺更新_華電聯網.md:234:- 條件與技能：必備為熟悉 LDAP，並有 AWS、Azure、GCP 雲端平台管理與建置經驗。加分為 Shell Script 或 PowerShell 基礎。科系為資訊管理、資訊工程相關。出差外派為無需出差外派。 [... omitted end of long line]
+35_104職缺更新_凱基證券.md:66:- 條件與技能：擅長工具 C#、ASP.NET、VueJS。必備：2 年以上 C#／ASP.NET（MVC 或 ASP.NET Core）、MS SQL、HTML5／CSS3／JavaScript／jQuery、Git。加分：.NET 6 以上、Vue.js 或 React 或  [... omitted end of long line]
+35_104職缺更新_凱基證券.md:101:- 條件與技能：擅長工具不拘。必備：資訊或相關科系大學以上，熟悉 Copilot Studio、Power Platform、Azure，了解 LLM、MCP、A2A，具 RPA 流程整合能力、能獨立完成模組開發及測試。加分：AI 專案、RPA 或 Power Platform  [... omitted end of long line]
+34_104職缺更新_藍新資訊.md:28:- 工作內容：參與客戶訪談與工作坊，分析作業流程與資訊系統，盤點 AI 自動化場景，撰寫需求規格與建議書。設計 Agentic AI、RAG 與 Workflow 架構，規劃企業知識庫與 AI 助理，協助客戶導入與驗證。串接 ERP、CRM、HR、電子簽核，開發 REST API [... omitted end of long line]
+34_104職缺更新_藍新資訊.md:29:- 條件與技能：擅長工具 JavaScript、Python、PostgreSQL；技能 AI、系統整合分析。專業知識 GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes。專業技能 Python、JavaScript [... omitted end of long line]
+33_104職缺更新_神通資訊.md:71:- 條件與技能：必備為 2 年以上前端實務、Next.js 實際專案經驗、React 與 TypeScript、HTML／CSS、Git，並能與後端討論 API 與資料結構。加分為 Next.js App Router／Server Components、Tailwind CSS [... omitted end of long line]
+33_104職缺更新_神通資訊.md:78:- 條件與技能：必備為 5 年以上前端實務、Next.js 平台型產品經驗、React 與 TypeScript、前端架構設計、狀態管理與模組拆分，並曾做過既有系統的前端重構或版本升級。擅長工具：ReactJS。工作技能欄標示 Next.js、React、TypeScript、前 [... omitted end of long line]
+33_104職缺更新_神通資訊.md:84:- 工作內容：用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端，設計 RESTful API 與服務模組。與前端定義 API 和資料結構，串接內外部系統處理資料流，並協助既有後端功能的重構與效能優化。 [... omitted end of long line]
+33_104職缺更新_神通資訊.md:85:- 條件與技能：必備為 Node.js 平台型或企業系統經驗、JavaScript／TypeScript、API 架構設計與模組拆分、至少一種資料庫（PostgreSQL／MySQL／MongoDB）。加分為 NestJS／Express／Fastify／Go、B2B／SaaS  [... omitted end of long line]
+33_104職缺更新_神通資訊.md:92:- 條件與技能：必備為 5 年以上後端經驗、Node.js 平台型或企業系統經驗、JavaScript／TypeScript、API 架構設計與系統整合、後端重構或效能優化經驗、至少一種資料庫。加分為 NestJS／Express／Fastify／Go、B2B／SaaS、排程與事 [... omitted end of long line]
+33_104職缺更新_神通資訊.md:106:- 條件與技能：擅長工具為 Git、Java、Python、Spring、MS SQL、PostgreSQL、HTML、JavaScript、jQuery、CSS。希望熟悉 Thymeleaf、Spring（Framework／JPA／MVC／Boot）、Redis；會 Dock [... omitted end of long line]
+33_104職缺更新_神通資訊.md:112:- 工作內容：維護軟體工程自動化流程（CI/CD），開發自動化腳本（軟體安裝與設定），管理微服務平台維運，建置測試環境與安裝軟體。需到客戶端做系統環境建置與軟體安裝，需出差，一年累積時間未定。 [... omitted end of long line]
+33_104職缺更新_神通資訊.md:113:- 條件與技能：擅長工具為 Linux、Shell、Jenkins、Git、Kubernetes、Windows Server 2019、DNS／DHCP／Firewall 等網路設定。需熟悉 Docker；會 Ansible 為佳；有 1 年以上實務經驗尤佳。週休二日。 [... omitted end of long line]
+33_104職缺更新_神通資訊.md:120:- 條件與技能：擅長工具為 Git、Java、Spring、MS SQL、MySQL、PostgreSQL、JavaScript、jQuery。希望熟悉 Thymeleaf、Spring（Framework／JPA／MVC／Boot）、Redis；會前端 HTML／CSS 為佳； [... omitted end of long line]
+33_104職缺更新_神通資訊.md:140:- 工作內容：負責金融系統前端架構，用 Angular 開發響應式 SPA，以 RxJS 處理資料串流與非同步 API，用 NgRx 或 Service 管理全域狀態。封裝可重用 UI 元件（SCSS／SASS），與 Java 後端對接 RESTful API，撰寫 Docker [... omitted end of long line]
+33_104職缺更新_神通資訊.md:147:- 工作內容：用 Spring Boot 開發高可用、可擴展的金融後端微服務，處理高併發交易邏輯，設計 RESTful API 並以 Swagger／OpenAPI 提供文件。設計 RDBMS 結構與 SQL 優化，整合 Hazelcast 或 Redis 做分散式快取，用 Ra [... omitted end of long line]
+33_104職缺更新_神通資訊.md:148:- 條件與技能：擅長工具為 Java、Spring、ANSI SQL、JDBC。需撰寫 Dockerfile 與 JVM 調優以在 K8S Pod 運行，寫 JUnit／Mockito 測試，並以 Prometheus 指標做監控；共同職能為 Git／Gitflow、GitLab [... omitted end of long line]
+33_104職缺更新_神通資訊.md:232:- 條件與技能：擅長工具為 Java、MySQL、PostgreSQL、JavaScript；工作技能含系統維護、系統整合分析、軟體程式設計。應屆畢業生可。日班有彈性上下班（08:00~17:00 或 10:00~19:00）。不需出差。 [... omitted end of long line]
+33_104職缺更新_神通資訊.md:259:- 工作內容：以 C# 做軟體開發，搭配網頁 JavaScript／React，需理解資料庫運作原理與規劃、串流基本觀念，並了解 AI 開發，至少會一種主流開發方法。職務類別為軟體工程師。彈性上下班（8:00～10:00 上班），週休二日，不需出差。 [... omitted end of long line]
+33_104職缺更新_神通資訊.md:267:- 條件與技能：熟悉 React、Vue、Angular 或 HTMX／Alpine.js 其一，JavaScript（ES6+）／TypeScript、HTML5、CSS3、RESTful API 與 HTTP、JSON 格式處理與狀態管理、Git 協作；有 Python／Dj [... omitted end of long line]
+33_104職缺更新_神通資訊.md:287:- 工作內容：打造企業級生成式 AI 應用，用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API（OpenAI、Claude 等）與向量資料庫，設計並優化 RAG 架構。以 Pydantic 與 JSON Schema 控制資料型態以穩定  [... omitted end of long line]
+33_104職缺更新_神通資訊.md:288:- 條件與技能：需有電機、資訊工程、資訊科學等相關學位背景，熟悉 Python 或 PyTorch，能讀論文並實作演算法；熟悉 Docker、Git、GitHub、Redmine 者佳；有 AI 開發或專案經驗者優先。職務類別為 AI 工程師、軟體工程師。不需出差。 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:54:- 條件與技能：必備：能獨立作業並解決技術問題；英文聽說讀寫中等。工具：Linux、Windows Server 2008／2012／2019。技能：伺服器網站管理維護、資料備份與復原、資料庫系統管理維護、系統架構規劃與維護。加分：英文技術文件閱讀；資安經驗（系統規劃、漏洞修補、 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:77:- 工作內容：加入 Vitals EIP 核心研發團隊。產品涵蓋企業入口（EIP）、單一簽入（SSO）、組織帳號治理（IAM）與零信任無密碼驗證。重視程式碼架構、自動化開發流程與軟體工法。目前正把產品發展到符合 MCP 協定，與企業內跨系統協作。 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:78:- 條件與技能：必備：C#、ASP.NET Core 運行機制；關聯式資料庫（MSSQL、Oracle、MySQL/MariaDB、SQLite）的 Schema 設計與查詢效能優化；Git 流程（Branching Strategy、Code Review）與持續整合；OOP  [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:114:- 條件與技能：必備：Java；工具 Linux、Java、JavaScript。加分：Agile（Scrum、Kanban）；REST API、Message Queue、WebSocket、Kafka；Spring Boot、Spring Security、AOP；Kuber [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:125:- 工作內容：加入敏捷開發團隊開發軟體產品，與 Product Owner 及 UI/UX 工程師溝通功能規格與介面。採用 Scrum 與 PDCA，達成各 sprint 目標。用 OOP、SOLID、Design Patterns 與 Refactoring 開發低技術債的軟體 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:149:- 工作內容：設計、開發與維護人力資源管理系統（HR 產品），參與系統架構設計，顧及效能、穩定與擴充。與產品經理和人資顧問合作做需求分析並提出技術方案。日常含程式開發、Code Review、重構、單元測試與自動化測試，偵錯與故障排除，用 CI/CD 工具自動部署，並處理線上問題 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:150:- 條件與技能：必備：精通 C#、JavaScript、TypeScript、T-SQL；熟悉 ASP.NET MVC 與 ASP.NET Core；有 MS SQL 關聯式資料庫經驗；對軟體開發有熱忱、好奇心。工具：Windows Server 2008／2012／2019、C [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:155:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:156:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、ASP.NET、C#、VB.NET、MS SQL、PL/SQL。加分：政府機關或金融業系統開發經驗；前端 AJAX [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:161:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:162:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、ASP.NET、C#、VB.NET、MS SQL、PL/SQL。加分：政府機關或金融業系統開發經驗；前端 AJAX [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:167:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:168:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、Java、MS SQL、PL/SQL、JavaScript、Visual Basic .net。加分：政府機關或金 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:173:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:174:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、Java、MS SQL、PL/SQL、JavaScript。加分：政府機關或金融業系統開發經驗；前端 AJAX、R [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:179:- 工作內容：依個人專長與意願分派到專案開發或產品研發團隊，負責程式設計。在 DevSecOps 環境撰寫測試程式、執行單元測試，把關程式碼品質與資安問題。實際把 LLM、CV、ML 等 AI 手法放進系統作業流程。做全端開發，前端（JavaScript、React、jQuery [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:180:- 條件與技能：必備：對軟體開發有熱誠並持續學習；問題分析與處理能力；表達溝通與團隊合作；參與 Code Review。工具：Windows Server 2019、Java、MS SQL、PL/SQL、JavaScript。加分：政府機關或金融業系統開發經驗；前端 AJAX、R [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:192:- 條件與技能：必備：5 年以上經驗，大學以上學歷。工具：Windows Server 2008／2012、ASP.NET、C#、MS SQL、JavaScript。加分：前後端開發經驗（C#、React）；微軟或 Java 等技術證照；PMP、ACP、Scrum 等專案管理證照 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:198:- 條件與技能：必備：英文中等，能讀英文；MS Office。工具：Linux、Windows Server 2008／2012／2019、資料庫（MSSQL、Oracle、MySQL、PostgreSQL 任一）、虛擬主機（VMware、VirtualBox、Hyper-V）、 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:204:- 條件與技能：必備：有其他系統維運經驗；下列任一項開發經驗：前端 React、Vue.js、jQuery；後端 .NET Core、ASP.NET Core MVC、Web API；資料庫 MS SQL Server、Oracle（Stored Procedure、Trigge [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:210:- 條件與技能：必備：有其他系統維運經驗；基礎程式設計概念（C#），能理解技術文件；積極負責、主動學習。工具：Windows Server 2008／2012、ASP.NET、MS SQL。加分：網路概念與區域網故障排除；C#／.NET／RESTful API 後端；React、 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:216:- 條件與技能：必備：3 年以上經驗；英文讀中等。工具：Linux、Windows Server 2019、Firewall、TCP/IP。技能：作業系統操作、資料備份與復原、資訊設備檢修與環境設定、系統架構規劃、軟硬體預算與採買規劃、防火牆與網路系統配置。加分：資安法規與標準（ [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:221:- 工作內容：在重視團隊合作、走向微服務的應用系統開發團隊中，開發整合資安與系統運籌領域世界級軟體的平台。負責系統開發設計、建置與維護，設計與實作新功能的系統、資料庫與 API，維護並改善 CI/CD 流程，並做客戶端環境建置。需求 1 人。 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:222:- 條件與技能：必備：Java、JavaScript（ES5/ES6）；關聯式資料庫 MySQL、MSSQL、PostgreSQL；OOP、ORM；Git、SVN 或 TFS；Ant、Maven 或 Gradle；Spring 4 以上（DI、IoC）；Angular、React [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:240:- 條件與技能：必備：對程式開發有熱忱；資料庫基本操作能力；邏輯與學習能力強；團隊合作開發；英文聽說讀寫略懂。工具：Linux、Windows Server 2008／2012、Windows 10、ASP.NET、C++.NET、Java、MS SQL、PL/SQL、Postg [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:246:- 條件與技能：必備：任一高階語言開發經驗（.NET、Java、Python、PHP、Node，.NET 與 Java 尤佳）；基本前端（HTML、CSS、JavaScript、jQuery）；任一關聯式資料庫（MSSQL、Oracle、MySQL、PostgreSQL）；英文讀 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:270:- 條件與技能：必備：3 年以上 .NET 後端開發或系統維護經驗，能獨立 Debug 與讀懂現有程式；能與客戶直接溝通。工具：Windows Server 2012／2019、ASP.NET、C#、MS SQL、MySQL、Oracle、XML Web services、jQu [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:275:- 工作內容：規劃伺服器、作業系統、儲存設備、虛擬化與雲端架構，評估效能、容量、可用性與擴充性，設計高可用（HA）、備援與容錯架構。安裝設定作業系統（以 Windows Server 為主），建置虛擬化平台（VMware、Hyper-V、KVM）與雲端平台（AWS、Azure）， [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:276:- 條件與技能：工具：Windows Server 2008／2012／2019、MS SQL。技能：VMware、Hyper-V、KVM、AWS、Azure、系統監控、Patch、HA 與備援架構。條件：經歷不拘；語文不拘。加分：未標示。 [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:282:- 條件與技能：必備：熟悉資料庫設計與規劃分析，有資料庫系統開發經驗；進取心、問題分析與解決、團隊合作、溝通協調。工具：Linux、Windows Server 2008／2012／2019、Java、MS SQL、PL/SQL。加分：程式語言開發經驗；Linux 與 Docke [... omitted end of long line]
+32_104職缺更新_叡揚資訊.md:300:- 條件與技能：必備：機器學習框架（PyTorch、HuggingFace、PyTorch Lightning）；Python、SQL、Git；Web API 工具（Flask、FastAPI）；有從實驗到部署的 ML 專案經驗；團隊合作與清楚溝通；英文聽說讀寫中等。工具：Pyt [... omitted end of long line]
+31_104職缺更新_聯合報.md:56:- 條件與技能：必備：紮實機器學習演算法基礎與開源數據工具操作能力；熟悉物件導向程式設計與 Python；具資料工程能力，用 SQL 操作大型資料庫做分析。加分：Google Cloud 佈署與應用；推薦系統、NLP 演算法與模型開發調參經驗；實驗設計（Experimental  [... omitted end of long line]
+31_104職缺更新_聯合報.md:64:- 條件與技能：需熟悉 GCP；熟悉資料科學、機器學習、推薦系統、NLP 或生成式 AI；熟悉 Python、SQL 與資料處理流程；熟悉 scikit-learn、XGBoost、LightGBM、TensorFlow、PyTorch 或類似工具；了解雲端資料平台（如 AWS） [... omitted end of long line]
+31_104職缺更新_聯合報.md:71:- 條件與技能：擅長：Vue 或 React 其一（Vue 尤佳）、HTML5／CSS、ECMAScript 6、RWD 與行動版切版、瀏覽器相容性調整、Git 版控。了解：TypeScript、Sass、SPA 下的 SEO 機制。略懂：Node.js（Express、Koa） [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:66:- 條件與技能：不需樣樣都會；具備部分以下經驗即為加分：Python、Java、JavaScript、SQL 等程式開發；使用或學習 AI 工具進行開發、分析或自動化；AWS／Azure／GCP 雲端學習或實作；side project、作品集、專題、競賽；邏輯思考與問題拆解；特 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:72:- 工作內容：針對新鮮人的資訊類招募，分五個方向：Java 全端軟體工程師（系統需求開發、架構規劃）；Python Web 工程師（資料庫架構、API、雲端服務整合、串接第三方系統）；雲端工程師（公有／私有雲架構、雲端資安、成本治理、SaaS 評估、擔任 SRE）；科技服務管理暨 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:73:- 條件與技能：語文為英文聽說讀寫中等。Java 全端：Java＋SQL、JavaScript／HTML5／CSS、SA/SD；加分 Spring Boot、Angular／React／Vue、Python／Shell、Redis、PostgreSQL、Docker、CI/CD、 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:79:- 工作內容：不限國籍、實習時間不限寒暑假，由專屬導師帶領；收到履歷後由單位媒合到 16 個方向之一。技術類包含：與 AI 工具（ChatGPT、Copilot）協作開發、API 與後端整合；科技與 AI 服務開發測試（NoSQL 測試程式、資料搬移）；開源資料庫 DBA；M+  [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:80:- 條件與技能：依方向不同。程式語言：Python、JavaScript、Java、Go、C#；Web／後端：Django、Node.js、Flask、RESTful API、GraphQL；資料庫：MySQL、PostgreSQL、MariaDB、SQL、NoSQL；工具：Do [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:87:- 條件與技能：系統開發：Java、HTML5 基礎、Docker 知識。資料建模：Python 基礎、AI／ML／DL 使用經驗。系統測試：Java 基礎、Linux 基本指令。M+ 模組：基礎程式經驗、對 AI 影像處理有興趣。104 擅長工具欄為不拘。 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:94:- 條件與技能：必備：Java 程式開發與 SQL 後端開發；JavaScript、HTML5、CSS 前端開發；系統分析／設計（SA/SD）經驗。加分：Spring、Spring Boot；Angular／React／Vue.js；Python／Shell Script；Red [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:101:- 條件與技能：必備：Java、JSP/Servlet、Spring MVC／Spring Boot 架構，並具 RESTful API 設計開發經驗；Oracle 或 PostgreSQL 資料庫程式設計開發經驗；Linux Shell Script 撰寫能力；了解雲端系統開發 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:108:- 條件與技能：必備：Java、JSP/Servlet、Spring MVC 架構，並具 RESTful API 設計開發經驗；Oracle 或 PostgreSQL 資料庫程式設計開發經驗；Linux Shell Script 撰寫能力；了解雲端系統開發架構；了解容器（Cont [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:122:- 條件與技能：必備：.NET Framework／.NET Core 與 SQL 後端；C#、WebForm、ASP.NET MVC、ASP.NET Core；JavaScript、HTML5、CSS、jQuery；Webservice、Web API、RESTful API  [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:129:- 條件與技能：必備：Java 開發能力並熟悉 Spring Boot；JavaScript、HTML5、CSS 網頁開發；資料庫使用經驗；RESTful API 開發經驗。具 Docker、雲端服務使用經驗尤佳。語文：英文聽說讀寫中等。104 擅長工具欄列 Java、JavaS [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:136:- 條件與技能：必備：至少一種後端語言（Java、Python、Go、C++）；JavaScript／TypeScript／HTML／CSS；Git 與 RESTful API 設計開發；溝通與獨立解決問題能力。加分：Spring Boot、Node.js、React、Vue、A [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:142:- 工作內容：以 Java（Spring Boot）實作核心系統並重構既有程式碼；設計 API 規格，考量安全、授權與效能並產出技術文件；針對複雜業務邏輯寫高效能 SQL，以 SQL Tuning（Index 優化）處理資料庫瓶頸；撰寫 Docker 腳本或操作 Kubernet [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:143:- 條件與技能：必備：6 年以上 Java 開發；精通 Spring Boot／MVC；AWS／GCP／Azure 雲端實作與 Docker／K8s；SQL 優化；API Spec 設計、OWASP Top 10 與檢測工具；Code Review。加分：SD／SA 經驗；CI/ [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:157:- 條件與技能：必備：精通 Java 並熟悉 Spring Boot；系統分析設計經驗、需求訪談與規格文件；HTML5、JavaScript、React.JS 開發經驗；關聯式資料庫與 SQL；2 年以上 Java 網站開發。加分：AWS 或 GCP 網站開發；善用 AI cod [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:163:- 工作內容：開發 Python Web 應用，架構為 Flask＋jQuery 單體，或 FastAPI＋ReactJS 前後端分離；另開發網路爬蟲程式。應用領域涵蓋科技新創服務、加值服務、通路營運、虛擬通路、企業創新服務。職務類別為軟體工程師，需求 1 人。 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:164:- 條件與技能：必備：Python Web 開發（Flask 或 FastAPI 尤佳，Django 亦可）；jQuery 或 JS 前端開發經驗；網路爬蟲程式開發。加分：ReactJS；GCP／AWS／K8S；Java Web Application；多益聽讀 550 以上。語 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:171:- 條件與技能：必備：Python；HTML、JavaScript、CSS 與互動式網頁開發；物件導向程式設計。加分：完整參與專案的經驗；任一關聯式資料庫與 Linux；容器化相關知識；溝通與團隊協作；多益聽讀 550 以上。104 擅長工具欄列 C#、PostgreSQL、HT [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:178:- 條件與技能：必備（內文全列為必備）：Python；Flask／FastAPI 框架；GCP／AWS 任一雲端服務；Git 版本控制；物件導向；完整參與專案的經驗；任一關聯式資料庫、Redis、Linux 使用經驗；容器化相關知識；溝通與團隊協作。104 擅長工具欄列 Linu [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:185:- 條件與技能：必備：JavaScript 與 Node.js 框架；物件導向與 Git 版本控制流程；GCP／AWS 任一雲端服務；關聯式與非關聯式資料庫（MySQL、PostgreSQL、Redis 或 MongoDB）；Linux 與容器化；Express 與 Socket [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:199:- 條件與技能：必要：8 年以上軟體開發經驗，其中 5 年以上專案管理；深入了解 FreeSWITCH 架構與 VoIP；C/C++、Python、Lua；分散式系統、微服務架構與雲端技術；PostgreSQL、MySQL；Linux 系統管理與 DevOps。加分：SIP、RT [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:206:- 條件與技能：必要：任一程式語言熟練並具 Lua 基礎；SIP、RTP 等 VoIP 協議基礎；PostgreSQL 或 MySQL 使用經驗；Linux 命令列操作；Git 程式碼管理。加分：FreeSWITCH 開發或配置經驗；Docker 與 Kubernetes 容器化 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:213:- 條件與技能：必備：Swift／Objective-C；UI/UX 開發並做出穩定的 App；RESTful API 串接與 JSON 解析；Git。加分：App 上架與推播；Firebase、FB 等第三方 SDK；MVC／MVVM；UML 與 Design Pattern； [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:220:- 條件與技能：必備：Kotlin（Coroutines、Extension Functions）；Android Framework 與 Jetpack（Navigation、Room、WorkManager、Compose）；MVVM、Repository Pattern、H [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:226:- 工作內容：設計並建置「AI 大腦平台」前後端分離的 Web 系統（前端 React.js、後端 Python），為智能客服與知識管理提供 AI 應答；整合 LLM，並用 RAG 結合檢索與生成以提高回答準確性；設計與優化 Agent Flow；應用 Agentic AI；監控 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:227:- 條件與技能：必備：深度學習與機器學習；NLP、LLM、Transformer；Python、HTML、JavaScript，FastAPI、langchain（React.js 更佳）；SQL、Pandas、NumPy；大規模分散式系統設計；AWS／Google Cloud／ [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:241:- 條件與技能：必備：TCP/IP 協定與網路通訊原理；AWS、Azure、GCP 雲端平台架構與設計原則並有實際操作經驗；Windows 與 Linux 作業系統日常維運；獨立解決問題並與團隊合作。加分：英文基本聽說讀寫，多益聽讀 550 以上。語文：英文聽說讀寫中等。104  [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:248:- 條件與技能：必備：3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes；GitOps；CI/CD 流水線（版本策略、Artifact/Registry、憑證／密鑰、部署與回滾）；Linux 與網路排障；Shell／Python／Ansible／Ter [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:254:- 工作內容：維持 Linux 服務系統的高可用、擴展性與效能；建置與維護監控與告警；規劃並實作 CI/CD 自動化流程；做故障排除與根因分析（RCA）；GCP／AWS 雲端服務維運；協助開發團隊做效能監控與容量規劃；日常維運含監控、排程、備份策略、定期巡檢；分析 Log 並除錯 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:255:- 條件與技能：必備：Linux 系統管理與指令；Web 應用服務架構（Web Service、Apache Tomcat 等中介平台）；Shell Script 或 Python 自動化；Troubleshooting；團隊溝通。加分：Incident Management；Z [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:261:- 工作內容：帶領 7–8 人的 K8S 平台團隊，規劃、建置、優化、維運與轉型 WebLogic、JBoss、WildFly、Tomcat 企業級中介軟體平台，並需理解 Oracle／PostgreSQL／MySQL／SQL Server 資料庫架構；推動 WildFly 轉  [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:276:- 條件與技能：使用技術：Linux（RHEL／Oracle Linux／Ubuntu）、Windows Server、VMware、Nutanix、K8s、Container、Zabbix、Nagios。期待：伺服器硬體與作業系統操作；VMware 或 Nutanix 虛擬化平 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:283:- 條件與技能：必備：3 年以上基礎架構、系統維運或平台管理；獨立執行伺服器或平台日常維護與排查；Zabbix、Nagios 等監控告警工具；系統更新、權限管理、備份還原、基礎資安；虛擬化或企業 IT 環境維運；文件撰寫與跨團隊協作。加分：Linux、Windows Server [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:290:- 條件與技能：必備：x86 伺服器硬體與作業系統操作；GPU 主機實務管理（資源切分、驅動與 CUDA 環境建置）；跨團隊溝通並轉化為 Infra 架構設計；獨立排除故障。加分：Docker、Kubernetes 與 GPU Operator 部署；AI／MLOps 開源工具底 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:296:- 工作內容：建置並優化企業資料庫平台（PostgreSQL 為主，Oracle 為核心系統），涵蓋環境設計、參數基線、權限模型與安全防護；推動標準化與可複製交付（建置、變更、回滾流程與模板）；建立慢查治理、Top SQL 分析、容量預測、監控告警分級與 Runbook；規劃備份 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:297:- 條件與技能：必備：PostgreSQL 或 Oracle 實務維運管理（其一即可）；Linux 基本操作與效能定位（CPU／Memory／IO／Network）；跨部門溝通；文件化與標準化習慣。加分：資料庫平台化、標準化、自動化；效能調校；HA/DR；雲端與混合雲資料庫治理； [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:332:- 條件與技能：3 年以上 TPM 或專案管理經驗；JIRA／Trello 與 SDLC、Agile；系統設計、API 介接、AWS／GCP／Azure 任一雲端的基本知識；溝通、跨部門協商與簡報。加分：PMP 或 AI 相關證照；政府標案或醫療資訊（HIS/PACS）專案；完整 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:339:- 條件與技能：必備：3 年以上 TPM 或專案管理；JIRA／Trello 與 SDLC、Agile；系統設計、API 介接、AWS／GCP／Azure 任一雲端的基本知識；溝通、跨部門協商與簡報。加分：PMP 或 AI 證照；政府標案或醫療資訊（HIS/PACS）專案；完整參 [... omitted end of long line]
+30_104職缺更新_台灣大哥大.md:380:- 工作內容：「大哥付你分期」是 BNPL（先買後付）服務。工作包含：維護額度模型與規則優化；跨部門挖掘電信大數據，提取具預測力的特徵並迭代模型；用 Tableau 與 AWS 建置即時監控儀表板；把地端（On-premise）原始資料導入 AWS 雲端中繼資料庫，排除異質資料源 [... omitted end of long line]
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+[
+  {
+    "question": "哪幾家公司徵才會看 React 的底子？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["React"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "凱基證券"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Angular／React／Vue、Python／Shell"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "Vue 或 React 其一（Vue 尤佳）"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）",
+        "quote": "加分：React 前後端整合"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+        "quote": "React 與 TypeScript、HTML／CSS、Git"
+      },
+      {
+        "file": "35_104職缺更新_凱基證券.md",
+        "heading": "目前開放職缺 > 【資訊部】C#/ASP.net全端工程師（87rsh）",
+        "quote": "Vue.js 或 React 或 RWD"
+      }
+    ]
+  },
+  {
+    "question": "懂 Docker 能投哪幾家公司的職缺？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["Docker"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊", "藍新資訊", "華電聯網", "中華網龍"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 系統網路資安工程師_資安系統(25021201)（8mdm2）",
+        "quote": "容器（Docker、Kubernetes）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）",
+        "quote": "會 Docker 與 Linux 為佳"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "Linux、Docker、Kubernetes"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）",
+        "quote": "Docker 與 Kubernetes（含 Container Security）"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "MCP、Docker、雲端、ComfyUI"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司找懂 TypeScript 的人？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["TypeScript"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊", "中華網龍"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I113 (Sr.)軟體工程師, 全端開發（8tphn）",
+        "quote": "JavaScript／TypeScript／HTML／CSS"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "了解：TypeScript、Sass、SPA 下的 SEO 機制"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > .NET 產品開發工程師(24052801)（8cgii）",
+        "quote": "JavaScript、TypeScript、T-SQL"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+        "quote": "React 與 TypeScript、HTML／CSS、Git"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "JavaScript/TypeScript、n8n、Elasticsearch、PostgreSQL"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "必備 Python、TypeScript 或其他後端語言"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家的徵才條件提到亞馬遜雲經驗？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["AWS"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "華電聯網"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）",
+        "quote": "AWS／Azure／GCP 雲端學習或實作"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+        "quote": "了解雲端資料平台（如 AWS）"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > MIS工程師(25041801)（8ox8m）",
+        "quote": "（GCP、Azure、AWS）"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）",
+        "quote": "必備為至少一種公有雲平台實戰經驗"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司的技術方向有碰到 MCP？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["MCP"],
+    "companies": ["台灣大哥大", "叡揚資訊", "藍新資訊", "凱基證券", "中華網龍"],
+    "gold": [
+      {
+        "file": "01_台灣大哥大.md",
+        "heading": "5. 技術堆疊",
+        "quote": "自研 GenAIus、MCP、向量檢索 RAG"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）",
+        "quote": "目前正把產品發展到符合 MCP 協定，與企業內跨系統協作。"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "MCP Connector，建置資料同步與事件驅動架構。"
+      },
+      {
+        "file": "35_104職缺更新_凱基證券.md",
+        "heading": "目前開放職缺 > 【數位創新部】AI Agent 應用開發工程師（8yxlh）",
+        "quote": "了解 LLM、MCP、A2A"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "Function Calling、Tool Calling、MCP"
+      }
+    ]
+  },
+  {
+    "question": "會 FastAPI 可以留意哪幾家的工作？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["FastAPI"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Python、Flask／FastAPI、AWS／GCP"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > Machine Learning Engineer (CV) 機器學習工程師 (電腦視覺)(24013102)（889ho）",
+        "quote": "Web API 工具（Flask、FastAPI）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+        "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家徵才會看 PostgreSQL 能力？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["PostgreSQL"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Redis、PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "擅長工具：Python、PostgreSQL。"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 系統工程師(24100701)（8iig9）",
+        "quote": "MySQL、PostgreSQL 任一）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+        "quote": "至少一種資料庫（PostgreSQL／MySQL／MongoDB）"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "擅長工具 JavaScript、Python、PostgreSQL"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司有做程式建置和上線的自動化？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["CI/CD"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊", "藍新資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "CI/CD、根因分析、容量規劃、Log 除錯"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > [校園專區]程式分析師（89sxv）",
+        "quote": "遵循並維護產品 CI/CD，建立自動化建構與部署程序。"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）",
+        "quote": "維護軟體工程自動化流程（CI/CD），開發自動化腳本（軟體安裝與設定）"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "建置 CI/CD Pipeline，規劃 GitOps、IaC 與自動化部署。"
+      }
+    ]
+  },
+  {
+    "question": "熟 TensorFlow 能留意哪幾家徵才？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["TensorFlow"],
+    "companies": ["台灣大哥大", "聯合報"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I108 LLM應用平台架構師（8b54k）",
+        "quote": "加分：PyTorch／TensorFlow"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+        "quote": "TensorFlow、PyTorch 或類似工具"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司找人時會看 Redis 經驗？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["Redis"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Redis、PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > [校園專區-台北]Java程式設計師（89d0n）",
+        "quote": "Redis、MongoDB、Cassandra"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）",
+        "quote": "Redis；會 Docker 與 Linux 為佳"
+      }
+    ]
+  },
+  {
+    "question": "哪些公司有提供員工宿舍可以住？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "gold": [],
+    "absence_keywords": ["員工宿舍", "員工住宿", "宿舍補助"]
+  },
+  {
+    "question": "哪些公司有每週只上四天班的制度？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "gold": [],
+    "absence_keywords": ["四天工作", "四日工作", "週休三日", "每週四天"]
+  }
+]
+hook: Stop
+hook: Stop Completed
+tokens used
+61,646
+[
+  {
+    "question": "哪幾家公司徵才會看 React 的底子？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["React"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "凱基證券"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Angular／React／Vue、Python／Shell"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "Vue 或 React 其一（Vue 尤佳）"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）",
+        "quote": "加分：React 前後端整合"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+        "quote": "React 與 TypeScript、HTML／CSS、Git"
+      },
+      {
+        "file": "35_104職缺更新_凱基證券.md",
+        "heading": "目前開放職缺 > 【資訊部】C#/ASP.net全端工程師（87rsh）",
+        "quote": "Vue.js 或 React 或 RWD"
+      }
+    ]
+  },
+  {
+    "question": "懂 Docker 能投哪幾家公司的職缺？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["Docker"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊", "藍新資訊", "華電聯網", "中華網龍"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 系統網路資安工程師_資安系統(25021201)（8mdm2）",
+        "quote": "容器（Docker、Kubernetes）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）",
+        "quote": "會 Docker 與 Linux 為佳"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "Linux、Docker、Kubernetes"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）",
+        "quote": "Docker 與 Kubernetes（含 Container Security）"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "MCP、Docker、雲端、ComfyUI"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司找懂 TypeScript 的人？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["TypeScript"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊", "中華網龍"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I113 (Sr.)軟體工程師, 全端開發（8tphn）",
+        "quote": "JavaScript／TypeScript／HTML／CSS"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "了解：TypeScript、Sass、SPA 下的 SEO 機制"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > .NET 產品開發工程師(24052801)（8cgii）",
+        "quote": "JavaScript、TypeScript、T-SQL"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+        "quote": "React 與 TypeScript、HTML／CSS、Git"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "JavaScript/TypeScript、n8n、Elasticsearch、PostgreSQL"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "必備 Python、TypeScript 或其他後端語言"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家的徵才條件提到亞馬遜雲經驗？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["AWS"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "華電聯網"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > HIPO疾行軍招募計畫-資訊類（7m38q）",
+        "quote": "AWS／Azure／GCP 雲端學習或實作"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+        "quote": "了解雲端資料平台（如 AWS）"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > MIS工程師(25041801)（8ox8m）",
+        "quote": "（GCP、Azure、AWS）"
+      },
+      {
+        "file": "36_104職缺更新_華電聯網.md",
+        "heading": "目前開放職缺 > 雲端與AI資安系統及產品工程師（104 職缺代碼 61qdm）",
+        "quote": "必備為至少一種公有雲平台實戰經驗"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司的技術方向有碰到 MCP？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["MCP"],
+    "companies": ["台灣大哥大", "叡揚資訊", "藍新資訊", "凱基證券", "中華網龍"],
+    "gold": [
+      {
+        "file": "01_台灣大哥大.md",
+        "heading": "5. 技術堆疊",
+        "quote": "自研 GenAIus、MCP、向量檢索 RAG"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 產品開發工程師(21020201A)（76idx）",
+        "quote": "目前正把產品發展到符合 MCP 協定，與企業內跨系統協作。"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "MCP Connector，建置資料同步與事件驅動架構。"
+      },
+      {
+        "file": "35_104職缺更新_凱基證券.md",
+        "heading": "目前開放職缺 > 【數位創新部】AI Agent 應用開發工程師（8yxlh）",
+        "quote": "了解 LLM、MCP、A2A"
+      },
+      {
+        "file": "37_104職缺更新_中華網龍.md",
+        "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+        "quote": "Function Calling、Tool Calling、MCP"
+      }
+    ]
+  },
+  {
+    "question": "會 FastAPI 可以留意哪幾家的工作？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["FastAPI"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Python、Flask／FastAPI、AWS／GCP"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > Machine Learning Engineer (CV) 機器學習工程師 (電腦視覺)(24013102)（889ho）",
+        "quote": "Web API 工具（Flask、FastAPI）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+        "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家徵才會看 PostgreSQL 能力？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["PostgreSQL"],
+    "companies": ["台灣大哥大", "聯合報", "叡揚資訊", "神通資訊", "藍新資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Redis、PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "擅長工具：Python、PostgreSQL。"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > 系統工程師(24100701)（8iig9）",
+        "quote": "MySQL、PostgreSQL 任一）"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+        "quote": "至少一種資料庫（PostgreSQL／MySQL／MongoDB）"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "擅長工具 JavaScript、Python、PostgreSQL"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司有做程式建置和上線的自動化？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["CI/CD"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊", "藍新資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "CI/CD、根因分析、容量規劃、Log 除錯"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > [校園專區]程式分析師（89sxv）",
+        "quote": "遵循並維護產品 CI/CD，建立自動化建構與部署程序。"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）",
+        "quote": "維護軟體工程自動化流程（CI/CD），開發自動化腳本（軟體安裝與設定）"
+      },
+      {
+        "file": "34_104職缺更新_藍新資訊.md",
+        "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+        "quote": "建置 CI/CD Pipeline，規劃 GitOps、IaC 與自動化部署。"
+      }
+    ]
+  },
+  {
+    "question": "熟 TensorFlow 能留意哪幾家徵才？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["TensorFlow"],
+    "companies": ["台灣大哥大", "聯合報"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > I108 LLM應用平台架構師（8b54k）",
+        "quote": "加分：PyTorch／TensorFlow"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+        "quote": "TensorFlow、PyTorch 或類似工具"
+      }
+    ]
+  },
+  {
+    "question": "哪幾家公司找人時會看 Redis 經驗？",
+    "type": "跨公司",
+    "topic": "技術",
+    "keywords": ["Redis"],
+    "companies": ["台灣大哥大", "叡揚資訊", "神通資訊"],
+    "gold": [
+      {
+        "file": "30_104職缺更新_台灣大哥大.md",
+        "heading": "目前開放職缺 > 新鮮人徵才計畫-資訊類（7lmd9）",
+        "quote": "Redis、PostgreSQL、Docker、CI/CD"
+      },
+      {
+        "file": "32_104職缺更新_叡揚資訊.md",
+        "heading": "目前開放職缺 > [校園專區-台北]Java程式設計師（89d0n）",
+        "quote": "Redis、MongoDB、Cassandra"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60176Y2_全端工程師（104 職缺代碼 9290o）",
+        "quote": "Redis；會 Docker 與 Linux 為佳"
+      }
+    ]
+  },
+  {
+    "question": "哪些公司有提供員工宿舍可以住？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "gold": [],
+    "absence_keywords": ["員工宿舍", "員工住宿", "宿舍補助"]
+  },
+  {
+    "question": "哪些公司有每週只上四天班的制度？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "gold": [],
+    "absence_keywords": ["四天工作", "四日工作", "週休三日", "每週四天"]
+  }
+]

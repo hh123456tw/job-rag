@@ -1,4 +1,4 @@
-"""票 39：獨立測試題 40 題（eval/questions_heldout.json）的檢索評估：python -X utf8 eval/run_heldout.py
+"""獨立測試題 100 題（eval/questions_heldout.json；2026-11-17 取代舊的 40 題）的檢索評估：python -X utf8 eval/run_heldout.py
 只量不調：用目前網站設定（K、已指定公司門檻 NOT_FOUND_THRESHOLD - SCOPED_DROP、補公司名、跨公司路徑），不改任何常數、不呼叫 LLM。
 需要 JOB_RAG_CORPUS、JOB_RAG_MODELS。一次只載一個 bge-m3。分流與評分沿用 eval/run_real.py。
 寫入 eval/results_heldout.txt 與 eval/results_heldout.json。"""
@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).parent))
 import run_real  # noqa: E402
 from job_rag import retrieval  # noqa: E402
-from job_rag.evaluate import DEPTH, evaluate, questions_digest  # noqa: E402
+from job_rag.evaluate import DEPTH, evaluate, metrics, questions_digest  # noqa: E402
 from job_rag.stats import metric_interval  # noqa: E402
 
 QFILE = ROOT / "eval" / "questions_heldout.json"
@@ -43,6 +43,15 @@ def main():
     # 沒答案題（含跨公司路徑）的檢索門檻擋住數：跨公司題「狀態 low」＝擋住
     un_cross = [r for r in cross if not r["answerable"]]
     out["unanswerable_total"] = out["n_unanswerable"] + len(un_cross)
+    # 各題型分開（只含走一般檢索的可回答題；跨公司路徑另列）
+    tp = {q["id"]: q["type"] for q in qs}
+    out["by_type"] = {}
+    for t in sorted({tp[i] for i in ranks}):
+        r = [v for i, v in ranks.items() if tp[i] == t]
+        if not r:
+            continue
+        out["by_type"][t] = {"n": len(r), "ci": {k: list(metric_interval(r, k)) for k in ("hit@1", "hit@3", "hit@5", "mrr")},
+                             **{k: metrics(r)[k] for k in ("hit@1", "hit@3", "hit@5", "mrr")}}
     out["unanswerable_blocked_total"] = len(gt["unanswerable_blocked"]) + sum(r["status"] == "low" for r in un_cross)
     (ROOT / "eval/results_heldout.json").write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     text = render(qs, out)
@@ -59,8 +68,8 @@ def render(qs, o):
     ans = {i for i, q in by.items() if q["answerable"]}
     top, ranks, routes = o["scores"], o["ranks"], o["routes"]
     n_a, n_u = o["n_answerable"], o["n_unanswerable"]
-    L = [f"獨立測試題 40 題的檢索評估（票 39）。題檔 eval/questions_heldout.json（{o['n']} 題；摘要 {o['digest'][:16]}）；量測日期 {o['date']}。",
-         "這 40 題在跑任何評估之前寫定，沒有用來挑門檻、取段數或任何常數；只量不調，結果差就照實寫。",
+    L = [f"獨立測試題 100 題的檢索評估。題檔 eval/questions_heldout.json（{o['n']} 題；摘要 {o['digest'][:16]}）；量測日期 {o['date']}。",
+         "這 100 題由 Codex CLI 的 gpt-6.1-sol 單一模型出題，在跑任何評估之前寫定，沒有用來挑門檻、取段數或任何常數；只量不調，結果差就照實寫。金標未經人工確認。",
          f"量測設定：公司名自動偵測 開、結果去重 開（網站預設）；每題取前 K={o['k']} 段；名次最多看到 {o['depth']}；檢索方式 bge-m3。",
          f"門檻常數（讀自程式，沒有調整）：未指定公司 {o['threshold']:.3f}；已指定公司 {o['scoped_threshold']:.3f}；跨公司 CROSS_FLOOR = {o['cross_floor']}。", ""]
     m, ci = o["metrics"], o["ci"]
@@ -82,6 +91,9 @@ def render(qs, o):
     c = o["gate_current"]
     L.append(f"現在的設定（已指定公司 {o['scoped_threshold']:.2f}、其餘 {o['threshold']:.2f}）：不可回答題擋住 {len(c['blocked_u'])}/{n_u}"
              f"（{_ids(c['blocked_u'])}），沒擋住 {_ids(c['passed_u'])}；可回答題誤擋 {len(c['blocked_a'])}/{n_a}（{_ids(c['blocked_a'])}）")
+    L += ["", "== 各題型分開（走一般檢索的可回答題）==", "題型 題數 Hit@1 Hit@3 Hit@5 MRR（方括號＝95% 區間）"]
+    for t, v in o["by_type"].items():
+        L.append(f"{t} {v['n']} " + " ".join(f"{v[k]:.3f} [{v['ci'][k][0]:.3f}, {v['ci'][k][1]:.3f}]" for k in ("hit@1", "hit@3", "hit@5", "mrr")))
     L += ["", f"== 跨公司題（{o['n_cross']} 題；門檻 CROSS_FLOOR = {o['cross_floor']}；每家取 {o['per_company']} 段）==",
           "題號 通過 狀態 相關家數 含關鍵字家數 最高分 問句"]
     for r in o["cross"]:
@@ -89,7 +101,7 @@ def render(qs, o):
     L.append(f"通過 {sum(r['pass'] for r in o['cross'])}/{len(o['cross'])}（通過＝可回答題狀態 ok 且至少一家相關公司的段落含關鍵字；不可回答題＝狀態 low；"
              "相關公司由程式做關鍵字比對）")
     L += ["", "== 合計 ==",
-          f"沒答案題（15 題，含跨公司路徑）檢索門檻擋住 {o['unanswerable_blocked_total']}/{o['unanswerable_total']}。"]
+          f"沒答案題（{o['unanswerable_total']} 題，含跨公司路徑）檢索門檻擋住 {o['unanswerable_blocked_total']}/{o['unanswerable_total']}。"]
     return "\n".join(L) + "\n"
 
 

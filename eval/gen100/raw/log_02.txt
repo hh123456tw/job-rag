@@ -1,0 +1,2320 @@
+OpenAI Codex v0.166.0
+--------
+workdir: C:\claude\aipe04期末\履歷\廠商深查
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1ea1a-8ae2-7820-8198-40f0762754fe
+--------
+user
+你是求職情報問答 RAG 的「出題者」。只用讀檔（唯讀），不要改任何檔案，不要執行會連網的指令。
+語料資料夾就是目前工作目錄（C:/claude/aipe04期末/履歷/廠商深查）。現有題檔在 C:/claude/aipe04期末/job-rag/eval/questions_heldout.json 與 C:/claude/aipe04期末/job-rag/eval/questions.json（先讀，格式要沿用，題目不能和它們重複或高度相似）。
+
+【可用來源】
+- 公司頁（0N_公司.md）只能用這幾段：「1. 基本資料」「2. 業務與財務」「4. 職缺」「5. 技術堆疊」「8. 近一年新聞」。
+- 補充檔（2N_補充_公司.md）只能用標題不含下列字詞的公開事實段落。
+- 104 職缺更新檔（3N_104職缺更新_公司.md）。
+- 禁用字詞（標題或段落主旨含這些就不能用）：面試、評價、風險、判斷、推測、矛盾、限制、未查到、對應、作戰。
+- 禁用檔案：00_面談作戰卡.md、00_總報告.md、104/ 資料夾、selfdata、其他非列名的檔案。
+
+【口吻】像面試官現場用手機問的：短、口語、10–30 字，不要照抄原文用字（要換同義說法，避免只靠關鍵字比對就答得出來）。公司名可以直接講。題目本身不可寫「根據文件」「上面」之類字眼。
+
+【輸出格式】只輸出一個 JSON 陣列（不要 markdown 圍欄、不要說明文字）。每題一個物件：
+{"question": 題目, "type": 類型, "topic": 主題（薪資/技術/地點/學歷/業務/財務/新聞/職缺/福利規章/內部資訊/其他）, "company": 公司名（跨公司題省略）, "gold": [{"file": 檔名, "heading": 標題路徑, "quote": 原文片段}], ...}
+- heading 寫法：不含檔案最上面的 # 一級標題；把上層到該層的標題文字用 " > " 串起來（例如 "2. 業務與財務"、"目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）"），文字與檔案內完全一致（含編號、全形括號）。
+- quote：必須是該標題段落內「逐字存在」的連續原文，單行內、8–60 字、不要跨行、不要自己改標點或空白。程式會逐字比對，錯一個字就整題作廢。
+- 一題的 gold 可以多筆（例如同一事實在公司頁與補充檔都有就都列）。
+
+【你的任務】只針對「聯合報」，檔案：02_*.md、21_補充_*.md、31_104職缺更新_*.md。共出 11 題：
+1) 7 題 type="單一公司"：答案是明確單一事實，主題要分散（薪資、技術堆疊、工作地點、學歷要求、業務、財務數字、新聞…）。至少 2 題取自 104 職缺更新檔的單一職缺（要指明職稱），其餘取自公司頁或補充檔。
+2) 2 題 type="職缺"：「職缺清單」題，例如「聯合報有哪些軟體職缺」「聯合報有沒有 Python 後端職缺」。答案是多個職缺，gold 要為「每個符合的職缺」各列一筆（file 為 31_*.md，heading 為該職缺標題路徑，quote 取該職缺段內一句）。你必須讀完整份 31 檔，確定列出所有符合的職缺，不要漏。符合職缺要 2–6 個。
+3) 2 題 type="不可回答"：貼近真實面試官會問、但語料裡沒有答案的題（福利細節如員工旅遊、年終獎金月數、加班費算法；公司內部組織人數；語料沒寫的數字等），問的是「聯合報」。gold 設 []，另加 "absence_keywords": [2–4 個關鍵字，用來在全語料 grep 驗證真的沒有；用最短、最能代表答案的詞，例如「年終」「員工旅遊」]。你自己先用 grep 確認這些關鍵字在「聯合報」相關檔案沒有出現。
+type 欄位的值只能是：單一公司、職缺、不可回答。company 欄位填 "聯合報"。
+
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+我會先讀現有題檔和聯合報的指定檔案，核對可用段落、完整職缺與重複題，再用唯讀搜尋確認不可回答題的關鍵字沒有出現。
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -Encoding UTF8 -Raw 'C:/claude/aipe04期末/job-rag/eval/questions_heldout.json'; Get-Content -Encoding UTF8 -Raw 'C:/claude/aipe04期末/job-rag/eval/questions.json'; Get-ChildItem -File -Name '02_*.md','21_補充_*.md','31_104職缺更新_*.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 385ms:
+{
+ "說明": "票 39：獨立測試題 40 題（原本有答案 25、沒答案 15；2026-11-17 因語料換新版，h40 改標為可回答，現為有答案 26、沒答案 14；gold 與關鍵字隨之更新，非為提高分數）。題目與金標在跑任何檢索評估之前寫定，之後不得為了結果改題。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（程式核對確實出現在公開段落）。沒有答案題的 absence_keywords 在整份語料（含排除段落）出現 0 次；trap＝相近主題但語料確實沒寫的陷阱題。核對狀態只有使用者能改成已確認。",
+ "questions": [
+  {
+   "id": "h01",
+   "question": "EPS 多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "EPS 4.77 元"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "EPS 4.77 元，營收年減 0.31%"
+    },
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "業務與財務 > 2025 年第四季與全年細項",
+     "quote": "EPS 4.77 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h02",
+   "question": "用什麼雲端？",
+   "type": "公司頁短問句",
+   "topic": "技術",
+   "answerable": true,
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）"
+    },
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "技術堆疊 > Google Cloud 資料與運算架構",
+     "quote": "使用的產品包括 BigQuery、Vertex AI、Compute Engine"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h03",
+   "question": "董事長是誰？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "張培鏞（代表人）／陳世安"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h04",
+   "question": "公司在哪裡？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "台北市內湖區堤頂大道二段 187 號"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h05",
+   "question": "什麼時候上櫃？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元"
+    },
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "68 元掛牌上櫃，開盤 73.7 元"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "基本資料 > 設立與資本市場歷程",
+     "quote": "每股 68 元掛牌上櫃"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2026 年上櫃審議到掛牌",
+     "quote": "承銷價每股 68 元掛牌上櫃"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h06",
+   "question": "海外有哪些據點？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 業務",
+     "quote": "香港、泰國、新加坡、印尼、中國大陸"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h07",
+   "question": "客戶是哪些類型？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 主要客戶",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "基本資料 > 策略夥伴與客戶群",
+     "quote": "政府單位（交通部、國防單位、地方政府）、電信業"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 2025 年營收結構與客戶組成",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h08",
+   "question": "股利配多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "配發 0.33 元現金股利，12 年來首次配息"
+    },
+    {
+     "file": "09_中華網龍.md",
+     "heading": "8. 近一年新聞",
+     "quote": "2025 年首次配息 0.33 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h09",
+   "question": "遠振資訊的資本額是多少？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "16_遠振資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "資本總額：20,000,000 元"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 公司簡介",
+     "quote": "資本額：1300 萬元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h10",
+   "question": "數據立的續約率是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "續約率 90%、續費率 120%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h11",
+   "question": "艾普特有哪四大事業群？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "廣告科技、行銷科技、管理科技、電商科技"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h12",
+   "question": "宏碁雲架構的母公司是誰？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "1. 基本資料",
+     "quote": "安碁資訊股份有限公司（ACSI，6690）"
+    },
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "安碁資訊（6690）的子公司"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h13",
+   "question": "典凡科技的資深網路架構師年薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師",
+     "quote": "年薪 1,500,000 元以上"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 1,500,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h14",
+   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "薪資：月薪 37,000 以上"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "job/8x526 | 1 年以上 | 大學、碩士 | 月薪 37,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h15",
+   "question": "艾普特的 PM 專案規劃師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "E_華電_艾普特_醫宇宙.md",
+     "heading": "2. 艾普特 > 相關職缺",
+     "quote": "月薪 40,000~42,000"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）",
+     "quote": "https://www.104.com.tw/job/8tpxn | 1 年以上 | 專科以上 | 月薪 40,000~42,000"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h16",
+   "question": "數據立的產品維運工程師要會哪些工具？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師",
+     "quote": "精通 Docker、Grafana + Prometheus"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h17",
+   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "3. 業務與財務 > 產品與業務",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    },
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "技術堆疊 > Agent Builder 企業 AI 一體機的軟硬體",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h18",
+   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "179.4 億，年增 383%"
+    },
+    {
+     "file": "06_凱基證券.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "上半年證券純益 179.4 億，年增 383%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h19",
+   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）",
+     "quote": "擅長工具欄為 MySQL、Oracle、PL/SQL"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "h20",
+   "question": "叡揚資訊 2026 前三季的營收是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "15.34 億，年增 6.58%"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "前三季營收年增 6.58%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h21",
+   "question": "哪些公司的職缺要求 Spring Boot？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Spring Boot"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h22",
+   "question": "哪幾家公司的職缺會用到 VMware？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "VMware"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h23",
+   "question": "哪家公司有做 AI Agent 的產品？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "AI Agent"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h24",
+   "question": "哪些公司使用 Google Cloud？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Google Cloud"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h25",
+   "question": "哪些公司的職缺要會 C#？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "C#"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h26",
+   "question": "有颱風假嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "神通資訊",
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "颱風假"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h27",
+   "question": "有員工持股信託嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "凱基證券",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "持股信託",
+    "員工持股"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h28",
+   "question": "有交通津貼嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "聯合報",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "交通津貼",
+    "交通補助"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h29",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "心理諮商"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h30",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "育嬰"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h31",
+   "question": "典凡科技今年的營收目標是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "營收目標"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "營收目標": "2026-11-17 新語料命中：27 號中華網龍補充檔寫的是《吞食天地》放置版首月營收目標，不是典凡科技今年營收目標；題目仍無答案"
+   }
+  },
+  {
+   "id": "h32",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "下載次數",
+    "下載量",
+    "累計下載"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h33",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "AI 部有",
+    "AI 部人數",
+    "AI 部共"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h34",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "廣達"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h35",
+   "question": "鴻海的董事長是誰？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "鴻海"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h36",
+   "question": "富邦金控旗下有哪些子公司？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "富邦金控"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h37",
+   "question": "台北明天會下雨嗎？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "天氣",
+    "氣象",
+    "下雨"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h38",
+   "question": "履歷的自傳要怎麼寫？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "自傳",
+    "履歷範本"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "自傳": "2026-11-17 新語料命中：37 號中華網龍職缺條件提到自傳，沒有教人怎麼寫自傳；題目仍無答案"
+   }
+  },
+  {
+   "id": "h39",
+   "question": "哪些公司有哺乳室？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "哺乳室"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h40",
+   "question": "哪間公司有員工社團？",
+   "type": "跨公司",
+   "topic": "福利規章",
+   "answerable": true,
+   "gold": [],
+   "split": "heldout",
+   "status": "待使用者確認（2026-11-17 因新語料已含答案，由不可回答改標為可回答，非為提高分數）",
+   "keywords": [
+    "家庭日、社團"
+   ]
+  }
+ ]
+}
+
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2025 年底原廠夥伴獎項",
+     "quote": "HPE FY25 最佳合作夥伴獎"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "c06",
+   "question": "哪一家公司有自研的語音模型？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研語音模型 myVoca"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "myVoca"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "神通資訊的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "額定 25 億；實收 21 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 標案占比（重點）",
+     "quote": "政府標案 110 件，總額近 83 億"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 政府標案與在手專案",
+     "quote": "110 件政府標案，得標總金額近 83 億元"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "20.19 億，年增 16.33%"
+    },
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "業務與財務 > 2025 年財務結果",
+     "quote": "20.19 億元，年增 16.33%"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "AltaBots.ai：企業級 No-Code AI Agent 平台"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "部門 2008 年成立"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "AI 智慧辨識（InsAI，VLM，支援地端）"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "InsAI 支援地端部署"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "InsAI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s11",
+   "question": "艾普特是做什麼的公司？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "數位行銷公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "2. 業務與財務 > 產品與服務（【自述】https://tftech.com.tw ）",
+     "quote": "企業級資料保護與雙活資料中心"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 公司簡介",
+     "quote": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+    },
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "2. 業務與財務",
+     "quote": "機房維運管理、雲端相關服務"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）",
+     "quote": "年薪 900,000~1,200,000"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
+     "quote": "薪資：年薪 900,000~1,200,000 元"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 900,000~1,200,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "Django"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I97 Kubernetes 平台工程師（8xjjo）",
+     "quote": "3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【戰略部】數據優化師(數據分析)（7qtdo）",
+     "quote": "月薪 35,000 元以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-1 AI 解決方案工程師（已讀單頁）",
+     "quote": "需出差，一年累積約三個月以下"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）",
+     "quote": "AI 解決方案工程師（技術）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）",
+     "quote": "不需出差"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）",
+     "quote": "必備為 Python 開發 3 年以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "3 年以上 AI 系統或大型軟體架構設計經驗"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "多益",
+    "TOEIC",
+    "英檢",
+    "英文能力"
+   ],
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "多益": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案",
+    "TOEIC": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案"
+   }
+  },
+  {
+   "id": "u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "月活躍",
+    "活躍玩家",
+    "MAU",
+    "DAU"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u06",
+   "question": "叡揚資訊的特休天數是幾天？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "特休",
+    "特別休假",
+    "休假天數"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u07",
+   "question": "藍新資訊可以在家上班嗎？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "在家上班",
+    "居家辦公",
+    "混合辦公",
+    "WFH",
+    "在家工作"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "平均年薪",
+    "平均薪資",
+    "薪資中位數"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}
+
+02_聯合報.md
+21_補充_聯合報.md
+31_104職缺更新_聯合報.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -Encoding UTF8 -Raw '02_聯合報.md'; Get-Content -Encoding UTF8 -Raw '21_補充_聯合報.md'; Get-Content -Encoding UTF8 -Raw '31_104職缺更新_聯合報.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 359ms:
+# 02 聯合報／聯合報系（udngroup）深查
+
+調查日期：2026-11-16。標記：【自述】公司自己說；【第三方】外部來源；【推測】我的推論。
+
+## 0. 報名資料與矛盾
+
+- 報名部門：數據發展部。
+- 對方職稱：總經理。【查無】公開資料中未找到「聯合報系總經理」職稱。聯合報公開職稱有董事長、執行董事（項國寧）、發行人（游美月）。見 https://lawplayer.com/company/03799802、https://udn.com/news/story/7314/9544347、https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710
+- 矛盾：表單同時勾「參加」與「無法參加」。11/19 前要向主辦或廠商確認到底能不能參加。
+- 職缺連結是 vip.104.com.tw 雇主後台，需登入。未嘗試登入，視為打不開。
+
+## 1. 基本資料
+
+### 1.1 法人關係（重點）
+
+- 「聯合報」「聯合報系」「聯合線上」是不同層級。
+  - 聯合報系：集團名稱，不是單一法人。含聯合報、經濟日報、世界日報、聯合新聞網。【自述】https://udngroup.com/
+  - 聯合報股份有限公司：報紙法人。【第三方】https://lawplayer.com/company/03799802
+  - 聯合線上股份有限公司：經營聯合新聞網（udn.com）與聯合知識庫。【第三方】https://www.businesstoday.com.tw/article/category/183015/post/200609210041/
+  - 聯經數位：2025-01 發表 Streamlined Newsroom 的開發方，另一個法人。【第三方】https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710
+- 數據發展部屬哪個法人：【查無】公開資料只寫「聯合報系數據發展部」，沒寫法人。
+  - 證據 A：Publish X 報導只寫「聯合報系數據發展部」。https://udn.com/news/story/7314/9544347
+  - 證據 B：interview.tw 把數據分析師心得放在「聯合報股份有限公司」頁下。https://interview.tw/c/4OUi
+  - 證據 C：GoodJob 把數據分析師與軟體工程師評價放在「聯合報股份有限公司」頁下。https://www.goodjob.life/companies/聯合報股份有限公司/work-experiences
+  - 【推測】可能掛在聯合報股份有限公司，也可能掛在聯合線上或集團共用。要在面試時問「簽約法人是哪一家」。
+- 聯合報與聯合線上的持股關係：【查無】。查了商工登記第三方鏡像、商周 2006 報導，都沒寫持股比例。
+- 兩家的董事有重疊：聯合報董事劉永平，同時是聯合線上負責人（2018-05 起）。【第三方】https://lawplayer.com/company/03799802、https://info.technews.tw/company/70763439-%E8%81%AF%E5%90%88%E7%B7%9A%E4%B8%8A%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8（此頁我這次抓不到全文，資訊來自搜尋摘要）。這只證明有人事關聯，不證明持股。
+
+### 1.2 聯合報股份有限公司
+
+- 統編：03799802。
+- 資本額：30.9 億元（已發行 309,000,000 股，面額 10 元）。
+- 成立：1973-12-29。登記狀態：核准設立。
+- 代表人：王文杉（董事長）。地址：新北市汐止區大同路1段369號。
+- 營業項目：報紙業、雜誌出版業、會議及展覽服務業。
+- 法人股東：杉怡實業、文怡投資、金南實業、沛盛實業、愛和實業、聯經資訊。
+- 以上全部【第三方】：https://lawplayer.com/company/03799802
+- 母公司：查無單一母公司。為家族／法人股東持股結構。
+- 上市櫃：聯合報本身查無上市櫃紀錄。
+- 員工數：查無。
+
+### 1.3 聯合線上股份有限公司
+
+- 統編：70763439。【第三方】https://info.technews.tw/company/70763439-%E8%81%AF%E5%90%88%E7%B7%9A%E4%B8%8A%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8
+- 資本額：2013–2018 為 174,718,150 元；2023-09-13 變更為 300,000,000 元。同上來源。
+- 負責人：2018-05 起劉永平，之前王安嘉。同上來源。
+- 成立：約 2000 年。【第三方】https://www.businesstoday.com.tw/article/category/183015/post/200609210041/ 。精確成立日查無。
+- 上市櫃：2006-09-06 在興櫃掛牌（同商周文）。現況查無，沒查公開資訊觀測站結果。
+- 員工數：查無。
+
+### 1.4 集團（公司自述）
+
+- 聯合報創刊 1951-09-16。官網稱 16 million 月不重複訪客、860 萬會員、680 萬粉絲專頁追蹤。數字是自述，未驗證。https://udngroup.com/
+- 自稱「內容加科技」公司。同上來源。
+
+## 2. 業務與財務
+
+- 產品【自述】：聯合報、經濟日報、世界日報、聯合新聞網、聯合知識庫、訂閱產品（2020 起）、數位廣告、出版、電商、文化活動。https://udngroup.com/ 、https://cloud.google.com/customers/udn?hl=zh-TW
+- 主要客戶：廣告主與訂閱讀者。細項【查無】。
+- 廣告資料業務【自述】：約 40% 廣告訂單由數據驅動廣告服務支撐。https://cloud.google.com/customers/udn?hl=zh-TW
+- 近 3 年營收：【查無】。聯合報非上市櫃。聯合線上財報未取得（沒查到公開版本）。查過：搜尋「聯合報 財報／虧損／裁員」，只得到無關結果。
+- 不可據此判斷財務好壞。傳統報業普遍面臨訂閱與廣告壓力，這是【推測】的產業背景，不是聯合報數據。
+
+## 3. 數據發展部在做什麼
+
+公開事實：
+- 部門 2008 年成立（Google Cloud 案例稱 UDN 在 2008 設立 data department）。【自述】https://cloud.google.com/customers/udn?hl=zh-TW
+- 2018 起把網站與分析搬上 Google Cloud。用 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions。同上。
+- 2022 與 Merkle 做使用者偏好預測模型，8 個月完成，部分廣告類別 unique CTR 最高 4 倍。2023-11 得數位行銷協會獎。同上。
+- 10–15% 新聞內容依使用者偏好數據製作，轉換率約 2 倍。【自述】同上。
+- Publish X：與新聞部合作，新聞室 AI 輔助判斷與決策系統。把資深記者經驗做成知識庫。自述導入後即時新聞參與度 2.4 倍、自然觸及 3.3 倍。【自述，無獨立驗證】
+  - 2026-06-02 在法國馬賽獲 WAN-IFRA 2026 Digital Media Awards「最佳創新數位產品」金獎。811 件參賽，50 件入圍。連三年金獎。
+  - 來源：https://www.worldjournal.com/wj/amp/story/121221/9542525 、https://udn.com/news/story/7314/9544347（經濟日報，2026-06-04）。
+  - 注意：本次未找到 WAN-IFRA 官方得獎名單原頁，獎項本身只有報系媒體與轉載來源。
+- 部門職缺（舊）：演算法工程師、資料科學資深經理、數據分析師。見第 4 節。
+
+【推測】部門分兩塊：(a) 廣告／受眾資料與分析（SQL、BigQuery）；(b) 新聞室 AI 產品（Publish X 類）。依據是上列事實，不是部門自述。
+
+## 4. 職缺
+
+- 104 雇主後台 vip.104.com.tw：需登入，不嘗試。
+- 104 公司頁 https://www.104.com.tw/company/1quaxzk ：自動抓取回 403，放棄，沒再試。
+- 104 部落格（2023-02-09，舊資料）列出【數據發展部】演算法工程師（台北信義）、資料科學資深經理（台北信義）、數據分析師（新北汐止），待遇面議。無技能要求，現況不明。https://blog.104.com.tw/?p=100339
+- 官網徵才頁、Yourator、CakeResume、1111、LinkedIn：搜尋一次，未找到聯合線上／聯合報系數據發展部職缺。【查無】
+- 現行職缺（2026-11）：【查無】。
+- 間接線索：GoodJob 面試心得有「AI 工程師」（2025-01 面試，2026-02-09 發文），考 SQL 與 Python LeetCode Easy。https://www.goodjob.life/companies/聯合報股份有限公司/interview-experiences
+
+## 5. 技術堆疊
+
+- 雲：Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）；廣告：Google Ad Manager（2013 起）、Google Analytics。【自述】https://cloud.google.com/customers/udn?hl=zh-TW
+- 語言／框架：筆試線索只見 SQL 與 Python。其餘【查無】。
+- GitHub、技術部落格、技術分享：搜尋一次，未找到數據發展部的公開技術文章。【查無】
+- Streamlined Newsroom（錯字偵測、圖片推薦、提示詞平台、跨通路發布）由聯經數位開發，不是數據發展部。https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710
+- Publish X 底層（模型、RAG、框架）：【查無】。
+
+## 6. 面試流程與題目
+
+樣本：面試趣聯合報頁約 411–417 則（兩次抓取數字不同），整體評價 3.7/5、錄取率 56%、難度低。多數內容要解鎖。https://interview.tw/c/4OUi
+GoodJob 聯合報面試 44 則。https://www.goodjob.life/companies/聯合報股份有限公司/interview-experiences
+
+數據類心得（逐則皆為單一心得）：
+- 數據分析師，2026-10-11 發文（2026-07 面）：SQL 筆試後與主管面談；月薪 4.5 萬；沒通知。GoodJob。
+- 數據分析師，2026-07-05 發文（2026-06 面）：線上約 1 小時，前 30–40 分鐘面試官介紹工作；題目不難；錄取；月薪 5 萬。GoodJob。
+- 數據分析師，2026-04-30 發文：會議室筆試（SQL、行銷基礎、新聞議題申論）再面談；錄取；月薪 4.5 萬。GoodJob。
+- AI 工程師，2026-02-09 發文（2025-01 面）：SQL 與觀念筆試，Python 寫 LeetCode Easy；沒通知；月薪 4.2 萬。GoodJob。
+- 數據分析師，2026-05-12 發文（2026-04 面）：被問「最有價值或印象最深刻的專案」。面試趣。
+- 數據分析師，2025-10-13 發文：需準備簡報線上分享過去專案。面試趣。
+- 助理數據分析師，2024-11-05 發文：問如何從數據作品提出洞察與行動建議；錄取。面試趣。
+- 數據分析師，2024-09-18 發文：筆試錯題多，面談尚可；未錄取；月薪 3.5 萬。GoodJob。
+
+歸納（樣本約 8 則，偏分析師職，不是工程師職）：
+- 常見流程：SQL 筆試 → 主管面談；部分要作品集簡報。
+- 常問：過去專案、洞察與建議。
+- 未找到 PTT Soft_Job、Dcard、Glassdoor、CakeResume 的聯合報數據職面經。【查無】（僅搜尋一次，未逐站檢查）
+- 薪資重要提醒：面試趣有一則（2026-10-27，數位製作人，經濟日報）抱怨薪資到簽約階段才揭露。單一心得。
+
+## 7. 工作評價
+
+GoodJob 聯合報：總評 3.7/5，56 則評分（另一次搜尋摘要為 3.8／52 則，抓取時間不同）。頁面只列 11 則文字評價。https://www.goodjob.life/companies/聯合報股份有限公司/work-experiences
+- 面向：薪資福利 2.6、升遷 1.0（1 則）、工時 3.3、文化 4.5（2 則）。
+- 薪資：全職月薪多在約 3.2–4.2 萬；年薪約 40–50 萬（GoodJob 彙總，職務含報社各職種）。
+- 軟體設計工程師，2025-07-27：工時穩定，較少臨時加班。單一心得。
+- 資料分析師，2025-04-28：與面試所述大致相符，薪資穩定但壓力不小。單一心得。
+- 記者，2025-05-05：加班多、待命。單一心得；記者職不等於數據部。
+- 影像企劃，2024-01-22：主管長期任職、數位轉型跟不上。單一心得。
+- 離職原因：頁面無資料。
+- PTT、Dcard、Glassdoor：【查無】。
+
+結論：技術類評價只有 2 則，樣本太小，不可下結論。
+
+## 8. 近一年新聞
+
+- 2026-06：Publish X 獲 WAN-IFRA 金獎（見第 3 節）。
+- 2025-01-08：聯合報發表 Streamlined Newsroom（聯經數位開發）。https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710
+- 裁員、融資、訴訟：搜尋 3 次，未找到聯合報系相關報導。【查無】不等於沒發生。
+
+## 9. 給求職者的判斷
+
+### (a) 適合度
+- 中等。理由：
+  - 有 AI 產品與 Google Cloud 資料棧，與他的 Gemini 專案方向接近。【推測】
+  - 面試重點是專案說明與 SQL。他有完整專案可講。
+  - 公開職缺與面經偏「數據分析師」，工程師職少。他可能被放在分析職。
+  - 薪資面經 3.5–5 萬月薪，對轉職者可談區間窄。【第三方，樣本少】
+
+### (b) 風險
+- 法人不明，簽約主體要確認。
+- 公開職缺查無，11/19 可能沒有對口職缺。
+- Publish X 成效數字是自述。
+- 技術評價樣本只有 2 則。
+- 表單參加狀態矛盾，可能對方資料有誤。
+- 他沒有 BigQuery／GCP 經驗（他的專案是 Flask+MySQL、Next.js+Gemini）。
+
+### (c) 5 個該問的問題
+1. 數據發展部的任用法人是哪一家？
+2. 目前開的是分析師、資料工程師，還是 AI 工程師？各幾人？
+3. Publish X 現在誰維護？新人會碰模型、資料管線，還是只做分析？
+4. 筆試考什麼？SQL 之外要不要 Python？
+5. 起薪區間與試用期？是否可遠端？
+
+### (d) 最能對上的專案與不要誇大
+- 最對上：和泰 AI 黑客松 15 強（Next.js+Gemini）。對應 Publish X「AI 輔助決策」。次要：停車推薦系統（推薦、MySQL、資料）。
+- 不要說：「我寫了／設計了」所有程式。要說：「我定義需求、驗收，程式由 AI Agent 產生」。
+- 不要說：有 BigQuery、Vertex AI、GKE、私有 LLM、K8s 經驗。沒有。
+- 不要說：Publish X 類系統能自己做。只說理解其問題與做法。
+- 不要說：決賽 15 強等於得獎。
+
+## 10. 未查到與限制
+
+- 經濟部商工登記公示系統、公開資訊觀測站：沒有直接查，只用第三方鏡像（lawplayer、technews）。資本額與負責人需上官方網站二次核對。
+- technews 聯合線上頁、104 公司頁：抓取 403，未取得全文。
+- 聯合線上目前是否仍為興櫃：查無。聯合報／聯合線上持股：查無。
+- 數據發展部所屬法人：查無。
+- 近 3 年營收、員工數：查無。
+- 現行職缺、技能要求、薪資：查無。104 後台未打開。
+- PTT、Dcard、Glassdoor、CakeResume、Yourator、LinkedIn：未逐站檢查，搜尋一次無結果。
+- WAN-IFRA 官方得獎名單原頁：未取得。
+- 搜尋工具回傳為摘要，部分數字（如面試則數 411 對 417、GoodJob 52 對 56）兩次抓取不一致，已並列。
+- 沒有調查報名者個人。
+
+# 21 聯合報 公開資料補充
+
+## 基本資料
+
+### 聯合報系沿革與事業版圖
+
+聯合報系官網列出的大事紀如下：1951 年聯合報創刊；1967 年經濟日報創刊；1976 年世界日報在北美發行；1986 年世界日報在泰國營運；1999 年聯合新聞網（udn.com）上線；2001 年聯合知識庫上線；2016 年成立 udnFunLife；2020 年推出數位訂閱；2021 年成立永續辦公室。旗下事業除報紙外，還包括聯經出版（出版過諾貝爾獎得主高行健的作品）、聯合報系教育（辦理年度作文比賽）、健康事業（提供醫療產業行銷服務），以及 udnFunLife（活動管理、票務與 IP 授權）。經濟日報另舉辦展覽與研討會。世界日報北美總部在紐約，另有舊金山、洛杉磯分社，東南亞版由曼谷出版。官網也設有永續辦公室與 ESG 專頁，內容涵蓋減碳與再生能源。
+來源：https://www.udngroup.com/en（查詢日 2026-11-17）
+
+### 官網公布的數位規模數字
+
+聯合報系中文官網稱，集團定位為「內容加科技」，使命是「努力讓台灣更好」，價值為正派、公義、品質、創新。官網公布的數位指標包括：聯合新聞網每月不重複訪客逾 1,600 萬人，全站每月流量逾 3.8 億，會員總數逾 862 萬，各粉絲團追蹤者合計逾 680 萬，記者寫下的報導字數逾 80 億字。官網把事業分成新聞媒體、多元事業與永續發展（ESG）三大塊。這些數字都是公司自述，官網沒有標示統計期間。英文官網對 1,600 萬訪客的說法也不一致：一處寫相當於台灣人口的三分之二，另一處寫每月有二分之一的台灣人造訪。引用時應連同原文口徑一起標明。
+來源：https://udngroup.com/（查詢日 2026-11-17）
+
+### 2023 年聯合招募的職類與規模
+
+聯合報系在 2023 年農曆春節後推出「聯合招募」。104 職場力報導指出，標題為徵才百人，但五大類別人數加總為 184 名：新聞編採 34 名、資訊技術 34 名、行銷企畫 50 名、業務開發 49 名、行政及其他 17 名（含機電、財務、安衛、營繕、印務）。約 76% 的職務屬於數位性質。報導稱，聯合報的資訊技術團隊要整合長達 72 年的報紙數位資料，每天處理約 2,500 則新聞。所列職缺地點全在新北市汐止區，例如行動發展部的 Android 行動軟體開發工程師、新聞部視覺設計中心、影音中心的剪接師。這是 2023 年的招募資料，不代表現行職缺。
+來源：https://blog.104.com.tw/?p=100339（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 數據驅動廣告服務
+
+聯合報系從 2013 年起使用 Google Ad Manager。2018 年決定把線上服務與資料分析搬上雲端，選擇 Google Cloud。廣告資料流程是：把內容資料、受眾標籤與 Google Analytics 蒐集的使用者行為資料存入 BigQuery，產生目標受眾名單，再送到 Google Ad Manager 投放。2022 年起，與行銷公司 Merkle 合作建立使用者偏好預測模型，8 個月完成。模型在 Vertex AI 上執行演算法，擷取內容關鍵字作標籤、比對內容標籤與廣告類別、產生目標受眾，並經過多輪 A/B 測試選定演算法。部分廣告類別的獨立點擊率最高提升 4 倍。2023 年 11 月，該專案獲台灣數位行銷協會「數位奇點獎」最佳精準行銷應用獎。公司稱，目前約 40% 的廣告訂單由數據驅動廣告服務支撐。
+來源：https://cloud.google.com/customers/udn?hl=zh-TW（查詢日 2026-11-17）
+
+### 以數據製作內容與個人化推薦
+
+聯合報系在 2008 年成立數據部門，推動數據驅動文化。Google Cloud 案例中，數據部門 Data General Manager Anson Mok 說明，公司用 BigQuery 產生的洞察來製作更吸引人的新聞內容、驅動線上推薦引擎，並提升營運效率。udn.com 目前有 10% 至 15% 的新聞內容依使用者偏好資料製作，平均轉換率為其他內容的 2 倍。他也提到，公司雖有自己的資料專家，仍選擇與外部團隊合作，以找出盲點。案例並指出，聯合報系計畫在 2024 年推出數位閱讀平台，用資料分析提供個人化服務，與 Merkle 探索更多機器學習應用，並使用 Google Cloud 的生成式 AI 技術提升營運效率。
+來源：https://cloud.google.com/customers/udn?hl=zh-TW（查詢日 2026-11-17）
+
+### 數位訂閱與歷年全球獎項
+
+聯合報系 2020 年推出數位訂閱。WAN-IFRA 全球數位媒體大獎的成績可看出訂閱與 AI 的投入軌跡：報導指出，前年（2024）以數據驅動的策展計畫獲「最佳數位訂閱與讀者收益策略」獎；去年（2025）以「AI 引爆三大成長動能」參賽獲獎；2026 年以 Publish X 獲「最佳創新數位產品」金獎。執行董事項國寧表示，聯合報系連續三年拿到三座 WAN-IFRA 全球金獎。報導沒有說明 2025 年作品的三大動能內容。2026 年的頒獎在法國馬賽舉行，項國寧親赴領獎。WAN-IFRA 執行長 Stig Ørskov 表示，今年入圍作品的共同點是勇於擁抱新技術與新敘事方式。
+來源：https://udn.com/news/story/7314/9544347（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### Google Cloud 資料與運算架構
+
+聯合報系 2018 年把新聞網站與資料分析搬到 Google Cloud，主要考量是長期可擴充的成本、技術與資安規範，以及與 Google Ad Manager 的整合。使用的產品包括 BigQuery、Vertex AI、Compute Engine、Google Kubernetes Engine（GKE）與 Cloud Functions。運算依產品性質分配：虛擬機放在 Compute Engine，容器化服務放在 GKE，無伺服器架構用 Cloud Functions，以因應流量波動。公司稱，遷移後新聞網站沒有發生過停機，雲端服務已運行超過 5 年。Vertex AI 用於機器學習模型開發，BigQuery 用於受眾與內容分析。案例以聯合報系 COO Apollo Sun 與數據部門 Data General Manager Anson Mok 的說法為主。
+來源：https://cloud.google.com/customers/udn?hl=zh-TW（查詢日 2026-11-17）
+
+### Publish X 新聞室 AI 輔助決策系統
+
+Publish X 由聯合報系數據發展部與新聞部共同研發，定位為新聞室 AI 輔助決策系統。專案邀請多位資歷逾 35 年的資深記者參與，把採訪直覺與實戰經驗轉成核心知識庫，用來因應高壓、突發的新聞情境。數據發展部表示，導入後即時新聞參與度成長 2.4 倍、自然觸及增加 3.3 倍；報導沒有定義這兩個倍數的計算方式、比較基準與期間，也沒有說明底層模型。2026 年 WAN-IFRA 全球數位媒體大獎共 811 件作品參賽，Publish X 進入 50 席決選名單，並獲「最佳創新數位產品」金獎，6 月 2 日在法國馬賽頒獎。
+來源：https://www.worldjournal.com/wj/amp/story/121221/9542525（查詢日 2026-11-17）
+
+### Streamlined Newsroom 平台
+
+2025-01-08，聯合報系在台北舉辦「AI 賦能新識力：Streamlined Newsroom 助力媒體轉型」成果發表會。平台由聯經數位推出，發表人為聯經數位總經理林政良與技術總監張凱迪，合作單位包括數位經濟暨產業發展協會。主要功能有錯字自動偵測與修正提示、自動推薦配圖以縮短編輯找圖時間、整合生成式 AI 提示詞平台、跨頻道刊登整合，並導入個人化內容體驗。聯合報社長游美月提到「數位優先」的編撰理念，目標是把平台推廣到媒體業界、學校與內容創作者。與會者包括新芽網路、詠鋐智能、睿思創新等業者，聯經數位的 Aicast 有聲書平台也在發表會中介紹。報導稱聯合報會員數超過 700 萬人。
+來源：https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2026-06 世界新聞年會與 AI 授權議題
+
+2026 年世界新聞年會由 WAN-IFRA 主辦，於 6 月在法國馬賽舉行。聯合報系董事長王文杉與執行董事項國寧，率領聯合報、世界日報、經濟日報與聯合線上的主管出席。紐約時報發行人沙茲伯格在 6 月 1 日發表演說，主張新聞業要與 AI 公司簽署內容授權時確保合理報酬，並呼籲透過法律途徑保護智慧財產、推動 AI 透明化立法。他指出紐時每年新聞製作投入超過 20 億美元，並已與亞馬遜簽署 AI 內容授權協議，同時自 2023 年底起對 OpenAI、微軟與 Perplexity 提告。世界日報在 6 月 3 日刊出相關報導。
+來源：https://www.worldjournal.com/wj/story/121172/9542716（查詢日 2026-11-17）
+
+### 2026-05-22 聯合線上與 Readmoo 推出「琅琅讀墨」
+
+2026-05-22，聯合線上宣布與電子書平台 Readmoo 讀墨策略結盟，推出聯名電子書店「琅琅讀墨」。分工上，聯合線上負責媒體流量導入與內容整合；Readmoo 負責技術與閱讀服務，並協助讀者轉移既有電子書。聯合線上稱，自己深耕數位出版逾 20 年，udn 每月觸及全台半數上網人口，媒體會員超過 800 萬，每日數千萬計的媒體流量將導向 Readmoo。書店預計快速超過 30 萬種書籍。發表會上，聯合線上總經理為官振萱，Readmoo 共同創辦人暨執行長為龐文真。報導沒有提到推薦演算法的細節。
+來源：https://money.udn.com/money/amp/story/5648/9520249（查詢日 2026-11-17）
+
+### 2026-07 聯合報數位版提供紐約時報國際內容
+
+聯合報民意論壇在 2026-07-02 刊出張瑞雄教授的投書。文中提到，自 7 月 1 日起，聯合報數位版開始提供紐約時報的國際內容，作者把這項合作視為新聞業面對 AI 衝擊的回應。同一頁面列出「AI 衝擊新聞業」系列報導，包括〈聯合+紐時 打造新聞永續商模〉、〈重建信任 把記者帶到讀者眼前〉與〈真偽難辨！AI 內容海嘯 全球焦慮〉。文中引用牛津大學路透新聞研究所的報告：全球約 37% 民眾在多數情況下信任新聞，台灣為 25%，在亞太地區最低。作者也引用，美國新聞廣告收入 20 年來減少約 80%。合作的授權條款與內容範圍，報導沒有說明。
+來源：https://udn.com/news/story/7339/9601328（查詢日 2026-11-17）
+
+# 31 聯合報 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+本次查到 13 筆軟體、AI、資料相關職缺。來源為聯合報系三個 104 公司頁：聯合報（1quaxzk）7 筆、聯經數位（112fvi8o）4 筆、聯合線上（wiaq2zc）2 筆。13 筆都已開 104 內頁讀完整頁，以下內容以內頁為準；13 筆內頁皆可開啟，無已關閉職缺。
+104 列表總筆數：聯合報 69 筆（共 4 頁）、聯合線上 43 筆（共 3 頁）、聯經數位 7 筆，合計 119 筆。其餘為業務、企畫、編輯、記者、影音、行政、印務等非工程職缺，不收。
+與舊檔（2026-11-16）相比：
+- 新增職稱：【戰略部】數據優化分析師（廣告投放）（聯合線上，8yvw2）。
+- 舊檔有但已找不到：無。舊檔收的軟體與資料相關職缺，這次都還在列表上；其中【資訊管理部】終端維護工程師、【數據發展部】專案經理、【數據發展部】總經理助理、【戰略部】數據優化師（聯播網廣告）仍開放，但屬硬體維護、專案管理、行政或廣告營運，這次不收。
+- 聯合報列表總數由 71 筆降為 69 筆，少掉的職缺屬非工程類。
+- 聯經數位 4 筆更新日由 11/04 變為 11/17，內容與舊檔相同。
+內頁與列表文字不同處：70mim 學歷改為大學、碩士且薪資註明經常性薪資達 4 萬元或以上；93f7l 學歷改為大學、碩士且需管理 5-8 人；6i2tp 學歷改為專科、大學、碩士，並新增前端技術清單；8eulh 薪資註明經常性薪資達 4 萬元或以上、學歷改為專科、大學、碩士；7vmmw、4u5lb、8yvw2 新增必備與加分條件清單。
+
+### 職稱清單
+聯合報在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 13 筆：
+- 【數據發展部】數據分析師 - 事業發展中心（7o52w）
+- 【數據發展部】數據分析師（7vmmw）
+- 【數據發展部】助理數據分析師－產品分析中心（70mim）
+- 【數據發展部】演算法工程師（4u5lb）
+- 【數據發展部】資料科學資深經理（93f7l）
+- 【新聞部數據中心】前端開發工程師（6i2tp）
+- 【行動發展部】Android行動軟體開發工程師（8eulh）
+- 數據應用工程師（8nf2t）
+- 數據系統開發工程師（JAVA）（8v5ma）
+- 系統工程師（MyData 平台維運）（8hsql）
+- 系統分析師（84hd7）
+- 【戰略部】數據優化師(數據分析)（7qtdo）
+- 【戰略部】數據優化分析師（廣告投放）（8yvw2）
+
+### 【數據發展部】數據分析師 - 事業發展中心（7o52w）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：大學、碩士
+- 工作內容：以數據模型與 AI 應用解決真實營運問題。主導指標定義、資料模型建構、專案落地與驗證，全程對成果負責；快速建置、驗證並迭代數據與 AI 應用，直接進入實際場景；深入拆解問題，確保數據準確且可信；在高度自主的環境中推進專案。
+- 條件與技能：能在 GCP 上獨立建構資料模型與分析流程（SQL／Python／LLM），對資料定義與計算邏輯敏感；具問題拆解與產品思維，能從模糊需求定義指標與驗證方式；交付前自行驗證與交叉檢核。擅長工具：Python、VBA、MS SQL、Excel、PowerPoint、Google Analytics、Looker Studio。科系：商管、數學及電算機科學、經濟社會及心理學科類。語文：中文精通、英文中等。職務類別為數據分析師／資料分析師、資料科學家。
+- 其他條件：需準備完整簡報作品（機敏資料請模糊化）；筆試含 SQL 測驗與新聞事件分析拆解；具跨單位協作與轉譯分析結果的能力。上班時段 09:00-18:00，日班，需求 1~2 人，管理責任無。
+- 網址：https://www.104.com.tw/job/7o52w
+- 104 上顯示的更新日：08/03
+
+### 【數據發展部】數據分析師（7vmmw）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上　學歷：大學、碩士
+- 工作內容：隸屬產品分析中心，該中心為聯合報系獲 WAN-IFRA「最佳 AI 營收策略應用」全球金獎專案的核心團隊。工作為整合交易、行為、數位廣告與調查數據，結合公開資料分析並轉為行銷策略與營收成長機會；撰寫分析報告與簡報；理解資料工程邏輯，支援 ETL 撰寫、資料清理與跨系統欄位整併；依主管指派如期交付專案。
+- 條件與技能：必備：熟悉 SQL 與 Python，能處理大型資料與多維分析；具 GCP 使用經驗（資料查詢、儲存、權限管理）。加分：Vertex AI 或其他大型語言模型（LLM）應用；數位廣告運作、成效分析與廣告指標判讀。擅長工具：Python、MS SQL、Excel、PowerPoint、Github、ANSI SQL。工作技能：專案規劃執行／範圍管理、數據分析。證照：Data Analysis Using Excel 國際證照（列於內頁）。科系：商管、數學及電算機科學、工程學科類。語文：不拘。
+- 其他：週休二日，日班 09:00-18:00，需求 1 人，職務類別為數據分析師／資料分析師、商業分析師、資料工程師。
+- 網址：https://www.104.com.tw/job/7vmmw
+- 104 上顯示的更新日：08/03
+
+### 【數據發展部】助理數據分析師－產品分析中心（70mim）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士
+- 工作內容：隸屬產品分析中心（聯合報系 AI 營收策略應用全球金獎專案的核心團隊）。使用 Python 或 SQL 進行數據處理、分析與報告撰寫；日常維護與更新數據報表；優化數據處理流程，建立自動化與監控機制；呈現數據洞察，並向非技術人員清楚說明分析結果；完成主管指派專案並如期交付。
+- 條件與技能：必備：基礎 SQL、Python 程式處理能力；樂於學習新技術。擅長工具：Python、MS SQL、Excel、PowerPoint。工作技能：專案規劃執行／範圍管理、數據分析。科系：商管、數學及電算機科學、工程學科類。語文：不拘。對新興技術有學習熱情，善於溝通，確保資訊準確傳遞。
+- 其他：週休二日，日班 09:00-18:00，需求 1~2 人，職務類別為數據分析師／資料分析師、商業分析師、資料工程師。歡迎應屆畢業生。
+- 網址：https://www.104.com.tw/job/70mim
+- 104 上顯示的更新日：08/03
+
+### 【數據發展部】演算法工程師（4u5lb）
+- 公司：聯合報股份有限公司　地點：台北市信義區基隆路一段178號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上
+- 工作內容：研究與開發先進機器學習演算法與模型應用，領域含推薦系統、精準廣告、自然語言處理（NLP）。針對線上廣告、內容創新、平台經營、用戶經營、付費訂閱、線上交易，協助各部門規劃與導入演算法模型；實作高可靠度與高再現性的機器學習研究，設計並執行測試實驗驗證模型成效；把資料處理流程與數據模型轉成自動化、可擴充的解決方案，涵蓋系統設計、建置、服務維運、效益追蹤與資料回收，並與數據工程團隊協作。
+- 條件與技能：必備：紮實機器學習演算法基礎與開源數據工具操作能力；熟悉物件導向程式設計與 Python；具資料工程能力，用 SQL 操作大型資料庫做分析。加分：Google Cloud 佈署與應用；推薦系統、NLP 演算法與模型開發調參經驗；實驗設計（Experimental Design）與模型成效追蹤；設計思考與原型快速迭代；建置與維運數據應用系統經驗。擅長工具：Python、PostgreSQL。科系：商管、數學及電算機科學、工程學科類。語文：不拘。
+- 其他：日班，需求 2~3 人，可上班日不限，職務類別為演算法工程師、AI 工程師。
+- 網址：https://www.104.com.tw/job/4u5lb
+- 104 上顯示的更新日：08/03
+
+### 【數據發展部】資料科學資深經理（93f7l）
+- 公司：聯合報股份有限公司　地點：台北市信義區基隆路一段178號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學、碩士
+- 工作內容：擔任資料科學功能主管，管理 5-8 人，帶領 AI 模型開發、資料產品優化與跨部門落地，服務新聞室、廣告業務、平台營運。負責管理三項自研產品：以預測式 AI 為基礎的數據導向精準廣告（受眾分群、興趣與行為預測、廣告成效預測）；內容推薦引擎（個人化推薦、冷啟動、相似內容、A/B 測試）；新聞室生成式 AI 輔助系統（分類、標籤、摘要、標題建議、議題聚合、GenAI 輸出品質評估）。同時建立模型開發流程（資料探索、設計、驗證、部署、監控、迭代）、模型治理、模型漂移監測、資料品質檢查與人工覆核機制，並規劃 Predictive、Interpretive、Generative、Agentic AI 的路線圖。
+- 條件與技能：需熟悉 GCP；熟悉資料科學、機器學習、推薦系統、NLP 或生成式 AI；熟悉 Python、SQL 與資料處理流程；熟悉 scikit-learn、XGBoost、LightGBM、TensorFlow、PyTorch 或類似工具；了解雲端資料平台（如 AWS）；具模型部署、MLOps、pipeline、API、batch inference、monitoring 等 production AI 經驗。英文中等。擅長工具欄：不拘。數位媒體、廣告科技、Martech 經驗尤佳。
+- 網址：https://www.104.com.tw/job/93f7l
+- 104 上顯示的更新日：08/03
+
+### 【新聞部數據中心】前端開發工程師（6i2tp）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：月薪 35,000~50,000 元　經歷：不拘　學歷：專科、大學、碩士
+- 工作內容：開發數位專題的前端介面，與視覺設計師、後端工程師協作做網頁互動、切版與前端效能優化；負責前端建置與佈署，並與後端 API 串接；實作付費內容網站頁面；協助 PM 釐清需求，確認 UX／UI 可行性與邏輯流程，實現 UI 互動元件。團隊目前主要使用 Vue3。
+- 條件與技能：擅長：Vue 或 React 其一（Vue 尤佳）、HTML5／CSS、ECMAScript 6、RWD 與行動版切版、瀏覽器相容性調整、Git 版控。了解：TypeScript、Sass、SPA 下的 SEO 機制。略懂：Node.js（Express、Koa）、SSR。英文讀中等。擅長工具欄：不拘。科系：教育、數學及電算機科學、工程學科類。職務類別為前端工程師、軟體工程師。
+- 其他：日班，需求 1 人，可上班日一個月內，歡迎應屆畢業生。內頁附歷年數位專題與付費內容服務網址。
+- 網址：https://www.104.com.tw/job/6i2tp
+- 104 上顯示的更新日：08/03
+
+### 【行動發展部】Android行動軟體開發工程師（8eulh）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士
+- 工作內容：隸屬行動發展部，團隊聚焦行動 APP、雲端應用與數位產品，服務聯合新聞網、經濟日報、世界日報等媒體，方向為行動化、雲端化、智能化。負責 Android App 的分析、開發、測試修改與維護，並與產品 PM、UI／UX 設計師、雲端後台工程師、產品營運團隊協作。
+- 條件與技能：必備：熟悉 Kotlin、Android Studio 與 Android 開發生態；熟悉 git、OOP 觀念、RESTful API。加分：JavaScript／HTML／CSS、前後端協同運作、Java、Firebase。需提供個人作品或足以證明研發能力的文件。擅長工具欄：不拘；科系：不拘；語文：不拘。
+- 其他：週休二日，日班，需求 2 人，可上班日不限，職務類別為軟體工程師、Android 工程師，歡迎應屆畢業生與研發替代役。
+- 網址：https://www.104.com.tw/job/8eulh
+- 104 上顯示的更新日：11/02
+
+### 數據應用工程師（8nf2t）
+- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上
+- 工作內容：依部門的集團數據中台系統發展策略，支援各事業體使用數據系統服務。協助評估、規劃、開發與管理數據系統發展計畫；制定數據系統作業程序，確保系統穩定、資料安全與準確；用工具進行資料清理、結構化、分析與呈現，讓需求單位容易取用數據；需進行需求訪談、開發、測試、維運與檢討。
+- 條件與技能：必備：熟悉基礎 SQL 語法與 BigQuery 進階用法；具基礎 Python 開發能力。加分：提案與簡報技巧；GA4 BigQuery 原始資料萃取與清理經驗；Google Looker Studio 開發經驗；媒體或相關產業網站用戶行為數據處理經驗。需進行約 45 分鐘基礎與進階 SQL 筆試。擅長工具欄：不拘；科系：不拘；語文：不拘。
+- 其他：週休二日，日班 09:00~17:30，需求 1~2 人，職務類別為系統分析師、數據分析師／資料分析師、資料工程師，歡迎應屆畢業生。
+- 網址：https://www.104.com.tw/job/8nf2t
+- 104 上顯示的更新日：11/17
+
+### 數據系統開發工程師（JAVA）（8v5ma）
+- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學
+- 工作內容：為部門的集團策略與目標提供高可用性的應用系統支援。協助釐清需求；在既有架構下獨立完成延伸開發，包含流程優化、程式架構設計、資料表正規化；依專案時程完成系統開發、測試（含瀏覽器相容性）、修正與交付；撰寫技術文件與系統藍圖；監控系統日誌，釐清異常原因並提出處理建議、執行通報。
+- 條件與技能：必備：Java、JSP、Servlet 開發經驗；Tomcat 使用經驗；jQuery、Ajax、SQL 開發經驗；Spring、Struts Framework 開發經驗。加分：OCJP 證照。需進行約 45 分鐘 Java 基礎概念與 SQL 筆試。擅長工具欄：不拘；科系：不拘；語文：不拘。
+- 其他：週休二日，日班 09:00~17:30，需求 1~3 人，職務類別為全端工程師、資料工程師、Internet 程式設計師，歡迎應屆畢業生。
+- 網址：https://www.104.com.tw/job/8v5ma
+- 104 上顯示的更新日：11/17
+
+### 系統工程師（MyData 平台維運）（8hsql）
+- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：專科以上
+- 工作內容：維運數位發展部的 MyData 平台（以民眾自主同意、資料安全取得為核心，提供個人化資料下載與服務申辦）。工作包含平台現有功能維護與迭代；服務監控與分析，追蹤使用端問題至解決；協助釐清問題並與客戶溝通回報；建立使用者手冊並進行教育訓練；新功能設計、測試與整合測試；評估功能修改與新需求；視狀況到客戶端機房維運。
+- 條件與技能：基本條件：1 年以上 Spring Framework 實務開發經驗；熟悉 ORM（Hibernate／JPA）、JSP；API 對接與開發經驗；任一關聯式資料庫（MS-SQL／MySQL）；擅用 Git 版控。擅長工具：Git、JSP、MS SQL、MySQL、HTML、JavaScript、CSS。工作技能：伺服器網站管理維護、作業系統基本操作、資訊設備環境設定。科系：資訊管理、資訊工程相關。英文中等。
+- 其他：日班 09:00~18:00，需求 1~2 人，職務類別為系統工程師、其他資訊專業人員，需具備與使用者或客戶溝通的能力。
+- 網址：https://www.104.com.tw/job/8hsql
+- 104 上顯示的更新日：11/17
+
+### 系統分析師（84hd7）
+- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：專科以上
+- 工作內容：監控系統運作並建立危機處理標準流程；分析並解決用戶端問題，評估系統修改與新系統需求；建立使用手冊與程序，對使用者進行教育訓練；負責服務的雲端化、容器化部署與管理維運。
+- 條件與技能：基本條件：熟悉 Windows／Linux 作業系統操作；具網路基本知識；VMware 虛擬化（ESXi、Windows Hyper-V）安裝與維護。加分：Google Cloud Platform、Microsoft Azure 雲端平台管理經驗；Kubernetes 部署與管理經驗。擅長工具：Linux、Windows Server 2019。工作技能：伺服器網站管理維護、作業系統基本操作、資訊設備環境設定。科系：資訊管理、資訊工程相關。英文中等。
+- 其他：週休二日，需求 1 人，職務類別為系統分析師，需具備與使用者溝通、歸納問題的能力。
+- 網址：https://www.104.com.tw/job/84hd7
+- 104 上顯示的更新日：11/17
+
+### 【戰略部】數據優化師(數據分析)（7qtdo）
+- 公司：聯合線上股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號　薪資：月薪 35,000 元以上　經歷：1 年以上　學歷：大學、碩士
+- 工作內容：用 Google Analytics、similarweb、comscore 的指標製作報表，並在 Looker Studio 視覺化；用 BigQuery 處理與分析集團數據，轉為可視化營運報表並做洞察分析；解析用戶行為洞察，協助策略推展；做廣告版位流量變現最適化、成效監控與報表彙整；製作部門月報、KPI 與內部管理報表。
+- 條件與技能：具 1 年以上營運數據分析與資料庫管理經驗；具 GA（Google Analytics）商業應用、數位行銷與流量分析經驗；能做基礎 GA 數據解讀。加分：GTM／SQL／Python 相關經驗。能獨立執行專案，擅長簡報與報表數據分析，有數位數據分析經驗為佳。擅長工具：MySQL、Excel、Google Analytics、Python。科系：不拘；語文：不拘。
+- 其他：週休二日，需求 2 人，可上班日一個月內，職務類別為市場調查／市場分析。
+- 網址：https://www.104.com.tw/job/7qtdo
+- 104 上顯示的更新日：11/17
+
+### 【戰略部】數據優化分析師（廣告投放）（8yvw2）
+- 公司：聯合線上股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號　薪資：月薪 35,000~45,000 元　經歷：1 年以上　學歷：大學、碩士
+- 工作內容：協助 Google、Facebook 等廣告投放，進行數據分析與優化並回報成效；用 Looker Studio 製作線上廣告報表並整理數據報告；做廣告版位流量變現最適化、成效監控與報表彙整，並回報討論改善方向。
+- 條件與技能：具專案管理與溝通協調能力；熟悉數位媒體廣告投放流程與廣告平台操作（Meta Ads、Google Ad Manager、Google Ads）；具數據分析能力，能獨立檢視並優化廣告成效；曾執行或參與數位廣告投放經驗者；熟悉 GA4 並有基本操作經驗者；對數位媒體趨勢敏感。程式語言要求未標示。擅長工具欄：不拘；科系：不拘；語文：不拘。
+- 其他：週休二日，需求 1 人，可上班日一個月內，職務類別為傳播媒體企劃、廣告文案／企劃。
+- 網址：https://www.104.com.tw/job/8yvw2
+- 104 上顯示的更新日：11/17
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -Encoding UTF8 -Raw '31_104職缺更新_聯合報.md'" in C:\claude\aipe04期末\履歷\廠商深查
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -Encoding UTF8 -Raw '21_補充_聯合報.md'" in C:\claude\aipe04期末\履歷\廠商深查
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "rg -n '年終|員工旅遊|旅遊補助|加班費|加班給付|婚假|結婚禮金|生日禮金|生日禮券|陪產|生育補助' -- '02_聯合報.md' '21_補充_聯合報.md' '31_104職缺更新_聯合報.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 362ms:
+# 31 聯合報 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+本次查到 13 筆軟體、AI、資料相關職缺。來源為聯合報系三個 104 公司頁：聯合報（1quaxzk）7 筆、聯經數位（112fvi8o）4 筆、聯合線上（wiaq2zc）2 筆。13 筆都已開 104 內頁讀完整頁，以下內容以內頁為準；13 筆內頁皆可開啟，無已關閉職缺。
+104 列表總筆數：聯合報 69 筆（共 4 頁）、聯合線上 43 筆（共 3 頁）、聯經數位 7 筆，合計 119 筆。其餘為業務、企畫、編輯、記者、影音、行政、印務等非工程職缺，不收。
+與舊檔（2026-11-16）相比：
+- 新增職稱：【戰略部】數據優化分析師（廣告投放）（聯合線上，8yvw2）。
+- 舊檔有但已找不到：無。舊檔收的軟體與資料相關職缺，這次都還在列表上；其中【資訊管理部】終端維護工程師、【數據發展部】專案經理、【數據發展部】總經理助理、【戰略部】數據優化師（聯播網廣告）仍開放，但屬硬體維護、專案管理、行政或廣告營運，這次不收。
+- 聯合報列表總數由 71 筆降為 69 筆，少掉的職缺屬非工程類。
+- 聯經數位 4 筆更新日由 11/04 變為 11/17，內容與舊檔相同。
+內頁與列表文字不同處：70mim 學歷改為大學、碩士且薪資註明經常性薪資達 4 萬元或以上；93f7l 學歷改為大學、碩士且需管理 5-8 人；6i2tp 學歷改為專科、大學、碩士，並新增前端技術清單；8eulh 薪資註明經常性薪資達 4 萬元或以上、學歷改為專科、大學、碩士；7vmmw、4u5lb、8yvw2 新增必備與加分條件清單。
+
+### 職稱清單
+聯合報在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 13 筆：
+- 【數據發展部】數據分析師 - 事業發展中心（7o52w）
+- 【數據發展部】數據分析師（7vmmw）
+- 【數據發展部】助理數據分析師－產品分析中心（70mim）
+- 【數據發展部】演算法工程師（4u5lb）
+- 【數據發展部】資料科學資深經理（93f7l）
+- 【新聞部數據中心】前端開發工程師（6i2tp）
+- 【行動發展部】Android行動軟體開發工程師（8eulh）
+- 數據應用工程師（8nf2t）
+- 數據系統開發工程師（JAVA）（8v5ma）
+- 系統工程師（MyData 平台維運）（8hsql）
+- 系統分析師（84hd7）
+- 【戰略部】數據優化師(數據分析)（7qtdo）
+- 【戰略部】數據優化分析師（廣告投放）（8yvw2）
+
+### 【數據發展部】數據分析師 - 事業發展中心（7o52w）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：大學、碩士
+- 工作內容：以數據模型與 AI 應用解決真實營運問題。主導指標定義、資料模型建構、專案落地與驗證，全程對成果負責；快速建置、驗證並迭代數據與 AI 應用，直接進入實際場景；深入拆解問題，確保數據準確且可信；在高度自主的環境中推進專案。
+- 條件與技能：能在 GCP 上獨立建構資料模型與分析流程（SQL／Python／LLM），對資料定義與計算邏輯敏感；具問題拆解與產品思維，能從模糊需求定義指標與驗證方式；交付前自行驗證與交叉檢核。擅長工具：Python、VBA、MS SQL、Excel、PowerPoint、Google Analytics、Looker Studio。科系：商管、數學及電算機科學、經濟社會及心理學科類。語文：中文精通、英文中等。職務類別為數據分析師／資料分析師、資料科學家。
+- 其他條件：需準備完整簡報作品（機敏資料請模糊化）；筆試含 SQL 測驗與新聞事件分析拆解；具跨單位協作與轉譯分析結果的能力。上班時段 09:00-18:00，日班，需求 1~2 人，管理責任無。
+- 網址：https://www.104.com.tw/job/7o52w
+- 104 上顯示的更新日：08/03
+
+### 【數據發展部】數據分析師（7vmmw）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上　學歷：大學、碩士
+- 工作內容：隸屬產品分析中心，該中心為聯合報系獲 WAN-IFRA「最佳 AI 營收策略應用」全球金獎專案的核心團隊。工作為整合交易、行為、數位廣告與調查數據，結合公開資料分析並轉為行銷策略與營收成長機會；撰寫分析報告與簡報；理解資料工程邏輯，支援 ETL 撰寫、資料清理與跨系統欄位整併；依主管指派如期交付專案。
+- 條件與技能：必備：熟悉 SQL 與 Python，能處理大型資料與多維分析；具 GCP 使用經驗（資料查詢、儲存、權限管理）。加分：Vertex AI 或其他大型語言模型（LLM）應用；數位廣告運作、成效分析與廣告指標判讀。擅長工具：Python、MS SQL、Excel、PowerPoint、Github、ANSI SQL。工作技能：專案規劃執行／範圍管理、數據分析。證照：Data Analysis Using Excel 國際證照（列於內頁）。科系：商管、數學及電算機科學、工程學科類。語文：不拘。
+- 其他：週休二日，日班 09:00-18:00，需求 1 人，職務類別為數據分析師／資料分析師、商業分析師、資料工程師。
+- 網址：https://www.104.com.tw/job/7vmmw
+- 104 上顯示的更新日：08/03
+
+### 【數據發展部】助理數據分析師－產品分析中心（70mim）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士
+- 工作內容：隸屬產品分析中心（聯合報系 AI 營收策略應用全球金獎專案的核心團隊）。使用 Python 或 SQL 進行數據處理、分析與報告撰寫；日常維護與更新數據報表；優化數據處理流程，建立自動化與監控機制；呈現數據洞察，並向非技術人員清楚說明分析結果；完成主管指派專案並如期交付。
+- 條件與技能：必備：基礎 SQL、Python 程式處理能力；樂於學習新技術。擅長工具：Python、MS SQL、Excel、PowerPoint。工作技能：專案規劃執行／範圍管理、數據分析。科系：商管、數學及電算機科學、工程學科類。語文：不拘。對新興技術有學習熱情，善於溝通，確保資訊準確傳遞。
+- 其他：週休二日，日班 09:00-18:00，需求 1~2 人，職務類別為數據分析師／資料分析師、商業分析師、資料工程師。歡迎應屆畢業生。
+- 網址：https://www.104.com.tw/job/70mim
+- 104 上顯示的更新日：08/03
+
+### 【數據發展部】演算法工程師（4u5lb）
+- 公司：聯合報股份有限公司　地點：台北市信義區基隆路一段178號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上
+- 工作內容：研究與開發先進機器學習演算法與模型應用，領域含推薦系統、精準廣告、自然語言處理（NLP）。針對線上廣告、內容創新、平台經營、用戶經營、付費訂閱、線上交易，協助各部門規劃與導入演算法模型；實作高可靠度與高再現性的機器學習研究，設計並執行測試實驗驗證模型成效；把資料處理流程與數據模型轉成自動化、可擴充的解決方案，涵蓋系統設計、建置、服務維運、效益追蹤與資料回收，並與數據工程團隊協作。
+- 條件與技能：必備：紮實機器學習演算法基礎與開源數據工具操作能力；熟悉物件導向程式設計與 Python；具資料工程能力，用 SQL 操作大型資料庫做分析。加分：Google Cloud 佈署與應用；推薦系統、NLP 演算法與模型開發調參經驗；實驗設計（Experimental Design）與模型成效追蹤；設計思考與原型快速迭代；建置與維運數據應用系統經驗。擅長工具：Python、PostgreSQL。科系：商管、數學及電算機科學、工程學科類。語文：不拘。
+- 其他：日班，需求 2~3 人，可上班日不限，職務類別為演算法工程師、AI 工程師。
+- 網址：https://www.104.com.tw/job/4u5lb
+- 104 上顯示的更新日：08/03
+
+### 【數據發展部】資料科學資深經理（93f7l）
+- 公司：聯合報股份有限公司　地點：台北市信義區基隆路一段178號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學、碩士
+- 工作內容：擔任資料科學功能主管，管理 5-8 人，帶領 AI 模型開發、資料產品優化與跨部門落地，服務新聞室、廣告業務、平台營運。負責管理三項自研產品：以預測式 AI 為基礎的數據導向精準廣告（受眾分群、興趣與行為預測、廣告成效預測）；內容推薦引擎（個人化推薦、冷啟動、相似內容、A/B 測試）；新聞室生成式 AI 輔助系統（分類、標籤、摘要、標題建議、議題聚合、GenAI 輸出品質評估）。同時建立模型開發流程（資料探索、設計、驗證、部署、監控、迭代）、模型治理、模型漂移監測、資料品質檢查與人工覆核機制，並規劃 Predictive、Interpretive、Generative、Agentic AI 的路線圖。
+- 條件與技能：需熟悉 GCP；熟悉資料科學、機器學習、推薦系統、NLP 或生成式 AI；熟悉 Python、SQL 與資料處理流程；熟悉 scikit-learn、XGBoost、LightGBM、TensorFlow、PyTorch 或類似工具；了解雲端資料平台（如 AWS）；具模型部署、MLOps、pipeline、API、batch inference、monitoring 等 production AI 經驗。英文中等。擅長工具欄：不拘。數位媒體、廣告科技、Martech 經驗尤佳。
+- 網址：https://www.104.com.tw/job/93f7l
+- 104 上顯示的更新日：08/03
+
+### 【新聞部數據中心】前端開發工程師（6i2tp）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：月薪 35,000~50,000 元　經歷：不拘　學歷：專科、大學、碩士
+- 工作內容：開發數位專題的前端介面，與視覺設計師、後端工程師協作做網頁互動、切版與前端效能優化；負責前端建置與佈署，並與後端 API 串接；實作付費內容網站頁面；協助 PM 釐清需求，確認 UX／UI 可行性與邏輯流程，實現 UI 互動元件。團隊目前主要使用 Vue3。
+- 條件與技能：擅長：Vue 或 React 其一（Vue 尤佳）、HTML5／CSS、ECMAScript 6、RWD 與行動版切版、瀏覽器相容性調整、Git 版控。了解：TypeScript、Sass、SPA 下的 SEO 機制。略懂：Node.js（Express、Koa）、SSR。英文讀中等。擅長工具欄：不拘。科系：教育、數學及電算機科學、工程學科類。職務類別為前端工程師、軟體工程師。
+- 其他：日班，需求 1 人，可上班日一個月內，歡迎應屆畢業生。內頁附歷年數位專題與付費內容服務網址。
+- 網址：https://www.104.com.tw/job/6i2tp
+- 104 上顯示的更新日：08/03
+
+### 【行動發展部】Android行動軟體開發工程師（8eulh）
+- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士
+- 工作內容：隸屬行動發展部，團隊聚焦行動 APP、雲端應用與數位產品，服務聯合新聞網、經濟日報、世界日報等媒體，方向為行動化、雲端化、智能化。負責 Android App 的分析、開發、測試修改與維護，並與產品 PM、UI／UX 設計師、雲端後台工程師、產品營運團隊協作。
+- 條件與技能：必備：熟悉 Kotlin、Android Studio 與 Android 開發生態；熟悉 git、OOP 觀念、RESTful API。加分：JavaScript／HTML／CSS、前後端協同運作、Java、Firebase。需提供個人作品或足以證明研發能力的文件。擅長工具欄：不拘；科系：不拘；語文：不拘。
+- 其他：週休二日，日班，需求 2 人，可上班日不限，職務類別為軟體工程師、Android 工程師，歡迎應屆畢業生與研發替代役。
+- 網址：https://www.104.com.tw/job/8eulh
+- 104 上顯示的更新日：11/02
+
+### 數據應用工程師（8nf2t）
+- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上
+- 工作內容：依部門的集團數據中台系統發展策略，支援各事業體使用數據系統服務。協助評估、規劃、開發與管理數據系統發展計畫；制定數據系統作業程序，確保系統穩定、資料安全與準確；用工具進行資料清理、結構化、分析與呈現，讓需求單位容易取用數據；需進行需求訪談、開發、測試、維運與檢討。
+- 條件與技能：必備：熟悉基礎 SQL 語法與 BigQuery 進階用法；具基礎 Python 開發能力。加分：提案與簡報技巧；GA4 BigQuery 原始資料萃取與清理經驗；Google Looker Studio 開發經驗；媒體或相關產業網站用戶行為數據處理經驗。需進行約 45 分鐘基礎與進階 SQL 筆試。擅長工具欄：不拘；科系：不拘；語文：不拘。
+- 其他：週休二日，日班 09:00~17:30，需求 1~2 人，職務類別為系統分析師、數據分析師／資料分析師、資料工程師，歡迎應屆畢業生。
+- 網址：https://www.104.com.tw/job/8nf2t
+- 104 上顯示的更新日：11/17
+
+### 數據系統開發工程師（JAVA）（8v5ma）
+- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學
+- 工作內容：為部門的集團策略與目標提供高可用性的應用系統支援。協助釐清需求；在既有架構下獨立完成延伸開發，包含流程優化、程式架構設計、資料表正規化；依專案時程完成系統開發、測試（含瀏覽器相容性）、修正與交付；撰寫技術文件與系統藍圖；監控系統日誌，釐清異常原因並提出處理建議、執行通報。
+- 條件與技能：必備：Java、JSP、Servlet 開發經驗；Tomcat 使用經驗；jQuery、Ajax、SQL 開發經驗；Spring、Struts Framework 開發經驗。加分：OCJP 證照。需進行約 45 分鐘 Java 基礎概念與 SQL 筆試。擅長工具欄：不拘；科系：不拘；語文：不拘。
+- 其他：週休二日，日班 09:00~17:30，需求 1~3 人，職務類別為全端工程師、資料工程師、Internet 程式設計師，歡迎應屆畢業生。
+- 網址：https://www.104.com.tw/job/8v5ma
+- 104 上顯示的更新日：11/17
+
+### 系統工程師（MyData 平台維運）（8hsql）
+- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：專科以上
+- 工作內容：維運數位發展部的 MyData 平台（以民眾自主同意、資料安全取得為核心，提供個人化資料下載與服務申辦）。工作包含平台現有功能維護與迭代；服務監控與分析，追蹤使用端問題至解決；協助釐清問題並與客戶溝通回報；建立使用者手冊並進行教育訓練；新功能設計、測試與整合測試；評估功能修改與新需求；視狀況到客戶端機房維運。
+- 條件與技能：基本條件：1 年以上 Spring Framework 實務開發經驗；熟悉 ORM（Hibernate／JPA）、JSP；API 對接與開發經驗；任一關聯式資料庫（MS-SQL／MySQL）；擅用 Git 版控。擅長工具：Git、JSP、MS SQL、MySQL、HTML、JavaScript、CSS。工作技能：伺服器網站管理維護、作業系統基本操作、資訊設備環境設定。科系：資訊管理、資訊工程相關。英文中等。
+- 其他：日班 09:00~18:00，需求 1~2 人，職務類別為系統工程師、其他資訊專業人員，需具備與使用者或客戶溝通的能力。
+- 網址：https://www.104.com.tw/job/8hsql
+- 104 上顯示的更新日：11/17
+
+### 系統分析師（84hd7）
+- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：專科以上
+- 工作內容：監控系統運作並建立危機處理標準流程；分析並解決用戶端問題，評估系統修改與新系統需求；建立使用手冊與程序，對使用者進行教育訓練；負責服務的雲端化、容器化部署與管理維運。
+- 條件與技能：基本條件：熟悉 Windows／Linux 作業系統操作；具網路基本知識；VMware 虛擬化（ESXi、Windows Hyper-V）安裝與維護。加分：Google Cloud Platform、Microsoft Azure 雲端平台管理經驗；Kubernetes 部署與管理經驗。擅長工具：Linux、Windows Server 2019。工作技能：伺服器網站管理維護、作業系統基本操作、資訊設備環境設定。科系：資訊管理、資訊工程相關。英文中等。
+- 其他：週休二日，需求 1 人，職務類別為系統分析師，需具備與使用者溝通、歸納問題的能力。
+- 網址：https://www.104.com.tw/job/84hd7
+- 104 上顯示的更新日：11/17
+
+### 【戰略部】數據優化師(數據分析)（7qtdo）
+- 公司：聯合線上股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號　薪資：月薪 35,000 元以上　經歷：1 年以上　學歷：大學、碩士
+- 工作內容：用 Google Analytics、similarweb、comscore 的指標製作報表，並在 Looker Studio 視覺化；用 BigQuery 處理與分析集團數據，轉為可視化營運報表並做洞察分析；解析用戶行為洞察，協助策略推展；做廣告版位流量變現最適化、成效監控與報表彙整；製作部門月報、KPI 與內部管理報表。
+- 條件與技能：具 1 年以上營運數據分析與資料庫管理經驗；具 GA（Google Analytics）商業應用、數位行銷與流量分析經驗；能做基礎 GA 數據解讀。加分：GTM／SQL／Python 相關經驗。能獨立執行專案，擅長簡報與報表數據分析，有數位數據分析經驗為佳。擅長工具：MySQL、Excel、Google Analytics、Python。科系：不拘；語文：不拘。
+- 其他：週休二日，需求 2 人，可上班日一個月內，職務類別為市場調查／市場分析。
+- 網址：https://www.104.com.tw/job/7qtdo
+- 104 上顯示的更新日：11/17
+
+### 【戰略部】數據優化分析師（廣告投放）（8yvw2）
+- 公司：聯合線上股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號　薪資：月薪 35,000~45,000 元　經歷：1 年以上　學歷：大學、碩士
+- 工作內容：協助 Google、Facebook 等廣告投放，進行數據分析與優化並回報成效；用 Looker Studio 製作線上廣告報表並整理數據報告；做廣告版位流量變現最適化、成效監控與報表彙整，並回報討論改善方向。
+- 條件與技能：具專案管理與溝通協調能力；熟悉數位媒體廣告投放流程與廣告平台操作（Meta Ads、Google Ad Manager、Google Ads）；具數據分析能力，能獨立檢視並優化廣告成效；曾執行或參與數位廣告投放經驗者；熟悉 GA4 並有基本操作經驗者；對數位媒體趨勢敏感。程式語言要求未標示。擅長工具欄：不拘；科系：不拘；語文：不拘。
+- 其他：週休二日，需求 1 人，可上班日一個月內，職務類別為傳播媒體企劃、廣告文案／企劃。
+- 網址：https://www.104.com.tw/job/8yvw2
+- 104 上顯示的更新日：11/17
+
+
+hook: PostToolUse
+ succeeded in 346ms:
+# 21 聯合報 公開資料補充
+
+## 基本資料
+
+### 聯合報系沿革與事業版圖
+
+聯合報系官網列出的大事紀如下：1951 年聯合報創刊；1967 年經濟日報創刊；1976 年世界日報在北美發行；1986 年世界日報在泰國營運；1999 年聯合新聞網（udn.com）上線；2001 年聯合知識庫上線；2016 年成立 udnFunLife；2020 年推出數位訂閱；2021 年成立永續辦公室。旗下事業除報紙外，還包括聯經出版（出版過諾貝爾獎得主高行健的作品）、聯合報系教育（辦理年度作文比賽）、健康事業（提供醫療產業行銷服務），以及 udnFunLife（活動管理、票務與 IP 授權）。經濟日報另舉辦展覽與研討會。世界日報北美總部在紐約，另有舊金山、洛杉磯分社，東南亞版由曼谷出版。官網也設有永續辦公室與 ESG 專頁，內容涵蓋減碳與再生能源。
+來源：https://www.udngroup.com/en（查詢日 2026-11-17）
+
+### 官網公布的數位規模數字
+
+聯合報系中文官網稱，集團定位為「內容加科技」，使命是「努力讓台灣更好」，價值為正派、公義、品質、創新。官網公布的數位指標包括：聯合新聞網每月不重複訪客逾 1,600 萬人，全站每月流量逾 3.8 億，會員總數逾 862 萬，各粉絲團追蹤者合計逾 680 萬，記者寫下的報導字數逾 80 億字。官網把事業分成新聞媒體、多元事業與永續發展（ESG）三大塊。這些數字都是公司自述，官網沒有標示統計期間。英文官網對 1,600 萬訪客的說法也不一致：一處寫相當於台灣人口的三分之二，另一處寫每月有二分之一的台灣人造訪。引用時應連同原文口徑一起標明。
+來源：https://udngroup.com/（查詢日 2026-11-17）
+
+### 2023 年聯合招募的職類與規模
+
+聯合報系在 2023 年農曆春節後推出「聯合招募」。104 職場力報導指出，標題為徵才百人，但五大類別人數加總為 184 名：新聞編採 34 名、資訊技術 34 名、行銷企畫 50 名、業務開發 49 名、行政及其他 17 名（含機電、財務、安衛、營繕、印務）。約 76% 的職務屬於數位性質。報導稱，聯合報的資訊技術團隊要整合長達 72 年的報紙數位資料，每天處理約 2,500 則新聞。所列職缺地點全在新北市汐止區，例如行動發展部的 Android 行動軟體開發工程師、新聞部視覺設計中心、影音中心的剪接師。這是 2023 年的招募資料，不代表現行職缺。
+來源：https://blog.104.com.tw/?p=100339（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 數據驅動廣告服務
+
+聯合報系從 2013 年起使用 Google Ad Manager。2018 年決定把線上服務與資料分析搬上雲端，選擇 Google Cloud。廣告資料流程是：把內容資料、受眾標籤與 Google Analytics 蒐集的使用者行為資料存入 BigQuery，產生目標受眾名單，再送到 Google Ad Manager 投放。2022 年起，與行銷公司 Merkle 合作建立使用者偏好預測模型，8 個月完成。模型在 Vertex AI 上執行演算法，擷取內容關鍵字作標籤、比對內容標籤與廣告類別、產生目標受眾，並經過多輪 A/B 測試選定演算法。部分廣告類別的獨立點擊率最高提升 4 倍。2023 年 11 月，該專案獲台灣數位行銷協會「數位奇點獎」最佳精準行銷應用獎。公司稱，目前約 40% 的廣告訂單由數據驅動廣告服務支撐。
+來源：https://cloud.google.com/customers/udn?hl=zh-TW（查詢日 2026-11-17）
+
+### 以數據製作內容與個人化推薦
+
+聯合報系在 2008 年成立數據部門，推動數據驅動文化。Google Cloud 案例中，數據部門 Data General Manager Anson Mok 說明，公司用 BigQuery 產生的洞察來製作更吸引人的新聞內容、驅動線上推薦引擎，並提升營運效率。udn.com 目前有 10% 至 15% 的新聞內容依使用者偏好資料製作，平均轉換率為其他內容的 2 倍。他也提到，公司雖有自己的資料專家，仍選擇與外部團隊合作，以找出盲點。案例並指出，聯合報系計畫在 2024 年推出數位閱讀平台，用資料分析提供個人化服務，與 Merkle 探索更多機器學習應用，並使用 Google Cloud 的生成式 AI 技術提升營運效率。
+來源：https://cloud.google.com/customers/udn?hl=zh-TW（查詢日 2026-11-17）
+
+### 數位訂閱與歷年全球獎項
+
+聯合報系 2020 年推出數位訂閱。WAN-IFRA 全球數位媒體大獎的成績可看出訂閱與 AI 的投入軌跡：報導指出，前年（2024）以數據驅動的策展計畫獲「最佳數位訂閱與讀者收益策略」獎；去年（2025）以「AI 引爆三大成長動能」參賽獲獎；2026 年以 Publish X 獲「最佳創新數位產品」金獎。執行董事項國寧表示，聯合報系連續三年拿到三座 WAN-IFRA 全球金獎。報導沒有說明 2025 年作品的三大動能內容。2026 年的頒獎在法國馬賽舉行，項國寧親赴領獎。WAN-IFRA 執行長 Stig Ørskov 表示，今年入圍作品的共同點是勇於擁抱新技術與新敘事方式。
+來源：https://udn.com/news/story/7314/9544347（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### Google Cloud 資料與運算架構
+
+聯合報系 2018 年把新聞網站與資料分析搬到 Google Cloud，主要考量是長期可擴充的成本、技術與資安規範，以及與 Google Ad Manager 的整合。使用的產品包括 BigQuery、Vertex AI、Compute Engine、Google Kubernetes Engine（GKE）與 Cloud Functions。運算依產品性質分配：虛擬機放在 Compute Engine，容器化服務放在 GKE，無伺服器架構用 Cloud Functions，以因應流量波動。公司稱，遷移後新聞網站沒有發生過停機，雲端服務已運行超過 5 年。Vertex AI 用於機器學習模型開發，BigQuery 用於受眾與內容分析。案例以聯合報系 COO Apollo Sun 與數據部門 Data General Manager Anson Mok 的說法為主。
+來源：https://cloud.google.com/customers/udn?hl=zh-TW（查詢日 2026-11-17）
+
+### Publish X 新聞室 AI 輔助決策系統
+
+Publish X 由聯合報系數據發展部與新聞部共同研發，定位為新聞室 AI 輔助決策系統。專案邀請多位資歷逾 35 年的資深記者參與，把採訪直覺與實戰經驗轉成核心知識庫，用來因應高壓、突發的新聞情境。數據發展部表示，導入後即時新聞參與度成長 2.4 倍、自然觸及增加 3.3 倍；報導沒有定義這兩個倍數的計算方式、比較基準與期間，也沒有說明底層模型。2026 年 WAN-IFRA 全球數位媒體大獎共 811 件作品參賽，Publish X 進入 50 席決選名單，並獲「最佳創新數位產品」金獎，6 月 2 日在法國馬賽頒獎。
+來源：https://www.worldjournal.com/wj/amp/story/121221/9542525（查詢日 2026-11-17）
+
+### Streamlined Newsroom 平台
+
+2025-01-08，聯合報系在台北舉辦「AI 賦能新識力：Streamlined Newsroom 助力媒體轉型」成果發表會。平台由聯經數位推出，發表人為聯經數位總經理林政良與技術總監張凱迪，合作單位包括數位經濟暨產業發展協會。主要功能有錯字自動偵測與修正提示、自動推薦配圖以縮短編輯找圖時間、整合生成式 AI 提示詞平台、跨頻道刊登整合，並導入個人化內容體驗。聯合報社長游美月提到「數位優先」的編撰理念，目標是把平台推廣到媒體業界、學校與內容創作者。與會者包括新芽網路、詠鋐智能、睿思創新等業者，聯經數位的 Aicast 有聲書平台也在發表會中介紹。報導稱聯合報會員數超過 700 萬人。
+來源：https://www.moneyweekly.com.tw/ArticleData/Info/Article/162710（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2026-06 世界新聞年會與 AI 授權議題
+
+2026 年世界新聞年會由 WAN-IFRA 主辦，於 6 月在法國馬賽舉行。聯合報系董事長王文杉與執行董事項國寧，率領聯合報、世界日報、經濟日報與聯合線上的主管出席。紐約時報發行人沙茲伯格在 6 月 1 日發表演說，主張新聞業要與 AI 公司簽署內容授權時確保合理報酬，並呼籲透過法律途徑保護智慧財產、推動 AI 透明化立法。他指出紐時每年新聞製作投入超過 20 億美元，並已與亞馬遜簽署 AI 內容授權協議，同時自 2023 年底起對 OpenAI、微軟與 Perplexity 提告。世界日報在 6 月 3 日刊出相關報導。
+來源：https://www.worldjournal.com/wj/story/121172/9542716（查詢日 2026-11-17）
+
+### 2026-05-22 聯合線上與 Readmoo 推出「琅琅讀墨」
+
+2026-05-22，聯合線上宣布與電子書平台 Readmoo 讀墨策略結盟，推出聯名電子書店「琅琅讀墨」。分工上，聯合線上負責媒體流量導入與內容整合；Readmoo 負責技術與閱讀服務，並協助讀者轉移既有電子書。聯合線上稱，自己深耕數位出版逾 20 年，udn 每月觸及全台半數上網人口，媒體會員超過 800 萬，每日數千萬計的媒體流量將導向 Readmoo。書店預計快速超過 30 萬種書籍。發表會上，聯合線上總經理為官振萱，Readmoo 共同創辦人暨執行長為龐文真。報導沒有提到推薦演算法的細節。
+來源：https://money.udn.com/money/amp/story/5648/9520249（查詢日 2026-11-17）
+
+### 2026-07 聯合報數位版提供紐約時報國際內容
+
+聯合報民意論壇在 2026-07-02 刊出張瑞雄教授的投書。文中提到，自 7 月 1 日起，聯合報數位版開始提供紐約時報的國際內容，作者把這項合作視為新聞業面對 AI 衝擊的回應。同一頁面列出「AI 衝擊新聞業」系列報導，包括〈聯合+紐時 打造新聞永續商模〉、〈重建信任 把記者帶到讀者眼前〉與〈真偽難辨！AI 內容海嘯 全球焦慮〉。文中引用牛津大學路透新聞研究所的報告：全球約 37% 民眾在多數情況下信任新聞，台灣為 25%，在亞太地區最低。作者也引用，美國新聞廣告收入 20 年來減少約 80%。合作的授權條款與內容範圍，報導沒有說明。
+來源：https://udn.com/news/story/7339/9601328（查詢日 2026-11-17）
+
+
+hook: PostToolUse
+ exited 1 in 385ms:
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+已讀完 13 筆職缺，清單題會採「信義區上班」與「不要求工作經驗」，分別符合 2 筆、6 筆。員工旅遊補助與加班費算法的關鍵字在三份指定檔案中均無命中；接著核對引文與標題路徑。
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "@'
+from pathlib import Path
+import re
+root=Path('.')
+checks=[
+('31_104職缺更新_聯合報.md','目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）','月薪 35,000~50,000 元'),
+('31_104職缺更新_聯合報.md','目前開放職缺 > 【數據發展部】助理數據分析師－產品分析中心（70mim）','學歷：大學、碩士'),
+('31_104職缺更新_聯合報.md','目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）','地點：台北市信義區基隆路一段178號11樓'),
+('21_補充_聯合報.md','業務與財務 > 數位訂閱與歷年全球獎項','聯合報系 2020 年推出數位訂閱。'),
+('02_聯合報.md','1. 基本資料 > 1.2 聯合報股份有限公司','資本額：30.9 億元（已發行 309,000,000 股，面額 10 元）。'),
+('21_補充_聯合報.md','技術堆疊 > Streamlined Newsroom 平台','平台由聯經數位推出'),
+('02_聯合報.md','5. 技術堆疊','由聯經數位開發，不是數據發展部。'),
+('21_補充_聯合報.md','近一年新聞 > 2026-07 聯合報數位版提供紐約時報國際內容','自 7 月 1 日起，聯合報數位版開始提供紐約時報的國際內容')]
+sections={}
+for file in ['02_聯合報.md','21_補充_聯合報.md','31_104職缺更新_聯合報.md']:
+ stack=[]; current=None
+ for line in (root/file).read_text(encoding='utf-8-sig').splitlines():
+  m=re.match(r'"'^(#{2,}) (.*)$'"',line)
+  if m:
+   level=len(m[1]); stack=[x for x in stack if x[0]<level]; stack.append((level,m[2])); current=' > '.join(x[1] for x in stack); sections[(file,current)]=[]
+  elif current: sections[(file,current)].append(line)
+for f,h,q in checks:
+ assert 8<=len(q)<=60,(q,len(q))
+ assert any(q in line for line in sections[(f,h)]),(h,q)
+print('Selected quotations and heading paths: all valid')
+for label,needle in [('信義區','地點：台北市信義區'),('經驗不拘','經歷：不拘')]:
+ matches=[]
+ for (f,h),lines in sections.items():
+  if f.startswith('31_') and h not in ['目前開放職缺 > 職缺總覽','目前開放職缺 > 職稱清單'] and any(needle in line for line in lines):
+   matches.append(h)
+ print(label,len(matches),*matches,sep='\\n')
+'@ | python -" in C:\claude\aipe04期末\履歷\廠商深查
+ exited 1 in 932ms:
+Traceback (most recent call last):
+  File "<stdin>", line 16, in <module>
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1058, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 22] Invalid argument: '02_???.md'
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command '$checks = @(@('"'31_104職缺更新_聯合報.md','月薪 35,000~50,000 元'),@('31_104職缺更新_聯合報.md','學歷：大學、碩士'),@('31_104職缺更新_聯合報.md','地點：台北市信義區基隆路一段178號11樓'),@('21_補充_聯合報.md','聯合報系 2020 年推出數位訂閱。'),@('02_聯合報.md','資本額：30.9 億元（已發行 309,000,000 股，面額 10 元）。'),@('21_補充_聯合報.md','平台由聯經數位推出'),@('02_聯合報.md','由聯經數位開發，不是數據發展部。'),@('21_補充_聯合報.md','自 7 月 1 日起，聯合報數位版開始提供紐約時報的國際內容')); foreach ("'$c in $checks) { $raw = Get-Content -Encoding UTF8 -Raw -LiteralPath $c[0]; if (-not $raw.Contains($c[1]) -or $c[1].Length -lt 8 -or $c[1].Length -gt 60) { throw ('"'Invalid quote: ' + "'$c[1]) } }; '"'All selected quotations valid'; rg -n '"'^(##|###) |經歷：不拘|地點：台北市信義區'"' -- '31_104職缺更新_聯合報.md'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 559ms:
+All selected quotations valid
+2:## 目前開放職缺
+3:### 職缺總覽
+13:### 職稱清單
+29:### 【數據發展部】數據分析師 - 事業發展中心（7o52w）
+37:### 【數據發展部】數據分析師（7vmmw）
+45:### 【數據發展部】助理數據分析師－產品分析中心（70mim）
+46:- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士
+53:### 【數據發展部】演算法工程師（4u5lb）
+54:- 公司：聯合報股份有限公司　地點：台北市信義區基隆路一段178號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上
+61:### 【數據發展部】資料科學資深經理（93f7l）
+62:- 公司：聯合報股份有限公司　地點：台北市信義區基隆路一段178號11樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學、碩士
+68:### 【新聞部數據中心】前端開發工程師（6i2tp）
+69:- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：月薪 35,000~50,000 元　經歷：不拘　學歷：專科、大學、碩士
+76:### 【行動發展部】Android行動軟體開發工程師（8eulh）
+77:- 公司：聯合報股份有限公司　地點：新北市汐止區大同路一段369號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士
+84:### 數據應用工程師（8nf2t）
+85:- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上
+92:### 數據系統開發工程師（JAVA）（8v5ma）
+93:- 公司：聯經數位股份有限公司（聯合報系）　地點：新北市汐止區大同路一段369號3樓　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學
+100:### 系統工程師（MyData 平台維運）（8hsql）
+108:### 系統分析師（84hd7）
+116:### 【戰略部】數據優化師(數據分析)（7qtdo）
+124:### 【戰略部】數據優化分析師（廣告投放）（8yvw2）
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+[
+  {
+    "question": "聯合報新聞部前端開發工程師月薪開多少？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "月薪 35,000~50,000 元"
+      }
+    ]
+  },
+  {
+    "question": "聯合報產品分析中心助理數據分析師要什麼學位？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】助理數據分析師－產品分析中心（70mim）",
+        "quote": "學歷：大學、碩士"
+      }
+    ]
+  },
+  {
+    "question": "聯合報演算法工程師每天去哪裡上班？",
+    "type": "單一公司",
+    "topic": "地點",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "地點：台北市信義區基隆路一段178號11樓"
+      }
+    ]
+  },
+  {
+    "question": "聯合報哪年開始賣數位訂閱？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "21_補充_聯合報.md",
+        "heading": "業務與財務 > 數位訂閱與歷年全球獎項",
+        "quote": "聯合報系 2020 年推出數位訂閱。"
+      },
+      {
+        "file": "02_聯合報.md",
+        "heading": "2. 業務與財務",
+        "quote": "聯合知識庫、訂閱產品（2020 起）"
+      }
+    ]
+  },
+  {
+    "question": "聯合報登記的資本金有多少？",
+    "type": "單一公司",
+    "topic": "財務",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "02_聯合報.md",
+        "heading": "1. 基本資料 > 1.2 聯合報股份有限公司",
+        "quote": "資本額：30.9 億元（已發行 309,000,000 股，面額 10 元）。"
+      }
+    ]
+  },
+  {
+    "question": "聯合報自動抓錯字的新聞平台是哪家公司做的？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "21_補充_聯合報.md",
+        "heading": "技術堆疊 > Streamlined Newsroom 平台",
+        "quote": "平台由聯經數位推出"
+      },
+      {
+        "file": "02_聯合報.md",
+        "heading": "5. 技術堆疊",
+        "quote": "Streamlined Newsroom（錯字偵測、圖片推薦、提示詞平台、跨通路發布）由聯經數位開發"
+      }
+    ]
+  },
+  {
+    "question": "聯合報今年七月起引進哪家美國報紙的內容？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "21_補充_聯合報.md",
+        "heading": "近一年新聞 > 2026-07 聯合報數位版提供紐約時報國際內容",
+        "quote": "自 7 月 1 日起，聯合報數位版開始提供紐約時報的國際內容"
+      }
+    ]
+  },
+  {
+    "question": "聯合報哪些職位的辦公室在信義區？",
+    "type": "職缺",
+    "topic": "地點",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "地點：台北市信義區基隆路一段178號11樓"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+        "quote": "地點：台北市信義區基隆路一段178號11樓"
+      }
+    ]
+  },
+  {
+    "question": "聯合報哪些職位讓沒工作經驗的人也能投？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】助理數據分析師－產品分析中心（70mim）",
+        "quote": "經歷：不拘　學歷：大學、碩士"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "經歷：不拘　學歷：大學以上"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "經歷：不拘　學歷：專科、大學、碩士"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【行動發展部】Android行動軟體開發工程師（8eulh）",
+        "quote": "經歷：不拘　學歷：專科、大學、碩士"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 數據應用工程師（8nf2t）",
+        "quote": "經歷：不拘　學歷：大學以上"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 數據系統開發工程師（JAVA）（8v5ma）",
+        "quote": "經歷：不拘　學歷：大學"
+      }
+    ]
+  },
+  {
+    "question": "聯合報每年員工出遊補助多少錢？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "聯合報",
+    "gold": [],
+    "absence_keywords": [
+      "員工旅遊",
+      "旅遊補助"
+    ]
+  },
+  {
+    "question": "聯合報平日延長工時的報酬怎麼算？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "聯合報",
+    "gold": [],
+    "absence_keywords": [
+      "加班費",
+      "加班給付"
+    ]
+  }
+]
+hook: Stop
+hook: Stop Completed
+tokens used
+47,275
+[
+  {
+    "question": "聯合報新聞部前端開發工程師月薪開多少？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "月薪 35,000~50,000 元"
+      }
+    ]
+  },
+  {
+    "question": "聯合報產品分析中心助理數據分析師要什麼學位？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】助理數據分析師－產品分析中心（70mim）",
+        "quote": "學歷：大學、碩士"
+      }
+    ]
+  },
+  {
+    "question": "聯合報演算法工程師每天去哪裡上班？",
+    "type": "單一公司",
+    "topic": "地點",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "地點：台北市信義區基隆路一段178號11樓"
+      }
+    ]
+  },
+  {
+    "question": "聯合報哪年開始賣數位訂閱？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "21_補充_聯合報.md",
+        "heading": "業務與財務 > 數位訂閱與歷年全球獎項",
+        "quote": "聯合報系 2020 年推出數位訂閱。"
+      },
+      {
+        "file": "02_聯合報.md",
+        "heading": "2. 業務與財務",
+        "quote": "聯合知識庫、訂閱產品（2020 起）"
+      }
+    ]
+  },
+  {
+    "question": "聯合報登記的資本金有多少？",
+    "type": "單一公司",
+    "topic": "財務",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "02_聯合報.md",
+        "heading": "1. 基本資料 > 1.2 聯合報股份有限公司",
+        "quote": "資本額：30.9 億元（已發行 309,000,000 股，面額 10 元）。"
+      }
+    ]
+  },
+  {
+    "question": "聯合報自動抓錯字的新聞平台是哪家公司做的？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "21_補充_聯合報.md",
+        "heading": "技術堆疊 > Streamlined Newsroom 平台",
+        "quote": "平台由聯經數位推出"
+      },
+      {
+        "file": "02_聯合報.md",
+        "heading": "5. 技術堆疊",
+        "quote": "Streamlined Newsroom（錯字偵測、圖片推薦、提示詞平台、跨通路發布）由聯經數位開發"
+      }
+    ]
+  },
+  {
+    "question": "聯合報今年七月起引進哪家美國報紙的內容？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "21_補充_聯合報.md",
+        "heading": "近一年新聞 > 2026-07 聯合報數位版提供紐約時報國際內容",
+        "quote": "自 7 月 1 日起，聯合報數位版開始提供紐約時報的國際內容"
+      }
+    ]
+  },
+  {
+    "question": "聯合報哪些職位的辦公室在信義區？",
+    "type": "職缺",
+    "topic": "地點",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "地點：台北市信義區基隆路一段178號11樓"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】資料科學資深經理（93f7l）",
+        "quote": "地點：台北市信義區基隆路一段178號11樓"
+      }
+    ]
+  },
+  {
+    "question": "聯合報哪些職位讓沒工作經驗的人也能投？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "聯合報",
+    "gold": [
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】助理數據分析師－產品分析中心（70mim）",
+        "quote": "經歷：不拘　學歷：大學、碩士"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【數據發展部】演算法工程師（4u5lb）",
+        "quote": "經歷：不拘　學歷：大學以上"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【新聞部數據中心】前端開發工程師（6i2tp）",
+        "quote": "經歷：不拘　學歷：專科、大學、碩士"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 【行動發展部】Android行動軟體開發工程師（8eulh）",
+        "quote": "經歷：不拘　學歷：專科、大學、碩士"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 數據應用工程師（8nf2t）",
+        "quote": "經歷：不拘　學歷：大學以上"
+      },
+      {
+        "file": "31_104職缺更新_聯合報.md",
+        "heading": "目前開放職缺 > 數據系統開發工程師（JAVA）（8v5ma）",
+        "quote": "經歷：不拘　學歷：大學"
+      }
+    ]
+  },
+  {
+    "question": "聯合報每年員工出遊補助多少錢？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "聯合報",
+    "gold": [],
+    "absence_keywords": [
+      "員工旅遊",
+      "旅遊補助"
+    ]
+  },
+  {
+    "question": "聯合報平日延長工時的報酬怎麼算？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "聯合報",
+    "gold": [],
+    "absence_keywords": [
+      "加班費",
+      "加班給付"
+    ]
+  }
+]

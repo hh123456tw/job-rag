@@ -1,0 +1,2645 @@
+OpenAI Codex v0.166.0
+--------
+workdir: C:\claude\aipe04期末\履歷\廠商深查
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1ea1a-8aaf-7052-a634-3b4a1ab8a940
+--------
+user
+你是求職情報問答 RAG 的「出題者」。只用讀檔（唯讀），不要改任何檔案，不要執行會連網的指令。
+語料資料夾就是目前工作目錄（C:/claude/aipe04期末/履歷/廠商深查）。現有題檔在 C:/claude/aipe04期末/job-rag/eval/questions_heldout.json 與 C:/claude/aipe04期末/job-rag/eval/questions.json（先讀，格式要沿用，題目不能和它們重複或高度相似）。
+
+【可用來源】
+- 公司頁（0N_公司.md）只能用這幾段：「1. 基本資料」「2. 業務與財務」「4. 職缺」「5. 技術堆疊」「8. 近一年新聞」。
+- 補充檔（2N_補充_公司.md）只能用標題不含下列字詞的公開事實段落。
+- 104 職缺更新檔（3N_104職缺更新_公司.md）。
+- 禁用字詞（標題或段落主旨含這些就不能用）：面試、評價、風險、判斷、推測、矛盾、限制、未查到、對應、作戰。
+- 禁用檔案：00_面談作戰卡.md、00_總報告.md、104/ 資料夾、selfdata、其他非列名的檔案。
+
+【口吻】像面試官現場用手機問的：短、口語、10–30 字，不要照抄原文用字（要換同義說法，避免只靠關鍵字比對就答得出來）。公司名可以直接講。題目本身不可寫「根據文件」「上面」之類字眼。
+
+【輸出格式】只輸出一個 JSON 陣列（不要 markdown 圍欄、不要說明文字）。每題一個物件：
+{"question": 題目, "type": 類型, "topic": 主題（薪資/技術/地點/學歷/業務/財務/新聞/職缺/福利規章/內部資訊/其他）, "company": 公司名（跨公司題省略）, "gold": [{"file": 檔名, "heading": 標題路徑, "quote": 原文片段}], ...}
+- heading 寫法：不含檔案最上面的 # 一級標題；把上層到該層的標題文字用 " > " 串起來（例如 "2. 業務與財務"、"目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）"），文字與檔案內完全一致（含編號、全形括號）。
+- quote：必須是該標題段落內「逐字存在」的連續原文，單行內、8–60 字、不要跨行、不要自己改標點或空白。程式會逐字比對，錯一個字就整題作廢。
+- 一題的 gold 可以多筆（例如同一事實在公司頁與補充檔都有就都列）。
+
+【你的任務】只針對「神通資訊」，檔案：04_*.md、23_補充_*.md、33_104職缺更新_*.md。共出 11 題：
+1) 7 題 type="單一公司"：答案是明確單一事實，主題要分散（薪資、技術堆疊、工作地點、學歷要求、業務、財務數字、新聞…）。至少 2 題取自 104 職缺更新檔的單一職缺（要指明職稱），其餘取自公司頁或補充檔。
+2) 2 題 type="職缺"：「職缺清單」題，例如「神通資訊有哪些軟體職缺」「神通資訊有沒有 Python 後端職缺」。答案是多個職缺，gold 要為「每個符合的職缺」各列一筆（file 為 33_*.md，heading 為該職缺標題路徑，quote 取該職缺段內一句）。你必須讀完整份 33 檔，確定列出所有符合的職缺，不要漏。符合職缺要 2–6 個。
+3) 2 題 type="不可回答"：貼近真實面試官會問、但語料裡沒有答案的題（福利細節如員工旅遊、年終獎金月數、加班費算法；公司內部組織人數；語料沒寫的數字等），問的是「神通資訊」。gold 設 []，另加 "absence_keywords": [2–4 個關鍵字，用來在全語料 grep 驗證真的沒有；用最短、最能代表答案的詞，例如「年終」「員工旅遊」]。你自己先用 grep 確認這些關鍵字在「神通資訊」相關檔案沒有出現。
+type 欄位的值只能是：單一公司、職缺、不可回答。company 欄位填 "神通資訊"。
+
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+warning: Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.
+  user (C:\Users\cygnu\.codex\config.toml): `features.child_agents_md` is ignored.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+我會先讀既有題目和神通資訊三份來源，檢查重複題、職缺完整性與不可回答題的關鍵字。
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions_heldout.json' -Encoding UTF8 -Raw; Get-Content -LiteralPath 'C:/claude/aipe04期末/job-rag/eval/questions.json' -Encoding UTF8 -Raw; Get-ChildItem -File | Where-Object { "'$_.Name -match '"'"'^(04_|23_補充_|33_104職缺更新_)'"' } | Select-Object Name,Length" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 526ms:
+{
+ "說明": "票 39：獨立測試題 40 題（原本有答案 25、沒答案 15；2026-11-17 因語料換新版，h40 改標為可回答，現為有答案 26、沒答案 14；gold 與關鍵字隨之更新，非為提高分數）。題目與金標在跑任何檢索評估之前寫定，之後不得為了結果改題。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（程式核對確實出現在公開段落）。沒有答案題的 absence_keywords 在整份語料（含排除段落）出現 0 次；trap＝相近主題但語料確實沒寫的陷阱題。核對狀態只有使用者能改成已確認。",
+ "questions": [
+  {
+   "id": "h01",
+   "question": "EPS 多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "EPS 4.77 元"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "EPS 4.77 元，營收年減 0.31%"
+    },
+    {
+     "file": "20_補充_台灣大哥大.md",
+     "heading": "業務與財務 > 2025 年第四季與全年細項",
+     "quote": "EPS 4.77 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h02",
+   "question": "用什麼雲端？",
+   "type": "公司頁短問句",
+   "topic": "技術",
+   "answerable": true,
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Google Cloud（BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions）"
+    },
+    {
+     "file": "21_補充_聯合報.md",
+     "heading": "技術堆疊 > Google Cloud 資料與運算架構",
+     "quote": "使用的產品包括 BigQuery、Vertex AI、Compute Engine"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h03",
+   "question": "董事長是誰？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "張培鏞（代表人）／陳世安"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h04",
+   "question": "公司在哪裡？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "台北市內湖區堤頂大道二段 187 號"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h05",
+   "question": "什麼時候上櫃？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "藍新資訊",
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "2026-10-27 掛牌，承銷價 68 元，開盤 73.7 元"
+    },
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "68 元掛牌上櫃，開盤 73.7 元"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "基本資料 > 設立與資本市場歷程",
+     "quote": "每股 68 元掛牌上櫃"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2026 年上櫃審議到掛牌",
+     "quote": "承銷價每股 68 元掛牌上櫃"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h06",
+   "question": "海外有哪些據點？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "凱基證券",
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 業務",
+     "quote": "香港、泰國、新加坡、印尼、中國大陸"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h07",
+   "question": "客戶是哪些類型？",
+   "type": "公司頁短問句",
+   "topic": "公司概況",
+   "answerable": true,
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 主要客戶",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "基本資料 > 策略夥伴與客戶群",
+     "quote": "政府單位（交通部、國防單位、地方政府）、電信業"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 2025 年營收結構與客戶組成",
+     "quote": "企業 44.1%、政府 31.5%、電信 24.4%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h08",
+   "question": "股利配多少？",
+   "type": "公司頁短問句",
+   "topic": "財務",
+   "answerable": true,
+   "company": "中華網龍",
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "配發 0.33 元現金股利，12 年來首次配息"
+    },
+    {
+     "file": "09_中華網龍.md",
+     "heading": "8. 近一年新聞",
+     "quote": "2025 年首次配息 0.33 元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h09",
+   "question": "遠振資訊的資本額是多少？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "16_遠振資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "資本總額：20,000,000 元"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 公司簡介",
+     "quote": "資本額：1300 萬元"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h10",
+   "question": "數據立的續約率是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "續約率 90%、續費率 120%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h11",
+   "question": "艾普特有哪四大事業群？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "廣告科技、行銷科技、管理科技、電商科技"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h12",
+   "question": "宏碁雲架構的母公司是誰？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "1. 基本資料",
+     "quote": "安碁資訊股份有限公司（ACSI，6690）"
+    },
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "安碁資訊（6690）的子公司"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h13",
+   "question": "典凡科技的資深網路架構師年薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 4. 資深網路架構師",
+     "quote": "年薪 1,500,000 元以上"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 1,500,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h14",
+   "question": "宏碁雲架構的雲端維運工程師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "薪資：月薪 37,000 以上"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "job/8x526 | 1 年以上 | 大學、碩士 | 月薪 37,000 以上"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h15",
+   "question": "艾普特的 PM 專案規劃師月薪多少？",
+   "type": "職缺",
+   "topic": "薪資",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "E_華電_艾普特_醫宇宙.md",
+     "heading": "2. 艾普特 > 相關職缺",
+     "quote": "月薪 40,000~42,000"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "3. 艾普特媒體有限公司（公司頁 10 筆；全部列出）",
+     "quote": "https://www.104.com.tw/job/8tpxn | 1 年以上 | 專科以上 | 月薪 40,000~42,000"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h16",
+   "question": "數據立的產品維運工程師要會哪些工具？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-3 產品維運工程師",
+     "quote": "精通 Docker、Grafana + Prometheus"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h17",
+   "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
+   "type": "單一公司",
+   "topic": "公司概況",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "3. 業務與財務 > 產品與業務",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    },
+    {
+     "file": "23_補充_神通資訊.md",
+     "heading": "技術堆疊 > Agent Builder 企業 AI 一體機的軟硬體",
+     "quote": "MiTAC Agent Builder 企業 AI 一體機"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "h18",
+   "question": "凱基證券 2026 上半年的稅後純益是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "179.4 億，年增 383%"
+    },
+    {
+     "file": "06_凱基證券.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "上半年證券純益 179.4 億，年增 383%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h19",
+   "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
+   "type": "職缺",
+   "topic": "技術",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 高級工程師（高雄）資料庫（104 職缺代碼 7q8te）",
+     "quote": "擅長工具欄為 MySQL、Oracle、PL/SQL"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "h20",
+   "question": "叡揚資訊 2026 前三季的營收是多少？",
+   "type": "單一公司",
+   "topic": "財務",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "15.34 億，年增 6.58%"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "前三季營收年增 6.58%"
+    }
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h21",
+   "question": "哪些公司的職缺要求 Spring Boot？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Spring Boot"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h22",
+   "question": "哪幾家公司的職缺會用到 VMware？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "VMware"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h23",
+   "question": "哪家公司有做 AI Agent 的產品？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "AI Agent"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h24",
+   "question": "哪些公司使用 Google Cloud？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "Google Cloud"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h25",
+   "question": "哪些公司的職缺要會 C#？",
+   "type": "跨公司",
+   "topic": "跨公司",
+   "answerable": true,
+   "gold": [],
+   "keywords": [
+    "C#"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h26",
+   "question": "有颱風假嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "神通資訊",
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "颱風假"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h27",
+   "question": "有員工持股信託嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "凱基證券",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "持股信託",
+    "員工持股"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h28",
+   "question": "有交通津貼嗎？",
+   "type": "公司頁短問句",
+   "topic": "福利規章",
+   "answerable": false,
+   "company": "聯合報",
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "交通津貼",
+    "交通補助"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h29",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "心理諮商"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h30",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "育嬰"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h31",
+   "question": "典凡科技今年的營收目標是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "營收目標"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "營收目標": "2026-11-17 新語料命中：27 號中華網龍補充檔寫的是《吞食天地》放置版首月營收目標，不是典凡科技今年營收目標；題目仍無答案"
+   }
+  },
+  {
+   "id": "h32",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "下載次數",
+    "下載量",
+    "累計下載"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h33",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "type": "不可回答",
+   "topic": "內部資訊",
+   "answerable": false,
+   "trap": true,
+   "gold": [],
+   "absence_keywords": [
+    "AI 部有",
+    "AI 部人數",
+    "AI 部共"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h34",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "廣達"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h35",
+   "question": "鴻海的董事長是誰？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "鴻海"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h36",
+   "question": "富邦金控旗下有哪些子公司？",
+   "type": "不可回答",
+   "topic": "其他公司",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "富邦金控"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h37",
+   "question": "台北明天會下雨嗎？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "天氣",
+    "氣象",
+    "下雨"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h38",
+   "question": "履歷的自傳要怎麼寫？",
+   "type": "不可回答",
+   "topic": "語料外",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "自傳",
+    "履歷範本"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "自傳": "2026-11-17 新語料命中：37 號中華網龍職缺條件提到自傳，沒有教人怎麼寫自傳；題目仍無答案"
+   }
+  },
+  {
+   "id": "h39",
+   "question": "哪些公司有哺乳室？",
+   "type": "不可回答",
+   "topic": "福利規章",
+   "answerable": false,
+   "trap": false,
+   "gold": [],
+   "absence_keywords": [
+    "哺乳室"
+   ],
+   "split": "heldout",
+   "status": "待使用者確認"
+  },
+  {
+   "id": "h40",
+   "question": "哪間公司有員工社團？",
+   "type": "跨公司",
+   "topic": "福利規章",
+   "answerable": true,
+   "gold": [],
+   "split": "heldout",
+   "status": "待使用者確認（2026-11-17 因新語料已含答案，由不可回答改標為可回答，非為提高分數）",
+   "keywords": [
+    "家庭日、社團"
+   ]
+  }
+ ]
+}
+
+{
+ "questions": [
+  {
+   "id": "c01",
+   "question": "哪一家公司拿到 HPE 和 NetApp 的年度夥伴獎？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "2. 業務與財務",
+     "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2025 年底原廠夥伴獎項",
+     "quote": "HPE FY25 最佳合作夥伴獎"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "c06",
+   "question": "哪一家公司有自研的語音模型？",
+   "type": "跨公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "自研語音模型 myVoca"
+    },
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "8. 近一年新聞（2025-11 至 2026-11）",
+     "quote": "myVoca"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s01",
+   "question": "神通資訊的資本額是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "04_神通資訊.md",
+     "heading": "1. 基本資料",
+     "quote": "額定 25 億；實收 21 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "07_華電聯網.md",
+     "heading": "2. 業務與財務 > 標案占比（重點）",
+     "quote": "政府標案 110 件，總額近 83 億"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 政府標案與在手專案",
+     "quote": "110 件政府標案，得標總金額近 83 億元"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 近年營收",
+     "quote": "20.19 億，年增 16.33%"
+    },
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "業務與財務 > 2025 年財務結果",
+     "quote": "20.19 億元，年增 16.33%"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
+  },
+  {
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "15_數據立.md",
+     "heading": "2. 業務與財務",
+     "quote": "AltaBots.ai：企業級 No-Code AI Agent 平台"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "02_聯合報.md",
+     "heading": "3. 數據發展部在做什麼",
+     "quote": "部門 2008 年成立"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "2. 業務與財務 > 產品【自述】https://www.gss.com.tw",
+     "quote": "AI 智慧辨識（InsAI，VLM，支援地端）"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "InsAI 支援地端部署"
+    },
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "8. 近一年新聞",
+     "quote": "InsAI"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s11",
+   "question": "艾普特是做什麼的公司？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "12_艾普特.md",
+     "heading": "2. 業務與財務",
+     "quote": "數位行銷公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "14_典凡科技.md",
+     "heading": "2. 業務與財務 > 產品與服務（【自述】https://tftech.com.tw ）",
+     "quote": "企業級資料保護與雙活資料中心"
+    },
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 公司簡介",
+     "quote": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 公司簡介",
+     "quote": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+    },
+    {
+     "file": "13_宏碁雲架構.md",
+     "heading": "2. 業務與財務",
+     "quote": "機房維運管理、雲端相關服務"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "2. 業務與財務",
+     "quote": "電信（行動、寬頻）、有線電視、企業服務、新科技事業、電商（momo）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "一、典凡科技股份有限公司 > 目前開放職缺：共 6 筆（頁面顯示「工作機會(6)」，列出 5 筆；第 6 筆未顯示）",
+     "quote": "年薪 900,000~1,200,000"
+    },
+    {
+     "file": "補5_典凡_聯合報系.md",
+     "heading": "一、典凡科技（公司頁 https://www.104.com.tw/company/1a2x6bnlk8） > 1. 徵的就是You-AI 應用整合規劃師、AI應用工程師（最相關）",
+     "quote": "薪資：年薪 900,000~1,200,000 元"
+    },
+    {
+     "file": "網址4_聯合報系_典凡.md",
+     "heading": "一、典凡科技股份有限公司（新北市新店區，6 筆全做）",
+     "quote": "年薪 900,000~1,200,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "C_宏碁雲_尼諾思.md",
+     "heading": "1. 宏碁雲架構服務股份有限公司（eDC） > 目前開放職缺",
+     "quote": "Django"
+    },
+    {
+     "file": "網址5_宏碁雲_藍新_網龍.md",
+     "heading": "1. 宏碁雲架構服務（公司頁 21 筆；下列為 AI／Python／後端／軟體／雲端／系統相關）",
+     "quote": "Django"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I97 Kubernetes 平台工程師（8xjjo）",
+     "quote": "3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "D_典凡_遠振.md",
+     "heading": "二、遠振資訊股份有限公司 > 目前開放職缺：0 筆",
+     "quote": "公司頁「工作機會」區塊沒有職缺"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j07",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【戰略部】數據優化師(數據分析)（7qtdo）",
+     "quote": "月薪 35,000 元以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
+     "heading": "5. 數據立諮詢顧問（Data-DI；公司頁 7 筆） > 5-1 AI 解決方案工程師（已讀單頁）",
+     "quote": "需出差，一年累積約三個月以下"
+    },
+    {
+     "file": "網址6_數據立_奧衍_艾普特_遠振.md",
+     "heading": "1. 數據立諮詢顧問有限公司（公司頁 7 筆）",
+     "quote": "AI 解決方案工程師（技術）"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "j09",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）",
+     "quote": "不需出差"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）",
+     "quote": "必備為 Python 開發 3 年以上"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "type": "職缺",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "3 年以上 AI 系統或大型軟體架構設計經驗"
+    }
+   ],
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
+  },
+  {
+   "id": "u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "多益",
+    "TOEIC",
+    "英檢",
+    "英文能力"
+   ],
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "多益": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案",
+    "TOEIC": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案"
+   }
+  },
+  {
+   "id": "u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "月活躍",
+    "活躍玩家",
+    "MAU",
+    "DAU"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u06",
+   "question": "叡揚資訊的特休天數是幾天？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "特休",
+    "特別休假",
+    "休假天數"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u07",
+   "question": "藍新資訊可以在家上班嗎？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "在家上班",
+    "居家辦公",
+    "混合辦公",
+    "WFH",
+    "在家工作"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "平均年薪",
+    "平均薪資",
+    "薪資中位數"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}
+
+
+Name               Length
+----               ------
+04_神通資訊.md          18160
+23_補充_神通資訊.md        8786
+33_104職缺更新_神通資訊.md  40300
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '04_神通資訊.md' -Encoding UTF8 -Raw
+Get-Content -LiteralPath '23_補充_神通資訊.md' -Encoding UTF8 -Raw
+Get-Content -LiteralPath '33_104職缺更新_神通資訊.md' -Encoding UTF8 -Raw" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 456ms:
+# 神通資訊科技股份有限公司（MiTAC Information Technology）深查
+
+- 調查日：2026-11-16
+- 面試日：2026-11-19（上午看發表、下午面談；對方為新興應用部經理 2 人）
+- 標記：【自述】公司自己說的／【第三方】媒體、評論站／【推測】我的判斷
+- 全篇不含任何個人電話或 email。
+
+---
+
+## 先看這 6 點
+
+1. 【第三方】公司主力是系統整合與政府／交通專案（駐點、標案）。AI 產品線（Agent Builder、MiEcoMatrix）是 2026 年新推的。
+2. 【第三方】「新興應用部」查無任何公開資料。部門做什麼只能推測。
+3. 【第三方】加班：專案型、駐點型單位會加班。標政府案的單位最嚴重（單一心得 70 小時）。
+4. 【第三方】GoodJob 現在顯示 3.3 分／96 筆。你原本記的 3.4／92 是舊快取。
+5. 【第三方】資料型、Java 型職缺的面試以手寫基礎題為主（Java、SQL、HTML/Vue）。
+6. 查無：標案占營收比例、營收數字、公開職缺清單（104 動態載入，抓不到）。
+
+---
+
+## 1. 基本資料
+
+| 項目 | 內容 | 來源 | 類型 |
+|---|---|---|---|
+| 法人全名 | 神通資訊科技股份有限公司 | https://company.g0v.ronny.tw/api/show/53000774 | 第三方（經濟部登記的轉載） |
+| 統編 | 53000774 | https://ehrweb.104.com.tw/job.do?uno=53000774 、 https://info.technews.tw/searchPatent/53000774 | 第三方（兩處一致） |
+| 資本額 | 額定 25 億；實收 21 億（2.1 億股） | https://company.g0v.ronny.tw/api/show/53000774 | 第三方 |
+| 設立／核准日 | 2010-10-07 | 同上 | 第三方 |
+| 登記狀態 | 核准設立 | 同上 | 第三方 |
+| 員工數 | 約 1,000 人，技術人員約 80% | https://www.mitac.com.tw | 自述 |
+| 總部 | 台北市內湖區堤頂大道二段 187 號 | https://www.mitac.com.tw | 自述 |
+| 前身 | 1974 年成立的神通電腦 | https://www.mitac.com.tw 、 https://blog.104.com.tw/mitac-information-e-system/ | 自述 |
+| 上市櫃 | 查無上市櫃紀錄。搜尋結果未見股票代號。判定為未上市櫃。 | 見「未查到與限制」 | 推測 |
+
+注意：
+- 經濟部官網 findbiz.nat.gov.tw 對自動化工具回 403，我無法直接驗證。資本額與設立日來自 g0v 轉載，面試前請自己點開核對。
+- 2010-10-07 可能是公司重組或合併日。公司自述「2010 年成立」與此一致（https://blog.104.com.tw/mitac-information-e-system/，2023-08-06）。
+
+## 2. 集團關係
+
+- 【自述】官網列有「神通集團」與「聯華神通集團」兩個集團頁面，沒有說明股權。https://www.mitac.com.tw
+- 【第三方】神通資訊是聯華神通集團旗下子公司，前身是 1974 年的神通電腦。https://www.ctee.com.tw/news/20260122701190-431202
+- 【第三方】神達（3706）、神基、聯強等同屬聯華神通集團。神雲是神達控股的子公司。https://www.cw.com.tw/article/5132839 、 https://www.bnext.com.tw/article/83314/mitac-amd-thermal
+- 【推測】神通資訊與神達／神雲是「同集團的兄弟公司」，不是上下游持股關係。神通做軟體與系統整合，神雲做伺服器硬體。查無各公司間的持股比例。
+- 【第三方】2026-04 發表會有神雲、神數科技出席，表示集團內有硬體／軟體協作。https://www.ctee.com.tw/news/20260423701330-431202
+- 職銜提示：發表會報導中出現「數位科技事業群 AI 暨平台產品研發處」與「AI 產品應用處」兩個單位。「新興應用部」沒有出現。
+
+## 3. 業務與財務
+
+### 產品與業務
+- 【自述】系統整合商，提供「雲」與「端」的 AIoT 解決方案。應用：智慧交通、製造、安防、政府、教育、企業、金融。https://www.mitac.com.tw
+- 【自述】三個核心：MiTAC Agent Builder 企業 AI 一體機、MiAIOT 平台、MiEcoMatrix 永續平台。https://www.mitac.com.tw
+- 【自述】代理產品：Google Cloud、Microsoft、VMware、SugarCRM、Avaya、Cisco 等。https://www.mitac.com.tw
+- 【第三方】交通系統：高鐵行動購票、捷運悠遊卡、公車驗票、輕軌收費。另有智慧教室、智慧圖書館、路口監視與中央監控。2023 入選無人機國家隊。https://blog.104.com.tw/mitac-information-e-system/
+- 【第三方】MiTAC Agent Builder：2026-04-23 與 AMD、撼訊科技共同發表。零程式碼建 Agent、決策可稽核。硬體為 AMD Ryzen AI Max+ 395 與 Radeon AI PRO R9700。https://www.ctee.com.tw/news/20260423701330-431202
+- 【第三方】6 月 COMPUTEX 展出；7 月 AI WAVE 展出，主打「產、銷、人、發、財」通用型 Agent、低程式碼拖拉介面。https://www.ctee.com.tw/news/20260730701527-431202
+- 【第三方】MiEcoMatrix：ESG／能源管理，含溫室氣體盤查、AI 永續報告書、智慧能源管理。2026-01 入選商周「AI 創新百強」。https://www.ctee.com.tw/news/20260122701190-431202
+- 【第三方】2026-08-06 高階主管論壇：Context Engine、AI 治理、四階段導入路徑。https://www.ctee.com.tw/news/20260806701085-431202
+
+### 主要客戶
+- 具名付費客戶：查無。
+- 【第三方】2026-04 發表會出席者：群聯電子 AI 團隊、遠東銀行 IT 主管、神雲、神數、群環。這是出席名單，不等於客戶。https://www.ctee.com.tw/news/20260423701330-431202
+- 【第三方】公開標案例：2014 年新北市稅捐稽徵處案，神通為唯一投標廠商，決標約 704 萬。這是 12 年前的單一案例。https://www.tax.ntpc.gov.tw/dl-293-53d4c8519cc34720b503d240505fcc26.html
+
+### 營收（近 3 年）
+- 查無。公司未上市櫃，搜尋未找到營收、財報。查了：公開資訊觀測站相關搜尋、新聞、財經網站。
+- 【推測】系統整合商常有政府標案比重。但沒有數字，不可寫比例。
+
+### 標案比例
+- 查無。我沒有查到政府電子採購網（web.pcc.gov.tw）的決標資料。該站需自行以統編 53000774 查詢。
+- 間接證據（第三方）：GoodJob 一則專案副理心得說「為標政府採購案，密集開會、趕寫標書」。單一心得。https://www.goodjob.life/companies/神通資訊科技股份有限公司/work-experiences
+- 間接證據（第三方）：交通、智慧安防、教育類客戶多為公部門。https://blog.104.com.tw/mitac-information-e-system/
+
+## 4. 報名部門：新興應用部
+
+- 公開資料：查無「新興應用部」。查了：官網、Google 搜尋「神通資訊 新興應用部／新興應用事業」、104 案例文、GoodJob、新聞。
+- 【推測】依公開線索，該部可能做這幾類事（不確定）：
+  - 把 AI 產品（Agent Builder、MiEcoMatrix）做成行業應用或 PoC。
+  - 無人機、AIoT、地端 AI 這類新技術試點。
+  - 這個推測根據：「新興」一詞＋公司 2023 年入選無人機國家隊＋2026 年主推地端 AI。
+- 【自述】公司採「各部門主管自己刊登職缺、自己篩履歷」。所以面談的 2 位經理就是用人主管。https://blog.104.com.tw/mitac-information-e-system/
+- 建議：面試一開始直接問「新興應用部目前有幾個專案？客戶是誰？用什麼技術？」
+
+## 5. 職缺
+
+- 官網徵才頁沒有列出職缺，只有導向 104 專區的連結。https://www.mitac.com.tw/人才招募/
+- 104 專區（https://ehrweb.104.com.tw/job.do?uno=53000774）：動態載入，只顯示「全部職缺 104 筆」，列表為空。依規定試一次就放棄，不再硬爬。
+- Yourator、CakeResume、1111、LinkedIn：搜尋沒找到神通資訊的職缺。CakeResume 搜尋命中的是「漢通科技」，不是神通，已排除。
+- 結論：目前 AI／Python／後端／資料職缺清單查無。職稱、薪資、發布日皆查無。
+- 側面資訊：
+  - 【自述】每年招募 200 多人，約接觸 5～10 人錄 1 人。https://blog.104.com.tw/mitac-information-e-system/ （2023-08）
+  - 【第三方】GoodJob 面試區有「資料工程師」「AI 資訊工程師」「資料分析工程師」心得，其中後兩者是 2019–2020 年，過舊。https://www.goodjob.life/companies/神通資訊科技股份有限公司
+
+## 6. 技術堆疊
+
+公開、可信的資料很少。
+
+- 【第三方】Agent Builder 硬體：AMD Ryzen AI Max+ 395、Radeon AI PRO R9700；伺服器版為神雲 TN85-B8261 搭 EPYC 與 Instinct MI350P。https://www.ctee.com.tw/news/20260423701330-431202 、 https://www.ctee.com.tw/news/20260730701527-431202
+- 兩篇報導的硬體不同，可能是不同機型。以官方為準。
+- 模型、框架（用哪個 LLM、LangChain 或自研）：查無。報導明確「文中未提及」。
+- 【第三方】面試題顯示常見語言：Java、SQL、HTML/Vue。https://interview.tw/c/gXRQ
+- 【第三方】技術 Java 型職缺（全端、Java 工程師）居多。https://www.goodjob.life/companies/神通資訊科技股份有限公司
+- 技術部落格、GitHub：沒查到公司官方技術部落格或 GitHub 組織。
+- 【推測】新興應用部可能偏 AI 應用整合，但語言（Python？）不確定。要在面談確認。
+
+## 7. 面試流程與常見題目
+
+### 樣本數
+- interview.tw：281 則心得，評價 3.6／5，錄取率 45%，難度「低」。多數內容需 VIP 才能看。https://interview.tw/c/gXRQ
+- GoodJob：面試經驗 87 則。https://www.goodjob.life/companies/神通資訊科技股份有限公司
+- PTT Soft_Job、Dcard：搜尋沒找到神通資訊相關文章。查無。
+- Glassdoor：查無（沒搜到）。
+- 注意：interview.tw 還有「神通電腦」（另一頁，51 則、3.5／5、錄取率 34%），是不同頁面，不要混用。
+
+### 流程（第三方，多為 Java／全端職缺，不一定適用你）
+- 筆試＋面試：Java 筆試約 90 分鐘＋面試官面談約 60 分鐘＋參觀環境 30 分鐘（2023，人才培訓部，單一心得）。https://interview.tw/i/664c9c9ec0f1757f6d0b2889
+- 全端：現場測驗 20 題、限時 1 小時（GoodJob 單一心得）。
+- 分析師（2022）：手寫題，含 Java、HTML、資料庫；再與主管面談（單一心得）。
+- 近期 Java 工程師筆試約 18 題手寫：Map vs Set、checked vs runtime exception、String/StringBuilder、SQL join／GROUP BY／HAVING、v-if vs v-show。https://interview.tw/c/gXRQ
+- 非技術題：離職原因、處理過的問題、職涯方向、對加班的態度。
+
+### 資料工程師面試
+- GoodJob 一則 4.5 分：面試官專業，會深問資料平台建置。單一心得。https://www.goodjob.life/companies/神通資訊科技股份有限公司
+
+### 負面
+- 2025 年專管師心得：面試邀請信地址連結錯誤，沒說明具體工作，評 1.5 分（單一心得）。來源在 interview.tw 搜尋結果。
+
+### 對你的意義
+- 【推測】新興應用部的面試可能不是上述筆試流程，而是經理直接面談。但不確定。
+- 要做的準備：複習 SQL（JOIN、GROUP BY）、Python、REST。
+
+## 8. 工作評價
+
+### GoodJob（第三方，匿名，未證實）
+- 公司頁：3.3 分／96 筆評分；平均每週 41 小時；約 54% 偶爾加班，幾乎每天加班 0%。https://www.goodjob.life/companies/神通資訊科技股份有限公司 （2026-11-16 抓取）
+- 工作經驗共 16 則；頁面顯示的 10 則日期 2025-05 到 2026-10。https://www.goodjob.life/companies/神通資訊科技股份有限公司/work-experiences
+- 工時狀況：10 則，平均 3.0 分。https://www.goodjob.life/companies/神通資訊科技股份有限公司/work-experiences/工時狀況
+
+### 加班（多來源交叉）
+| 來源 | 內容 | 樣本 |
+|---|---|---|
+| GoodJob 工時 | 專案趕工、客戶時程短時會被要求加班；駐點依客戶作息 | 10 則，多數提到趕工加班 |
+| GoodJob（2025-12） | 專案副理：標政府案，週 70 小時，腰椎受傷 | 單一心得 |
+| GoodJob（2025-05） | 專案主任：近似責任制；申請加班費可能影響升遷 | 單一心得 |
+| GoodJob（2025-04） | 軟體工程師：每天 8 小時，不用加班 | 單一心得 |
+| GoodJob（2026-07） | 高級管理師：平日加班，週末不加，年度結算要進公司 | 單一心得 |
+| interview.tw | 有人說團隊無加班文化，要填單；多數職缺為駐點，因客戶而異 | 單一心得 |
+| salary.tw | 多數日均 8 小時、加班少；也有 10–12 小時；流動率高、老鳥文化的說法 | 搜尋摘要，薪資被鎖 |
+- 結論【推測】：加班取決於單位。標案、專案交付、駐點最重。內部產品或研發單位較輕，但沒有直接資料。
+- 查無：新興應用部加班評價。
+
+### 薪資（GoodJob 單一心得，月薪）
+- 軟體工程師 4 萬（2026-10、2026-02、2025-10）、4.3 萬（2025-06）；開發工程師 4.5 萬；全端 5.5 萬；專案副理 6 萬。
+- 年終多依績效，一則寫「多為 1 個月」。
+- 一則 2 分評價說調薪幅度不大，適合想穩定或新鮮人。
+- 薪資帶：頁面摘要寫 4 萬至 5.5 萬。
+
+### 主管
+- 一則（2025-06）說主管與同事「人不錯」；一則提到「軍事化氛圍」（全端，1 分，內容被截斷）。皆單一心得。
+
+### 離職原因
+- 查無。GoodJob 這 10 則沒有任何一則明寫離職原因。
+
+### 其他
+- PTT Soft_Job、Dcard、Glassdoor：查無。
+- 福利（自述）：員工分紅、年度績效獎金、健身房、兩年一次健檢、教育訓練。https://www.mitac.com.tw/人才招募/
+- 工作彈性（自述，2023 文）：彈性上下班。https://blog.104.com.tw/mitac-information-e-system/
+
+## 9. 近一年新聞
+
+| 日期 | 事件 | 來源 |
+|---|---|---|
+| 2026-01 | MiEcoMatrix 入選商周 AI 創新百強 | https://www.ctee.com.tw/news/20260122701190-431202 |
+| 2026-03 | MiEcoMatrix 智慧能源管理系統獲智慧城市創新應用獎 | https://www.ctee.com.tw/news/20260320700711-431202 |
+| 2026-04-23 | Agent Builder 企業 AI 一體機發表（AMD、撼訊） | https://www.ctee.com.tw/news/20260423701330-431202 |
+| 2026-06 | COMPUTEX 展出 Agent Hub and Builder | https://www.ctee.com.tw/news/20260423701330-431202 的相關報導（搜尋摘要） |
+| 2026-07 | AI WAVE 展出一體機 | https://www.ctee.com.tw/news/20260730701527-431202 |
+| 2026-08-06 | 與資策會 MIC 辦高階主管論壇 | https://www.ctee.com.tw/news/20260806701085-431202 |
+
+- 裁員：查無。
+- 融資：查無（未上市櫃）。
+- 訴訟：查無。查了新聞搜尋；沒查司法院裁判書系統，請自行補查。
+
+## 10. 給求職者的判斷
+
+### (a) 適合度與理由
+- 【推測】中等偏高。
+- 合：你有 Gemini 應用、OpenCV 影像、Flask＋MySQL 的實作；公司剛推地端 AI Agent，缺能做 AI 應用整合與 PoC 的人。
+- 合：公司規模約 1,000 人，有教育訓練與培訓計畫，適合轉職者起步。
+- 不合：公司主力是 Java、駐點、政府專案。你的 Python 路線可能與多數職缺不同。
+- 不合：公司的 AI 一體機走 AMD 本地推論。你沒有私有化 LLM 部署經驗。
+
+### (b) 風險
+- 加班：標案與駐點單位明顯偏重。要問清楚新興應用部是否駐點。
+- 薪資：GoodJob 單一心得薪資帶 4 萬至 5.5 萬。與你期待比對。
+- 部門不透明：新興應用部查無資料，可能是新成立或小團隊，資源與穩定性不明。
+- 文化：有 1 則「軍事化」、1 則「責任制」心得（單一心得）。
+- 資料新舊：職缺、營收、標案比例都查無。
+
+### (c) 5 個該問的問題
+1. 新興應用部目前有幾個專案？哪些是產品、哪些是客戶專案？
+2. 這個職位主要寫什麼語言？有沒有 Python？AI 用哪個模型（雲端或地端）？
+3. 要不要駐點客戶？平均每月加班幾小時？標案期間會怎樣？
+4. 部門與 AI 暨平台產品研發處、AI 產品應用處的關係？Agent Builder 是誰在做？
+5. 新人前 3 個月做什麼？有沒有 mentor？轉職者如何被評估？
+
+### (d) 最能對上的專案，與不要誇大的事
+- 最對上：Gemini＋OpenCV 影像辨識模組（AI 應用整合）。其次：和泰黑客松 15 強（Next.js＋Gemini，展示 PoC 與交付速度）。
+- 對上點：Agent Builder 主打「企業 AI Agent、可稽核」。你可談如何用 Gemini 做 Agent 流程、如何驗收 AI 輸出。
+- 停車推薦系統（Flask＋MySQL）可證明你會做後端與資料庫，對上他們的 SQL 基礎要求。
+- 不要誇大：
+  - 不要說自己會私有化 LLM 部署、Kubernetes、AMD 推論最佳化。你沒有。
+  - 程式碼主要由 AI Agent 產生：直接說「我負責需求與驗收」，並準備能講清楚資料流、錯誤處理與驗收方式。公司面試有手寫 SQL／Java 基礎題，被問到答不出來會扣分。
+  - 不要把黑客松 15 強說成「上線產品」。
+  - 不要說自己懂政府標案流程。
+
+---
+
+## 11. 未查到與限制
+
+- 查無：新興應用部的任何公開資料；營收（近 3 年）；標案占營收比例；2025 以後的標案得標清單；具名付費客戶；官網與第三方平台的 AI／Python／後端職缺；離職原因；PTT Soft_Job、Dcard、Glassdoor 的神通資訊心得；裁員、融資、訴訟（未見報導）。
+- 無法直接驗證：
+  - 經濟部商工登記公示（findbiz.nat.gov.tw）回 403，資本額與設立日改用 g0v 轉載。
+  - 公開資訊觀測站：沒有直接查到本公司資料，推定未上市櫃。請自行用統編 53000774 核對。
+  - 104 專區列表空白，已放棄。依規定不硬爬。
+  - 政府電子採購網未查，請用統編 53000774 自行查決標。
+- 資料新舊：104 案例文為 2023-08；多數面試心得為 2022–2023；GoodJob 2025–2026。
+- 樣本小：GoodJob 工時 10 則、工作經驗 16 則。單一心得已標示。
+- interview.tw 多數內容需 VIP，只看到摘要。
+- 名稱混淆：神通資訊科技、神通資科、神通電腦、神通科技是不同頁面或不同公司。本檔只用「神通資訊科技（統編 53000774）」。
+- 搜尋工具為摘要式，部分數字（如 GoodJob 3.4／92 vs 3.3／96）來自不同抓取時間。
+
+# 23 神通資訊 公開資料補充
+
+## 基本資料
+
+### 神通資訊的沿革與規模
+神通資訊科技股份有限公司的前身是 1974 年成立的神通電腦，官網稱它是台灣首家引進微電腦系統的電腦公司。依 104 企業專訪文章，神通資訊科技於 2010 年成立，承接神通電腦的系統整合經驗與核心技術。官網首頁寫有 47 年的整合經驗、1,500 件以上的大型專案，員工約 1,000 人，其中技術人員占 80%。該專訪文章列出的里程碑還有：2019 年導入 104 招募管理系統，2023 年入選無人機國家隊。官網的總部資訊是台北市內湖區，另有七堵廠遷址公告。
+來源：https://www.mitac.com.tw 、https://blog.104.com.tw/mitac-information-e-system/（查詢日 2026-11-17）
+
+### 集團關係與公開出現的單位名稱
+官網列有「神通集團」與「聯華神通集團」兩個頁面；2026 年 6 月的官網消息提到新達電腦與伊頓電氣（Eaton）簽署策略合作夥伴，新達電腦與神通集團相關。2026 年 4 月 Agent Builder 發表會的報導，列出神通的公開職銜：董事長蘇亮、AI 暨平台產品研發副總林哲斌、董事長特助（AI 產品應用）萬冠群。2026 年 1 月與 3 月的報導則提到「永續智慧系統發展處」處長林顥蒼代表領獎。MiEcoMatrix 屬於聯華神通集團「ESG 聯華神通大平台」生態圈。
+來源：https://www.mitac.com.tw 、https://www.ctee.com.tw/news/20260423701330-431202 、https://www.ctee.com.tw/news/20260122701190-431202（查詢日 2026-11-17）
+
+### 官方公開的招募與培訓
+神通官網徵才頁說明，營業範圍涵蓋系統整合、自動化控制、應用軟體研發、技術諮詢與售後服務。培訓有內部訓練課程、外部訓練補助、菁英人才訓練計畫與內部讀書會。福利包括員工分紅、年度績效獎金、生日與三節禮券、家庭關懷補助、旅遊與活動補助、員工購車購屋購置筆電優惠貸款、健身房、兩年一次健檢與定期醫師駐診。徵才頁沒有列出職缺，只連到 104 招募專區。104 專訪文章（2023 年）稱每年招募 200 多位新人，由用人主管自行刊登職缺、篩選履歷並安排邀約。
+來源：https://www.mitac.com.tw/人才招募/ 、https://blog.104.com.tw/mitac-information-e-system/（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 智慧交通與智慧政府產品
+官網列出的智慧交通產品有 AFCS 自動收費系統、CMFT 多功能通訊整合平台、ATP 列車自動保護系統、計軸器系統、Mi-Kiosk 智慧售票機，以及公車驗票、輕軌收費、供電與通訊系統。104 專訪文章提到的交通案例有台灣高鐵手機購票、捷運悠遊卡系統、公車驗票與輕軌收費。智慧政府方面有 E-Gate 自動通關系統、智慧路燈與 AI 違規偵測系統。智慧安防有 MiCMS 中央監控系統、路口監視錄影系統與 MiUAV 旋翼型無人飛行載具。這些項目顯示公司長期承接公共交通與政府類系統建置。
+來源：https://www.mitac.com.tw 、https://blog.104.com.tw/mitac-information-e-system/（查詢日 2026-11-17）
+
+### 智慧製造、企業、金融與服務產品
+智慧製造產品有 RFID 工業 4.0 解決方案、Mi-SeeR 工廠異常檢測系統、刀具磨耗監控平台、泵浦故障預測系統、AI 精準計數器與 MiCart 智能跟隨搬運車。智慧企業有 Micloud、Access Gate 速通門、MiAegis 智慧溫感臉辨門禁機、MiClerk 電子簽名與 MiSBot.ai。智慧金融有 MiWBS 法金核心系統、外匯核心系統、海外分行系統、訊息交換平台 TMS 與央媒申報系統。智慧服務有 MiSBot.ai 智慧櫃台與生成式 AI 智能對練服務。代理產品包括 Google Cloud、Microsoft、VMware、SugarCRM、Avaya、Cisco 等。
+來源：https://www.mitac.com.tw（查詢日 2026-11-17）
+
+### 神通 AI 數位學院與教育布局
+官網列有「神通 AI 數位學院」，內容包括企業 AI 人才課程與高中 AI 實驗室計畫。官網消息記載：2025 年 10 月 28 日，神通捐贈花蓮高中 AI 伺服器與筆電，啟用 AI 實驗室；2026 年 6 月 11 日舉行「2026 神通 AI 數位學院扶輪盃」高中 AI 競賽，花蓮高中獲得冠軍。產品面還有智慧學習教室、智慧圖書館、IDSmart 整體解決方案與校園保健。2026 年 7 月的報導提到，Agent Builder 平台推出智慧教育應用，內容有教案生成、個人化學習診斷與校園諮詢，並採地端部署。
+來源：https://www.mitac.com.tw 、https://www.ctee.com.tw/news/20260730701527-431202（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### Agent Builder 企業 AI 一體機的軟硬體
+2026 年 4 月 23 日，神通在台北大直舉辦「AI 私有時代：打造企業自己的 AI Agent」發表會，與 AMD 及撼訊科技共同發表 MiTAC Agent Builder 企業 AI 一體機。報導稱它是台灣首個以軟體為主軸的軟硬整合地端 AI 方案。軟體是零程式碼的 Agent 建立工具，不需技術背景即可使用，決策脈絡、運作規則與資料來源可追溯。硬體採 AMD 平台，包括 Ryzen AI Max+ 395 與 Radeon AI PRO R9700。展示項目有 ESG 盤查管理（MiEcoMatrix）、資料中台與教育 AI 助理。報導沒有公開價格與效能數字。
+來源：https://www.ctee.com.tw/news/20260423701330-431202（查詢日 2026-11-17）
+
+### 2026-07 AI WAVE 展出的伺服器版本
+2026 年 7 月 30 日的報導描述神通在 AI WAVE 展 AMD 專區的展出。底層伺服器是神雲 MiTAC TN85-B8261 2U 機型，搭配 AMD EPYC 9004／9005 系列處理器與 AMD Instinct MI350P PCIe 5.0 顯示卡。部署規格從迷你與標準工作站到高階伺服器都有。軟體面是完全地端部署、以 RAG 做知識檢索、低程式碼／無程式碼的拖拉式介面。通用 Agent 涵蓋產、銷、人、發、財五大職能；範例包括 ESG 溫室氣體盤查助理（串接 IoT 能源資料與碳法規知識庫）、履歷篩選、專利分析、發票 OCR 與財務異常偵測。
+來源：https://www.ctee.com.tw/news/20260730701527-431202（查詢日 2026-11-17）
+
+### MiEcoMatrix 與 MiEMS 微電網
+MiEcoMatrix 是神通自研的永續生態服務平台，模組有溫室氣體盤查、AI 永續報告書、智慧能源管理與智慧大樓。其中 MiEMS 智慧能源管理模組整合氫能、光電與多種儲能設備，由 AI 預判分散式能源動態，搭配廠內可控負載調度，目標是尖離峰套利、契約容量最佳化與綠電自用最大化。系統有三層防災機制：市電中斷時，移動式儲能櫃先接手，氫燃料電池熱電聯產提供長效補給。異常偵測可達秒級預警。神通與漢通科技推出「微電網 BBU Total Solution」，並結合亞氫動力的燃料電池。應用場域提到醫院與校園等關鍵負載。
+來源：https://www.ctee.com.tw/news/20260320700711-431202 、https://www.ctee.com.tw/news/20260122701190-431202（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2026-01 至 2026-06 獎項與展出
+2026 年 1 月，MiEcoMatrix 入選《商業周刊》首屆「AI 創新百強」，並獲資訊與通訊傳播業優選獎，報導稱評選看重 AI 的實際應用與商業價值。2026 年 3 月 17 日至 20 日，智慧城市展在台北南港展覽館舉行，神通的 MiEcoMatrix 智慧能源管理系統獲「智慧城市創新應用獎」，並入圍遠見 ESG 企業永續獎。官網另記載：3 月 18 日提出「城市主權 AI」與「淨零轉型」雙主軸；6 月 8 日參展智慧城市暨淨零城市展，展出氫能與微電網方案；6 月 16 日衛福部樂生醫院啟用 MiCart 智能護理行動車；6 月 17 日 Agent Builder 亮相，官網稱內建 10 款常用 Agent。
+來源：https://www.ctee.com.tw/news/20260122701190-431202 、https://www.ctee.com.tw/news/20260320700711-431202 、https://www.mitac.com.tw（查詢日 2026-11-17）
+
+### 2026-08 與資策會 MIC 的高階主管論壇
+2026 年 8 月 6 日，神通與資策會產業情報研究所（MIC）在 JR 東日本大飯店舉辦高階主管圓桌論壇「超越 AI 的導入 邁向原生 AI 企業智慧」，共有 9 大產業、15 位董事長、執行長與總經理等主管出席。神通副總經理林哲斌提出 Context Engine：動態整合使用者身分、職務、業務事件、資料權限與最新政策版本，並區分哪些步驟由 AI 自動執行、哪些需人工核准。AI 治理要求能追溯每次決策依據的資料、模型、工具與核准流程。導入路徑分四階段：Think Big、Start Small（約 4 至 8 週驗證）、Scale Fast、Systemize。
+來源：https://www.ctee.com.tw/news/20260806701085-431202（查詢日 2026-11-17）
+
+# 33 神通資訊 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+本次在神通 104 公司頁（ocjaiy8）共讀 6 頁、104 筆職缺（第 1～5 頁各 20 筆，第 6 頁 4 筆；頁面標示「99+」）。其中軟體、AI、資料、平台、測試相關職缺收錄 36 筆，每筆都開內頁讀過。業務、專案管理、會計、人資、儀電施工、設備駐點維護、網路與硬體類職缺不收。
+
+與舊檔（B_神通_聯合報、網址2_神通_華電、補2_神通，查詢日 2026-11-16）相比：
+- 舊檔收過的軟體相關職缺全部仍在列表上，已下架職稱：無。
+- 新增職稱（舊檔未收錄內頁）：C015CCF 系統工程師／虛擬化工程師、C023CHK 測試工程師（銀行駐點）、C034CF1 測試工程師、K011KBE 測試工程師、C037CCE 駐點工程師（C#／ASP.NET）、K006KBF 軟體工程師（捷運售票，C++／C#）、K016KBH 車載軟體工程師、K027KB0 軟體工程師（通訊協定）、P009PG1 系統分析師（有兩筆刊登，薪資欄不同）、C066CHK 系統分析師（銀行駐點）。
+- 舊檔只有列表字句、本次補讀內頁：C011CH2 前端（Angular）、C011CH2 後端（Java）、C024CD3 系統分析師／程式設計工程師、C016CCE 資料庫工程師、60056X0／60066X0 前端 Next.js、60186Y2 DevOps、60196Y2 Java、60226XF 技術支援工程師。
+- 列表上有但本檔不收：K034KBW 工程師（智慧交通機電系統）、Q035QF0 系統網路工程師、C015CCF 網路工程師、C018CCG／C022CCJ 維運工程師、K001KBK／K013KBK／K024KBR 駐點工程師（收費設備維護）、Q018Q82 工程師（硬體）、K015KBH 車載硬體工程師、60106X0 產品經理與各類專案經理。
+- 更新日：多數為 09/14；C015CCF 為 09/29，K011KBE 為 09/19，Q014Q61 為 10/15，K034KBW 為 10/02，Q035QF0 為 10/20。
+- 欄位與內文不一致：60076X0 欄位經歷為 2 年以上，內文必要條件寫 5 年以上。
+- 部門名稱：各職缺內頁都沒有部門欄位，「新興應用部」字樣沒有出現。
+
+### 職稱清單
+神通資訊在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 36 筆：
+- 60036X0_AI 工程師（決策導向／平台型系統）（104 職缺代碼 8y65v）
+- 60046X0_AI 資深工程師（決策導向／平台型系統）（104 職缺代碼 8y660）
+- 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）
+- 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）
+- 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）
+- 60136X0_後端資深工程師（104 職缺代碼 8y6oq）
+- 60146X1_高級程式設計師（104 職缺代碼 8zbla）
+- 60176Y2_全端工程師（104 職缺代碼 9290o）
+- 60186Y2_DevOps 工程師（104 職缺代碼 895j8）
+- 60196Y2_Java 工程師（104 職缺代碼 895jc）
+- 60226XF_技術支援工程師（104 職缺代碼 91pny）
+- C003CDG_軟體工程師（104 職缺代碼 8xp1s）
+- C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）
+- C011CH2_後端開發工程師(java)（104 職缺代碼 8xzqd）
+- C016CCE_資料庫工程師（104 職缺代碼 8xvez）
+- C023CHK_測試工程師（104 職缺代碼 8xz4m）
+- C024CD3_系統分析師/程式設計工程師（104 職缺代碼 8xz6d）
+- C024CD3_資料分析（104 職缺代碼 8y7en）
+- C015CCF_系統工程師/虛擬化工程師（104 職缺代碼 8z1d1）
+- C033CF1_JAVA工程師（104 職缺代碼 8zu67）
+- C034CF1_測試工程師（104 職缺代碼 8zu68）
+- C037CCE_駐點工程師（104 職缺代碼 90qjq）
+- K006KBF_軟體工程師（104 職缺代碼 8zble）
+- K016KBH_車載軟體工程師（104 職缺代碼 8zm4z）
+- K027KB0_軟體工程師（104 職缺代碼 92in9）
+- P001PG2_工程師（104 職缺代碼 8xveo）
+- P009PG1_系統分析師（月薪 38,000 以上版本）（104 職缺代碼 91pmr）
+- P009PG1_系統分析師（待遇面議版本）（104 職缺代碼 93q8x）
+- P011PG4_高級工程師（104 職缺代碼 932en）
+- 【集團代招】Q010Q41_系統工程師（104 職缺代碼 8xz3l）
+- 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）
+- K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）
+- C066CHK_系統分析師（104 職缺代碼 93viz）
+- 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）
+- 實習生（Java／AI／C/C++）（104 職缺代碼 8zd2t）
+- K011KBE_測試工程師（104 職缺代碼 961u4）
+
+### 60036X0_AI 工程師（決策導向／平台型系統）（104 職缺代碼 8y65v）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：設計與實作「決策導向」的企業 AI 系統與應用流程，定義 AI 可介入與不可介入的決策邊界。把業務規則、角色與情境轉成 AI 能遵循的結構，並設計拒答、人工上報（human escalation）與回溯機制。需與前端、後端、資料團隊協作。
+- 條件與技能：必備為 2 年以上軟體、系統或 AI 開發經驗，熟悉 Python 或 JavaScript 其一，具 API 設計或系統整合實務，並能向非技術角色說明技術取捨。加分為 AI／Chat／Agent／Workflow 經驗、B2B 或平台型產品經驗、規則引擎與治理機制設計經驗。擅長工具：Python、JavaScript。
+- 網址：https://www.104.com.tw/job/8y65v
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差，不需管理責任）
+
+### 60046X0_AI 資深工程師（決策導向／平台型系統）（104 職缺代碼 8y660）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：主導決策導向 AI 系統與平台型架構設計，定義 AI 可為與不可為的行為規範。設計拒答、人工上報、稽核與回溯機制，把業務規則轉成可維運的系統設計，並參與 AI 系統長期演進的關鍵設計決策。非人員管理職。
+- 條件與技能：必備為 5 年以上軟體、系統或 AI 開發經驗，曾參與平台型或企業級系統架構設計，熟悉 Python 或 JavaScript 其一，具 API 架構設計、系統整合或服務拆分實務。加分為 AI／Agent／Workflow／Decision System 實務、規則引擎／權限／稽核系統經驗、B2B 或 SaaS 整合經驗。
+- 網址：https://www.104.com.tw/job/8y660
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人，不需出差）
+
+### 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：使用 Next.js 開發與維護平台型前端系統，設計 Chat、Workflow 與資料導向 UI。與後端和 AI 團隊串接 API，呈現決策相關資訊，處理不同使用者角色與狀態的介面行為，並實作 SSR／SSG 與可重用元件及 UI 規範。
+- 條件與技能：必備為 2 年以上前端實務、Next.js 實際專案經驗、React 與 TypeScript、HTML／CSS、Git，並能與後端討論 API 與資料結構。加分為 Next.js App Router／Server Components、Tailwind CSS、Design System、B2B／SaaS 平台經驗、Chat UI 經驗。擅長工具：ReactJS。
+- 網址：https://www.104.com.tw/job/8y663
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差）
+
+### 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：主導平台型前端系統（Next.js App Router）的架構設計與演進，設計 Chat、Workflow、資料導向 UI。參與既有平台前端的 enhancement、重構與版本升級，評估技術債，維護共用元件與設計規範，改善效能與穩定性。非人員管理職。
+- 條件與技能：必備為 5 年以上前端實務、Next.js 平台型產品經驗、React 與 TypeScript、前端架構設計、狀態管理與模組拆分，並曾做過既有系統的前端重構或版本升級。擅長工具：ReactJS。工作技能欄標示 Next.js、React、TypeScript、前端架構設計、API 串接與整合。
+- 網址：https://www.104.com.tw/job/8y66b
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差）
+
+### 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上（欄位值；內文必要條件另寫 5 年以上）　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端，設計 RESTful API 與服務模組。與前端定義 API 和資料結構，串接內外部系統處理資料流，並協助既有後端功能的重構與效能優化。
+- 條件與技能：必備為 Node.js 平台型或企業系統經驗、JavaScript／TypeScript、API 架構設計與模組拆分、至少一種資料庫（PostgreSQL／MySQL／MongoDB）。加分為 NestJS／Express／Fastify／Go、B2B／SaaS 大型平台後端、非同步與事件驅動設計、API 版本控管經驗。擅長工具：JavaScript、Node.js。
+- 網址：https://www.104.com.tw/job/8y67b
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差）
+
+### 60136X0_後端資深工程師（104 職缺代碼 8y6oq）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：主導 Node.js 平台型後端系統的架構設計與長期演進，維護核心 API 架構與服務模組。與前端、AI、資料團隊定義系統責任界線，參與既有系統的重構與版本升級，評估技術債並規劃模組拆分、服務整合與資料流設計。非人員管理職。
+- 條件與技能：必備為 5 年以上後端經驗、Node.js 平台型或企業系統經驗、JavaScript／TypeScript、API 架構設計與系統整合、後端重構或效能優化經驗、至少一種資料庫。加分為 NestJS／Express／Fastify／Go、B2B／SaaS、排程與事件驅動設計、API 版本控管。
+- 網址：https://www.104.com.tw/job/8y6oq
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差）
+
+### 60146X1_高級程式設計師（104 職缺代碼 8zbla）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 50,000 元以上　經歷：5 年以上　學歷：大學、碩士（資訊工程、資訊管理、數學及電算機科學相關）
+- 工作內容：協助能源管理平台的產品開發、介面設計與功能測試，開發資料庫 API 介面與軟體 UI/UX，並收集現場數據。需處理能源管理平台、網頁與資料庫容器的安裝及網路連線等現場作業，可獨立帶領能源管理專案與產品開發小組。
+- 條件與技能：擅長工具為 Python、Visual C#、HTML、Angular。工作技能欄含軟體工程系統開發、資料庫系統管理、報表開發、人工智慧、系統架構規劃。需有網路程式開發經驗，熟悉 JavaScript／HTML／CSS 前端與後端網路架構及資料庫操作；英文中等。職務類別含全端工程師、資料工程師。需出差，一年累積約一個月以下。
+- 網址：https://www.104.com.tw/job/8zbla
+- 104 上顯示的更新日：09/14（需求 2 人，兩週內應徵 0~5 人）
+
+### 60176Y2_全端工程師（104 職缺代碼 9290o）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 45,000 元以上　經歷：不拘　學歷：專科、大學、碩士（資訊工程、資訊管理相關）
+- 工作內容：做產品研發（新技術研發）與 Java 軟體開發，負責系統開發與維護，並建立開發流程自動化，包含版本管理、程式佈署、系統監控與日誌管理。
+- 條件與技能：擅長工具為 Git、Java、Python、Spring、MS SQL、PostgreSQL、HTML、JavaScript、jQuery、CSS。希望熟悉 Thymeleaf、Spring（Framework／JPA／MVC／Boot）、Redis；會 Docker 與 Linux 為佳；有 1 年以上實務開發經驗尤佳。職務類別為全端、前端、後端工程師。不需出差。
+- 網址：https://www.104.com.tw/job/9290o
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### 60186Y2_DevOps 工程師（104 職缺代碼 895j8）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 45,000 元以上　經歷：不拘　學歷：高中、專科、大學、碩士（資訊工程、資訊管理、其他工程相關）
+- 工作內容：維護軟體工程自動化流程（CI/CD），開發自動化腳本（軟體安裝與設定），管理微服務平台維運，建置測試環境與安裝軟體。需到客戶端做系統環境建置與軟體安裝，需出差，一年累積時間未定。
+- 條件與技能：擅長工具為 Linux、Shell、Jenkins、Git、Kubernetes、Windows Server 2019、DNS／DHCP／Firewall 等網路設定。需熟悉 Docker；會 Ansible 為佳；有 1 年以上實務經驗尤佳。週休二日。
+- 網址：https://www.104.com.tw/job/895j8
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### 60196Y2_Java 工程師（104 職缺代碼 895jc）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 45,000 元以上　經歷：不拘　學歷：專科、大學、碩士（資訊工程相關）
+- 工作內容：做產品研發（新技術研發）與 Java 軟體開發，負責系統開發與維護，並參與開發流程自動化，含版本管理、程式佈署、系統監控與日誌管理。
+- 條件與技能：擅長工具為 Git、Java、Spring、MS SQL、MySQL、PostgreSQL、JavaScript、jQuery。希望熟悉 Thymeleaf、Spring（Framework／JPA／MVC／Boot）、Redis；會前端 HTML／CSS 為佳；有 1 年以上實際開發經驗尤佳。不需出差。
+- 網址：https://www.104.com.tw/job/895jc
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### 60226XF_技術支援工程師（104 職缺代碼 91pny）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊工程、數學及電算機科學相關）
+- 工作內容：負責自動化環境佈署研發，並建立標準化驗證體系以確保交付品質；擔任事業群之間的產品說明與導入支援；協助系統監控、故障排查與售後技術支援，並與開發及客戶團隊一起推進專案落地。
+- 條件與技能：104 擅長工具與工作技能欄均標示不拘，其他條件未列細項。職務類別為系統工程師、AI 工程師、軟體工程師。英文聽與讀為中等。需出差，一年累積約一個月以下。
+- 網址：https://www.104.com.tw/job/91pny
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人）
+
+### C003CDG_軟體工程師（104 職缺代碼 8xp1s）
+- 公司：神通資訊科技股份有限公司　地點：台北市信義區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊管理、資訊工程相關）
+- 工作內容：開發 Java 商用網站系統，使用 Spring 與 MyBatis，設計 RESTful 應用，並做 Spring Boot 與 Spring Cloud 微服務開發。職務類別含全端工程師、軟體工程師、系統分析師。
+- 條件與技能：擅長工具為 Java、MS SQL、MySQL、JavaScript、VueJS。需熟悉 Java 8 以上與常用設計模式、SQL 與關聯式資料庫、Git 協作，習慣閱讀英文技術文件；前端 JSP、jQuery、Vue 3 與 HTML／CSS 切版為佳。英文中等。不需出差。
+- 網址：https://www.104.com.tw/job/8xp1s
+- 104 上顯示的更新日：09/14（需求 1~4 人，兩週內應徵 0~5 人）
+
+### C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士（工程學科類）
+- 工作內容：負責金融系統前端架構，用 Angular 開發響應式 SPA，以 RxJS 處理資料串流與非同步 API，用 NgRx 或 Service 管理全域狀態。封裝可重用 UI 元件（SCSS／SASS），與 Java 後端對接 RESTful API，撰寫 Dockerfile（Nginx）佈署到 K8S，並落實 XSS／CSRF 防護。參與單體式架構遷移到微服務。
+- 條件與技能：擅長工具為 Java、Spring、JavaScript、jQuery、Node.js、Angular。共同職能為 Git／Gitflow、程式碼審查、GitLab CI／Jenkins，以及撰寫規格書與 API 文件。
+- 網址：https://www.104.com.tw/job/8xzqc
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人，不需出差）
+
+### C011CH2_後端開發工程師(java)（104 職缺代碼 8xzqd）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士（工程學科類）
+- 工作內容：用 Spring Boot 開發高可用、可擴展的金融後端微服務，處理高併發交易邏輯，設計 RESTful API 並以 Swagger／OpenAPI 提供文件。設計 RDBMS 結構與 SQL 優化，整合 Hazelcast 或 Redis 做分散式快取，用 RabbitMQ 或 Kafka 做非同步處理，並串接 SWIFT 訊息格式與 HSM 加密模組。
+- 條件與技能：擅長工具為 Java、Spring、ANSI SQL、JDBC。需撰寫 Dockerfile 與 JVM 調優以在 K8S Pod 運行，寫 JUnit／Mockito 測試，並以 Prometheus 指標做監控；共同職能為 Git／Gitflow、GitLab CI／Jenkins。
+- 網址：https://www.104.com.tw/job/8xzqd
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人，不需出差）
+
+### C016CCE_資料庫工程師（104 職缺代碼 8xvez）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 46,000 元以上　經歷：1 年以上　學歷：專科以上（科系不拘）
+- 工作內容：配合專案時程維護與營運大型資料庫，撰寫資料庫與維運的標準作業文件。執行資料庫效能監控與調校（含 Index 優化），規劃定期維護、備份還原與故障排除，需熟悉 Oracle 或 SQL Server 其中一種的操作與基礎管理。職務類別含資料庫管理人員、後端工程師。
+- 條件與技能：擅長工具為 Linux、Windows Server 2019、MS SQL、PL/SQL。曾參與系統開發或有後端開發經驗，並有意深耕資料庫領域。104 列出的相關證照有 OCP／OCA DBA、DP-900。不需出差。
+- 網址：https://www.104.com.tw/job/8xvez
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### C023CHK_測試工程師（104 職缺代碼 8xz4m）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區（需配合至銀行內部駐點，雙北範圍）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士（科系不拘）
+- 工作內容：根據需求撰寫測試計畫與測試案例，執行功能、整合與回歸測試，撰寫測試文件、缺陷報告與測試報告並追蹤修復進度。用 SQL 做資料驗證與測試數據查詢，與開發、業務、維運團隊溝通測試結果。需求 10 人。
+- 條件與技能：擅長工具為 Excel、PowerPoint、Word；資訊管理、企業管理、金融相關科系佳。需有邏輯分析與問題排查能力；會 SQL 查詢為加分。不需出差。
+- 網址：https://www.104.com.tw/job/8xz4m
+- 104 上顯示的更新日：09/14（兩週內應徵 0~5 人）
+
+### C024CD3_系統分析師/程式設計工程師（104 職缺代碼 8xz6d）
+- 公司：神通資訊科技股份有限公司　地點：台北市萬華區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科以上（科系不拘）
+- 工作內容：處理客戶問題單與需求單，涵蓋需求分析、程式增修、測試、版更與文件撰寫；負責系統開發，包含架構規劃、驗證、程式撰寫、測試與上線；並做系統效能調校、Code Review 與新技術導入。職務類別含軟體工程師、系統分析師、資料分析師。
+- 條件與技能：擅長工具為 MS SQL。需熟悉 Java 或 C#、Vue.js、MS SQL 查詢語法與 Linux／Windows 作業系統；具 3 年以上數據分析實務經驗，並有統計或數據分析證照者尤佳。不需出差。
+- 網址：https://www.104.com.tw/job/8xz6d
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人）
+
+### C024CD3_資料分析（104 職缺代碼 8y7en）
+- 公司：神通資訊科技股份有限公司　地點：台北市萬華區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士（應用數學、資訊管理、資訊工程相關）
+- 工作內容：用 ETL 工具做資料處理、清理、驗證與品質檢查，以 SQL 查詢資料庫，用 Power BI、Tableau 等工具製作圖表與儀表板。產出定期與臨時分析報告，把分析結果轉成業務單位可讀的洞察，並建立與維護資料字典，遵循資料治理與隱私規範。
+- 條件與技能：擅長工具為 Python、ETL、MS SQL、Power BI。具資訊工程、統計、數學、機器學習等相關學士以上學位，能用統計與機器學習演算法做資料建模與分析。英文中等。不需出差。
+- 網址：https://www.104.com.tw/job/8y7en
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 6~10 人）
+
+### C015CCF_系統工程師/虛擬化工程師（104 職缺代碼 8z1d1）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 45,000 元以上　經歷：2 年以上　學歷：大學以上（科系不拘）
+- 工作內容：參與企業 IT 基礎架構設計與維運，建置與管理虛擬化平台，維護虛擬主機作業系統（CentOS、Ubuntu、Windows Server），建置應用程式主機環境（Tomcat、Nginx、HAProxy、Mail Server、DNS），並管理 SQL Server 與儲存設備、規劃系統架構與應用程式更新。職務類別為系統工程師、雲端工程師。
+- 條件與技能：擅長工具為 Linux、Windows Server 2019、VMware。104 列出的相關證照有 LPIC、MCSE、Red Hat 認證工程師、VCP、Azure AZ-900 與 Azure Developer Associate。不需出差。
+- 網址：https://www.104.com.tw/job/8z1d1
+- 104 上顯示的更新日：09/29（需求 1 人，兩週內應徵 0~5 人）
+
+### C033CF1_JAVA工程師（104 職缺代碼 8zu67）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊管理、資訊工程相關）
+- 工作內容：設計、開發與維護公司後端服務，設計與實作 API 介面，協助前端團隊完成產品開發與優化，排除系統與應用問題，並與團隊討論產品需求、架構與功能改善。職務類別為後端工程師、軟體工程師。
+- 條件與技能：具 Java 與 Spring Boot REST 基礎、SQL 基礎，熟悉物件導向程式開發（OOP），了解基本 Design Pattern。104 的擅長工具與工作技能欄標示不拘。不需出差。
+- 網址：https://www.104.com.tw/job/8zu67
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人）
+
+### C034CF1_測試工程師（104 職缺代碼 8zu68）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊管理、圖書管理相關）
+- 工作內容：依產品規格擬定測試計畫與撰寫測試案例，錄製自動化測試腳本，執行規格驗證、功能、整合與壓力測試以確保產品可用性，依結果撰寫測試報告並維護品質管理紀錄與報表。職務類別為測試人員、軟韌體測試工程師。
+- 條件與技能：擅長工具與工作技能欄標示不拘。其他條件為 1 年以上測試經驗，有網站前後端或 APP 測試經驗者、熟悉 Katalon Studio 及 Linux 基本指令者尤佳。不需出差。
+- 網址：https://www.104.com.tw/job/8zu68
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### C037CCE_駐點工程師（104 職缺代碼 90qjq）
+- 公司：神通資訊科技股份有限公司　地點：台北市大安區　薪資：月薪 45,000 元以上　經歷：1 年以上　學歷：專科以上（科系不拘）
+- 工作內容：以 C#、ASP.NET、HTML、JavaScript、CSS 與 .NET Framework 做程式新增與修改，使用 SQL Server T-SQL 查詢，並與客戶溝通協調需求。職務類別為軟體工程師、軟體助理工程師。
+- 條件與技能：擅長工具為 ASP.NET、C#、MS SQL、HTML、JavaScript；英文略懂。104 的工作技能欄標示不拘。不需出差。
+- 網址：https://www.104.com.tw/job/90qjq
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### K006KBF_軟體工程師（104 職缺代碼 8zble）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科以上（資訊工程、數學及電算機科學、應用數學相關）
+- 工作內容：開發捷運售票及相關系統。職務類別為軟體工程師、後端工程師。需出差，一年累積時間約一個月以下。
+- 條件與技能：擅長工具為 Git、C#、C++、Visual Studio。需精通 C++ 或 C#，有 Git 與 Visual Studio 2019 以上使用經驗，熟悉多執行緒（Multi-threading）；有 Serial Port（RS-232）通訊開發經驗者尤佳。英文中等。
+- 網址：https://www.104.com.tw/job/8zble
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### K016KBH_車載軟體工程師（104 職缺代碼 8zm4z）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 42,000 元以上　經歷：2 年以上　學歷：專科、大學、碩士（數學及電算機科學學科類）
+- 工作內容：負責車載系統的架構設計與開發、通訊協定實作、介面整合串接、系統監控與故障診斷，並做需求分析與可行性評估。職務類別為軟體工程師、前端工程師、通訊軟體工程師。需出差，一年累積時間約一個月以下。
+- 條件與技能：熟 C／C++，具記憶體管理與多執行緒開發經驗，熟悉 Linux System Programming 與 TCP/IP、HTTP、MQTT 協定；了解 UART、RS-485 串列通訊與 CAN Bus 概念；有 Git 經驗，熟悉 JSON／XML 解析。英文讀寫中等。
+- 網址：https://www.104.com.tw/job/8zm4z
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### K027KB0_軟體工程師（104 職缺代碼 92in9）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上　學歷：大學、碩士（資訊管理、資訊工程、電機電子工程相關）
+- 工作內容：負責系統架構設計與開發、通訊協定實作、介面整合串接、系統監控與故障診斷，並做需求分析與可行性評估。職務類別為軟體工程師、通訊軟體工程師、後端工程師。需出差，一年累積時間約一個月以下。
+- 條件與技能：擅長工具為 C#、C++、MS SQL。需熟 C#.NET 與 C／C++，具多執行緒開發經驗，熟悉 Windows System Programming、TCP/IP、HTTP、MQTT 協定，了解 RS-422／485 串列通訊，有 Git 經驗並熟悉 JSON／XML 解析。
+- 網址：https://www.104.com.tw/job/92in9
+- 104 上顯示的更新日：09/14（需求 2 人，兩週內應徵 0~5 人）
+
+### P001PG2_工程師（104 職缺代碼 8xveo）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 38,000 元以上　經歷：不拘　學歷：專科、大學、碩士（資訊管理、資訊工程相關）
+- 工作內容：推動集團內部數位轉型，涵蓋需求分析、系統設計、開發到維運，重點是內部 OA 系統。用 Spring Boot 與 Vue.js 做前後端功能開發、架構升級與 API 串接，並以 Spring MVC 維護既有系統。職務類別為 MIS 程式設計師、全端工程師。
+- 條件與技能：擅長工具為 Java、MySQL、PostgreSQL、JavaScript；工作技能含系統維護、系統整合分析、軟體程式設計。應屆畢業生可。日班有彈性上下班（08:00~17:00 或 10:00~19:00）。不需出差。
+- 網址：https://www.104.com.tw/job/8xveo
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### P009PG1_系統分析師（月薪 38,000 以上版本）（104 職缺代碼 91pmr）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 38,000 元以上　經歷：1 年以上　學歷：專科以上（科系不拘）
+- 工作內容：維護集團內部資訊應用系統，並開發對應的新功能。職務類別為 MIS 程式設計師、軟體工程師、全端工程師。週休二日，不需出差。同一職稱在公司頁另有一筆待遇面議的刊登（代碼 93q8x）。
+- 條件與技能：擅長工具為 Java、JSP；工作技能含系統維護操作、系統整合分析、軟體工程系統開發。英文略懂，中文中等。
+- 網址：https://www.104.com.tw/job/91pmr
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人）
+
+### P009PG1_系統分析師（待遇面議版本）（104 職缺代碼 93q8x）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：專科以上（科系不拘）
+- 工作內容：維護集團內部資訊應用系統，並開發對應的新功能。職務類別為 MIS 程式設計師、軟體工程師、全端工程師。週休二日，不需出差。內容與月薪 38,000 以上那筆（代碼 91pmr）相同，薪資欄不同。
+- 條件與技能：擅長工具為 Java、JSP；工作技能含系統維護操作、系統整合分析、軟體工程系統開發。英文略懂，中文中等。
+- 網址：https://www.104.com.tw/job/93q8x
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人）
+
+### P011PG4_高級工程師（104 職缺代碼 932en）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 42,000 元以上　經歷：不拘　學歷：大學、碩士（資訊管理、資訊工程相關）
+- 工作內容：負責 BI 儀表板與 Self-Service BI 推廣、ETL／ELT 資料整合、資料治理、資料 API 串接與數據中台維運，同時開發與導入 GenAI、AI Agent 和企業知識庫等 AI 應用，建立穩定可信的數據服務平台。職務類別為 AI 工程師、系統工程師、全端工程師。
+- 條件與技能：工作技能欄含軟體程式設計、AI、提示工程、生成式 AI、資料庫系統管理與程式設計、系統導入、報表開發、商業智慧；擅長工具欄標示不拘。英文中等，中文精通。不需出差。
+- 網址：https://www.104.com.tw/job/932en
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人）
+
+### 【集團代招】Q010Q41_系統工程師（104 職缺代碼 8xz3l）
+- 公司：神通資訊科技股份有限公司（集團代招）　地點：台北市內湖區堤頂大道二段187號（內湖科技園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士（資訊工程、資訊管理、電機電子工程相關）
+- 工作內容：以 C# 做軟體開發，搭配網頁 JavaScript／React，需理解資料庫運作原理與規劃、串流基本觀念，並了解 AI 開發，至少會一種主流開發方法。職務類別為軟體工程師。彈性上下班（8:00～10:00 上班），週休二日，不需出差。
+- 條件與技能：具軟體開發、資料庫、虛擬化能力，有 Client/Server 與 Web 開發經驗，具作業系統與資料庫基本開發經驗；專案管理證照為專業證照項目。英文中等。
+- 網址：https://www.104.com.tw/job/8xz3l
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）
+- 公司：神通資訊科技股份有限公司（集團代招）　地點：台北市內湖區堤頂大道二段187號（內湖科技園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：大學（資訊工程、資訊管理、電機電子工程相關）
+- 工作內容：負責 Web 系統前端功能開發與維護，參與前端架構與模組規劃，與 Python／Django 後端工程師對接 RESTful API 並制定資料串接規格。處理前端資料清洗、轉換與業務邏輯，實作 UI/UX 與響應式網頁（RWD）。需出差，一年累積約三個月以下。
+- 條件與技能：熟悉 React、Vue、Angular 或 HTMX／Alpine.js 其一，JavaScript（ES6+）／TypeScript、HTML5、CSS3、RESTful API 與 HTTP、JSON 格式處理與狀態管理、Git 協作；有 Python／Django 後端串接經驗，具前端架構與元件庫設計能力者佳。週休二日。
+- 網址：https://www.104.com.tw/job/8xz51
+- 104 上顯示的更新日：10/15（需求 1 人，兩週內應徵 0~5 人）
+
+### K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 37,000~50,000 元　經歷：不拘　學歷：大學、碩士（資訊工程、數學及電算機科學、數理統計相關）
+- 工作內容：開發與修正捷運自動收費系統的後台軟體，使用 C++ 做資料處理、資料庫應用與網路通訊程式，並搭配 AI 工具輔助開發。職務類別為軟體工程師、系統分析師、AI 工程師。週休二日，不需出差。
+- 條件與技能：擅長工具為 Claude、C、C++、MS SQL；工作技能為軟體程式設計、生成式 AI。英文中等，應屆畢業生可。
+- 網址：https://www.104.com.tw/job/93vim
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### C066CHK_系統分析師（104 職缺代碼 93viz）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區（需配合至銀行內部駐點，雙北範圍）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：大學（科系不拘，資訊、管理、金融相關佳）
+- 工作內容：參與需求訪談與業務分析，撰寫系統分析文件、功能規格書、流程文件與介面規格。分析系統架構與資料流，協助設計系統解決方案，並與開發、測試、維運團隊追蹤需求落地，協助系統上線與需求變更管理。
+- 條件與技能：熟悉需求分析、流程設計與文件撰寫，能閱讀資料模型與資料庫設計並具 SQL 查詢能力，有跨部門溝通能力；金融系統、核心交易或流程系統經驗為加分。不需出差。
+- 網址：https://www.104.com.tw/job/93viz
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人）
+
+### 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（科系不拘）
+- 工作內容：打造企業級生成式 AI 應用，用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API（OpenAI、Claude 等）與向量資料庫，設計並優化 RAG 架構。以 Pydantic 與 JSON Schema 控制資料型態以穩定 Structured Outputs，設計 Prompt 並拆解業務工作流，追蹤並實作新的生成式 AI 技術與論文演算法。
+- 條件與技能：需有電機、資訊工程、資訊科學等相關學位背景，熟悉 Python 或 PyTorch，能讀論文並實作演算法；熟悉 Docker、Git、GitHub、Redmine 者佳；有 AI 開發或專案經驗者優先。職務類別為 AI 工程師、軟體工程師。不需出差。
+- 網址：https://www.104.com.tw/job/94rqp
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人）
+
+### 實習生（Java／AI／C/C++）（104 職缺代碼 8zd2t）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區　薪資：時薪 196 元以上（兼職）　經歷：不拘　學歷：大學以上（科系不拘）
+- 工作內容：協助軟體模組編寫、系統功能開發與既有程式維護，依專案分配投入 Java（企業級系統、API 串接、資料庫）、AI（資料清洗標註、模型測試、AI 模組輔助開發）或 C/C++（底層效能優化、軟硬體整合通訊）。並執行單元測試、排查程式錯誤、撰寫測試報告與整理技術文件。
+- 條件與技能：實習時段為開學期間每週至少 3 天、寒暑假每週 5 天，為期一學期或一學年；日班 9:00-18:00。104 的擅長工具與工作技能欄標示不拘。
+- 網址：https://www.104.com.tw/job/8zd2t
+- 104 上顯示的更新日：09/14（需求人數不限，兩週內應徵 11~30 人）
+
+### K011KBE_測試工程師（104 職缺代碼 961u4）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學（資訊管理、資訊工程相關）
+- 工作內容：撰寫測試計畫與步驟文件，依軟體開發功能執行測試（含回歸測試），並做設備硬體的簡易排除。職務類別為軟韌體測試工程師。不需出差。
+- 條件與技能：工作技能欄列有功能測試、使用者測試、軟體整合測試、測試環境建置規劃、壓力測試與測試計畫及報告書撰寫；擅長工具標示不拘。需善於溝通，懂 C／C++ 開發尤佳。英文讀寫中等。
+- 網址：https://www.104.com.tw/job/961u4
+- 104 上顯示的更新日：09/19（需求 1~2 人，兩週內應徵 0~5 人）
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '23_補充_神通資訊.md' -Encoding UTF8 -Raw" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 436ms:
+# 23 神通資訊 公開資料補充
+
+## 基本資料
+
+### 神通資訊的沿革與規模
+神通資訊科技股份有限公司的前身是 1974 年成立的神通電腦，官網稱它是台灣首家引進微電腦系統的電腦公司。依 104 企業專訪文章，神通資訊科技於 2010 年成立，承接神通電腦的系統整合經驗與核心技術。官網首頁寫有 47 年的整合經驗、1,500 件以上的大型專案，員工約 1,000 人，其中技術人員占 80%。該專訪文章列出的里程碑還有：2019 年導入 104 招募管理系統，2023 年入選無人機國家隊。官網的總部資訊是台北市內湖區，另有七堵廠遷址公告。
+來源：https://www.mitac.com.tw 、https://blog.104.com.tw/mitac-information-e-system/（查詢日 2026-11-17）
+
+### 集團關係與公開出現的單位名稱
+官網列有「神通集團」與「聯華神通集團」兩個頁面；2026 年 6 月的官網消息提到新達電腦與伊頓電氣（Eaton）簽署策略合作夥伴，新達電腦與神通集團相關。2026 年 4 月 Agent Builder 發表會的報導，列出神通的公開職銜：董事長蘇亮、AI 暨平台產品研發副總林哲斌、董事長特助（AI 產品應用）萬冠群。2026 年 1 月與 3 月的報導則提到「永續智慧系統發展處」處長林顥蒼代表領獎。MiEcoMatrix 屬於聯華神通集團「ESG 聯華神通大平台」生態圈。
+來源：https://www.mitac.com.tw 、https://www.ctee.com.tw/news/20260423701330-431202 、https://www.ctee.com.tw/news/20260122701190-431202（查詢日 2026-11-17）
+
+### 官方公開的招募與培訓
+神通官網徵才頁說明，營業範圍涵蓋系統整合、自動化控制、應用軟體研發、技術諮詢與售後服務。培訓有內部訓練課程、外部訓練補助、菁英人才訓練計畫與內部讀書會。福利包括員工分紅、年度績效獎金、生日與三節禮券、家庭關懷補助、旅遊與活動補助、員工購車購屋購置筆電優惠貸款、健身房、兩年一次健檢與定期醫師駐診。徵才頁沒有列出職缺，只連到 104 招募專區。104 專訪文章（2023 年）稱每年招募 200 多位新人，由用人主管自行刊登職缺、篩選履歷並安排邀約。
+來源：https://www.mitac.com.tw/人才招募/ 、https://blog.104.com.tw/mitac-information-e-system/（查詢日 2026-11-17）
+
+## 業務與財務
+
+### 智慧交通與智慧政府產品
+官網列出的智慧交通產品有 AFCS 自動收費系統、CMFT 多功能通訊整合平台、ATP 列車自動保護系統、計軸器系統、Mi-Kiosk 智慧售票機，以及公車驗票、輕軌收費、供電與通訊系統。104 專訪文章提到的交通案例有台灣高鐵手機購票、捷運悠遊卡系統、公車驗票與輕軌收費。智慧政府方面有 E-Gate 自動通關系統、智慧路燈與 AI 違規偵測系統。智慧安防有 MiCMS 中央監控系統、路口監視錄影系統與 MiUAV 旋翼型無人飛行載具。這些項目顯示公司長期承接公共交通與政府類系統建置。
+來源：https://www.mitac.com.tw 、https://blog.104.com.tw/mitac-information-e-system/（查詢日 2026-11-17）
+
+### 智慧製造、企業、金融與服務產品
+智慧製造產品有 RFID 工業 4.0 解決方案、Mi-SeeR 工廠異常檢測系統、刀具磨耗監控平台、泵浦故障預測系統、AI 精準計數器與 MiCart 智能跟隨搬運車。智慧企業有 Micloud、Access Gate 速通門、MiAegis 智慧溫感臉辨門禁機、MiClerk 電子簽名與 MiSBot.ai。智慧金融有 MiWBS 法金核心系統、外匯核心系統、海外分行系統、訊息交換平台 TMS 與央媒申報系統。智慧服務有 MiSBot.ai 智慧櫃台與生成式 AI 智能對練服務。代理產品包括 Google Cloud、Microsoft、VMware、SugarCRM、Avaya、Cisco 等。
+來源：https://www.mitac.com.tw（查詢日 2026-11-17）
+
+### 神通 AI 數位學院與教育布局
+官網列有「神通 AI 數位學院」，內容包括企業 AI 人才課程與高中 AI 實驗室計畫。官網消息記載：2025 年 10 月 28 日，神通捐贈花蓮高中 AI 伺服器與筆電，啟用 AI 實驗室；2026 年 6 月 11 日舉行「2026 神通 AI 數位學院扶輪盃」高中 AI 競賽，花蓮高中獲得冠軍。產品面還有智慧學習教室、智慧圖書館、IDSmart 整體解決方案與校園保健。2026 年 7 月的報導提到，Agent Builder 平台推出智慧教育應用，內容有教案生成、個人化學習診斷與校園諮詢，並採地端部署。
+來源：https://www.mitac.com.tw 、https://www.ctee.com.tw/news/20260730701527-431202（查詢日 2026-11-17）
+
+## 技術堆疊
+
+### Agent Builder 企業 AI 一體機的軟硬體
+2026 年 4 月 23 日，神通在台北大直舉辦「AI 私有時代：打造企業自己的 AI Agent」發表會，與 AMD 及撼訊科技共同發表 MiTAC Agent Builder 企業 AI 一體機。報導稱它是台灣首個以軟體為主軸的軟硬整合地端 AI 方案。軟體是零程式碼的 Agent 建立工具，不需技術背景即可使用，決策脈絡、運作規則與資料來源可追溯。硬體採 AMD 平台，包括 Ryzen AI Max+ 395 與 Radeon AI PRO R9700。展示項目有 ESG 盤查管理（MiEcoMatrix）、資料中台與教育 AI 助理。報導沒有公開價格與效能數字。
+來源：https://www.ctee.com.tw/news/20260423701330-431202（查詢日 2026-11-17）
+
+### 2026-07 AI WAVE 展出的伺服器版本
+2026 年 7 月 30 日的報導描述神通在 AI WAVE 展 AMD 專區的展出。底層伺服器是神雲 MiTAC TN85-B8261 2U 機型，搭配 AMD EPYC 9004／9005 系列處理器與 AMD Instinct MI350P PCIe 5.0 顯示卡。部署規格從迷你與標準工作站到高階伺服器都有。軟體面是完全地端部署、以 RAG 做知識檢索、低程式碼／無程式碼的拖拉式介面。通用 Agent 涵蓋產、銷、人、發、財五大職能；範例包括 ESG 溫室氣體盤查助理（串接 IoT 能源資料與碳法規知識庫）、履歷篩選、專利分析、發票 OCR 與財務異常偵測。
+來源：https://www.ctee.com.tw/news/20260730701527-431202（查詢日 2026-11-17）
+
+### MiEcoMatrix 與 MiEMS 微電網
+MiEcoMatrix 是神通自研的永續生態服務平台，模組有溫室氣體盤查、AI 永續報告書、智慧能源管理與智慧大樓。其中 MiEMS 智慧能源管理模組整合氫能、光電與多種儲能設備，由 AI 預判分散式能源動態，搭配廠內可控負載調度，目標是尖離峰套利、契約容量最佳化與綠電自用最大化。系統有三層防災機制：市電中斷時，移動式儲能櫃先接手，氫燃料電池熱電聯產提供長效補給。異常偵測可達秒級預警。神通與漢通科技推出「微電網 BBU Total Solution」，並結合亞氫動力的燃料電池。應用場域提到醫院與校園等關鍵負載。
+來源：https://www.ctee.com.tw/news/20260320700711-431202 、https://www.ctee.com.tw/news/20260122701190-431202（查詢日 2026-11-17）
+
+## 近一年新聞
+
+### 2026-01 至 2026-06 獎項與展出
+2026 年 1 月，MiEcoMatrix 入選《商業周刊》首屆「AI 創新百強」，並獲資訊與通訊傳播業優選獎，報導稱評選看重 AI 的實際應用與商業價值。2026 年 3 月 17 日至 20 日，智慧城市展在台北南港展覽館舉行，神通的 MiEcoMatrix 智慧能源管理系統獲「智慧城市創新應用獎」，並入圍遠見 ESG 企業永續獎。官網另記載：3 月 18 日提出「城市主權 AI」與「淨零轉型」雙主軸；6 月 8 日參展智慧城市暨淨零城市展，展出氫能與微電網方案；6 月 16 日衛福部樂生醫院啟用 MiCart 智能護理行動車；6 月 17 日 Agent Builder 亮相，官網稱內建 10 款常用 Agent。
+來源：https://www.ctee.com.tw/news/20260122701190-431202 、https://www.ctee.com.tw/news/20260320700711-431202 、https://www.mitac.com.tw（查詢日 2026-11-17）
+
+### 2026-08 與資策會 MIC 的高階主管論壇
+2026 年 8 月 6 日，神通與資策會產業情報研究所（MIC）在 JR 東日本大飯店舉辦高階主管圓桌論壇「超越 AI 的導入 邁向原生 AI 企業智慧」，共有 9 大產業、15 位董事長、執行長與總經理等主管出席。神通副總經理林哲斌提出 Context Engine：動態整合使用者身分、職務、業務事件、資料權限與最新政策版本，並區分哪些步驟由 AI 自動執行、哪些需人工核准。AI 治理要求能追溯每次決策依據的資料、模型、工具與核准流程。導入路徑分四階段：Think Big、Start Small（約 4 至 8 週驗證）、Scale Fast、Systemize。
+來源：https://www.ctee.com.tw/news/20260806701085-431202（查詢日 2026-11-17）
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '33_104職缺更新_神通資訊.md' -Encoding UTF8 | Select-Object -First 150" in C:\claude\aipe04期末\履歷\廠商深查
+hook: PostToolUse
+ succeeded in 565ms:
+# 33 神通資訊 104 職缺更新（查詢日 2026-11-17）
+## 目前開放職缺
+### 職缺總覽
+本次在神通 104 公司頁（ocjaiy8）共讀 6 頁、104 筆職缺（第 1～5 頁各 20 筆，第 6 頁 4 筆；頁面標示「99+」）。其中軟體、AI、資料、平台、測試相關職缺收錄 36 筆，每筆都開內頁讀過。業務、專案管理、會計、人資、儀電施工、設備駐點維護、網路與硬體類職缺不收。
+
+與舊檔（B_神通_聯合報、網址2_神通_華電、補2_神通，查詢日 2026-11-16）相比：
+- 舊檔收過的軟體相關職缺全部仍在列表上，已下架職稱：無。
+- 新增職稱（舊檔未收錄內頁）：C015CCF 系統工程師／虛擬化工程師、C023CHK 測試工程師（銀行駐點）、C034CF1 測試工程師、K011KBE 測試工程師、C037CCE 駐點工程師（C#／ASP.NET）、K006KBF 軟體工程師（捷運售票，C++／C#）、K016KBH 車載軟體工程師、K027KB0 軟體工程師（通訊協定）、P009PG1 系統分析師（有兩筆刊登，薪資欄不同）、C066CHK 系統分析師（銀行駐點）。
+- 舊檔只有列表字句、本次補讀內頁：C011CH2 前端（Angular）、C011CH2 後端（Java）、C024CD3 系統分析師／程式設計工程師、C016CCE 資料庫工程師、60056X0／60066X0 前端 Next.js、60186Y2 DevOps、60196Y2 Java、60226XF 技術支援工程師。
+- 列表上有但本檔不收：K034KBW 工程師（智慧交通機電系統）、Q035QF0 系統網路工程師、C015CCF 網路工程師、C018CCG／C022CCJ 維運工程師、K001KBK／K013KBK／K024KBR 駐點工程師（收費設備維護）、Q018Q82 工程師（硬體）、K015KBH 車載硬體工程師、60106X0 產品經理與各類專案經理。
+- 更新日：多數為 09/14；C015CCF 為 09/29，K011KBE 為 09/19，Q014Q61 為 10/15，K034KBW 為 10/02，Q035QF0 為 10/20。
+- 欄位與內文不一致：60076X0 欄位經歷為 2 年以上，內文必要條件寫 5 年以上。
+- 部門名稱：各職缺內頁都沒有部門欄位，「新興應用部」字樣沒有出現。
+
+### 職稱清單
+神通資訊在 104 目前收錄的軟體、AI、資料相關職缺，完整職稱共 36 筆：
+- 60036X0_AI 工程師（決策導向／平台型系統）（104 職缺代碼 8y65v）
+- 60046X0_AI 資深工程師（決策導向／平台型系統）（104 職缺代碼 8y660）
+- 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）
+- 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）
+- 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）
+- 60136X0_後端資深工程師（104 職缺代碼 8y6oq）
+- 60146X1_高級程式設計師（104 職缺代碼 8zbla）
+- 60176Y2_全端工程師（104 職缺代碼 9290o）
+- 60186Y2_DevOps 工程師（104 職缺代碼 895j8）
+- 60196Y2_Java 工程師（104 職缺代碼 895jc）
+- 60226XF_技術支援工程師（104 職缺代碼 91pny）
+- C003CDG_軟體工程師（104 職缺代碼 8xp1s）
+- C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）
+- C011CH2_後端開發工程師(java)（104 職缺代碼 8xzqd）
+- C016CCE_資料庫工程師（104 職缺代碼 8xvez）
+- C023CHK_測試工程師（104 職缺代碼 8xz4m）
+- C024CD3_系統分析師/程式設計工程師（104 職缺代碼 8xz6d）
+- C024CD3_資料分析（104 職缺代碼 8y7en）
+- C015CCF_系統工程師/虛擬化工程師（104 職缺代碼 8z1d1）
+- C033CF1_JAVA工程師（104 職缺代碼 8zu67）
+- C034CF1_測試工程師（104 職缺代碼 8zu68）
+- C037CCE_駐點工程師（104 職缺代碼 90qjq）
+- K006KBF_軟體工程師（104 職缺代碼 8zble）
+- K016KBH_車載軟體工程師（104 職缺代碼 8zm4z）
+- K027KB0_軟體工程師（104 職缺代碼 92in9）
+- P001PG2_工程師（104 職缺代碼 8xveo）
+- P009PG1_系統分析師（月薪 38,000 以上版本）（104 職缺代碼 91pmr）
+- P009PG1_系統分析師（待遇面議版本）（104 職缺代碼 93q8x）
+- P011PG4_高級工程師（104 職缺代碼 932en）
+- 【集團代招】Q010Q41_系統工程師（104 職缺代碼 8xz3l）
+- 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）
+- K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）
+- C066CHK_系統分析師（104 職缺代碼 93viz）
+- 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）
+- 實習生（Java／AI／C/C++）（104 職缺代碼 8zd2t）
+- K011KBE_測試工程師（104 職缺代碼 961u4）
+
+### 60036X0_AI 工程師（決策導向／平台型系統）（104 職缺代碼 8y65v）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：設計與實作「決策導向」的企業 AI 系統與應用流程，定義 AI 可介入與不可介入的決策邊界。把業務規則、角色與情境轉成 AI 能遵循的結構，並設計拒答、人工上報（human escalation）與回溯機制。需與前端、後端、資料團隊協作。
+- 條件與技能：必備為 2 年以上軟體、系統或 AI 開發經驗，熟悉 Python 或 JavaScript 其一，具 API 設計或系統整合實務，並能向非技術角色說明技術取捨。加分為 AI／Chat／Agent／Workflow 經驗、B2B 或平台型產品經驗、規則引擎與治理機制設計經驗。擅長工具：Python、JavaScript。
+- 網址：https://www.104.com.tw/job/8y65v
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差，不需管理責任）
+
+### 60046X0_AI 資深工程師（決策導向／平台型系統）（104 職缺代碼 8y660）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：主導決策導向 AI 系統與平台型架構設計，定義 AI 可為與不可為的行為規範。設計拒答、人工上報、稽核與回溯機制，把業務規則轉成可維運的系統設計，並參與 AI 系統長期演進的關鍵設計決策。非人員管理職。
+- 條件與技能：必備為 5 年以上軟體、系統或 AI 開發經驗，曾參與平台型或企業級系統架構設計，熟悉 Python 或 JavaScript 其一，具 API 架構設計、系統整合或服務拆分實務。加分為 AI／Agent／Workflow／Decision System 實務、規則引擎／權限／稽核系統經驗、B2B 或 SaaS 整合經驗。
+- 網址：https://www.104.com.tw/job/8y660
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人，不需出差）
+
+### 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：使用 Next.js 開發與維護平台型前端系統，設計 Chat、Workflow 與資料導向 UI。與後端和 AI 團隊串接 API，呈現決策相關資訊，處理不同使用者角色與狀態的介面行為，並實作 SSR／SSG 與可重用元件及 UI 規範。
+- 條件與技能：必備為 2 年以上前端實務、Next.js 實際專案經驗、React 與 TypeScript、HTML／CSS、Git，並能與後端討論 API 與資料結構。加分為 Next.js App Router／Server Components、Tailwind CSS、Design System、B2B／SaaS 平台經驗、Chat UI 經驗。擅長工具：ReactJS。
+- 網址：https://www.104.com.tw/job/8y663
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差）
+
+### 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：主導平台型前端系統（Next.js App Router）的架構設計與演進，設計 Chat、Workflow、資料導向 UI。參與既有平台前端的 enhancement、重構與版本升級，評估技術債，維護共用元件與設計規範，改善效能與穩定性。非人員管理職。
+- 條件與技能：必備為 5 年以上前端實務、Next.js 平台型產品經驗、React 與 TypeScript、前端架構設計、狀態管理與模組拆分，並曾做過既有系統的前端重構或版本升級。擅長工具：ReactJS。工作技能欄標示 Next.js、React、TypeScript、前端架構設計、API 串接與整合。
+- 網址：https://www.104.com.tw/job/8y66b
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差）
+
+### 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上（欄位值；內文必要條件另寫 5 年以上）　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端，設計 RESTful API 與服務模組。與前端定義 API 和資料結構，串接內外部系統處理資料流，並協助既有後端功能的重構與效能優化。
+- 條件與技能：必備為 Node.js 平台型或企業系統經驗、JavaScript／TypeScript、API 架構設計與模組拆分、至少一種資料庫（PostgreSQL／MySQL／MongoDB）。加分為 NestJS／Express／Fastify／Go、B2B／SaaS 大型平台後端、非同步與事件驅動設計、API 版本控管經驗。擅長工具：JavaScript、Node.js。
+- 網址：https://www.104.com.tw/job/8y67b
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差）
+
+### 60136X0_後端資深工程師（104 職缺代碼 8y6oq）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：5 年以上　學歷：大學以上（資訊工程、資訊管理相關）
+- 工作內容：主導 Node.js 平台型後端系統的架構設計與長期演進，維護核心 API 架構與服務模組。與前端、AI、資料團隊定義系統責任界線，參與既有系統的重構與版本升級，評估技術債並規劃模組拆分、服務整合與資料流設計。非人員管理職。
+- 條件與技能：必備為 5 年以上後端經驗、Node.js 平台型或企業系統經驗、JavaScript／TypeScript、API 架構設計與系統整合、後端重構或效能優化經驗、至少一種資料庫。加分為 NestJS／Express／Fastify／Go、B2B／SaaS、排程與事件驅動設計、API 版本控管。
+- 網址：https://www.104.com.tw/job/8y6oq
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人，不需出差）
+
+### 60146X1_高級程式設計師（104 職缺代碼 8zbla）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 50,000 元以上　經歷：5 年以上　學歷：大學、碩士（資訊工程、資訊管理、數學及電算機科學相關）
+- 工作內容：協助能源管理平台的產品開發、介面設計與功能測試，開發資料庫 API 介面與軟體 UI/UX，並收集現場數據。需處理能源管理平台、網頁與資料庫容器的安裝及網路連線等現場作業，可獨立帶領能源管理專案與產品開發小組。
+- 條件與技能：擅長工具為 Python、Visual C#、HTML、Angular。工作技能欄含軟體工程系統開發、資料庫系統管理、報表開發、人工智慧、系統架構規劃。需有網路程式開發經驗，熟悉 JavaScript／HTML／CSS 前端與後端網路架構及資料庫操作；英文中等。職務類別含全端工程師、資料工程師。需出差，一年累積約一個月以下。
+- 網址：https://www.104.com.tw/job/8zbla
+- 104 上顯示的更新日：09/14（需求 2 人，兩週內應徵 0~5 人）
+
+### 60176Y2_全端工程師（104 職缺代碼 9290o）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 45,000 元以上　經歷：不拘　學歷：專科、大學、碩士（資訊工程、資訊管理相關）
+- 工作內容：做產品研發（新技術研發）與 Java 軟體開發，負責系統開發與維護，並建立開發流程自動化，包含版本管理、程式佈署、系統監控與日誌管理。
+- 條件與技能：擅長工具為 Git、Java、Python、Spring、MS SQL、PostgreSQL、HTML、JavaScript、jQuery、CSS。希望熟悉 Thymeleaf、Spring（Framework／JPA／MVC／Boot）、Redis；會 Docker 與 Linux 為佳；有 1 年以上實務開發經驗尤佳。職務類別為全端、前端、後端工程師。不需出差。
+- 網址：https://www.104.com.tw/job/9290o
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### 60186Y2_DevOps 工程師（104 職缺代碼 895j8）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 45,000 元以上　經歷：不拘　學歷：高中、專科、大學、碩士（資訊工程、資訊管理、其他工程相關）
+- 工作內容：維護軟體工程自動化流程（CI/CD），開發自動化腳本（軟體安裝與設定），管理微服務平台維運，建置測試環境與安裝軟體。需到客戶端做系統環境建置與軟體安裝，需出差，一年累積時間未定。
+- 條件與技能：擅長工具為 Linux、Shell、Jenkins、Git、Kubernetes、Windows Server 2019、DNS／DHCP／Firewall 等網路設定。需熟悉 Docker；會 Ansible 為佳；有 1 年以上實務經驗尤佳。週休二日。
+- 網址：https://www.104.com.tw/job/895j8
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### 60196Y2_Java 工程師（104 職缺代碼 895jc）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 45,000 元以上　經歷：不拘　學歷：專科、大學、碩士（資訊工程相關）
+- 工作內容：做產品研發（新技術研發）與 Java 軟體開發，負責系統開發與維護，並參與開發流程自動化，含版本管理、程式佈署、系統監控與日誌管理。
+- 條件與技能：擅長工具為 Git、Java、Spring、MS SQL、MySQL、PostgreSQL、JavaScript、jQuery。希望熟悉 Thymeleaf、Spring（Framework／JPA／MVC／Boot）、Redis；會前端 HTML／CSS 為佳；有 1 年以上實際開發經驗尤佳。不需出差。
+- 網址：https://www.104.com.tw/job/895jc
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### 60226XF_技術支援工程師（104 職缺代碼 91pny）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊工程、數學及電算機科學相關）
+- 工作內容：負責自動化環境佈署研發，並建立標準化驗證體系以確保交付品質；擔任事業群之間的產品說明與導入支援；協助系統監控、故障排查與售後技術支援，並與開發及客戶團隊一起推進專案落地。
+- 條件與技能：104 擅長工具與工作技能欄均標示不拘，其他條件未列細項。職務類別為系統工程師、AI 工程師、軟體工程師。英文聽與讀為中等。需出差，一年累積約一個月以下。
+- 網址：https://www.104.com.tw/job/91pny
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人）
+
+### C003CDG_軟體工程師（104 職缺代碼 8xp1s）
+- 公司：神通資訊科技股份有限公司　地點：台北市信義區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊管理、資訊工程相關）
+- 工作內容：開發 Java 商用網站系統，使用 Spring 與 MyBatis，設計 RESTful 應用，並做 Spring Boot 與 Spring Cloud 微服務開發。職務類別含全端工程師、軟體工程師、系統分析師。
+- 條件與技能：擅長工具為 Java、MS SQL、MySQL、JavaScript、VueJS。需熟悉 Java 8 以上與常用設計模式、SQL 與關聯式資料庫、Git 協作，習慣閱讀英文技術文件；前端 JSP、jQuery、Vue 3 與 HTML／CSS 切版為佳。英文中等。不需出差。
+- 網址：https://www.104.com.tw/job/8xp1s
+- 104 上顯示的更新日：09/14（需求 1~4 人，兩週內應徵 0~5 人）
+
+### C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士（工程學科類）
+- 工作內容：負責金融系統前端架構，用 Angular 開發響應式 SPA，以 RxJS 處理資料串流與非同步 API，用 NgRx 或 Service 管理全域狀態。封裝可重用 UI 元件（SCSS／SASS），與 Java 後端對接 RESTful API，撰寫 Dockerfile（Nginx）佈署到 K8S，並落實 XSS／CSRF 防護。參與單體式架構遷移到微服務。
+- 條件與技能：擅長工具為 Java、Spring、JavaScript、jQuery、Node.js、Angular。共同職能為 Git／Gitflow、程式碼審查、GitLab CI／Jenkins，以及撰寫規格書與 API 文件。
+- 網址：https://www.104.com.tw/job/8xzqc
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人，不需出差）
+
+### C011CH2_後端開發工程師(java)（104 職缺代碼 8xzqd）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士（工程學科類）
+- 工作內容：用 Spring Boot 開發高可用、可擴展的金融後端微服務，處理高併發交易邏輯，設計 RESTful API 並以 Swagger／OpenAPI 提供文件。設計 RDBMS 結構與 SQL 優化，整合 Hazelcast 或 Redis 做分散式快取，用 RabbitMQ 或 Kafka 做非同步處理，並串接 SWIFT 訊息格式與 HSM 加密模組。
+- 條件與技能：擅長工具為 Java、Spring、ANSI SQL、JDBC。需撰寫 Dockerfile 與 JVM 調優以在 K8S Pod 運行，寫 JUnit／Mockito 測試，並以 Prometheus 指標做監控；共同職能為 Git／Gitflow、GitLab CI／Jenkins。
+- 網址：https://www.104.com.tw/job/8xzqd
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人，不需出差）
+
+hook: PostToolUse Completed
+codex
+既有題目已涵蓋總部地址、資本額及部分 AI 職缺技能，我會避開這些考點。公司頁的章節編號與指定清單不同，其餘題目會優先取自補充檔；職缺清單正逐筆核對。
+
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "Get-Content -LiteralPath '33_104職缺更新_神通資訊.md' -Encoding UTF8 | Select-Object -Skip 150" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 639ms:
+
+### C016CCE_資料庫工程師（104 職缺代碼 8xvez）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 46,000 元以上　經歷：1 年以上　學歷：專科以上（科系不拘）
+- 工作內容：配合專案時程維護與營運大型資料庫，撰寫資料庫與維運的標準作業文件。執行資料庫效能監控與調校（含 Index 優化），規劃定期維護、備份還原與故障排除，需熟悉 Oracle 或 SQL Server 其中一種的操作與基礎管理。職務類別含資料庫管理人員、後端工程師。
+- 條件與技能：擅長工具為 Linux、Windows Server 2019、MS SQL、PL/SQL。曾參與系統開發或有後端開發經驗，並有意深耕資料庫領域。104 列出的相關證照有 OCP／OCA DBA、DP-900。不需出差。
+- 網址：https://www.104.com.tw/job/8xvez
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### C023CHK_測試工程師（104 職缺代碼 8xz4m）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區（需配合至銀行內部駐點，雙北範圍）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科、大學、碩士（科系不拘）
+- 工作內容：根據需求撰寫測試計畫與測試案例，執行功能、整合與回歸測試，撰寫測試文件、缺陷報告與測試報告並追蹤修復進度。用 SQL 做資料驗證與測試數據查詢，與開發、業務、維運團隊溝通測試結果。需求 10 人。
+- 條件與技能：擅長工具為 Excel、PowerPoint、Word；資訊管理、企業管理、金融相關科系佳。需有邏輯分析與問題排查能力；會 SQL 查詢為加分。不需出差。
+- 網址：https://www.104.com.tw/job/8xz4m
+- 104 上顯示的更新日：09/14（兩週內應徵 0~5 人）
+
+### C024CD3_系統分析師/程式設計工程師（104 職缺代碼 8xz6d）
+- 公司：神通資訊科技股份有限公司　地點：台北市萬華區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科以上（科系不拘）
+- 工作內容：處理客戶問題單與需求單，涵蓋需求分析、程式增修、測試、版更與文件撰寫；負責系統開發，包含架構規劃、驗證、程式撰寫、測試與上線；並做系統效能調校、Code Review 與新技術導入。職務類別含軟體工程師、系統分析師、資料分析師。
+- 條件與技能：擅長工具為 MS SQL。需熟悉 Java 或 C#、Vue.js、MS SQL 查詢語法與 Linux／Windows 作業系統；具 3 年以上數據分析實務經驗，並有統計或數據分析證照者尤佳。不需出差。
+- 網址：https://www.104.com.tw/job/8xz6d
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人）
+
+### C024CD3_資料分析（104 職缺代碼 8y7en）
+- 公司：神通資訊科技股份有限公司　地點：台北市萬華區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士（應用數學、資訊管理、資訊工程相關）
+- 工作內容：用 ETL 工具做資料處理、清理、驗證與品質檢查，以 SQL 查詢資料庫，用 Power BI、Tableau 等工具製作圖表與儀表板。產出定期與臨時分析報告，把分析結果轉成業務單位可讀的洞察，並建立與維護資料字典，遵循資料治理與隱私規範。
+- 條件與技能：擅長工具為 Python、ETL、MS SQL、Power BI。具資訊工程、統計、數學、機器學習等相關學士以上學位，能用統計與機器學習演算法做資料建模與分析。英文中等。不需出差。
+- 網址：https://www.104.com.tw/job/8y7en
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 6~10 人）
+
+### C015CCF_系統工程師/虛擬化工程師（104 職缺代碼 8z1d1）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 45,000 元以上　經歷：2 年以上　學歷：大學以上（科系不拘）
+- 工作內容：參與企業 IT 基礎架構設計與維運，建置與管理虛擬化平台，維護虛擬主機作業系統（CentOS、Ubuntu、Windows Server），建置應用程式主機環境（Tomcat、Nginx、HAProxy、Mail Server、DNS），並管理 SQL Server 與儲存設備、規劃系統架構與應用程式更新。職務類別為系統工程師、雲端工程師。
+- 條件與技能：擅長工具為 Linux、Windows Server 2019、VMware。104 列出的相關證照有 LPIC、MCSE、Red Hat 認證工程師、VCP、Azure AZ-900 與 Azure Developer Associate。不需出差。
+- 網址：https://www.104.com.tw/job/8z1d1
+- 104 上顯示的更新日：09/29（需求 1 人，兩週內應徵 0~5 人）
+
+### C033CF1_JAVA工程師（104 職缺代碼 8zu67）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊管理、資訊工程相關）
+- 工作內容：設計、開發與維護公司後端服務，設計與實作 API 介面，協助前端團隊完成產品開發與優化，排除系統與應用問題，並與團隊討論產品需求、架構與功能改善。職務類別為後端工程師、軟體工程師。
+- 條件與技能：具 Java 與 Spring Boot REST 基礎、SQL 基礎，熟悉物件導向程式開發（OOP），了解基本 Design Pattern。104 的擅長工具與工作技能欄標示不拘。不需出差。
+- 網址：https://www.104.com.tw/job/8zu67
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人）
+
+### C034CF1_測試工程師（104 職缺代碼 8zu68）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（資訊管理、圖書管理相關）
+- 工作內容：依產品規格擬定測試計畫與撰寫測試案例，錄製自動化測試腳本，執行規格驗證、功能、整合與壓力測試以確保產品可用性，依結果撰寫測試報告並維護品質管理紀錄與報表。職務類別為測試人員、軟韌體測試工程師。
+- 條件與技能：擅長工具與工作技能欄標示不拘。其他條件為 1 年以上測試經驗，有網站前後端或 APP 測試經驗者、熟悉 Katalon Studio 及 Linux 基本指令者尤佳。不需出差。
+- 網址：https://www.104.com.tw/job/8zu68
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### C037CCE_駐點工程師（104 職缺代碼 90qjq）
+- 公司：神通資訊科技股份有限公司　地點：台北市大安區　薪資：月薪 45,000 元以上　經歷：1 年以上　學歷：專科以上（科系不拘）
+- 工作內容：以 C#、ASP.NET、HTML、JavaScript、CSS 與 .NET Framework 做程式新增與修改，使用 SQL Server T-SQL 查詢，並與客戶溝通協調需求。職務類別為軟體工程師、軟體助理工程師。
+- 條件與技能：擅長工具為 ASP.NET、C#、MS SQL、HTML、JavaScript；英文略懂。104 的工作技能欄標示不拘。不需出差。
+- 網址：https://www.104.com.tw/job/90qjq
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### K006KBF_軟體工程師（104 職缺代碼 8zble）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：專科以上（資訊工程、數學及電算機科學、應用數學相關）
+- 工作內容：開發捷運售票及相關系統。職務類別為軟體工程師、後端工程師。需出差，一年累積時間約一個月以下。
+- 條件與技能：擅長工具為 Git、C#、C++、Visual Studio。需精通 C++ 或 C#，有 Git 與 Visual Studio 2019 以上使用經驗，熟悉多執行緒（Multi-threading）；有 Serial Port（RS-232）通訊開發經驗者尤佳。英文中等。
+- 網址：https://www.104.com.tw/job/8zble
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### K016KBH_車載軟體工程師（104 職缺代碼 8zm4z）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 42,000 元以上　經歷：2 年以上　學歷：專科、大學、碩士（數學及電算機科學學科類）
+- 工作內容：負責車載系統的架構設計與開發、通訊協定實作、介面整合串接、系統監控與故障診斷，並做需求分析與可行性評估。職務類別為軟體工程師、前端工程師、通訊軟體工程師。需出差，一年累積時間約一個月以下。
+- 條件與技能：熟 C／C++，具記憶體管理與多執行緒開發經驗，熟悉 Linux System Programming 與 TCP/IP、HTTP、MQTT 協定；了解 UART、RS-485 串列通訊與 CAN Bus 概念；有 Git 經驗，熟悉 JSON／XML 解析。英文讀寫中等。
+- 網址：https://www.104.com.tw/job/8zm4z
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### K027KB0_軟體工程師（104 職缺代碼 92in9）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：2 年以上　學歷：大學、碩士（資訊管理、資訊工程、電機電子工程相關）
+- 工作內容：負責系統架構設計與開發、通訊協定實作、介面整合串接、系統監控與故障診斷，並做需求分析與可行性評估。職務類別為軟體工程師、通訊軟體工程師、後端工程師。需出差，一年累積時間約一個月以下。
+- 條件與技能：擅長工具為 C#、C++、MS SQL。需熟 C#.NET 與 C／C++，具多執行緒開發經驗，熟悉 Windows System Programming、TCP/IP、HTTP、MQTT 協定，了解 RS-422／485 串列通訊，有 Git 經驗並熟悉 JSON／XML 解析。
+- 網址：https://www.104.com.tw/job/92in9
+- 104 上顯示的更新日：09/14（需求 2 人，兩週內應徵 0~5 人）
+
+### P001PG2_工程師（104 職缺代碼 8xveo）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 38,000 元以上　經歷：不拘　學歷：專科、大學、碩士（資訊管理、資訊工程相關）
+- 工作內容：推動集團內部數位轉型，涵蓋需求分析、系統設計、開發到維運，重點是內部 OA 系統。用 Spring Boot 與 Vue.js 做前後端功能開發、架構升級與 API 串接，並以 Spring MVC 維護既有系統。職務類別為 MIS 程式設計師、全端工程師。
+- 條件與技能：擅長工具為 Java、MySQL、PostgreSQL、JavaScript；工作技能含系統維護、系統整合分析、軟體程式設計。應屆畢業生可。日班有彈性上下班（08:00~17:00 或 10:00~19:00）。不需出差。
+- 網址：https://www.104.com.tw/job/8xveo
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### P009PG1_系統分析師（月薪 38,000 以上版本）（104 職缺代碼 91pmr）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 38,000 元以上　經歷：1 年以上　學歷：專科以上（科系不拘）
+- 工作內容：維護集團內部資訊應用系統，並開發對應的新功能。職務類別為 MIS 程式設計師、軟體工程師、全端工程師。週休二日，不需出差。同一職稱在公司頁另有一筆待遇面議的刊登（代碼 93q8x）。
+- 條件與技能：擅長工具為 Java、JSP；工作技能含系統維護操作、系統整合分析、軟體工程系統開發。英文略懂，中文中等。
+- 網址：https://www.104.com.tw/job/91pmr
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人）
+
+### P009PG1_系統分析師（待遇面議版本）（104 職缺代碼 93q8x）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：專科以上（科系不拘）
+- 工作內容：維護集團內部資訊應用系統，並開發對應的新功能。職務類別為 MIS 程式設計師、軟體工程師、全端工程師。週休二日，不需出差。內容與月薪 38,000 以上那筆（代碼 91pmr）相同，薪資欄不同。
+- 條件與技能：擅長工具為 Java、JSP；工作技能含系統維護操作、系統整合分析、軟體工程系統開發。英文略懂，中文中等。
+- 網址：https://www.104.com.tw/job/93q8x
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人）
+
+### P011PG4_高級工程師（104 職缺代碼 932en）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 42,000 元以上　經歷：不拘　學歷：大學、碩士（資訊管理、資訊工程相關）
+- 工作內容：負責 BI 儀表板與 Self-Service BI 推廣、ETL／ELT 資料整合、資料治理、資料 API 串接與數據中台維運，同時開發與導入 GenAI、AI Agent 和企業知識庫等 AI 應用，建立穩定可信的數據服務平台。職務類別為 AI 工程師、系統工程師、全端工程師。
+- 條件與技能：工作技能欄含軟體程式設計、AI、提示工程、生成式 AI、資料庫系統管理與程式設計、系統導入、報表開發、商業智慧；擅長工具欄標示不拘。英文中等，中文精通。不需出差。
+- 網址：https://www.104.com.tw/job/932en
+- 104 上顯示的更新日：09/14（需求 1~2 人，兩週內應徵 0~5 人）
+
+### 【集團代招】Q010Q41_系統工程師（104 職缺代碼 8xz3l）
+- 公司：神通資訊科技股份有限公司（集團代招）　地點：台北市內湖區堤頂大道二段187號（內湖科技園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學、碩士（資訊工程、資訊管理、電機電子工程相關）
+- 工作內容：以 C# 做軟體開發，搭配網頁 JavaScript／React，需理解資料庫運作原理與規劃、串流基本觀念，並了解 AI 開發，至少會一種主流開發方法。職務類別為軟體工程師。彈性上下班（8:00～10:00 上班），週休二日，不需出差。
+- 條件與技能：具軟體開發、資料庫、虛擬化能力，有 Client/Server 與 Web 開發經驗，具作業系統與資料庫基本開發經驗；專案管理證照為專業證照項目。英文中等。
+- 網址：https://www.104.com.tw/job/8xz3l
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）
+- 公司：神通資訊科技股份有限公司（集團代招）　地點：台北市內湖區堤頂大道二段187號（內湖科技園區）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：大學（資訊工程、資訊管理、電機電子工程相關）
+- 工作內容：負責 Web 系統前端功能開發與維護，參與前端架構與模組規劃，與 Python／Django 後端工程師對接 RESTful API 並制定資料串接規格。處理前端資料清洗、轉換與業務邏輯，實作 UI/UX 與響應式網頁（RWD）。需出差，一年累積約三個月以下。
+- 條件與技能：熟悉 React、Vue、Angular 或 HTMX／Alpine.js 其一，JavaScript（ES6+）／TypeScript、HTML5、CSS3、RESTful API 與 HTTP、JSON 格式處理與狀態管理、Git 協作；有 Python／Django 後端串接經驗，具前端架構與元件庫設計能力者佳。週休二日。
+- 網址：https://www.104.com.tw/job/8xz51
+- 104 上顯示的更新日：10/15（需求 1 人，兩週內應徵 0~5 人）
+
+### K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：月薪 37,000~50,000 元　經歷：不拘　學歷：大學、碩士（資訊工程、數學及電算機科學、數理統計相關）
+- 工作內容：開發與修正捷運自動收費系統的後台軟體，使用 C++ 做資料處理、資料庫應用與網路通訊程式，並搭配 AI 工具輔助開發。職務類別為軟體工程師、系統分析師、AI 工程師。週休二日，不需出差。
+- 條件與技能：擅長工具為 Claude、C、C++、MS SQL；工作技能為軟體程式設計、生成式 AI。英文中等，應屆畢業生可。
+- 網址：https://www.104.com.tw/job/93vim
+- 104 上顯示的更新日：09/14（需求 1 人，兩週內應徵 0~5 人）
+
+### C066CHK_系統分析師（104 職缺代碼 93viz）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區（需配合至銀行內部駐點，雙北範圍）　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：1 年以上　學歷：大學（科系不拘，資訊、管理、金融相關佳）
+- 工作內容：參與需求訪談與業務分析，撰寫系統分析文件、功能規格書、流程文件與介面規格。分析系統架構與資料流，協助設計系統解決方案，並與開發、測試、維運團隊追蹤需求落地，協助系統上線與需求變更管理。
+- 條件與技能：熟悉需求分析、流程設計與文件撰寫，能閱讀資料模型與資料庫設計並具 SQL 查詢能力，有跨部門溝通能力；金融系統、核心交易或流程系統經驗為加分。不需出差。
+- 網址：https://www.104.com.tw/job/93viz
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人）
+
+### 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學以上（科系不拘）
+- 工作內容：打造企業級生成式 AI 應用，用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API（OpenAI、Claude 等）與向量資料庫，設計並優化 RAG 架構。以 Pydantic 與 JSON Schema 控制資料型態以穩定 Structured Outputs，設計 Prompt 並拆解業務工作流，追蹤並實作新的生成式 AI 技術與論文演算法。
+- 條件與技能：需有電機、資訊工程、資訊科學等相關學位背景，熟悉 Python 或 PyTorch，能讀論文並實作演算法；熟悉 Docker、Git、GitHub、Redmine 者佳；有 AI 開發或專案經驗者優先。職務類別為 AI 工程師、軟體工程師。不需出差。
+- 網址：https://www.104.com.tw/job/94rqp
+- 104 上顯示的更新日：09/14（需求 1~3 人，兩週內應徵 0~5 人）
+
+### 實習生（Java／AI／C/C++）（104 職缺代碼 8zd2t）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區　薪資：時薪 196 元以上（兼職）　經歷：不拘　學歷：大學以上（科系不拘）
+- 工作內容：協助軟體模組編寫、系統功能開發與既有程式維護，依專案分配投入 Java（企業級系統、API 串接、資料庫）、AI（資料清洗標註、模型測試、AI 模組輔助開發）或 C/C++（底層效能優化、軟硬體整合通訊）。並執行單元測試、排查程式錯誤、撰寫測試報告與整理技術文件。
+- 條件與技能：實習時段為開學期間每週至少 3 天、寒暑假每週 5 天，為期一學期或一學年；日班 9:00-18:00。104 的擅長工具與工作技能欄標示不拘。
+- 網址：https://www.104.com.tw/job/8zd2t
+- 104 上顯示的更新日：09/14（需求人數不限，兩週內應徵 11~30 人）
+
+### K011KBE_測試工程師（104 職缺代碼 961u4）
+- 公司：神通資訊科技股份有限公司　地點：台北市內湖區堤頂大道二段187號　薪資：待遇面議（經常性薪資達 4 萬元或以上）　經歷：不拘　學歷：大學（資訊管理、資訊工程相關）
+- 工作內容：撰寫測試計畫與步驟文件，依軟體開發功能執行測試（含回歸測試），並做設備硬體的簡易排除。職務類別為軟韌體測試工程師。不需出差。
+- 條件與技能：工作技能欄列有功能測試、使用者測試、軟體整合測試、測試環境建置規劃、壓力測試與測試計畫及報告書撰寫；擅長工具標示不拘。需善於溝通，懂 C／C++ 開發尤佳。英文讀寫中等。
+- 網址：https://www.104.com.tw/job/961u4
+- 104 上顯示的更新日：09/19（需求 1~2 人，兩週內應徵 0~5 人）
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "rg -n -i --glob '*神通*.md' '陪產|陪孕|育嬰|留職停薪|停車|車位|餐費|伙食|餐補|婚假|喪假' ." in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 490ms:
+.\04_神通資訊.md:210:- 停車推薦系統（Flask＋MySQL）可證明你會做後端與資料庫，對上他們的 SQL 基礎要求。
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command "rg -n -i --glob '*神通*.md' '伙食|餐費|餐補|試用|試任|probation' .
+Get-ChildItem -File -Filter '*神通*.md' | Select-Object -ExpandProperty Name" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 632ms:
+04_神通資訊.md
+23_補充_神通資訊.md
+33_104職缺更新_神通資訊.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Users\\cygnu\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe" -NoProfile -Command '$checks = @'"'
+[
+[\"04_神通資訊.md\",\"1. 基本資料\",\"約 1,000 人，技術人員約 80%\"],
+[\"23_補充_神通資訊.md\",\"基本資料 > 官方公開的招募與培訓\",\"健身房、兩年一次健檢與定期醫師駐診\"],
+[\"23_補充_神通資訊.md\",\"業務與財務 > 智慧交通與智慧政府產品\",\"智慧政府方面有 E-Gate 自動通關系統\"],
+[\"23_補充_神通資訊.md\",\"技術堆疊 > 2026-07 AI WAVE 展出的伺服器版本\",\"AMD EPYC 9004／9005 系列處理器\"],
+[\"23_補充_神通資訊.md\",\"近一年新聞 > 2026-01 至 2026-06 獎項與展出\",\"6 月 16 日衛福部樂生醫院啟用 MiCart 智能護理行動車\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > C016CCE_資料庫工程師（104 職缺代碼 8xvez）\",\"薪資：月薪 46,000 元以上\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）\",\"學歷：高中、專科、大學、碩士\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）\",\"使用 Next.js 開發與維護平台型前端系統\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）\",\"主導平台型前端系統（Next.js App Router）的架構設計與演進\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）\",\"負責金融系統前端架構，用 Angular 開發響應式 SPA\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）\",\"負責 Web 系統前端功能開發與維護\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > C023CHK_測試工程師（104 職缺代碼 8xz4m）\",\"根據需求撰寫測試計畫與測試案例，執行功能、整合與回歸測試\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > C034CF1_測試工程師（104 職缺代碼 8zu68）\",\"依產品規格擬定測試計畫與撰寫測試案例，錄製自動化測試腳本\"],
+[\"33_104職缺更新_神通資訊.md\",\"目前開放職缺 > K011KBE_測試工程師（104 職缺代碼 961u4）\",\"撰寫測試計畫與步驟文件，依軟體開發功能執行測試（含回歸測試）\"]
+]
+'@ | ConvertFrom-Json
+foreach ("'$c in $checks) {
+ $parents = @{}; $path = '"''; "'$found = $false
+ foreach ($line in (Get-Content -LiteralPath $c[0] -Encoding UTF8)) {
+  if ($line -match '"'"'^(#{2,6}) (.+)$'"') {
+   "'$level = $matches[1].Length; $parents[$level] = $matches[2]
+   foreach ($k in @($parents.Keys)) { if ($k -gt $level) { $parents.Remove($k) } }
+   $path = (@($parents.Keys | Sort-Object | ForEach-Object { $parents[$_] }) -join '"' > ')
+  }
+  if ("'$path -ceq $c[1] -and $line.Contains($c[2])) { $found = $true }
+ }
+ if (-not $found -or $c[2].Length -lt 8 -or $c[2].Length -gt 60) { throw ('"'Invalid quote: ' + "'$c[1]) }
+}
+'"'Validated 14 exact quotes and heading paths.'" in C:\claude\aipe04期末\履歷\廠商深查
+ succeeded in 883ms:
+Validated 14 exact quotes and heading paths.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+[
+  {
+    "question": "神通資訊資料庫工程師月薪從多少起？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > C016CCE_資料庫工程師（104 職缺代碼 8xvez）",
+        "quote": "薪資：月薪 46,000 元以上"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊的 DevOps 工程師最低要什麼學位？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）",
+        "quote": "學歷：高中、專科、大學、碩士"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊七月展出的伺服器用哪款處理器？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "技術堆疊 > 2026-07 AI WAVE 展出的伺服器版本",
+        "quote": "AMD EPYC 9004／9005 系列處理器"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊讓旅客自助過關的系統叫什麼？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "業務與財務 > 智慧交通與智慧政府產品",
+        "quote": "智慧政府方面有 E-Gate 自動通關系統"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊的護理行動車在哪家醫院啟用？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "近一年新聞 > 2026-01 至 2026-06 獎項與展出",
+        "quote": "6 月 16 日衛福部樂生醫院啟用 MiCart 智能護理行動車"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊員工裡做技術的大概占幾成？",
+    "type": "單一公司",
+    "topic": "其他",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "04_神通資訊.md",
+        "heading": "1. 基本資料",
+        "quote": "約 1,000 人，技術人員約 80%"
+      },
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "基本資料 > 神通資訊的沿革與規模",
+        "quote": "員工約 1,000 人，其中技術人員占 80%"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊多久安排一次員工健康檢查？",
+    "type": "單一公司",
+    "topic": "福利規章",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "基本資料 > 官方公開的招募與培訓",
+        "quote": "健身房、兩年一次健檢與定期醫師駐診"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊有哪些專做網頁前端的職缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+        "quote": "使用 Next.js 開發與維護平台型前端系統"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）",
+        "quote": "主導平台型前端系統（Next.js App Router）的架構設計與演進"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）",
+        "quote": "負責金融系統前端架構，用 Angular 開發響應式 SPA"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）",
+        "quote": "負責 Web 系統前端功能開發與維護"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊有哪些專門找軟體毛病的職缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > C023CHK_測試工程師（104 職缺代碼 8xz4m）",
+        "quote": "根據需求撰寫測試計畫與測試案例，執行功能、整合與回歸測試"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > C034CF1_測試工程師（104 職缺代碼 8zu68）",
+        "quote": "依產品規格擬定測試計畫與撰寫測試案例，錄製自動化測試腳本"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > K011KBE_測試工程師（104 職缺代碼 961u4）",
+        "quote": "撰寫測試計畫與步驟文件，依軟體開發功能執行測試（含回歸測試）"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊的員工餐費每月補助多少？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "神通資訊",
+    "gold": [],
+    "absence_keywords": ["餐費", "伙食", "餐補"]
+  },
+  {
+    "question": "神通資訊的新人試用期是幾個月？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "神通資訊",
+    "gold": [],
+    "absence_keywords": ["試用", "試任", "probation"]
+  }
+]
+hook: Stop
+hook: Stop Completed
+tokens used
+64,397
+[
+  {
+    "question": "神通資訊資料庫工程師月薪從多少起？",
+    "type": "單一公司",
+    "topic": "薪資",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > C016CCE_資料庫工程師（104 職缺代碼 8xvez）",
+        "quote": "薪資：月薪 46,000 元以上"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊的 DevOps 工程師最低要什麼學位？",
+    "type": "單一公司",
+    "topic": "學歷",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60186Y2_DevOps 工程師（104 職缺代碼 895j8）",
+        "quote": "學歷：高中、專科、大學、碩士"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊七月展出的伺服器用哪款處理器？",
+    "type": "單一公司",
+    "topic": "技術",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "技術堆疊 > 2026-07 AI WAVE 展出的伺服器版本",
+        "quote": "AMD EPYC 9004／9005 系列處理器"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊讓旅客自助過關的系統叫什麼？",
+    "type": "單一公司",
+    "topic": "業務",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "業務與財務 > 智慧交通與智慧政府產品",
+        "quote": "智慧政府方面有 E-Gate 自動通關系統"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊的護理行動車在哪家醫院啟用？",
+    "type": "單一公司",
+    "topic": "新聞",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "近一年新聞 > 2026-01 至 2026-06 獎項與展出",
+        "quote": "6 月 16 日衛福部樂生醫院啟用 MiCart 智能護理行動車"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊員工裡做技術的大概占幾成？",
+    "type": "單一公司",
+    "topic": "其他",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "04_神通資訊.md",
+        "heading": "1. 基本資料",
+        "quote": "約 1,000 人，技術人員約 80%"
+      },
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "基本資料 > 神通資訊的沿革與規模",
+        "quote": "員工約 1,000 人，其中技術人員占 80%"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊多久安排一次員工健康檢查？",
+    "type": "單一公司",
+    "topic": "福利規章",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "23_補充_神通資訊.md",
+        "heading": "基本資料 > 官方公開的招募與培訓",
+        "quote": "健身房、兩年一次健檢與定期醫師駐診"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊有哪些專做網頁前端的職缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60056X0_前端工程師（Next.js／平台型系統）（104 職缺代碼 8y663）",
+        "quote": "使用 Next.js 開發與維護平台型前端系統"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 60066X0_前端資深工程師（Next.js／平台型系統）（104 職缺代碼 8y66b）",
+        "quote": "主導平台型前端系統（Next.js App Router）的架構設計與演進"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > C011CH2_前端開發工程師(angular)（104 職缺代碼 8xzqc）",
+        "quote": "負責金融系統前端架構，用 Angular 開發響應式 SPA"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > 【集團代招】Q014Q61_工程師（前端，配合 Python／Django 後端）（104 職缺代碼 8xz51）",
+        "quote": "負責 Web 系統前端功能開發與維護"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊有哪些專門找軟體毛病的職缺？",
+    "type": "職缺",
+    "topic": "職缺",
+    "company": "神通資訊",
+    "gold": [
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > C023CHK_測試工程師（104 職缺代碼 8xz4m）",
+        "quote": "根據需求撰寫測試計畫與測試案例，執行功能、整合與回歸測試"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > C034CF1_測試工程師（104 職缺代碼 8zu68）",
+        "quote": "依產品規格擬定測試計畫與撰寫測試案例，錄製自動化測試腳本"
+      },
+      {
+        "file": "33_104職缺更新_神通資訊.md",
+        "heading": "目前開放職缺 > K011KBE_測試工程師（104 職缺代碼 961u4）",
+        "quote": "撰寫測試計畫與步驟文件，依軟體開發功能執行測試（含回歸測試）"
+      }
+    ]
+  },
+  {
+    "question": "神通資訊的員工餐費每月補助多少？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "神通資訊",
+    "gold": [],
+    "absence_keywords": ["餐費", "伙食", "餐補"]
+  },
+  {
+    "question": "神通資訊的新人試用期是幾個月？",
+    "type": "不可回答",
+    "topic": "福利規章",
+    "company": "神通資訊",
+    "gold": [],
+    "absence_keywords": ["試用", "試任", "probation"]
+  }
+]
