@@ -68,16 +68,6 @@ def test_method_chart_numbers_are_the_output_file_numbers(client, root):  # noqa
     assert [m for m, *_ in mrr] == sorted(f, key=lambda m: -f[m]["mrr"])  # 由高到低
 
 
-def test_forest_points_match_data_layer_and_open_marker_means_interval_has_zero(client, root):  # noqa: F811
-    want = {r["method"]: r for r in about.load(root)["mrr_diffs"]}
-    sec = slide(get(client).get_data(as_text=True), "forest")
-    pts = re.findall(r'<circle class="pt( open)?" data-m="([\w-]+)" data-v="([-\d.e]+)" data-lo="([-\d.e]+)" data-hi="([-\d.e]+)"', sec)
-    assert [p[1] for p in pts] == ["bm25", "bge-small-zh", "e5-large", "hybrid"]
-    for op, m, v, lo, hi in pts:
-        assert (float(v), float(lo), float(hi)) == (want[m]["diff"], want[m]["lo"], want[m]["hi"])
-        assert bool(op) == (float(lo) <= 0 <= float(hi))
-
-
 def test_chunk_histogram_counts_sum_to_segment_count(client):
     n = sum(client[0].public_company_counts().values())
     sec = slide(get(client).get_data(as_text=True), "chunk")
@@ -196,29 +186,11 @@ def test_slides_never_use_forbidden_wording(client, root):  # noqa: F811
     assert not WORDS.search(src)
 
 
-def test_versus_bars_recount_every_question_from_the_ranks(client, root):  # noqa: F811
-    f = json.loads((root / "eval/results_methods.json").read_text(encoding="utf-8"))["methods"]
-    rr = lambda r: 1 / r if r else 0.0
-    sec = slide(get(client).get_data(as_text=True), "forest")
-    got = {}
-    for m, k, v in re.findall(r'<rect class="sg (?:win|tie|loss)" data-m="([\w-]+)" data-k="(\w+)" data-v="(\d+)"', sec):
-        got.setdefault(m, {})[k] = int(v)
-    a = f["bge-m3"]["ranks"]
-    assert list(got) == ["bm25", "bge-small-zh", "e5-large", "hybrid"]
-    for m, c in got.items():
-        b = f[m]["ranks"]
-        want = {"win": sum(rr(a[i]) > rr(b[i]) for i in a), "loss": sum(rr(a[i]) < rr(b[i]) for i in a)}
-        want["tie"] = len(a) - want["win"] - want["loss"]
-        assert c == {k: v for k, v in want.items() if v}
-    assert got["hybrid"] == {"win": 1, "tie": 2, "loss": 1}  # 夾具手算：a1 勝、a2 a3 平、a4 負
-
-
 def test_hybrid_is_always_written_with_its_two_parts_on_slides(client):
     h = get(client).get_data(as_text=True)
-    for key in ("methods", "forest", "qa"):
+    for key in ("methods", "qa"):
         sec = slide(h, key)
         assert "BM25＋bge-m3" in sec or "（BM25＋bge-m3）" in sec, key
-    assert "混合（BM25＋bge-m3）" in slide(h, "forest") and "不能確定誰真的比較好" in slide(h, "forest") and "看詳細數字" in slide(h, "forest")
 
 
 def test_methods_slide_defines_hit_and_mrr_in_plain_words(client, root):  # noqa: F811

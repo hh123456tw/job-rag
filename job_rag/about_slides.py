@@ -567,7 +567,7 @@ def render(data, error, n_segments, n_companies, lengths=None, companies=None) -
     sp = _speeches(say, data)
     builders = [lambda: s_cover(data, n_segments, n_companies), lambda: s_arch(data, n_segments, n_companies), lambda: s_chunk(data, lengths)]
     if data:
-        builders += [lambda: s_methods(data), lambda: s_forest(data), lambda: s_held(data), lambda: s_qset(data), lambda: s_fixes(data), lambda: s_funnel(data, data.get("e2e")),
+        builders += [lambda: s_methods(data), lambda: s_held(data), lambda: s_qset(data), lambda: s_fixes(data), lambda: s_funnel(data, data.get("e2e")),
                      lambda: s_cross(data, n_companies, companies), lambda: s_ragas(data)]
     else:
         builders += [lambda: s_error(error)]
