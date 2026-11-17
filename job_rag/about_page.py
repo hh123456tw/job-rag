@@ -30,7 +30,7 @@ def _gate_t(gt) -> str:
     return f"{gt['threshold']:.3f}" + (f"（已指定公司 {gt['scoped_threshold']:.3f}）" if gt.get("scoped_threshold") and gt.get("n_scoped") else "")
 
 
-GEN_NOTE = "RAGAS 於 2026-11-17 在新版語料、K=5 設定重跑；GPT 複查是前一版語料那次答案的複查，沒有重跑。"
+GEN_NOTE = "RAGAS 與 GPT 複查都於 2026-11-17 在新版語料、K=5 設定重跑（GPT 單次輸出有隨機性）。"
 
 
 def _e2e(d) -> str:
@@ -103,7 +103,7 @@ def _details(d) -> str:
         f"已評分 {g['scored']} 題；另有 {g['gated']} 題被查無門檻擋住，沒有打分{failed}。{GEN_NOTE}</p>"
         + (f"<p>{_held_gen(d)}</p>" if _held_gen(d) else "") +
         f"<p>另請 GPT 獨立複查{same} {c['n']} 題（不是 RAGAS）：{c['claims']} 個陳述中 {c['supported']} 個有依據，"
-        f"忠實度平均 {_f(c['mean'])}，{verdict}。</p>" + gate + _real_line(d))
+        f"忠實度平均 {_f(c['mean'])}，{verdict}。{_held_cross(d)}</p>" + gate + _real_line(d))
 
 
 def _stat(big, text) -> str:
@@ -155,6 +155,12 @@ def _held_gen(d) -> str:
     ar = f"，答案相關性 {_f(h['answer_relevancy'])}（{h['n_ar']} 題）" if h["answer_relevancy"] is not None else ""
     return (f"獨立題（現行設定：K=5、補公司名）：忠實度 {_f(h['faithfulness'])}（{h['n']} 題）{ar}；另有 {h['gated']} 題被查無門檻擋住、"
             f"{h['not_found']} 題生成回查無，沒有打分。同為 DeepSeek 評自己的答案，可能偏樂觀。")
+
+
+def _held_cross(d) -> str:
+    """獨立題的 GPT 複查一句；輸出檔缺就回空字串。"""
+    h = d.get("held_cross")
+    return f"獨立題另複查 {h['n']} 題：{h['claims']} 個陳述中 {h['supported']} 個有依據。" if h else ""
 
 
 def _ragas(d) -> str:

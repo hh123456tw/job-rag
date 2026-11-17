@@ -315,6 +315,19 @@ def _heldout_gen(root: Path):
         return None
 
 
+def _heldout_cross(root: Path):
+    """獨立題的 GPT 複查（judge_gpt_heldout.json）。缺檔、讀不了、或題號不在 RAGAS 已評分的獨立題內回 None（頁面不寫這一句）。"""
+    try:
+        rows = json.loads((root / "eval/crossjudge/judge_gpt_heldout.json").read_text(encoding="utf-8"))
+        ids = {q["id"] for q in json.loads((root / "eval/results_heldout_generation.json").read_text(encoding="utf-8"))["per_question"]}
+        if not rows or any(r["id"] not in ids for r in rows):
+            return None
+        claims = [c for r in rows for c in r["claims"]]
+        return {"n": len(rows), "claims": len(claims), "supported": sum(bool(c["supported"]) for c in claims)}
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def load(root=None) -> dict:
     root = Path(root or ROOT)
     questions = _read(root, questions_path(root))["questions"]
@@ -337,7 +350,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root), "held_cross": _heldout_cross(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
