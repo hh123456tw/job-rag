@@ -8,7 +8,8 @@ $env:JOB_RAG_LOCAL_OPEN = '1'   # open from this laptop without the access code;
 $env:JOB_RAG_HOST = '127.0.0.1'   # never the LAN: only ngrok reaches the app
 $api = 'http://127.0.0.1:4040/api/tunnels'
 
-if (-not $env:JOB_RAG_ACCESS_CODE) {
+# Default: no access code. Set JOB_RAG_REQUIRE_CODE=1 to make a random one (public visitors still hit the hourly answer limit).
+if ($env:JOB_RAG_REQUIRE_CODE -eq '1' -and -not $env:JOB_RAG_ACCESS_CODE) {
     $env:JOB_RAG_ACCESS_CODE = (& python -c "import secrets;print(secrets.token_urlsafe(9))").Trim()
 }
 # Owner PIN (self-use mode): read from the git-ignored file selfdata\owner_pin.txt when the variable is not already set.
@@ -17,7 +18,7 @@ if (-not $env:JOB_RAG_OWNER_PIN) {
     if (Test-Path $pinFile) { $env:JOB_RAG_OWNER_PIN = (Get-Content $pinFile -Raw -Encoding UTF8).Trim() }
 }
 $code = $env:JOB_RAG_ACCESS_CODE
-if ($code.Length -lt 8) { Write-Host 'JOB_RAG_ACCESS_CODE must be at least 8 characters.'; exit 1 }
+if ($code -and $code.Length -lt 8) { Write-Host 'JOB_RAG_ACCESS_CODE must be at least 8 characters.'; exit 1 }
 $ngrok = Get-Command ngrok -ErrorAction SilentlyContinue
 if (-not $ngrok) { Write-Host 'ngrok was not found on PATH.'; exit 1 }
 try { Invoke-RestMethod $api -TimeoutSec 2 | Out-Null; $busy = $true } catch { $busy = $false }
@@ -29,7 +30,7 @@ try {
     $app = Start-Process python -ArgumentList '-X', 'utf8', 'app.py' -NoNewWindow -PassThru
     $procs += $app
     Write-Host 'Loading model and index (takes a few minutes)...'
-    $local = "http://127.0.0.1:$port/?k=$code"
+    $local = if ($code) { "http://127.0.0.1:$port/?k=$code" } else { "http://127.0.0.1:$port/" }
     $ready = $false
     for ($i = 0; $i -lt 450 -and -not $ready; $i++) {   # up to about 15 minutes
         if ($app.HasExited) { throw 'The app stopped. See the messages above.' }
@@ -59,8 +60,8 @@ try {
     if (-not $url) { throw 'ngrok did not report a public URL within 30 seconds.' }
 
     Write-Host ''
-    Write-Host 'Share this address (keep it private, it contains the access code):'
-    Write-Host "  $url/?k=$code"
+    Write-Host 'Share this address:'
+    if ($code) { Write-Host "  $url/?k=$code" } else { Write-Host "  $url/" }
     Write-Host 'First visit on the free ngrok plan shows a warning page: tap Visit Site.'
     Write-Host 'Close this window or press Ctrl+C to stop.'
     while (-not $app.HasExited -and -not $ng.HasExited) { Start-Sleep -Seconds 2 }

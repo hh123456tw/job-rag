@@ -161,6 +161,64 @@ def s_methods(d):
     return head, fig, notes, "methods", None
 
 
+def s_held(d):
+    """調參用 30 題對調完才測的 40 題（bge-m3，Hit@3 與 MRR，含 95% 區間）。缺任一邊的輸出就略過這頁。"""
+    x = d.get("held")
+    m3 = next((r for r in d["table"] if r["method"] == "bge-m3"), None)
+    if not x or not m3:
+        return None
+    x0, x1, pitch, y0 = 56, 280, 82, 14
+    rows = [("Hit@3", m3["hit@3"], m3["ci"]["hit@3"], x["hit3"], x["hit3_ci"]), ("MRR", m3["mrr"], m3["ci"]["mrr"], x["mrr"], x["mrr_ci"])]
+    g = []
+    for i, (name, v1, c1, v2, c2) in enumerate(rows):
+        y = y0 + i * pitch
+        g.append(_t(0, y + 4, name, "bd"))
+        for j, (lab, v, ci, hot) in enumerate((("30 題", v1, c1, False), ("40 題", v2, c2, True))):
+            yy = y + 12 + j * 26
+            sx = lambda t: x0 + t * (x1 - x0)
+            g.append(_t(x0 - 6, yy + 14, lab, "sm", "end")
+                     + f'<rect class="bar gx{"" if hot else " g"}" data-set="{lab}" data-k="{name}" data-v="{v!r}" x="{x0}" y="{yy}" width="{v * (x1 - x0):.1f}" height="20" rx="4"/>'
+                     + f'<g class="eb"><line class="h" x1="{sx(ci[0]):.1f}" x2="{sx(ci[1]):.1f}" y1="{yy + 10}" y2="{yy + 10}"/><line class="c" x1="{sx(ci[0]):.1f}" x2="{sx(ci[1]):.1f}" y1="{yy + 10}" y2="{yy + 10}"/></g>'
+                     + _t(x1 + 8, yy + 15, _f(v), "bd sm"))
+    ya = y0 + len(rows) * pitch
+    g.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{ya}" y2="{ya}"/>' + _ticks_h(x0, x1, ya, (0, .25, .5, .75, 1), lambda v: f"{v:g}")
+             + _t(x0, ya + 34, "黑線是 95% 區間", "mu sm"))
+    fig = _svg(ya + 42, "調參用 30 題與調完才測 40 題的 Hit@3 與 MRR", "".join(g))
+    e = f"；端到端拒答 {x['e2e']['refused']}/{x['e2e']['n']}" if x["e2e"] else ""
+    notes = (f"<p><b>為什麼分兩組？</b>30 題像練習題：調參數時我一直看它，所以它的分數會偏高一點。<b>40 題</b>像考試題：調完才出，沒用來調任何東西，所以更能看出真實程度。"
+             f"結果考試題沒有比練習題差。</p>"
+             f"<p><b>怎麼讀圖：</b>Hit@3＝正確那一段有沒有排進前 3 名（越接近 1 越好）。MRR＝正確那段排第幾，越前面分數越高。黑線是 95% 區間，兩條線重疊就代表差距看不出來。</p>"
+             f"<p>算分用的題：30 題組 {d['n_answerable']} 題有答案；40 題組只用其中 {x['n_plain_answerable']} 題單一公司的有答案題。兩組題數不同，不能直接比大小。</p>"
+             f"<p>40 題裡 {x['n_unanswerable']} 題沒答案：檢索擋住 {x['blocked_u']}{e}。同一人出題，只能當方向。</p>")
+    return "調完才測，沒有變差", fig, notes, "held", "30 題對 40 題"
+
+
+_KIND = {"職缺": ("問職缺", "有哪些職缺、要什麼條件"), "單一公司": ("問某一家公司的事實", "資本額、做什麼、技術"),
+         "公司頁短問句": ("在公司頁隨口問的短句", "不寫公司名，只問一句"), "跨公司": ("比較多家公司", "哪些公司有…"),
+         "不可回答": ("資料裡沒有答案", "正確做法是回「查無」")}
+
+
+def s_qset(d):
+    """這 70 題問什麼：兩組題各題型的題數與一個真實例題。沒有題檔就略過。"""
+    q = d.get("qsets")
+    if not q:
+        return None
+    kinds = list(dict.fromkeys([*q["held"]["kinds"], *q["tune"]["kinds"]]))
+    rows = []
+    for k in kinds:
+        name, hint = _KIND.get(k, (k, ""))
+        a, b = q["tune"]["kinds"].get(k), q["held"]["kinds"].get(k)
+        ex = (b or a)["example"]
+        rows.append(f'<div class="qk"><p><b>{escape(name)}</b>　調參用 {a["n"] if a else 0} 題・調完才測 {b["n"] if b else 0} 題</p>'
+                    f'<p class="mu">例：「{escape(ex)}」{("（" + escape(hint) + "）") if hint else ""}</p></div>')
+    fig = "".join(rows)
+    notes = (f"<p>共 {q['tune']['n'] + q['held']['n']} 題，分兩組。<b>調參用 {q['tune']['n']} 題</b>像練習題：我調門檻、選找法時一直在看。"
+             f"<b>調完才測 {q['held']['n']} 題</b>像考試題：調完才出，沒用來調任何東西。</p>"
+             "<p>每題我都先標好「正確答案在哪一段」，所以可以算排名。「資料裡沒有答案」的題要測它會不會亂編，所以特別放進去。"
+             "題目都是我一個人出的，只能當方向。</p>")
+    return "這 70 題問什麼", fig, notes, "qset", "題目長什麼樣"
+
+
 def _sgn(v):
     return f"{v:+.3f}".replace("-", "−")
 
@@ -401,6 +459,7 @@ def s_error(error):
 
 # ---------- 組頁 ----------
 CSS = """body.sl{max-width:900px;padding:0 16px 168px}
+.qk{margin:0 0 14px}.qk p{margin:2px 0}
 .sh{display:flex;align-items:center;justify-content:space-between;min-height:52px;font-size:.9375rem}
 .sh a{display:inline-flex;align-items:center;min-height:48px}.sh b{color:var(--mute);font-weight:500}
 .slide{padding:0 0 16px}.js .slide{display:none}.js .slide.cur{display:block;animation:fi .25s ease-out}
@@ -508,7 +567,7 @@ def render(data, error, n_segments, n_companies, lengths=None, companies=None) -
     sp = _speeches(say, data)
     builders = [lambda: s_cover(data, n_segments, n_companies), lambda: s_arch(data, n_segments, n_companies), lambda: s_chunk(data, lengths)]
     if data:
-        builders += [lambda: s_methods(data), lambda: s_forest(data), lambda: s_fixes(data), lambda: s_funnel(data, data.get("e2e")),
+        builders += [lambda: s_methods(data), lambda: s_forest(data), lambda: s_held(data), lambda: s_qset(data), lambda: s_fixes(data), lambda: s_funnel(data, data.get("e2e")),
                      lambda: s_cross(data, n_companies, companies), lambda: s_ragas(data)]
     else:
         builders += [lambda: s_error(error)]

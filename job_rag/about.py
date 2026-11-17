@@ -223,6 +223,22 @@ def _heldout(root: Path):
     return out
 
 
+def _qsets(root: Path):
+    """調參用 30 題與調完才測 40 題各題型的題數與一個例題（說明頁「這 70 題問什麼」用）。題檔缺或讀不了回 None。"""
+    try:
+        out = {}
+        for key, rel in (("tune", "eval/questions.json"), ("held", "eval/questions_heldout.json")):
+            qs = json.loads((root / rel).read_text(encoding="utf-8"))["questions"]
+            kinds = {}
+            for q in qs:
+                k = kinds.setdefault(q["type"], {"n": 0, "example": q["question"]})
+                k["n"] += 1
+            out[key] = {"n": len(qs), "kinds": kinds}
+        return out
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def _mrr_diff(methods: dict) -> dict:
     """bge-m3 減混合的 MRR 差與 95% 區間（同一批重抽的題目，算法與 evaluate 的 results_methods.txt 相同）。"""
     a, b = methods["bge-m3"], methods["hybrid"]
@@ -321,7 +337,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
