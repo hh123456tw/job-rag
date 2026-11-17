@@ -30,7 +30,7 @@ def _gate_t(gt) -> str:
     return f"{gt['threshold']:.3f}" + (f"（已指定公司 {gt['scoped_threshold']:.3f}）" if gt.get("scoped_threshold") and gt.get("n_scoped") else "")
 
 
-GEN_NOTE = "量測時為 K=3 設定；之後 K 改成 5，生成層沒有重跑，數字照舊。"
+GEN_NOTE = "RAGAS 於 2026-11-17 在新版語料、K=5 設定重跑；GPT 複查是前一版語料那次答案的複查，沒有重跑。"
 
 
 def _e2e(d) -> str:
@@ -466,7 +466,7 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             f"我原本以為{HYBRID}會更好。數據看不出來，所以選比較簡單的 bge-m3。" if df and df["lo"] <= 0 <= df["hi"] else None,
             f"問單一公司取前 {r.DEFAULT_K} 段；問全部公司，每家取 {r.PER_COMPANY} 段。"],
         4: ["找得到還不夠，答案也要有依據。",
-            f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是取前 3 段時量的，之後改成取前 5 段，我還沒有重跑。" if g else None,
+            f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是 2026-11-17 在新版語料、取前 5 段重跑的結果。" if g else None,
             "但評審和生成都是 DeepSeek，可能偏愛自己的答案。" if g else None,
             f"所以另請 GPT 複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None,
             "這只量有沒有依據，不量對不對。" if g else None,

@@ -1,0 +1,29 @@
+Loading weights:   0%|          | 0/391 [00:00<?, ?it/s]Loading weights: 100%|██████████| 391/391 [00:00<00:00, 29841.56it/s]
+questions:u02 ok ok 查無
+questions:u03 ok ok 查無
+questions:u06 ok ok 查無
+questions:u07 ok ok 查無
+questions:u08 ok ok 查無
+questions_heldout:h26 low None 
+questions_heldout:h27 ok ok 查無
+questions_heldout:h28 low None 
+questions_heldout:h29 ok ok 查無
+questions_heldout:h30 low None 
+questions_heldout:h31 ok ok 查無
+questions_heldout:h32 ok ok 查無
+questions_heldout:h33 ok ok 查無
+questions_heldout:h34 low None 
+questions_heldout:h35 low None 
+questions_heldout:h36 low None 
+questions_heldout:h37 low None 
+questions_heldout:h38 low None 
+questions_heldout:h39 low None 
+questions_real:r14 ok ok 查無
+questions_real:r15 ok ok 查無
+questions_real:r16 ok ok 資料中沒有提到員工托嬰服務。
+questions_real:r17 ok ok 查無
+questions_real:r18 low None 
+questions_real:r19 ok ok 查無
+questions_cross:u01 low None 
+questions_cross:u02 low None 
+題數 27 DeepSeek 呼叫 15

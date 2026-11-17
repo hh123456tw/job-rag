@@ -104,7 +104,7 @@ def test_ragas_slide_numbers_and_the_self_judge_note(client, root):  # noqa: F81
     a = re.findall(r'data-k="(\w+)" data-v="([\d.e-]+)"', sec)
     assert [(k, float(v)) for k, v in a] == [("faithfulness", d["generation"]["faithfulness"]), ("answer_relevancy", d["generation"]["answer_relevancy"])]
     assert re.search(rf'data-v="{d["cross"]["supported"]}" data-n="{d["cross"]["claims"]}"', sec)
-    assert "同模型自評可能偏樂觀" in sec and "K=3" in sec
+    assert "同模型自評可能偏樂觀" in sec and "K=5" in sec
 
 
 def test_funnel_uses_end_to_end_file_and_links_to_threshold(client, root):  # noqa: F811

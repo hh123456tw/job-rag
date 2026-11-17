@@ -1,30 +1,28 @@
 {
- "n_answerable": 25,
- "n_scored_candidates": 23,
+ "n_answerable": 26,
+ "n_scored_candidates": 24,
  "gated": [
   "h11",
   "h21"
  ],
  "model_not_found": [],
  "context_mismatch": [],
- "unanswerable_given_answer": [
-  "h27"
- ],
+ "unanswerable_given_answer": [],
  "stats": {
   "faithfulness": {
-   "n": 23,
-   "mean": 0.9620427881297448,
+   "n": 24,
+   "mean": 0.9780844155844156,
    "ci95": [
-    0.9089026915113874,
+    0.9372294372294371,
     1.0
    ]
   },
   "answer_relevancy": {
-   "n": 23,
-   "mean": 0.8623787832368939,
+   "n": 24,
+   "mean": 0.8776714033862815,
    "ci95": [
-    0.8054319917237543,
-    0.9160672238711427
+    0.8184694950229172,
+    0.9280598792030771
    ]
   }
  },
@@ -33,25 +31,25 @@
    "id": "h01",
    "question": "EPS 多少？",
    "company": "台灣大哥大",
-   "answer": "根據段落 [1]，2025 全年稅後純益 144.4 億元，年增 4%，EPS 為 4.77 元，創 7 年新高 [1]。另段落 [1] 也提到 2024 年 EPS 為 4.57 元 [1]。",
+   "answer": "EPS 的數字依不同期間而不同：\n\n- 2025 年全年 EPS 為 4.77 元 [1][2]。\n- 2025 年第四季 EPS 為 1.28 元 [1]。\n- 2026 年第三季 EPS 為 1.4 元；前三季累計 EPS 為 4.26 元 [3]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.6427273967422782,
+   "answer_relevancy": 0.8340184924994092,
    "error": null
   },
   {
    "id": "h02",
    "question": "用什麼雲端？",
    "company": "聯合報",
-   "answer": "使用 Google Cloud，具體包含 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions [1][2]。",
+   "answer": "聯合報系使用 Google Cloud [1][2][3]。使用的產品包括 BigQuery、Vertex AI、Compute Engine、Google Kubernetes Engine（GKE）與 Cloud Functions [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.7287511411891922,
+   "answer_relevancy": 0.6655265215487677,
    "error": null
   },
   {
    "id": "h03",
    "question": "董事長是誰？",
    "company": "叡揚資訊",
-   "answer": "董事長是張培鏞（代表人）[1][2]。",
+   "answer": "董事長是張培鏞（代表人）[2]。",
    "faithfulness": 1.0,
    "answer_relevancy": 0.9999999999996964,
    "error": null
@@ -60,52 +58,52 @@
    "id": "h04",
    "question": "公司在哪裡？",
    "company": "神通資訊",
-   "answer": "公司總部位於台北市內湖區堤頂大道二段187號 [1][2]。",
+   "answer": "公司在台北市內湖區堤頂大道二段187號 [1][5]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.8432248639450659,
+   "answer_relevancy": 0.919060299689769,
    "error": null
   },
   {
    "id": "h05",
    "question": "什麼時候上櫃？",
    "company": "藍新資訊",
-   "answer": "公司於 2026-10-27 掛牌上櫃，承銷價 68 元，開盤 73.7 元 [1][4]。",
+   "answer": "藍新資訊於 2026 年 10 月以承銷價每股 68 元掛牌上櫃 [1]。依報導，掛牌日為 2026-10-27 [2][3]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.7995483324716183,
+   "answer_relevancy": 0.6558268704487692,
    "error": null
   },
   {
    "id": "h06",
    "question": "海外有哪些據點？",
    "company": "凱基證券",
-   "answer": "凱基證券的海外據點有：香港、泰國、新加坡、印尼、中國大陸（公司自述）[1]。",
+   "answer": "根據段落 [1]，凱基證券的海外據點包括：香港、泰國、新加坡、印尼、中國大陸（公司自述）。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.7362387395596617,
+   "answer_relevancy": 0.7327156111624243,
    "error": null
   },
   {
    "id": "h07",
    "question": "客戶是哪些類型？",
    "company": "華電聯網",
-   "answer": "依段落 [1]，華電聯網 2025 年的客戶組合是：企業 44.1%、政府 31.5%、電信 24.4%（公司自述）[1]。",
+   "answer": "華電聯網的客戶類型包括：政府單位、電信業、一般企業 [1]。以2025年客戶組成來看，企業占44.1%、政府占31.5%、電信占24.4% [2][3]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.5441685458580942,
+   "answer_relevancy": 0.73423793595174,
    "error": null
   },
   {
    "id": "h08",
    "question": "股利配多少？",
    "company": "中華網龍",
-   "answer": "2025 年配發 0.33 元現金股利，是 12 年來首次配息 [1]。",
+   "answer": "根據段落，2025 年配發現金股利 0.33 元，為 12 年來首次配息 [1][2]；2026 年股息除息日為 2026 年 7 月 17 日 [2]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.7458650494837111,
+   "answer_relevancy": 0.7323244189044607,
    "error": null
   },
   {
    "id": "h09",
    "question": "遠振資訊的資本額是多少？",
    "company": null,
-   "answer": "遠振資訊的資本額，段落中有兩組說法：\n\n- [1] 記載資本總額 20,000,000 元，實收資本額 16,054,500 元（第三方彙整資料）。\n- [2] 記載資本額 1300 萬元。\n\n兩者不一致，資料中沒有說明差異原因。",
+   "answer": "遠振資訊的資本額有兩種說法：資本總額為 20,000,000 元、實收資本額為 16,054,500 元 [1]；另一處則寫資本額 1300 萬元 [2]。",
    "faithfulness": 1.0,
    "answer_relevancy": 1.0,
    "error": null
@@ -114,25 +112,25 @@
    "id": "h10",
    "question": "數據立的續約率是多少？",
    "company": null,
-   "answer": "根據 [5]，文中稱「90% 續約」，但該篇為廣編／業配（sponsored by Data-DI）性質，公司自述與獎項也未經主辦單位查證。資料中沒有提到獨立報導的續約率。",
+   "answer": "根據 [5]，Business Next 的廣編文章中提到「90% 續約」。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.589211104058997,
+   "answer_relevancy": 0.691761359819727,
    "error": null
   },
   {
    "id": "h12",
    "question": "宏碁雲架構的母公司是誰？",
    "company": null,
-   "answer": "宏碁雲架構的母公司是安碁資訊股份有限公司（ACSI，6690）[1]。資料也提到它是國內首家 IPO 資安服務商安碁資訊的子公司（公司自述）[2]。",
+   "answer": "宏碁雲架構的母公司是安碁資訊股份有限公司（ACSI，6690）[1]。資料也提到它是安碁資訊的子公司（公司自述）[2]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9931817017405186,
+   "answer_relevancy": 0.9915340942030517,
    "error": null
   },
   {
    "id": "h13",
    "question": "典凡科技的資深網路架構師年薪多少？",
    "company": null,
-   "answer": "典凡科技資深網路架構師的年薪為 1,500,000 元以上 [1][4][5]。",
+   "answer": "典凡科技資深網路架構師的年薪為 1,500,000 元以上 [1][4]。",
    "faithfulness": 1.0,
    "answer_relevancy": 0.9945265386556592,
    "error": null
@@ -141,9 +139,9 @@
    "id": "h14",
    "question": "宏碁雲架構的雲端維運工程師月薪多少？",
    "company": null,
-   "answer": "根據 [1] 與 [5]，雲端維運工程師的月薪為 37,000 元以上。",
+   "answer": "宏碁雲架構的雲端維運工程師月薪為 37,000 元以上 [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9258509756771832,
+   "answer_relevancy": 0.9989788896032347,
    "error": null
   },
   {
@@ -159,106 +157,110 @@
    "id": "h16",
    "question": "數據立的產品維運工程師要會哪些工具？",
    "company": null,
-   "answer": "根據 [1]，數據立的產品維運工程師必須精通 Linux、Docker、Grafana + Prometheus，並具備 Kafka、Nginx、DNS／SSL，以及 Shell、Python 3.9+、Java JDK 17+ 的日誌排查能力。加分條件是 Hadoop、Elasticsearch、Doris、ClickHouse、Kibana [1]。另外，[4] 的職缺列表備註提到工具包括 Linux、Java、MySQL、Hadoop、K8s、Shell、LLM、Claude [4][5]。",
+   "answer": "根據 [1] 和 [5]，產品維運工程師要會的工具如下：\n\n**必要條件（[1]）**：\n- 精通 Linux\n- 精通 Docker、Grafana + Prometheus\n- Kafka、Nginx、DNS／SSL\n- Shell、Python 3.9+、Java JDK 17+ 日誌排查\n\n**加分條件（[1]）**：\n- Hadoop、Elasticsearch、Doris、ClickHouse、Kibana\n\n**公司頁工具欄列出的（[5]）**：\n- Linux、Java、MySQL、Hadoop、K8s、Shell、LLM、Claude\n\n另外，[1] 提到需 3 年以上經驗、大學以上學歷，待遇面議，工作地點在中山區。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9498081023007775,
+   "answer_relevancy": 0.8927970006018361,
    "error": null
   },
   {
    "id": "h17",
    "question": "神通資訊的 MiTAC Agent Builder 是什麼產品？",
    "company": null,
-   "answer": "神通資訊（公司自述）有三個核心，其中之一是 MiTAC Agent Builder 企業 AI 一體機 [1]。第三方資料指出，MiTAC Agent Builder 於 2026-04-23 與 AMD、撼訊科技共同發表，可零程式碼建 Agent、決策可稽核；硬體為 AMD Ryzen AI Max+ 395 與 Radeon AI PRO R9700 [1]。另有第三方報導提到伺服器版為神雲 TN85-B8261 搭 EPYC 與 Instinct MI350P，並指出兩篇報導的硬體不同，可能是不同機型 [2]。",
+   "answer": "神通資訊的 MiTAC Agent Builder 是企業 AI 一體機，於 2026 年 4 月 23 日與 AMD 及撼訊科技共同發表。軟體是零程式碼的 Agent 建立工具，不需技術背景即可使用，決策脈絡、運作規則與資料來源可追溯；硬體採 AMD 平台 [1]。2026 年 7 月 AI WAVE 展出的伺服器版本，底層為神雲 TN85-B8261 2U 機型，搭配 AMD EPYC 9004／9005 系列處理器與 AMD Instinct MI350P 顯示卡，軟體面是完全地端部署、以 RAG 做知識檢索、低程式碼／無程式碼的拖拉式介面 [5]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.8352797613273287,
+   "answer_relevancy": 0.9826795446647694,
    "error": null
   },
   {
    "id": "h18",
    "question": "凱基證券 2026 上半年的稅後純益是多少？",
    "company": null,
-   "answer": "凱基證券 2026 上半年稅後純益為 179.4 億元，年增 383% [1][3]。",
+   "answer": "根據段落 [1] 和 [4]，凱基證券 2026 上半年的稅後純益是 179.4 億元，年增 383%。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9986405578687948,
+   "answer_relevancy": 0.9999999999998016,
    "error": null
   },
   {
    "id": "h19",
    "question": "華電聯網的高級工程師（高雄）資料庫職缺要會哪些資料庫？",
    "company": null,
-   "answer": "華電聯網高級工程師（高雄）（資料庫）職缺要求會 MySQL、Oracle、PL/SQL 及 Stored Procedure [1]。",
+   "answer": "華電聯網「高級工程師（高雄）資料庫」職缺要求 Oracle 與 MySQL 至少熟悉一種，擅長工具欄列出 MySQL、Oracle、PL/SQL [1]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9452585317128391,
+   "answer_relevancy": 0.953553242035161,
    "error": null
   },
   {
    "id": "h20",
    "question": "叡揚資訊 2026 前三季的營收是多少？",
    "company": null,
-   "answer": "叡揚資訊 2026 前三季營收為 15.34 億，年增 6.58% [2]。",
+   "answer": "叡揚資訊 2026 前三季營收為 15.34 億元，年增 6.58% [3]。",
    "faithfulness": 1.0,
-   "answer_relevancy": 0.9984539359763862,
+   "answer_relevancy": 0.9992269679881923,
    "error": null
   },
   {
    "id": "h22",
    "question": "哪幾家公司的職缺會用到 VMware？",
    "company": null,
-   "answer": "藍新資訊：平台包含 VMware 虛擬化 [1]。\n台灣大哥大：資料沒寫。\n華電聯網：資料沒寫。\n叡揚資訊：資料沒寫。\n凱基證券：資料沒寫。\n中華網龍：資料沒寫。\n神通資訊：資料沒寫。\n聯合報：資料沒寫。",
-   "faithfulness": 1.0,
-   "answer_relevancy": 0.8548984384393954,
+   "answer": "藍新資訊：平台包含 VMware 虛擬化 [1]；官網列出的虛擬化平台包括 VMware、Hyper-V 與 Nutanix KVM [9]。\n神通資訊：擅長工具包含 VMware [4]。\n華電聯網：雲端工程師職缺的擅長工具包含 VMware [5]。\n台灣大哥大：資料沒寫。\n中華網龍：資料沒寫。\n叡揚資訊：資料沒寫。\n聯合報：資料沒寫。\n凱基證券：資料沒寫。",
+   "faithfulness": 0.5454545454545454,
+   "answer_relevancy": 0.8698115171491514,
    "error": null
   },
   {
    "id": "h23",
    "question": "哪家公司有做 AI Agent 的產品？",
    "company": null,
-   "answer": "凱基證券：資料中沒有提到有做 AI Agent 的產品；職缺提到開發自主決策 AI Agent、串接 RPA 與內部系統 [1]。\n神通資訊：公司自述的產品沒有寫 AI Agent；第三方資料提到 MiTAC Agent Builder 企業 AI 一體機，可零程式碼建 Agent [2]。\n叡揚資訊：發表 InsAI（地端 VLM），C.ai 3.0 為 Agentic Portal，並研發 Agentic AI／Harness [4]；C.ai 對話服務平台在 2026 報導稱為 Agentic Portal [8]。\n藍新資訊：職缺提到 Agentic AI、RAG、Workflow [7]。\n華電聯網：自研產品有 SmartQ LAS 企業專屬生成式 AI 平台，資料中沒有提到 AI Agent 產品 [11]。\n台灣大哥大：職缺列表出現「AI Agent 導入」字樣 [5]，資料中沒有提到 AI Agent 產品。\n中華網龍：職缺提到用 AI 工具維護與開發遊戲，資料中沒有提到 AI Agent 產品 [14]。\n聯合報：資料中沒有提到 AI Agent 產品 [15][16]。",
-   "faithfulness": 0.8888888888888888,
-   "answer_relevancy": 0.8707567440947012,
+   "answer": "神通資訊：有 Agent Builder 企業 AI 一體機，軟體是零程式碼的 Agent 建立工具，決策可稽核 [1][6]。  \n凱基證券：有「AI Agent 智慧牧羊犬」，把 AI Agent 與 RPA 整合 [2]。  \n台灣大哥大：有 MyAgent 企業 AI 代理平台 [4]。  \n叡揚資訊：資料提到 Agentic AI、InsAI 與公文 Copilot，並介紹 Agentic RAG、MCP [5]；另有 C.ai 3.0 為 Agentic Portal [7]。  \n華電聯網：SmartQ LAS 提供對話式服務與任務自動化 [8]。  \n藍新資訊：服務範圍包含 AI Agent 整合 [14]。  \n中華網龍：AI 用在遊戲開發流程與玩法，例如《尋秦記》的 AI 夥伴 [13]。  \n聯合報：資料沒寫。",
+   "faithfulness": 0.9285714285714286,
+   "answer_relevancy": 0.9247815176917559,
    "error": null
   },
   {
    "id": "h24",
    "question": "哪些公司使用 Google Cloud？",
    "company": null,
-   "answer": "聯合報：使用 Google Cloud，包括 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions [1]；2018 起把網站與分析搬上 Google Cloud [2]。\n藍新資訊：資料沒寫。\n神通資訊：代理產品包括 Google Cloud（公司自述） [5]。\n叡揚資訊：資料沒寫。\n華電聯網：資料沒寫。\n中華網龍：資料沒寫。\n凱基證券：資料沒寫。\n台灣大哥大：資料沒寫。",
-   "faithfulness": 0.5714285714285714,
-   "answer_relevancy": 0.9335457076088457,
+   "answer": "聯合報系：新聞網站與資料分析搬到 Google Cloud，使用 BigQuery、Vertex AI、Compute Engine、GKE、Cloud Functions [1]；雲平台為 Google Cloud [2]。\n神通資訊：代理產品包括 Google Cloud（公司自述）[7]。\n\n其他公司資料沒寫使用 Google Cloud：叡揚資訊 [3][6]、藍新資訊 [4][5]、華電聯網 [9][11]、台灣大哥大 [10][15]、中華網龍 [12][14]、凱基證券 [13][16]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9626096162958424,
    "error": null
   },
   {
    "id": "h25",
    "question": "哪些公司的職缺要會 C#？",
    "company": null,
-   "answer": "凱基證券：資訊部有 C# 全端技術工程師，技能為 C#、WinForm、MS SQL、T-SQL 效能 [1]；另有 C#／ASP.NET 全端工程師，擅長工具為 C#、ASP.NET、VueJS [2]。\n神通資訊：資料沒寫。\n叡揚資訊：產品開發工程師(21020201A) 必要 C#、ASP.NET Core [5]；另有工具列 C#、ASP.NET、VB.NET、MS SQL、PL/SQL [7]。\n中華網龍：AI應用遊戲工程師內文要求 C++／C#、Unity、Git [6]。\n華電聯網：(C#)資深軟體工程師技能為 C#、ASP.NET、Web A…[8]。\n台灣大哥大：資料沒寫。\n藍新資訊：資料沒寫。\n聯合報：資料沒寫。",
-   "faithfulness": 0.6666666666666666,
-   "answer_relevancy": 0.9058978183478952,
+   "answer": "凱基證券：職缺【資訊部】C# 全端技術工程師要求必備 C#.NET 開發經驗，擅長工具含 C#、WinForm、MS SQL [1]；職缺【資訊部】C#/ASP.net全端工程師必備 2 年以上 C#／ASP.NET（MVC 或 ASP.NET Core）等技能 [3]。\n華電聯網：(C#)資深軟體工程師必備 C# 開發 2 年以上 [2]；高級工程師（高雄）資料庫職缺的資料中沒有提到要會 C# [16]。\n神通資訊：C037CCE_駐點工程師以 C#、ASP.NET 等做程式新增與修改，擅長工具含 C# [4]；C003CDG_軟體工程師職缺的資料中沒有提到要會 C# [5]。\n中華網龍：AI應用遊戲工程師要求熟悉或精通 C++、C# [7]；AI 應用研發工程師職缺的資料中沒有提到要會 C# [6]。\n叡揚資訊：[校園專區-台北].NET程式設計師必備擅長 C#.NET，工具含 C# [9]；.NET 軟體設計師(高雄)職缺的資料中沒有提到要會 C# [10]。\n聯合報：資料科學資深經理職缺的資料中沒有提到要會 C# [8]。\n台灣大哥大：I106 .Net工程師職缺的資料中沒有提到要會 C# [11]。\n藍新資訊：資料中沒有提到要會 C# 的職缺 [15]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9602980441796009,
+   "error": null
+  },
+  {
+   "id": "h40",
+   "question": "哪間公司有員工社團？",
+   "company": null,
+   "answer": "叡揚資訊：有社團活動 [1]。",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.5689671707880138,
    "error": null
   }
  ],
  "low_ids": [
-  "h23",
-  "h24",
-  "h25"
+  "h22"
  ],
  "reasons": {
-  "h23": "跨公司 8 家。神通一行寫「公司自述的產品沒有寫 AI Agent」，但段落 [2] 的【自述】就列了 MiTAC Agent Builder，這句與段落相反；其餘多行是「資料中沒有提到」這類沒有出處可對的否定句，評審難以認定有依據。其他正面陳述（凱基、叡揚、藍新）在段落找得到。",
-  "h24": "跨公司 8 家，答案 8 行裡有 6 行是「資料沒寫」；這類否定句沒有段落可對，評審多半判無依據，分數被拉低。正面陳述（聯合報、神通）在段落 [1][2][5] 找得到。",
-  "h25": "跨公司 8 家，答案 8 行裡有 4 行是「資料沒寫」（神通、台灣大哥大、藍新、聯合報），同樣沒有段落可對。凱基、叡揚、中華網龍、華電的 C# 陳述在段落找得到（華電那行結尾是段落被截斷的「Web A…」）。"
+  "h22": null
  },
  "low_ar_ids": [
   "h01",
   "h02",
-  "h04",
   "h05",
   "h06",
   "h07",
   "h08",
   "h10",
-  "h17",
+  "h16",
   "h22",
-  "h23"
+  "h40"
  ],
- "note": "答案相關性是第二次補量（先停掉主服務騰出記憶體，用本機 bge-m3 嵌入）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案沿用票 39（K=5、補公司名、已指定公司門檻 0.62）。"
+ "note": "答案相關性是第二次補量（先停掉主服務騰出記憶體，用本機 bge-m3 嵌入）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案是 2026-11-17 在新版語料上由 run_heldout_answers.py 重新生成的（K=5、補公司名、已指定公司門檻 0.62）。"
 }

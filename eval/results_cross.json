@@ -6,20 +6,20 @@
  "n_companies": 8,
  "index_companies": 13,
  "tops": {
-  "x01": 0.5707922577857971,
-  "x02": 0.562466025352478,
-  "x03": 0.6620873212814331,
-  "x04": 0.5595641136169434,
-  "x05": 0.569949746131897,
+  "x01": 0.5439647436141968,
+  "x02": 0.5707817673683167,
+  "x03": 0.6403940916061401,
+  "x04": 0.542574942111969,
+  "x05": 0.589841365814209,
   "x06": 0.48392388224601746,
-  "x07": 0.6452034711837769,
-  "x08": 0.690908670425415,
+  "x07": 0.6415702104568481,
+  "x08": 0.6617487668991089,
   "x09": 0.6005944013595581,
   "x10": 0.539951741695404,
-  "x11": 0.6252767443656921,
+  "x11": 0.6224963665008545,
   "x12": 0.5666513442993164,
-  "u01": 0.5100035667419434,
-  "u02": 0.5278022289276123,
+  "u01": 0.517454981803894,
+  "u02": 0.5278022885322571,
   "u03": 0.5133603811264038
  },
  "per": {
@@ -30,13 +30,13 @@
     "status": "ok",
     "n_hits": 8,
     "companies": 8,
-    "n_relevant": 8,
-    "n_correct": 7,
-    "coverage": 0.875,
-    "chars": 3041,
-    "est_tokens": 2129,
-    "ms": 52.0,
-    "top": 0.5707922577857971
+    "n_relevant": 7,
+    "n_correct": 5,
+    "coverage": 0.7142857142857143,
+    "chars": 3025,
+    "est_tokens": 2118,
+    "ms": 56.3,
+    "top": 0.5439647436141968
    },
    {
     "id": "x02",
@@ -47,10 +47,10 @@
     "n_relevant": 8,
     "n_correct": 6,
     "coverage": 0.75,
-    "chars": 2281,
-    "est_tokens": 1597,
-    "ms": 51.6,
-    "top": 0.562466025352478
+    "chars": 2806,
+    "est_tokens": 1964,
+    "ms": 56.1,
+    "top": 0.5707817673683167
    },
    {
     "id": "x03",
@@ -59,12 +59,12 @@
     "n_hits": 8,
     "companies": 8,
     "n_relevant": 8,
-    "n_correct": 7,
-    "coverage": 0.875,
-    "chars": 2569,
-    "est_tokens": 1798,
-    "ms": 54.3,
-    "top": 0.6620873212814331
+    "n_correct": 6,
+    "coverage": 0.75,
+    "chars": 2879,
+    "est_tokens": 2015,
+    "ms": 55.0,
+    "top": 0.6403940916061401
    },
    {
     "id": "x04",
@@ -72,13 +72,13 @@
     "status": "ok",
     "n_hits": 8,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 7,
-    "coverage": 1.0,
-    "chars": 3714,
-    "est_tokens": 2600,
-    "ms": 55.0,
-    "top": 0.5595641136169434
+    "n_relevant": 4,
+    "n_correct": 3,
+    "coverage": 0.75,
+    "chars": 2499,
+    "est_tokens": 1749,
+    "ms": 54.9,
+    "top": 0.542574942111969
    },
    {
     "id": "x05",
@@ -87,12 +87,12 @@
     "n_hits": 8,
     "companies": 8,
     "n_relevant": 7,
-    "n_correct": 4,
-    "coverage": 0.5714285714285714,
-    "chars": 2450,
-    "est_tokens": 1715,
-    "ms": 54.6,
-    "top": 0.569949746131897
+    "n_correct": 5,
+    "coverage": 0.7142857142857143,
+    "chars": 3543,
+    "est_tokens": 2480,
+    "ms": 54.7,
+    "top": 0.589841365814209
    },
    {
     "id": "x06",
@@ -100,12 +100,12 @@
     "status": "low",
     "n_hits": 8,
     "companies": 8,
-    "n_relevant": 4,
+    "n_relevant": 5,
     "n_correct": 0,
     "coverage": 0.0,
-    "chars": 2574,
-    "est_tokens": 1802,
-    "ms": 54.1,
+    "chars": 3753,
+    "est_tokens": 2627,
+    "ms": 53.9,
     "top": 0.48392388224601746
    },
    {
@@ -114,13 +114,13 @@
     "status": "ok",
     "n_hits": 8,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 2,
-    "coverage": 0.2857142857142857,
-    "chars": 2728,
-    "est_tokens": 1910,
-    "ms": 51.9,
-    "top": 0.6452034711837769
+    "n_relevant": 8,
+    "n_correct": 3,
+    "coverage": 0.375,
+    "chars": 3767,
+    "est_tokens": 2637,
+    "ms": 54.3,
+    "top": 0.6415702104568481
    },
    {
     "id": "x08",
@@ -128,13 +128,13 @@
     "status": "ok",
     "n_hits": 8,
     "companies": 8,
-    "n_relevant": 4,
-    "n_correct": 1,
-    "coverage": 0.25,
-    "chars": 3600,
-    "est_tokens": 2520,
-    "ms": 52.7,
-    "top": 0.690908670425415
+    "n_relevant": 7,
+    "n_correct": 2,
+    "coverage": 0.2857142857142857,
+    "chars": 3263,
+    "est_tokens": 2284,
+    "ms": 54.6,
+    "top": 0.6617487668991089
    },
    {
     "id": "x09",
@@ -145,9 +145,9 @@
     "n_relevant": 8,
     "n_correct": 7,
     "coverage": 0.875,
-    "chars": 3185,
-    "est_tokens": 2230,
-    "ms": 53.0,
+    "chars": 3123,
+    "est_tokens": 2186,
+    "ms": 54.4,
     "top": 0.6005944013595581
    },
    {
@@ -157,11 +157,11 @@
     "n_hits": 8,
     "companies": 8,
     "n_relevant": 8,
-    "n_correct": 3,
-    "coverage": 0.375,
-    "chars": 3260,
-    "est_tokens": 2282,
-    "ms": 54.8,
+    "n_correct": 4,
+    "coverage": 0.5,
+    "chars": 3115,
+    "est_tokens": 2180,
+    "ms": 56.6,
     "top": 0.539951741695404
    },
    {
@@ -170,13 +170,13 @@
     "status": "ok",
     "n_hits": 8,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 3,
-    "coverage": 0.42857142857142855,
-    "chars": 2932,
-    "est_tokens": 2052,
-    "ms": 54.8,
-    "top": 0.6252767443656921
+    "n_relevant": 8,
+    "n_correct": 4,
+    "coverage": 0.5,
+    "chars": 2655,
+    "est_tokens": 1858,
+    "ms": 55.6,
+    "top": 0.6224963665008545
    },
    {
     "id": "x12",
@@ -184,12 +184,12 @@
     "status": "ok",
     "n_hits": 8,
     "companies": 8,
-    "n_relevant": 6,
+    "n_relevant": 7,
     "n_correct": 1,
-    "coverage": 0.16666666666666666,
+    "coverage": 0.14285714285714285,
     "chars": 3520,
     "est_tokens": 2464,
-    "ms": 52.9,
+    "ms": 53.3,
     "top": 0.5666513442993164
    },
    {
@@ -201,10 +201,10 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 1977,
-    "est_tokens": 1384,
-    "ms": 52.7,
-    "top": 0.5100035667419434
+    "chars": 3623,
+    "est_tokens": 2536,
+    "ms": 55.0,
+    "top": 0.517454981803894
    },
    {
     "id": "u02",
@@ -215,10 +215,10 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 1472,
-    "est_tokens": 1030,
-    "ms": 53.8,
-    "top": 0.5278022289276123
+    "chars": 2662,
+    "est_tokens": 1863,
+    "ms": 53.5,
+    "top": 0.5278022885322571
    },
    {
     "id": "u03",
@@ -229,9 +229,9 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 3293,
-    "est_tokens": 2305,
-    "ms": 53.5,
+    "chars": 3093,
+    "est_tokens": 2165,
+    "ms": 53.4,
     "top": 0.5133603811264038
    }
   ],
@@ -242,13 +242,13 @@
     "status": "ok",
     "n_hits": 16,
     "companies": 8,
-    "n_relevant": 8,
+    "n_relevant": 7,
     "n_correct": 7,
-    "coverage": 0.875,
-    "chars": 5848,
-    "est_tokens": 4094,
-    "ms": 51.5,
-    "top": 0.5707922577857971
+    "coverage": 1.0,
+    "chars": 6429,
+    "est_tokens": 4500,
+    "ms": 54.7,
+    "top": 0.5439647436141968
    },
    {
     "id": "x02",
@@ -257,12 +257,12 @@
     "n_hits": 16,
     "companies": 8,
     "n_relevant": 8,
-    "n_correct": 7,
-    "coverage": 0.875,
-    "chars": 4577,
-    "est_tokens": 3204,
-    "ms": 52.3,
-    "top": 0.562466025352478
+    "n_correct": 6,
+    "coverage": 0.75,
+    "chars": 5719,
+    "est_tokens": 4003,
+    "ms": 52.9,
+    "top": 0.5707817673683167
    },
    {
     "id": "x03",
@@ -271,12 +271,12 @@
     "n_hits": 16,
     "companies": 8,
     "n_relevant": 8,
-    "n_correct": 7,
-    "coverage": 0.875,
-    "chars": 5637,
-    "est_tokens": 3946,
-    "ms": 52.3,
-    "top": 0.6620873212814331
+    "n_correct": 8,
+    "coverage": 1.0,
+    "chars": 6734,
+    "est_tokens": 4714,
+    "ms": 55.5,
+    "top": 0.6403940916061401
    },
    {
     "id": "x04",
@@ -284,13 +284,13 @@
     "status": "ok",
     "n_hits": 16,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 7,
+    "n_relevant": 4,
+    "n_correct": 4,
     "coverage": 1.0,
-    "chars": 7315,
-    "est_tokens": 5120,
-    "ms": 55.1,
-    "top": 0.5595641136169434
+    "chars": 5668,
+    "est_tokens": 3968,
+    "ms": 54.5,
+    "top": 0.542574942111969
    },
    {
     "id": "x05",
@@ -301,10 +301,10 @@
     "n_relevant": 7,
     "n_correct": 6,
     "coverage": 0.8571428571428571,
-    "chars": 5290,
-    "est_tokens": 3703,
-    "ms": 51.7,
-    "top": 0.569949746131897
+    "chars": 7032,
+    "est_tokens": 4922,
+    "ms": 54.7,
+    "top": 0.589841365814209
    },
    {
     "id": "x06",
@@ -312,12 +312,12 @@
     "status": "low",
     "n_hits": 16,
     "companies": 8,
-    "n_relevant": 4,
+    "n_relevant": 5,
     "n_correct": 1,
-    "coverage": 0.25,
-    "chars": 6389,
-    "est_tokens": 4472,
-    "ms": 52.3,
+    "coverage": 0.2,
+    "chars": 7494,
+    "est_tokens": 5246,
+    "ms": 54.3,
     "top": 0.48392388224601746
    },
    {
@@ -326,13 +326,13 @@
     "status": "ok",
     "n_hits": 16,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 4,
-    "coverage": 0.5714285714285714,
-    "chars": 5120,
-    "est_tokens": 3584,
-    "ms": 53.9,
-    "top": 0.6452034711837769
+    "n_relevant": 8,
+    "n_correct": 7,
+    "coverage": 0.875,
+    "chars": 7180,
+    "est_tokens": 5026,
+    "ms": 53.2,
+    "top": 0.6415702104568481
    },
    {
     "id": "x08",
@@ -340,13 +340,13 @@
     "status": "ok",
     "n_hits": 16,
     "companies": 8,
-    "n_relevant": 4,
-    "n_correct": 2,
-    "coverage": 0.5,
-    "chars": 6740,
-    "est_tokens": 4718,
-    "ms": 53.1,
-    "top": 0.690908670425415
+    "n_relevant": 7,
+    "n_correct": 3,
+    "coverage": 0.42857142857142855,
+    "chars": 6009,
+    "est_tokens": 4206,
+    "ms": 53.9,
+    "top": 0.6617487668991089
    },
    {
     "id": "x09",
@@ -357,9 +357,9 @@
     "n_relevant": 8,
     "n_correct": 8,
     "coverage": 1.0,
-    "chars": 6178,
-    "est_tokens": 4325,
-    "ms": 52.0,
+    "chars": 6553,
+    "est_tokens": 4587,
+    "ms": 55.7,
     "top": 0.6005944013595581
    },
    {
@@ -369,11 +369,11 @@
     "n_hits": 16,
     "companies": 8,
     "n_relevant": 8,
-    "n_correct": 3,
-    "coverage": 0.375,
-    "chars": 5909,
-    "est_tokens": 4136,
-    "ms": 54.1,
+    "n_correct": 5,
+    "coverage": 0.625,
+    "chars": 6669,
+    "est_tokens": 4668,
+    "ms": 54.5,
     "top": 0.539951741695404
    },
    {
@@ -382,13 +382,13 @@
     "status": "ok",
     "n_hits": 16,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 4,
-    "coverage": 0.5714285714285714,
-    "chars": 6394,
-    "est_tokens": 4476,
-    "ms": 53.4,
-    "top": 0.6252767443656921
+    "n_relevant": 8,
+    "n_correct": 6,
+    "coverage": 0.75,
+    "chars": 6233,
+    "est_tokens": 4363,
+    "ms": 56.1,
+    "top": 0.6224963665008545
    },
    {
     "id": "x12",
@@ -396,12 +396,12 @@
     "status": "ok",
     "n_hits": 16,
     "companies": 8,
-    "n_relevant": 6,
+    "n_relevant": 7,
     "n_correct": 2,
-    "coverage": 0.3333333333333333,
-    "chars": 6407,
-    "est_tokens": 4485,
-    "ms": 52.6,
+    "coverage": 0.2857142857142857,
+    "chars": 6409,
+    "est_tokens": 4486,
+    "ms": 59.0,
     "top": 0.5666513442993164
    },
    {
@@ -413,10 +413,10 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 4821,
-    "est_tokens": 3375,
-    "ms": 52.6,
-    "top": 0.5100035667419434
+    "chars": 6830,
+    "est_tokens": 4781,
+    "ms": 53.7,
+    "top": 0.517454981803894
    },
    {
     "id": "u02",
@@ -427,10 +427,10 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 3995,
-    "est_tokens": 2796,
-    "ms": 52.4,
-    "top": 0.5278022289276123
+    "chars": 6534,
+    "est_tokens": 4574,
+    "ms": 53.5,
+    "top": 0.5278022885322571
    },
    {
     "id": "u03",
@@ -441,9 +441,9 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 7175,
-    "est_tokens": 5022,
-    "ms": 52.3,
+    "chars": 6885,
+    "est_tokens": 4820,
+    "ms": 53.3,
     "top": 0.5133603811264038
    }
   ],
@@ -454,13 +454,13 @@
     "status": "ok",
     "n_hits": 24,
     "companies": 8,
-    "n_relevant": 8,
-    "n_correct": 8,
+    "n_relevant": 7,
+    "n_correct": 7,
     "coverage": 1.0,
-    "chars": 9003,
-    "est_tokens": 6302,
-    "ms": 52.7,
-    "top": 0.5707922577857971
+    "chars": 9427,
+    "est_tokens": 6599,
+    "ms": 52.6,
+    "top": 0.5439647436141968
    },
    {
     "id": "x02",
@@ -469,12 +469,12 @@
     "n_hits": 24,
     "companies": 8,
     "n_relevant": 8,
-    "n_correct": 8,
-    "coverage": 1.0,
-    "chars": 7304,
-    "est_tokens": 5113,
-    "ms": 52.2,
-    "top": 0.562466025352478
+    "n_correct": 7,
+    "coverage": 0.875,
+    "chars": 9524,
+    "est_tokens": 6667,
+    "ms": 53.5,
+    "top": 0.5707817673683167
    },
    {
     "id": "x03",
@@ -483,12 +483,12 @@
     "n_hits": 24,
     "companies": 8,
     "n_relevant": 8,
-    "n_correct": 7,
-    "coverage": 0.875,
-    "chars": 8528,
-    "est_tokens": 5970,
-    "ms": 52.5,
-    "top": 0.6620873212814331
+    "n_correct": 8,
+    "coverage": 1.0,
+    "chars": 9566,
+    "est_tokens": 6696,
+    "ms": 54.3,
+    "top": 0.6403940916061401
    },
    {
     "id": "x04",
@@ -496,13 +496,13 @@
     "status": "ok",
     "n_hits": 24,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 7,
+    "n_relevant": 4,
+    "n_correct": 4,
     "coverage": 1.0,
-    "chars": 10349,
-    "est_tokens": 7244,
-    "ms": 56.3,
-    "top": 0.5595641136169434
+    "chars": 9352,
+    "est_tokens": 6546,
+    "ms": 55.5,
+    "top": 0.542574942111969
    },
    {
     "id": "x05",
@@ -513,10 +513,10 @@
     "n_relevant": 7,
     "n_correct": 6,
     "coverage": 0.8571428571428571,
-    "chars": 8929,
-    "est_tokens": 6250,
+    "chars": 10185,
+    "est_tokens": 7130,
     "ms": 52.1,
-    "top": 0.569949746131897
+    "top": 0.589841365814209
    },
    {
     "id": "x06",
@@ -524,12 +524,12 @@
     "status": "low",
     "n_hits": 24,
     "companies": 8,
-    "n_relevant": 4,
-    "n_correct": 1,
-    "coverage": 0.25,
-    "chars": 10102,
-    "est_tokens": 7071,
-    "ms": 53.3,
+    "n_relevant": 5,
+    "n_correct": 2,
+    "coverage": 0.4,
+    "chars": 10801,
+    "est_tokens": 7561,
+    "ms": 53.0,
     "top": 0.48392388224601746
    },
    {
@@ -538,13 +538,13 @@
     "status": "ok",
     "n_hits": 24,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 4,
-    "coverage": 0.5714285714285714,
-    "chars": 8260,
-    "est_tokens": 5782,
-    "ms": 53.0,
-    "top": 0.6452034711837769
+    "n_relevant": 8,
+    "n_correct": 7,
+    "coverage": 0.875,
+    "chars": 10293,
+    "est_tokens": 7205,
+    "ms": 52.9,
+    "top": 0.6415702104568481
    },
    {
     "id": "x08",
@@ -552,13 +552,13 @@
     "status": "ok",
     "n_hits": 24,
     "companies": 8,
-    "n_relevant": 4,
-    "n_correct": 2,
-    "coverage": 0.5,
-    "chars": 9226,
-    "est_tokens": 6458,
-    "ms": 53.0,
-    "top": 0.690908670425415
+    "n_relevant": 7,
+    "n_correct": 3,
+    "coverage": 0.42857142857142855,
+    "chars": 8778,
+    "est_tokens": 6145,
+    "ms": 54.0,
+    "top": 0.6617487668991089
    },
    {
     "id": "x09",
@@ -569,9 +569,9 @@
     "n_relevant": 8,
     "n_correct": 8,
     "coverage": 1.0,
-    "chars": 8891,
-    "est_tokens": 6224,
-    "ms": 51.4,
+    "chars": 9720,
+    "est_tokens": 6804,
+    "ms": 53.1,
     "top": 0.6005944013595581
    },
    {
@@ -581,11 +581,11 @@
     "n_hits": 24,
     "companies": 8,
     "n_relevant": 8,
-    "n_correct": 3,
-    "coverage": 0.375,
-    "chars": 8713,
-    "est_tokens": 6099,
-    "ms": 55.5,
+    "n_correct": 5,
+    "coverage": 0.625,
+    "chars": 9406,
+    "est_tokens": 6584,
+    "ms": 56.1,
     "top": 0.539951741695404
    },
    {
@@ -594,13 +594,13 @@
     "status": "ok",
     "n_hits": 24,
     "companies": 8,
-    "n_relevant": 7,
-    "n_correct": 5,
-    "coverage": 0.7142857142857143,
-    "chars": 8739,
-    "est_tokens": 6117,
-    "ms": 53.0,
-    "top": 0.6252767443656921
+    "n_relevant": 8,
+    "n_correct": 6,
+    "coverage": 0.75,
+    "chars": 10052,
+    "est_tokens": 7036,
+    "ms": 58.6,
+    "top": 0.6224963665008545
    },
    {
     "id": "x12",
@@ -608,12 +608,12 @@
     "status": "ok",
     "n_hits": 24,
     "companies": 8,
-    "n_relevant": 6,
-    "n_correct": 4,
-    "coverage": 0.6666666666666666,
-    "chars": 8317,
-    "est_tokens": 5822,
-    "ms": 51.4,
+    "n_relevant": 7,
+    "n_correct": 5,
+    "coverage": 0.7142857142857143,
+    "chars": 9028,
+    "est_tokens": 6320,
+    "ms": 56.6,
     "top": 0.5666513442993164
    },
    {
@@ -625,10 +625,10 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 7455,
-    "est_tokens": 5218,
-    "ms": 51.3,
-    "top": 0.5100035667419434
+    "chars": 9821,
+    "est_tokens": 6875,
+    "ms": 52.7,
+    "top": 0.517454981803894
    },
    {
     "id": "u02",
@@ -639,10 +639,10 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 7170,
-    "est_tokens": 5019,
-    "ms": 52.5,
-    "top": 0.5278022289276123
+    "chars": 10230,
+    "est_tokens": 7161,
+    "ms": 53.8,
+    "top": 0.5278022885322571
    },
    {
     "id": "u03",
@@ -653,9 +653,9 @@
     "n_relevant": 0,
     "n_correct": 0,
     "coverage": null,
-    "chars": 9941,
-    "est_tokens": 6959,
-    "ms": 52.7,
+    "chars": 10807,
+    "est_tokens": 7565,
+    "ms": 52.3,
     "top": 0.5133603811264038
    }
   ]
@@ -663,7 +663,6 @@
  "relevant": {
   "x01": [
    "中華網龍",
-   "凱基證券",
    "叡揚資訊",
    "台灣大哥大",
    "神通資訊",
@@ -693,10 +692,7 @@
   ],
   "x04": [
    "中華網龍",
-   "凱基證券",
-   "叡揚資訊",
    "神通資訊",
-   "聯合報",
    "華電聯網",
    "藍新資訊"
   ],
@@ -713,22 +709,27 @@
    "凱基證券",
    "叡揚資訊",
    "台灣大哥大",
-   "神通資訊"
+   "神通資訊",
+   "聯合報"
   ],
   "x07": [
    "中華網龍",
    "凱基證券",
    "叡揚資訊",
    "台灣大哥大",
+   "神通資訊",
    "聯合報",
    "華電聯網",
    "藍新資訊"
   ],
   "x08": [
+   "凱基證券",
    "叡揚資訊",
    "台灣大哥大",
    "神通資訊",
-   "聯合報"
+   "聯合報",
+   "華電聯網",
+   "藍新資訊"
   ],
   "x09": [
    "中華網龍",
@@ -752,6 +753,7 @@
   ],
   "x11": [
    "中華網龍",
+   "凱基證券",
    "叡揚資訊",
    "台灣大哥大",
    "神通資訊",
@@ -765,6 +767,7 @@
    "台灣大哥大",
    "神通資訊",
    "聯合報",
+   "華電聯網",
    "藍新資訊"
   ],
   "u01": [],

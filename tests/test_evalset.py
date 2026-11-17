@@ -57,6 +57,19 @@ def test_unanswerable_keyword_found_in_corpus_is_rejected():
     assert any("鯨魚" in p for p in verify([U("u", ["鯨魚", "量子麵包"])], MINI))
 
 
+def test_status_may_carry_a_note_but_must_start_with_pending():
+    good = U("u", ["量子麵包"], status=PEND + "（gold 於 2026-11-17 更新）")
+    assert verify([good], MINI) == []
+    assert any("核對狀態" in p for p in verify([U("u", ["量子麵包"], status="已確認")], MINI))
+    assert any("核對狀態" in p for p in verify([U("u", ["量子麵包"], status="另註：" + PEND)], MINI))
+
+
+def test_reviewed_absence_keyword_is_skipped_but_others_still_checked():
+    ok = U("u", ["鯨魚"], absence_reviewed={"鯨魚": "命中段落是別家，已讀過"})
+    assert verify([ok], MINI) == []
+    assert any("河馬" in p for p in verify([U("u", ["鯨魚", "河馬"], absence_reviewed={"鯨魚": "x"})], MINI))
+
+
 def test_unanswerable_keyword_found_in_subfolder_is_rejected():
     assert verify([U("u", ["貓頭鷹"])], MINI)  # 104/A_甲科技.md
 
@@ -129,7 +142,7 @@ def test_real_question_set_composition():
     assert c["不可回答"] == 5 and all(c[t] > 0 for t in ("跨公司", "單一公司", "職缺"))
     assert c["跨公司"] <= 3  # 答案散在多處的題少放，金標容易漏列
     assert set(c) == {"跨公司", "單一公司", "職缺", "不可回答"}
-    assert all(q["status"] == PEND for q in qs)  # 只有使用者能改成已確認
+    assert all(q["status"].startswith(PEND) for q in qs)  # 只有使用者能改成已確認
     assert all("private" not in q for q in qs)
 
 

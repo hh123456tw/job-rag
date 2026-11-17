@@ -1,0 +1,23 @@
+{"note": "排擠測試：8 家展示公司的公司介紹類問題，只問公開事實。無 gold，由人讀前 5 名判斷是否含答案。",
+ "questions": [
+  {"id": "g01", "company": "台灣大哥大", "topic": "規模", "question": "台灣大哥大的資本額是多少？"},
+  {"id": "g02", "company": "台灣大哥大", "topic": "做什麼", "question": "台灣大哥大主要做哪些業務？"},
+  {"id": "g03", "company": "台灣大哥大", "topic": "財務", "question": "台灣大哥大最近的財報獲利如何？"},
+  {"id": "g04", "company": "聯合報", "topic": "做什麼", "question": "聯合報系的主要業務是什麼？"},
+  {"id": "g05", "company": "聯合報", "topic": "新聞", "question": "聯合報近期有什麼新聞？"},
+  {"id": "g06", "company": "叡揚資訊", "topic": "產品", "question": "叡揚資訊的主要產品有哪些？"},
+  {"id": "g07", "company": "叡揚資訊", "topic": "規模", "question": "叡揚資訊的資本額和員工人數是多少？"},
+  {"id": "g08", "company": "叡揚資訊", "topic": "技術", "question": "叡揚資訊用什麼技術？"},
+  {"id": "g09", "company": "神通資訊", "topic": "規模", "question": "神通資訊的資本額和員工規模是多少？"},
+  {"id": "g10", "company": "神通資訊", "topic": "做什麼", "question": "神通資訊主要做什麼業務？"},
+  {"id": "g11", "company": "藍新資訊", "topic": "產品", "question": "藍新資訊的主要產品與代理品牌有哪些？"},
+  {"id": "g12", "company": "藍新資訊", "topic": "新聞", "question": "藍新資訊近一年有什麼新聞？"},
+  {"id": "g13", "company": "凱基證券", "topic": "規模", "question": "凱基證券的資本額是多少？"},
+  {"id": "g14", "company": "凱基證券", "topic": "財務", "question": "凱基證券近期的財務表現如何？"},
+  {"id": "g15", "company": "凱基證券", "topic": "做什麼", "question": "凱基證券主要提供哪些業務？"},
+  {"id": "g16", "company": "華電聯網", "topic": "做什麼", "question": "華電聯網主要做什麼？"},
+  {"id": "g17", "company": "華電聯網", "topic": "規模", "question": "華電聯網的資本額和員工人數是多少？"},
+  {"id": "g18", "company": "華電聯網", "topic": "技術", "question": "華電聯網有哪些主要產品與技術？"},
+  {"id": "g19", "company": "中華網龍", "topic": "產品", "question": "中華網龍有哪些主要遊戲產品？"},
+  {"id": "g20", "company": "中華網龍", "topic": "規模", "question": "中華網龍的資本額和近期新聞是什麼？"}
+ ]}

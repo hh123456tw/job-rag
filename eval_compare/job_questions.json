@@ -1,0 +1,18 @@
+{"note": "職缺類自擬題。無 gold，由人讀前 5 名判斷。",
+ "questions": [
+  {"id": "v01", "question": "哪些職缺要會 Python？"},
+  {"id": "v02", "question": "哪些公司有 Java 後端工程師的職缺？"},
+  {"id": "v03", "question": "哪些職缺要會 FastAPI？"},
+  {"id": "v04", "question": "哪一家公司有 AI 工程師的職缺？"},
+  {"id": "v05", "question": "台灣大哥大的 Python 後端工程師薪資是多少？"},
+  {"id": "v06", "question": "神通資訊的 AI 工程師薪水多少？"},
+  {"id": "v07", "question": "中華網龍的 AI 應用研發工程師月薪多少？"},
+  {"id": "v08", "question": "台灣大哥大的職缺可以遠端工作嗎？"},
+  {"id": "v09", "question": "台灣大哥大的 Java 職缺需要出差嗎？"},
+  {"id": "v10", "question": "華電聯網有哪些職缺需要出差？"},
+  {"id": "v11", "question": "凱基證券有哪些 Python 相關職缺？"},
+  {"id": "v12", "question": "叡揚資訊有哪些軟體開發職缺？"},
+  {"id": "v13", "question": "藍新資訊有後端工程師職缺嗎？"},
+  {"id": "v14", "question": "聯合報系有哪些資料分析職缺？"},
+  {"id": "v15", "question": "哪些公司的職缺要會 Kubernetes？"}
+ ]}

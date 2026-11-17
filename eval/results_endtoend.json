@@ -1,95 +1,88 @@
 {
- "date": "2026-11-16",
- "method": "真 DeepSeek；網站實際路徑 /api/search + /api/answer",
- "note": "12 題；同一人出題；只跑一次；拒答＝答案為查無或被檢索門檻擋下",
+ "date": "2026-11-17",
+ "method": "真 DeepSeek；網站實際路徑 /api/search + /api/answer（新版語料）",
+ "note": "11 題；同一人出題；只跑一次；拒答＝答案為查無或被檢索門檻擋下；r20 因新語料已含答案改標為可回答，不在此列",
  "rows": [
   {
    "id": "u02",
-   "top_score": 0.692,
+   "top_score": 0.6694580316543579,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "u03",
-   "top_score": 0.649,
+   "top_score": 0.6505652666091919,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "u06",
-   "top_score": 0.671,
+   "top_score": 0.6713786125183105,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "u07",
-   "top_score": 0.658,
+   "top_score": 0.6646136045455933,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "u08",
-   "top_score": 0.7,
+   "top_score": 0.6622500419616699,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "r14",
-   "top_score": 0.642,
+   "top_score": 0.6282995343208313,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "r15",
-   "top_score": 0.626,
+   "top_score": 0.6519021987915039,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "r16",
-   "top_score": 0.663,
+   "top_score": 0.6573699116706848,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "r17",
-   "top_score": 0.672,
+   "top_score": 0.6602019667625427,
    "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
    "id": "r18",
-   "top_score": 0.532,
+   "top_score": 0.513980507850647,
    "search_status": "low",
-   "answer": null,
-   "refused": true
-  },
-  {
-   "id": "r19",
-   "top_score": 0.731,
-   "search_status": "ok",
    "answer": "查無",
    "refused": true
   },
   {
-   "id": "r20",
-   "top_score": 0.504,
-   "search_status": "low",
-   "answer": null,
+   "id": "r19",
+   "top_score": 0.7309716939926147,
+   "search_status": "ok",
+   "answer": "查無",
    "refused": true
   }
  ],
- "n": 12,
- "refused": 12,
- "by_gate": 2,
+ "n": 11,
+ "refused": 11,
+ "by_gate": 1,
  "by_answer_layer": 10
 }

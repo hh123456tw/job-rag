@@ -68,7 +68,7 @@ def verify(questions: list[dict], corpus=None) -> list[str]:
         if qid in seen:
             bad("題號重複")
         seen.add(qid)
-        if q.get("status") != PENDING:
+        if not str(q.get("status", "")).startswith(PENDING):  # 允許在後面加註（例如 gold 更新日期）
             bad(f"核對狀態必須是「{PENDING}」（只有使用者能確認）")
         if q["answerable"] and q.get("keywords") and not q["gold"]:
             # 跨公司關鍵字題（沒有單一金標）：每個關鍵字都要真的出現在公開段落，否則等於沒有答案
@@ -106,6 +106,8 @@ def verify(questions: list[dict], corpus=None) -> list[str]:
             if q["gold"] or not kws:
                 bad("不可回答題不能有金標，且必須列出查過的關鍵字")
             for kw in kws:
+                if kw in (q.get("absence_reviewed") or {}):  # 已人工讀過命中段落、確認沒回答題目（理由寫在題檔）
+                    continue
                 hits = [n for n, t in all_text.items() if _squash(kw) in t]
                 if hits:
                     bad(f"關鍵字「{kw}」在語料中找到：{hits[:3]}，答案可能在語料內")

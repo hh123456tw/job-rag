@@ -1,0 +1,281 @@
+{
+ "說明": "票 33：使用者真實問法 20 題（公司頁內短問句、單一公司、跨公司、語料沒有答案）。company＝問題是在該公司頁內提的（問句不含公司名）。跨公司題沒有單一金標，用 keywords（由程式核對確實出現在公開段落），評分方式同 eval/questions_cross.json。核對狀態只有使用者能改成已確認。",
+ "questions": [
+  {
+   "id": "r01",
+   "question": "薪水多少？",
+   "type": "公司頁短問句",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "4. 職缺",
+     "quote": "年薪 81–108 萬"
+    },
+    {
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺",
+     "quote": "年薪約81~108萬"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r02",
+   "question": "薪水多少？",
+   "type": "公司頁短問句",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "4. 職缺",
+     "quote": "月薪 35,000–55,000"
+    },
+    {
+     "file": "32_104職缺更新_叡揚資訊.md",
+     "heading": "目前開放職缺",
+     "quote": "月薪 35,000~55,000"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r03",
+   "question": "薪水多少？",
+   "type": "公司頁短問句",
+   "answerable": true,
+   "company": "神通資訊",
+   "gold": [
+    {
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺",
+     "quote": "月薪 45,000 元以上"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r04",
+   "question": "用什麼技術？",
+   "type": "公司頁短問句",
+   "answerable": true,
+   "company": "叡揚資訊",
+   "gold": [
+    {
+     "file": "03_叡揚資訊.md",
+     "heading": "5. 技術堆疊",
+     "quote": "Spring Boot"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r05",
+   "question": "用什麼技術？",
+   "type": "公司頁短問句",
+   "answerable": true,
+   "company": "台灣大哥大",
+   "gold": [
+    {
+     "file": "01_台灣大哥大.md",
+     "heading": "5. 技術堆疊",
+     "quote": "NVIDIA GB300"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r06",
+   "question": "有哪些職缺？",
+   "type": "公司頁短問句",
+   "answerable": true,
+   "company": "華電聯網",
+   "gold": [
+    {
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺",
+     "quote": "公司：華電聯網股份有限公司"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r07",
+   "question": "有哪些職缺？",
+   "type": "公司頁短問句",
+   "answerable": true,
+   "company": "聯合報",
+   "gold": [
+    {
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺",
+     "quote": "數據發展部"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r08",
+   "question": "藍新資訊的智能應用發展部在做什麼？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "05_藍新資訊.md",
+     "heading": "3. 智能應用發展部在做什麼",
+     "quote": "企業 LLM 私有化部署"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r09",
+   "question": "凱基證券 2025 年的稅後純益是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "06_凱基證券.md",
+     "heading": "2. 業務與財務 > 近 3 年獲利（稅後純益）",
+     "quote": "115.03～115.1 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r10",
+   "question": "中華網龍 2025 年的營收是多少？",
+   "type": "單一公司",
+   "answerable": true,
+   "gold": [
+    {
+     "file": "09_中華網龍.md",
+     "heading": "2. 業務與財務 > 近 3 年營收",
+     "quote": "3.96 億"
+    }
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r11",
+   "question": "哪些公司有承接政府標案？",
+   "type": "跨公司",
+   "answerable": true,
+   "keywords": [
+    "標案"
+   ],
+   "gold": [],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r12",
+   "question": "哪些公司的技術堆疊有 Oracle？",
+   "type": "跨公司",
+   "answerable": true,
+   "keywords": [
+    "Oracle"
+   ],
+   "gold": [],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r13",
+   "question": "哪家公司用 Terraform？",
+   "type": "跨公司",
+   "answerable": true,
+   "keywords": [
+    "Terraform"
+   ],
+   "gold": [],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r14",
+   "question": "有員工餐廳嗎？",
+   "type": "公司頁短問句",
+   "answerable": false,
+   "company": "台灣大哥大",
+   "gold": [],
+   "absence_keywords": [
+    "員工餐廳",
+    "餐廳"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r15",
+   "question": "尾牙有什麼獎品？",
+   "type": "公司頁短問句",
+   "answerable": false,
+   "company": "叡揚資訊",
+   "gold": [],
+   "absence_keywords": [
+    "尾牙",
+    "獎品"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r16",
+   "question": "有員工托嬰服務嗎？",
+   "type": "公司頁短問句",
+   "answerable": false,
+   "company": "神通資訊",
+   "gold": [],
+   "absence_keywords": [
+    "托嬰",
+    "幼兒園"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r17",
+   "question": "有員工宿舍嗎？",
+   "type": "公司頁短問句",
+   "answerable": false,
+   "company": "華電聯網",
+   "gold": [],
+   "absence_keywords": [
+    "宿舍"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r18",
+   "question": "陪產假有幾天？",
+   "type": "公司頁短問句",
+   "answerable": false,
+   "company": "聯合報",
+   "gold": [],
+   "absence_keywords": [
+    "陪產假"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r19",
+   "question": "中華網龍的股價是多少？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "股價"
+   ],
+   "status": "待使用者確認"
+  },
+  {
+   "id": "r20",
+   "question": "哪些公司提供員工旅遊補助？",
+   "type": "不可回答",
+   "answerable": false,
+   "gold": [],
+   "absence_keywords": [
+    "員工旅遊",
+    "旅遊補助"
+   ],
+   "status": "待使用者確認"
+  }
+ ]
+}

@@ -58,7 +58,7 @@ def contexts(a):
                 r["hits"] = [{k: h[k] for k in ("company", "file", "heading_path", "text")} for h in hits]
                 r["contexts"] = [format_source(i, h) for i, h in enumerate(hits, 1)]
         rows.append(r)
-    V2.write_text(json.dumps({"note": old["note"] + " 答案沿用票 39（未重新生成）；contexts 由 /api/search 重取並與票 39 出處比對。",
+    V2.write_text(json.dumps({"note": old["note"] + " 答案是同日由 run_heldout_answers.py 重新生成的；contexts 由 /api/search 重取並與該次答案的出處比對。",
                               "deepseek_calls": 0, "rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
     print({k: sum(r["context_check"] == k for r in rows) for k in {r["context_check"] for r in rows}})
 
@@ -119,7 +119,7 @@ def report(a):
            "stats": stat, "per_question": per, "low_ids": [i["id"] for i in low],
            "reasons": {i["id"]: REASONS.get(i["id"]) for i in low},
            "low_ar_ids": [i["id"] for i in low_ar],
-           "note": "答案相關性是第二次補量（先停掉主服務騰出記憶體，用本機 bge-m3 嵌入）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案沿用票 39（K=5、補公司名、已指定公司門檻 0.62）。"}
+           "note": "答案相關性是第二次補量（先停掉主服務騰出記憶體，用本機 bge-m3 嵌入）。評審與生成同為 DeepSeek，可能偏樂觀；題數少，只能當方向。答案是 2026-11-17 在新版語料上由 run_heldout_answers.py 重新生成的（K=5、補公司名、已指定公司門檻 0.62）。"}
     OUT.with_suffix(".json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     f = lambda x: "-" if x is None else f"{x:.3f}"
     L = ["獨立測試題 RAGAS（現行設定：K=5、補公司名、已指定公司門檻 0.62；題組 eval/questions_heldout.json）",

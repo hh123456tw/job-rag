@@ -10,9 +10,14 @@
      "file": "05_藍新資訊.md",
      "heading": "2. 業務與財務",
      "quote": "HPE FY25 Best Partner、NetApp FY25 夥伴獎"
+    },
+    {
+     "file": "24_補充_藍新資訊.md",
+     "heading": "近一年新聞 > 2025 年底原廠夥伴獎項",
+     "quote": "HPE FY25 最佳合作夥伴獎"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
   },
   {
    "id": "c06",
@@ -57,9 +62,14 @@
      "file": "07_華電聯網.md",
      "heading": "2. 業務與財務 > 標案占比（重點）",
      "quote": "政府標案 110 件，總額近 83 億"
+    },
+    {
+     "file": "26_補充_華電聯網.md",
+     "heading": "業務與財務 > 政府標案與在手專案",
+     "quote": "110 件政府標案，得標總金額近 83 億元"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
   },
   {
    "id": "s04",
@@ -71,9 +81,14 @@
      "file": "03_叡揚資訊.md",
      "heading": "2. 業務與財務 > 近年營收",
      "quote": "20.19 億，年增 16.33%"
+    },
+    {
+     "file": "22_補充_叡揚資訊.md",
+     "heading": "業務與財務 > 2025 年財務結果",
+     "quote": "20.19 億元，年增 16.33%"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新；新增補充檔的正確段落）"
   },
   {
    "id": "s05",
@@ -243,12 +258,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "B_神通_聯合報.md",
-     "heading": "一、神通資訊科技股份有限公司（MiTAC Information） > 3. 60076X0_後端工程師（Node.js）",
-     "quote": "Node.js、JavaScript、TypeScript"
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60076X0_後端工程師(Node.js)（104 職缺代碼 8y67b）",
+     "quote": "用 Node.js（JavaScript／TypeScript）開發與維護企業級平台後端"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "j04",
@@ -257,12 +272,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "A_凱基_台哥大.md",
-     "heading": "二、台灣大哥大（104 公司名：台灣大哥大股份有限公司，職缺編號格式如 I97、D667、E164）",
-     "quote": "3 年以上（Kubernetes 2 年以上）"
+     "file": "30_104職缺更新_台灣大哥大.md",
+     "heading": "目前開放職缺 > I97 Kubernetes 平台工程師（8xjjo）",
+     "quote": "3 年以上 DevOps／SRE／平台工程與 2 年以上 Kubernetes"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "j05",
@@ -285,12 +300,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "B_神通_聯合報.md",
-     "heading": "二、聯合報系 > B. 聯合線上股份有限公司 > B1. 【戰略部】數據優化師（數據分析）",
-     "quote": "月薪 35,000 以上"
+     "file": "31_104職缺更新_聯合報.md",
+     "heading": "目前開放職缺 > 【戰略部】數據優化師(數據分析)（7qtdo）",
+     "quote": "月薪 35,000 元以上"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "j08",
@@ -318,17 +333,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "補2_神通.md",
-     "heading": "二、AI／Python／後端／資料／全端相關職缺（已點進內頁，共 6 筆） > 3. K026KB6_C++/AI 應用工程師",
-     "quote": "無需出差外派"
-    },
-    {
-     "file": "網址2_神通_華電.md",
-     "heading": "一、神通資訊科技（公司頁 https://www.104.com.tw/company/ocjaiy8）",
-     "quote": "K026KB6 | https://www.104.com.tw/job/93vim"
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > K026KB6_C++/AI 應用工程師（104 職缺代碼 93vim）",
+     "quote": "不需出差"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "j10",
@@ -337,17 +347,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
-     "heading": "4. 中華網龍（公司頁 10 筆；與 AI／軟體相關） > 4-1 AI 應用研發工程師（已讀單頁）",
-     "quote": "Python、TypeScript 或其他後端語言"
-    },
-    {
-     "file": "網址5_宏碁雲_藍新_網龍.md",
-     "heading": "3. 中華網龍（公司頁 10 筆，全部有網址）",
-     "quote": "Python／TypeScript、LLM、Agent、RAG"
+     "file": "37_104職缺更新_中華網龍.md",
+     "heading": "目前開放職缺 > AI 應用研發工程師（104 職缺代碼 9523j）",
+     "quote": "必備 Python、TypeScript 或其他後端語言"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "j11",
@@ -356,17 +361,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "F_叡揚_藍新_奧衍_網龍_數據立.md",
-     "heading": "2. 藍新資訊（公司頁 14 筆，下列為 AI／軟體／系統相關） > 2-1 AI前線部署工程師（主 agent 已讀）",
-     "quote": "Agentic AI、RAG、Workflow"
-    },
-    {
-     "file": "網址5_宏碁雲_藍新_網龍.md",
-     "heading": "2. 藍新資訊（公司頁 14 筆，全部有網址；不是藍新金流／藍新科技）",
-     "quote": "GenAI、Agentic AI、RAG、MCP、Docker、K8s、n8n"
+     "file": "34_104職缺更新_藍新資訊.md",
+     "heading": "目前開放職缺 > AI前線部署工程師（8uol0）",
+     "quote": "GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "j12",
@@ -375,17 +375,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "補2_神通.md",
-     "heading": "二、AI／Python／後端／資料／全端相關職缺（已點進內頁，共 6 筆） > 1. 60296BD_AI 工程師　【生成式 AI】",
-     "quote": "Python、FastAPI；LLM API（OpenAI、Claude 等）與向量資料庫"
-    },
-    {
-     "file": "網址2_神通_華電.md",
-     "heading": "一、神通資訊科技（公司頁 https://www.104.com.tw/company/ocjaiy8）",
-     "quote": "LLM／RAG／Python／FastAPI"
+     "file": "33_104職缺更新_神通資訊.md",
+     "heading": "目前開放職缺 > 60296BD_AI 工程師（生成式 AI）（104 職缺代碼 94rqp）",
+     "quote": "用 Python 與 FastAPI 建構後端 API 與 AI 服務，串接 LLM API"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "j13",
@@ -394,17 +389,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "補3_華電.md",
-     "heading": "2. 軟體／AI／資料／雲端相關職缺（詳頁已讀）",
-     "quote": "Python 三年以上、Linux、Docker"
-    },
-    {
-     "file": "網址2_神通_華電.md",
-     "heading": "二、華電聯網（公司頁 https://www.104.com.tw/company/12y30460）",
-     "quote": "Python／Linux／Docker，AI 模型維護"
+     "file": "36_104職缺更新_華電聯網.md",
+     "heading": "目前開放職缺 > 資深研發工程師－研發一部（汐止）（104 職缺代碼 8zclg）",
+     "quote": "必備為 Python 開發 3 年以上"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "j14",
@@ -413,22 +403,12 @@
    "answerable": true,
    "gold": [
     {
-     "file": "A_凱基_台哥大.md",
-     "heading": "一、凱基證券（104 公司頁 https://www.104.com.tw/company/am88jqw ，全公司約 99+ 筆職缺） > 2. 【數位創新部】AI Solution 工程師／架構師",
-     "quote": "企業級 AI 系統或大型軟體架構經驗"
-    },
-    {
-     "file": "網址3_凱基_叡揚.md",
-     "heading": "一、凱基證券（共 13 筆網址）",
-     "quote": "AI Solution 工程師/架構師"
-    },
-    {
-     "file": "補4_凱基_叡揚.md",
-     "heading": "一、凱基證券（公司頁 https://www.104.com.tw/company/am88jqw ，共 6 頁，約 99+ 筆） > 其他 AI／後端／全端／系統相關（經歷要求 1 年以上）",
-     "quote": "AI Solution 工程師／架構師：3 年以上"
+     "file": "35_104職缺更新_凱基證券.md",
+     "heading": "目前開放職缺 > 【數位創新部】AI Solution 工程師/架構師（91qox）",
+     "quote": "3 年以上 AI 系統或大型軟體架構設計經驗"
     }
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認（gold 於 2026-11-17 因語料換新版而更新）"
   },
   {
    "id": "u02",
@@ -442,7 +422,11 @@
     "英檢",
     "英文能力"
    ],
-   "status": "待使用者確認"
+   "status": "待使用者確認",
+   "absence_reviewed": {
+    "多益": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案",
+    "TOEIC": "2026-11-17 新語料命中：30 號台灣大哥大職缺有多益門檻，32 號叡揚職缺只寫「TOEIC 或 TOEIC Bridge 成績」為加分、沒寫分數；叡揚的錄取多益分數仍查無，題目仍無答案"
+   }
   },
   {
    "id": "u03",

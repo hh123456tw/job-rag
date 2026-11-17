@@ -36,4 +36,4 @@ def test_pages_show_the_held_line_with_self_judge_caveat_only_with_the_file(clie
     for url in ("/about", "/about?all=1"):
         h = client[1].get(url).get_data(as_text=True)
         assert "獨立題（現行設定：K=5、補公司名）：忠實度 0.912（23 題）" in h and "可能偏樂觀" in h and "答案相關性 0." not in h.split("獨立題（現行設定")[1][:80]
-        assert "量測時為 K=3 設定" in h
+        assert "K=5 設定重跑" in h

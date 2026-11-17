@@ -1,0 +1,302 @@
+{
+ "deepseek_calls": 15,
+ "rows": [
+  {
+   "key": "questions:u02",
+   "question": "叡揚資訊錄取後要求多益幾分？",
+   "search_status": "ok",
+   "company": "叡揚資訊",
+   "cross": false,
+   "top": 0.6694580316543579,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions:u03",
+   "question": "中華網龍的遊戲月活躍玩家有多少？",
+   "search_status": "ok",
+   "company": "中華網龍",
+   "cross": false,
+   "top": 0.6505652666091919,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions:u06",
+   "question": "叡揚資訊的特休天數是幾天？",
+   "search_status": "ok",
+   "company": "叡揚資訊",
+   "cross": false,
+   "top": 0.6713786125183105,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions:u07",
+   "question": "藍新資訊可以在家上班嗎？",
+   "search_status": "ok",
+   "company": "藍新資訊",
+   "cross": false,
+   "top": 0.6646136045455933,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions:u08",
+   "question": "凱基證券員工的平均年薪是多少？",
+   "search_status": "ok",
+   "company": "凱基證券",
+   "cross": false,
+   "top": 0.6622500419616699,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_heldout:h26",
+   "question": "有颱風假嗎？",
+   "search_status": "low",
+   "company": "神通資訊",
+   "cross": false,
+   "top": 0.5810534954071045,
+   "threshold": 0.62,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_heldout:h27",
+   "question": "有員工持股信託嗎？",
+   "search_status": "ok",
+   "company": "凱基證券",
+   "cross": false,
+   "top": 0.6341038942337036,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_heldout:h28",
+   "question": "有交通津貼嗎？",
+   "search_status": "low",
+   "company": "聯合報",
+   "cross": false,
+   "top": 0.6010427474975586,
+   "threshold": 0.62,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_heldout:h29",
+   "question": "數據立有提供員工心理諮商嗎？",
+   "search_status": "ok",
+   "company": "數據立",
+   "cross": false,
+   "top": 0.7134504318237305,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_heldout:h30",
+   "question": "遠振資訊的育嬰假可以休多久？",
+   "search_status": "low",
+   "company": "遠振資訊",
+   "cross": false,
+   "top": 0.5869344472885132,
+   "threshold": 0.62,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_heldout:h31",
+   "question": "典凡科技今年的營收目標是多少？",
+   "search_status": "ok",
+   "company": "典凡科技",
+   "cross": false,
+   "top": 0.6849967241287231,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_heldout:h32",
+   "question": "中華網龍的《尋秦記》累計下載次數是多少？",
+   "search_status": "ok",
+   "company": "中華網龍",
+   "cross": false,
+   "top": 0.6642501354217529,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_heldout:h33",
+   "question": "艾普特的 AI 部有幾位工程師？",
+   "search_status": "ok",
+   "company": "艾普特",
+   "cross": false,
+   "top": 0.6503349542617798,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_heldout:h34",
+   "question": "廣達電腦有哪些 AI 工程師職缺？",
+   "search_status": "low",
+   "company": "",
+   "cross": false,
+   "top": 0.6509686708450317,
+   "threshold": 0.7,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_heldout:h35",
+   "question": "鴻海的董事長是誰？",
+   "search_status": "low",
+   "company": "",
+   "cross": false,
+   "top": 0.4547005891799927,
+   "threshold": 0.7,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_heldout:h36",
+   "question": "富邦金控旗下有哪些子公司？",
+   "search_status": "low",
+   "company": "",
+   "cross": false,
+   "top": 0.5353647470474243,
+   "threshold": 0.7,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_heldout:h37",
+   "question": "台北明天會下雨嗎？",
+   "search_status": "low",
+   "company": "",
+   "cross": false,
+   "top": 0.4808999300003052,
+   "threshold": 0.7,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_heldout:h38",
+   "question": "履歷的自傳要怎麼寫？",
+   "search_status": "low",
+   "company": "",
+   "cross": false,
+   "top": 0.46783339977264404,
+   "threshold": 0.7,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_heldout:h39",
+   "question": "哪些公司有哺乳室？",
+   "search_status": "low",
+   "company": "",
+   "cross": true,
+   "top": 0.46799981594085693,
+   "threshold": 0.534,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_real:r14",
+   "question": "有員工餐廳嗎？",
+   "search_status": "ok",
+   "company": "台灣大哥大",
+   "cross": false,
+   "top": 0.6282995343208313,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_real:r15",
+   "question": "尾牙有什麼獎品？",
+   "search_status": "ok",
+   "company": "叡揚資訊",
+   "cross": false,
+   "top": 0.6519021987915039,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_real:r16",
+   "question": "有員工托嬰服務嗎？",
+   "search_status": "ok",
+   "company": "神通資訊",
+   "cross": false,
+   "top": 0.6573699116706848,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "資料中沒有提到員工托嬰服務。"
+  },
+  {
+   "key": "questions_real:r17",
+   "question": "有員工宿舍嗎？",
+   "search_status": "ok",
+   "company": "華電聯網",
+   "cross": false,
+   "top": 0.6602019667625427,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_real:r18",
+   "question": "陪產假有幾天？",
+   "search_status": "low",
+   "company": "聯合報",
+   "cross": false,
+   "top": 0.513980507850647,
+   "threshold": 0.62,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_real:r19",
+   "question": "中華網龍的股價是多少？",
+   "search_status": "ok",
+   "company": "中華網龍",
+   "cross": false,
+   "top": 0.7309716939926147,
+   "threshold": 0.62,
+   "answer_status": "ok",
+   "answer": "查無"
+  },
+  {
+   "key": "questions_cross:u01",
+   "question": "哪間公司有員工餐廳？",
+   "search_status": "low",
+   "company": "",
+   "cross": true,
+   "top": 0.517454981803894,
+   "threshold": 0.534,
+   "answer_status": null,
+   "answer": null
+  },
+  {
+   "key": "questions_cross:u02",
+   "question": "哪些公司提供寵物友善辦公室？",
+   "search_status": "low",
+   "company": "",
+   "cross": true,
+   "top": 0.5278022885322571,
+   "threshold": 0.534,
+   "answer_status": null,
+   "answer": null
+  }
+ ]
+}

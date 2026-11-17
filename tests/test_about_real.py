@@ -41,12 +41,12 @@ def test_page_shows_real_line_and_generation_setting_note(client, root):  # noqa
     real_files(root)
     html = client[1].get("/about?all=1").get_data(as_text=True)
     assert "另外 2 道真實問法" in html and "Hit@5 0.875" in html and "擋住 1/1" in html
-    assert html.count("量測時為 K=3 設定") >= 2                # 細節與 RAGAS 說明都標註，並保留原數字
+    assert html.count("K=5 設定重跑") >= 2                # 細節與 RAGAS 說明都標註，並保留原數字
 
 
 def test_page_without_real_output_has_no_real_line_but_keeps_note(client, root):  # noqa: F811
     html = client[1].get("/about?all=1").get_data(as_text=True)
-    assert "真實問法" not in html and "量測時為 K=3 設定" in html
+    assert "真實問法" not in html and "K=5 設定重跑" in html
 
 
 def test_blocked_case_uses_the_threshold_of_that_question():
@@ -79,7 +79,7 @@ def test_committed_real_numbers_match_results_real_text():
 
 def test_committed_real_questions_are_pending_and_have_no_private_markers():
     qs = json.loads((about.ROOT / "eval/questions_real.json").read_text(encoding="utf-8"))["questions"]
-    assert len(qs) == 20 and all(q["status"] == "待使用者確認" for q in qs)
+    assert len(qs) == 20 and all(q["status"].startswith("待使用者確認") for q in qs)
     assert sum(not q["answerable"] for q in qs) >= 5
     blob = json.dumps(qs, ensure_ascii=False)
     assert not any(w in blob for w in ("面試", "評價", "風險", "推測", "private"))
