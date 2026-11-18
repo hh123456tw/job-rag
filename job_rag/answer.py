@@ -1,6 +1,7 @@
 """整理成答案：把公開事實段落交給 DeepSeek，回附出處的答案。LLM 呼叫只在這裡。"""
 import json
 import os
+import re
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -70,6 +71,13 @@ def _usage(resp) -> dict:
     return {k: u[k] for k in ("prompt_tokens", "completion_tokens") if type(u.get(k)) is int and u[k] >= 0}
 
 
+def bad_citations(text: str, n_hits: int) -> list[int]:
+    """答案裡不在 1..n_hits 的引用編號（由小到大、不重複）。只看 [1]～[99] 這種寫法：
+    [2026] 這類四位數是年份不是引用；沒有任何引用的答案不算錯（例如「資料中沒有提到」）。
+    shortcut: 只查編號存不存在，不查那一段有沒有寫這句話；要更嚴就加數字與專有名詞比對。"""
+    return sorted({int(n) for n in re.findall(r"\[(\d{1,2})\]", text)} - set(range(1, n_hits + 1)))
+
+
 def answer(question: str, hits: list[dict], post=_post, env_file=".env", history=None, cross=False) -> dict:
     """hits 來自 search()，只可能是公開事實段落。history 是已驗證的最近幾輪 [{"q","a"}]。回 {"answer", "sources"}，DeepSeek 有給用量時多一個 "usage"；失敗丟 AnswerError。"""
     used = hits
@@ -100,6 +108,8 @@ def answer(question: str, hits: list[dict], post=_post, env_file=".env", history
     extra = {"usage": u} if (u := _usage(resp)) else {}
     if not text or text == NOT_FOUND:
         return {"answer": NOT_FOUND, "sources": []} | extra
+    if bad := bad_citations(text, len(used)):  # 引用了沒給它的段落：這個答案不能核對，擋下不顯示
+        raise AnswerError(f"答案引用了不存在的段落編號（{'、'.join(f'[{n}]' for n in bad)}），已擋下")
     sources = []
     for h in used:  # 出處不重複：同一個位置的多個段落只列一次
         src = {k: h[k] for k in ("company", "file", "heading_path")}

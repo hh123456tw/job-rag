@@ -156,3 +156,21 @@ def test_page_found_has_no_not_found_text(client):
     appmod, c = client
     html = c.get("/?q=鯨魚追蹤軟體").get_data(as_text=True)
     assert "可能沒有答案" not in html and "class='hit'" in html
+
+
+# ---- 引用編號檢查：答案引用了沒給它的段落就擋下 ----
+@pytest.mark.parametrize("reply", ["答案 [2]", "先說 [1]，再說 [3]", "答案 [0]", "答案 [1][12]"])
+def test_citation_of_a_segment_that_was_not_sent_is_blocked(reply):
+    with pytest.raises(AnswerError, match="不存在的段落編號"):
+        answer("問題", [PUB], post=FakePost(reply))
+
+
+@pytest.mark.parametrize("reply", ["答案 [1]", "資料中沒有提到", "2026 年成立 [1]，見公告[2026]", "金額 [NT$ 3] 萬 [1]"])
+def test_valid_or_absent_citations_and_bracketed_years_are_not_blocked(reply):
+    """負向：沒有引用、四位數年份、不是純數字的方括號都不算引用錯誤。"""
+    assert answer("問題", [PUB], post=FakePost(reply))["answer"] == reply
+
+
+def test_bad_citations_lists_each_missing_number_once_in_order():
+    from job_rag.answer import bad_citations
+    assert bad_citations("[3] [1] [3] [9]", 2) == [3, 9] and bad_citations("[1][2]", 2) == [] and bad_citations("沒有引用", 0) == []
