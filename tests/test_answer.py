@@ -159,7 +159,7 @@ def test_page_found_has_no_not_found_text(client):
 
 
 # ---- 引用編號檢查：答案引用了沒給它的段落就擋下 ----
-@pytest.mark.parametrize("reply", ["答案 [2]", "先說 [1]，再說 [3]", "答案 [0]", "答案 [1][12]"])
+@pytest.mark.parametrize("reply", ["答案 [2]", "先說 [1]，再說 [3]", "答案 [0]", "答案 [1][12]", "虛構結論 [100]", "答案 [1] [999]"])
 def test_citation_of_a_segment_that_was_not_sent_is_blocked(reply):
     with pytest.raises(AnswerError, match="不存在的段落編號"):
         answer("問題", [PUB], post=FakePost(reply))

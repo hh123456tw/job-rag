@@ -158,9 +158,9 @@ def _details(d) -> str:
         intro +
         f"<p><b>生成層（RAGAS，用 LLM 當評審的 RAG 評估工具）</b>：忠實度（答案的每個陳述，段落裡找不找得到依據）平均 {_f(g['faithfulness'])}，"
         f"答案相關性（從答案反推問題，和原問題像不像）平均 {_f(g['answer_relevancy'])}。"
-        f"已評分 {g['scored']} 題；另有 {g['gated']} 題被查無門檻擋住，沒有打分{failed}。{GEN_NOTE}</p>"
+        f"已評分 {g['scored']} 題；另有 {g['gated']} 題被查無門檻擋住，沒有打分{failed}。{_gen_note(d)}</p>"
         + (f"<p>{_held_gen(d)}</p>" if _held_gen(d) else "") + (f"<p>{_rejudge_note(d)}</p>" if _rejudge_note(d) else "") +
-        f"<p>另請 GPT 獨立複查{same} {c['n']} 題（不是 RAGAS）：{c['claims']} 個陳述中 {c['supported']} 個有依據，"
+        f"<p>另請 {_who(d)} 逐句複查{same} {c['n']} 題（不是 RAGAS）：{c['claims']} 個陳述中 {c['supported']} 個有依據，"
         f"忠實度平均 {_f(c['mean'])}，{verdict}。{_held_cross(d)}</p>" + gate + _real_line(d))
 
 
@@ -205,10 +205,40 @@ def _mrr(d) -> str:
             f"<li><b>我們的結果：</b>網站用的 bge-m3 是 {_f(best['mrr'])}（95% 區間 {_f(lo)}–{_f(hi)}）。</li></ul>")
 
 
+def judged(d):
+    from .about import CONSISTENT  # 在這裡才匯入：about 與本檔互相引用
+    """長版用：RAGAS 與逐句複查都有 Sonnet 5.5 重評時，把頁面讀的數字整組換成它，並記下評審名與原本的數字（寫歷程用）。
+    條件不齊（只有其中一份、或評審不是 Sonnet 5.5）就原樣回傳：不混用兩個評審的數字。"""
+    rg, cs = (d or {}).get("ragas_gpt"), (d or {}).get("cross_sonnet")
+    if not (d and d.get("generation") and d.get("cross") and rg and cs and rg["judge"] == "Sonnet 5.5" and cs.get("mean") is not None):
+        return d
+    t, h = rg["tune"], rg.get("held")
+    out = dict(d, judge="Sonnet 5.5", before={"faithfulness": d["generation"]["faithfulness"], "cross": d["cross"]},
+               generation=dict(d["generation"], faithfulness=t["faithfulness"], answer_relevancy=t["answer_relevancy"]),
+               cross=dict(cs, consistent=abs(cs["mean"] - t["faithfulness"]) <= CONSISTENT),
+               held_cross=d.get("held_cross_sonnet"))
+    if h and d.get("held_gen"):
+        out["held_gen"] = dict(d["held_gen"], faithfulness=h["faithfulness"], answer_relevancy=h["answer_relevancy"], n=h["scored"], n_ar=h["scored"])
+    return out
+
+
+def _who(d) -> str:
+    return (d or {}).get("judge") or "GPT"
+
+
+def _gen_note(d) -> str:
+    """評估是什麼時候、用什麼評審跑的。"""
+    if _who(d) == "GPT":
+        return GEN_NOTE
+    b = d["before"]
+    return (f"RAGAS 與逐句複查的評審都是 {_who(d)}（2026-11-18），不是生成用的 DeepSeek；評的是 11/17～18 在補完職稱清單的語料、K=5 設定生成的同一批答案，沒有重新生成；評審只跑一次，輸出有隨機性。"
+            f"換評審之前：DeepSeek 自評的忠實度 {_f(b['faithfulness'])}，GPT 複查 {b['cross']['claims']} 個陳述中 {b['cross']['supported']} 個有依據；結果接近。")
+
+
 def _rejudge_note(d) -> str:
     """評審換成別的模型（Sonnet 5.5 或 GPT）重評同一批答案的結果一句；沒有輸出檔回空字串。"""
     rg = d and d.get("ragas_gpt")
-    if not rg:
+    if not rg or d.get("judge"):  # 整頁已經換成這個評審的數字時，不必再補這一句
         return ""
     t, h = rg["tune"], rg.get("held")
     out = (f"評審後來換成 {rg['judge']}（不是生成用的 DeepSeek）重評同一批答案：RAGAS 忠實度 {_f(t['faithfulness'])}、答案相關性 {_f(t['answer_relevancy'])}（{t['scored']} 題）"
@@ -227,7 +257,8 @@ def _held_gen(d) -> str:
         return ""
     ar = f"，答案相關性 {_f(h['answer_relevancy'])}（{h['n_ar']} 題）" if h["answer_relevancy"] is not None else ""
     return (f"獨立題（現行設定：K=5、補公司名）：忠實度 {_f(h['faithfulness'])}（{h['n']} 題）{ar}；另有 {h['gated']} 題被查無門檻擋住、"
-            f"{h['not_found']} 題生成回查無，沒有打分。同為 DeepSeek 評自己的答案，可能偏樂觀。")
+            f"{h['not_found']} 題生成回查無，沒有打分。"
+            + ("同為 DeepSeek 評自己的答案，可能偏樂觀。" if _who(d) == "GPT" else f"評審是 {_who(d)}。"))
 
 
 def _held_cross(d) -> str:
@@ -244,8 +275,8 @@ def _ragas(d) -> str:
             "<li><b>量什麼：</b>答案好不好（不是段落找得準不準）。是用另一個語言模型當評審的開源評估工具。</li>"
             f"<li><b>忠實度 {_f(g['faithfulness'])}：</b>答案的每個說法，在給它的段落裡找得到依據。</li>"
             f"<li><b>答案相關性 {_f(g['answer_relevancy'])}：</b>答案有回答到問題。</li>"
-            f"<li><b>範圍：</b>共評分 {g['scored']} 題。評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。{_rejudge_note(d)}</li>"
-            f"<li><b>設定：</b>{GEN_NOTE}</li>" + (f"<li>{_held_gen(d)}</li>" if _held_gen(d) else "") + "</ul>")
+            f"<li><b>範圍：</b>共評分 {g['scored']} 題。" + ("評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。" if _who(d) == "GPT" else f"評審是 {_who(d)}，不是生成用的 DeepSeek。") + f"{_rejudge_note(d)}</li>"
+            f"<li><b>設定：</b>{_gen_note(d)}</li>" + (f"<li>{_held_gen(d)}</li>" if _held_gen(d) else "") + "</ul>")
 
 
 def _level(d) -> str:
@@ -278,7 +309,7 @@ def _level(d) -> str:
             f"<div><h3>刻意沒做</h3><ul class=plain>{li(undone)}</ul></div></div>")
 
 
-def _arch(n_segments: int, n_companies: int) -> str:
+def _arch(n_segments: int, n_companies: int, who: str = "GPT") -> str:
     """系統架構圖：純 HTML／CSS。方框文字取自程式常數與載入結果，每個方框都對得上程式（tests/test_about_eng.py）。"""
     r = retrieval
 
@@ -295,7 +326,7 @@ def _arch(n_segments: int, n_companies: int) -> str:
             ("查無門檻", f"最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}）：不呼叫 LLM"),
             ("生成", "DeepSeek，只根據段落回答"),
             ("答案與出處", "附引用編號；失敗回到原文")]
-    ev = [("評估集", "手寫題目與金標段落"), ("MRR／Hit@k", "量找法"), ("RAGAS", "量答案"), ("另一個 AI 複查", "GPT 獨立複查")]
+    ev = [("評估集", "手寫題目與金標段落"), ("MRR／Hit@k", "量找法"), ("RAGAS", "量答案"), ("另一個 AI 複查", f"{who} 逐句複查")]
     mode = [("展示", "預設；只有公開事實段落"), ("自用", "本人密碼通過後才開；另有本機資料")]
     return (f"<div class=arch><p class=lab>主流程</p>{chain(main)}<p class=lab>評估迴路</p>{chain(ev)}"
             f"<p class=lab>模式隔離</p>{chain(mode)}</div>")
@@ -343,7 +374,7 @@ def _trade(d, n_segments: int) -> str:
              if perf else "")
     df = d["mrr_diff"]
     gen = d["cross"]
-    check = f"GPT 複查 {gen['claims']} 個說法中 {gen['supported']} 個有依據；" if gen else ""
+    check = f"{_who(d)} 複查 {gen['claims']} 個說法中 {gen['supported']} 個有依據；" if gen else ""
     rows = [
         ("選 FAISS，不選 Qdrant／Milvus",
          f"資料只有 {n_segments} 段，在記憶體內搜尋就夠，不必另外架一個資料庫服務。資料大很多時再換（見下方放大 100 倍）。"),
@@ -357,9 +388,12 @@ def _trade(d, n_segments: int) -> str:
          f"{HYBRID}＝BM25 關鍵字名次加 bge-m3 語意名次，用 RRF 合併。原本預期它會贏。bge-m3 減{HYBRID}的 MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
          + ("：區間含 0，數據沒有支持混合比較好，所以用較簡單的單一向量找法。" if df["lo"] <= 0 <= df["hi"]
             else f"：區間不含 0，單一向量找法與{HYBRID}的差異可信。") + _hybrid_held(d) + "例外：跨公司提問用混合挑段。" + CROSS_NOTE),
-        ("DeepSeek 生成與評審，另請 GPT 複查",
+        (("DeepSeek 生成，Sonnet 5.5 評審",
+          f"{check}一開始評審和生成同為 DeepSeek，可能偏愛自己的答案，所以把 RAGAS 與逐句複查的評審都換成 Sonnet 5.5；換完分數接近。兩者都只量答案有沒有依據，不量對不對。")
+         if _who(d) != "GPT" and gen else
+         ("DeepSeek 生成與評審，另請 GPT 複查",
          f"{check}評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查；兩者都只量答案有沒有依據，不量對不對。"
-         if gen else "評審和生成同為 DeepSeek，可能偏愛自己的答案；兩者都只量答案有沒有依據，不量對不對。這份輸出沒有複查結果。"),
+         if gen else "評審和生成同為 DeepSeek，可能偏愛自己的答案；兩者都只量答案有沒有依據，不量對不對。這份輸出沒有複查結果。")),
     ]
     return ("<h3>為什麼選這個，不選那個</h3><ul class=trade>"
             + "".join(f"<li><b>{escape(t)}</b><span>{escape(x)}</span></li>" for t, x in rows) + "</ul>")
@@ -388,7 +422,7 @@ def _limits(d) -> str:
 def _eng(d, n_segments: int, n_companies: int, lengths=None) -> str:
     """給工程師讀者的技術細節（預設收合）。附在第 4 塊底下；沒有評估資料時整塊不顯示。"""
     return (f"<details class=eng><summary>給{retrieval.ENG_AUDIENCE}：技術細節</summary>"
-            f"<h3>系統架構</h3>{_arch(n_segments, n_companies)}{_lengths(lengths)}"
+            f"<h3>系統架構</h3>{_arch(n_segments, n_companies, _who(d))}{_lengths(lengths)}"
             f"{_trade(d, n_segments)}{_scale()}{_limits(d)}</details>")
 
 
@@ -616,7 +650,9 @@ def render(data: dict | None, error: str, n_segments: int, n_companies: int, len
     """data 為 None 時（輸出檔缺或過期），成績與失敗案例改顯示明確錯誤，不用舊數字。
     順序是現場講解的順序：這是什麼 → 資料 → 找法 → 怎麼確認 → 踩到的坑 → 限制，最後是問答備案。"""
     err = f"<p class=err>無法顯示：{escape(error)}</p>"
-    gen_limit = ("<li>評審與生成同為 DeepSeek，可能偏愛自己的答案。已另用 GPT 複查，但兩者都只量「答案有沒有依據」，不量對不對。</li>"
+    data = judged(data)  # 有 Sonnet 5.5 重評就整頁用它的數字（只有長版；簡報版各頁自己處理）
+    gen_limit = ((f"<li>評審是 {_who(data)}，不是生成用的 DeepSeek。但 RAGAS 與逐句複查都只量「答案有沒有依據」，不量對不對。</li>" if _who(data) != "GPT" else
+                  "<li>評審與生成同為 DeepSeek，可能偏愛自己的答案。已另用 GPT 複查，但兩者都只量「答案有沒有依據」，不量對不對。</li>")
                  if not data or data["generation"] else "")
     counts = f"只有 {data['n_answerable']} 題有答案、{data['n_unanswerable']} 題沒答案，只能當方向。" if data else "題目很少，只能當方向。"
     say = _speech(data, n_companies, n_segments)

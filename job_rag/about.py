@@ -308,7 +308,9 @@ def _claims(path: Path):
     try:
         rows = json.loads(path.read_text(encoding="utf-8"))
         claims = [c for r in rows for c in r["claims"]]
-        return {"n": len(rows), "claims": len(claims), "supported": sum(bool(c["supported"]) for c in claims)} if claims else None
+        fs = [r["faithfulness"] for r in rows if isinstance(r.get("faithfulness"), (int, float))]
+        return {"n": len(rows), "claims": len(claims), "supported": sum(bool(c["supported"]) for c in claims),
+                "mean": sum(fs) / len(fs) if fs else None} if claims else None
     except (OSError, ValueError, KeyError, TypeError):
         return None
 

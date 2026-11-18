@@ -152,7 +152,7 @@ def test_cross_slide_is_the_only_slide_with_cross_company_numbers(client, root):
     mrr = {"n_pairs": 7, "methods": {"hybrid": {"mrr": 0.625, "within_per": 3}, "bge-m3": {"mrr": 0.25, "within_per": 1}}}
     put(root, "eval/results_cross_mrr.json", mrr)
     sec = slide(get(client).get_data(as_text=True), "cross")
-    assert 'data-k="cross_mrr" data-v="0.625"' in sec and 'data-k="cross_mrr_base" data-v="0.25"' in sec and "5. MRR：" in sec
+    assert 'data-k="cross_mrr" data-v="0.625"' in sec and 'data-k="cross_mrr_base" data-v="0.25"' in sec and "5. MRR：" in sec and "為什麼跨公司比較低" in sec and "MRR 從 0.25 到 0.62" in sec and "實際取到 7 家裡的 3 家" in sec
     put(root, "eval/results_cross_mrr.json", mrr | {"n_pairs": 8})  # 家次對不上：不用
     assert "MRR" not in slide(get(client).get_data(as_text=True), "cross")
     (root / "eval/results_cross_mrr.json").unlink()
@@ -235,3 +235,18 @@ def test_methods_slide_defines_hit_and_mrr_in_plain_words(client, root):  # noqa
     sec = slide(get(client).get_data(as_text=True), "methods")
     assert "Hit@3＝正確答案的那段，有排進前 3 名的題數比例" in sec and "Hit@1 是第 1 名、Hit@5 是前 5 名" in sec
     assert f"{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{m3['hit@3']:.2f}（{m3['found']}/{d['n_answerable']}）" in sec and "MRR＝正確段落名次的倒數平均" in sec
+
+
+def test_long_page_uses_sonnet_numbers_everywhere_only_when_both_ragas_and_claim_check_exist(client, root):  # noqa: F811
+    """長版：RAGAS 與逐句複查都有 Sonnet 5.5 那份才整頁換；只有其中一份就維持原樣，不混用兩個評審的數字。"""
+    long = lambda: get(client, "/about?all=1").get_data(as_text=True)
+    st = {"n": 4, "failed": [], "faithfulness": {"n": 4, "mean": 0.75}, "answer_relevancy": {"n": 4, "mean": 0.5}}
+    put(root, "eval/results_ragas_sonnet.json", {"judge_short": "Sonnet 5.5", "sets": {"tune": st}})
+    h = long()
+    assert "所以另請 GPT 複查" in h and "DeepSeek 生成，Sonnet 5.5 評審" not in h  # 只有 RAGAS 那份：不換
+    put(root, "eval/crossjudge/judge_sonnet_new.json", [{"id": "a1", "faithfulness": 0.5, "claims": [{"supported": True}, {"supported": False}]}])
+    h = long()
+    assert "DeepSeek 生成，Sonnet 5.5 評審" in h and "另請 Sonnet 5.5 逐句複查" in h and "Sonnet 5.5 複查 2 個說法中 1 個有依據" in h
+    assert "忠實度（答案的每個陳述，段落裡找不找得到依據）平均 0.750" in h and "評審是 Sonnet 5.5，不是生成用的 DeepSeek" in h
+    assert "所以另請 GPT 複查" not in h and "另請 GPT 獨立複查" not in h and "已另用 GPT 複查" not in h
+    assert "換評審之前：DeepSeek 自評的忠實度" in h  # 原本的數字留作歷程，不藏

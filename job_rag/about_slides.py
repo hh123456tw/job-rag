@@ -414,6 +414,12 @@ def s_cross(d, n_companies, companies):
                 f'<span>只用 bge-m3 挑段時（對照）</span>'
                 + (f'<p class="mrr">MRR <b class="cmp" data-k="cross_mrr_base" data-v="{x["mrr"]["base"]!r}">{_f(x["mrr"]["base"])}</b></p>' if x.get("mrr") else "") +
                 f'<i class="tr"><i class="fl" style="width:{100 * b["got"] / b["want"]:.1f}%"></i></i></div>')
+    why = ""
+    if x.get("mrr"):  # 為什麼比問一家公司低：放在示意圖下方，數字讀輸出檔
+        why = ('<div class="qk" style="margin-top:14px"><p><b>為什麼跨公司比較低</b></p>'
+               "<p>問的是一個技術名詞，在職缺段落裡只是一個字。向量比的是整段意思，抓不到這種細節。</p>"
+               f"<p>所以加了關鍵字比對：MRR 從 {x['mrr']['base']:.2f} 到 {x['mrr']['hybrid']:.2f}。"
+               f"網站每家取 {per} 段，實際取到 {x['want']} 家裡的 {x['got']} 家。</p></div>")
     e = x.get("example")
     how = ('<div class="qk"><p><b>怎麼測</b></p>'
            f"<p>1. {x['n']} 題跨公司題，每題有一個關鍵字。" + (f"例：「{escape(e['q'])}」關鍵字 {escape(e['kw'])}。" if e else "") + "</p>"
@@ -423,7 +429,7 @@ def s_cross(d, n_companies, companies):
            + ("<p>5. MRR：每一家該出現的公司，含關鍵字的段落在那一家裡排第幾名，取倒數後平均。</p>" if x.get("mrr") else "") + "</div>")
     notes = (f"<p>挑段用混合（BM25＋bge-m3）：技術名詞靠字面比對較準。要不要拒答，看 bge-m3 的最高分。</p>"
              f"<p>弱點：短的技術名詞題會被拒答門檻擋掉，{x['n']} 題裡 {x['blocked']} 題。這組題也用來調過門檻，數字偏樂觀。</p>")
-    return f"問全部公司：每家各取 {per} 段", f'<div class="two"><figure>{schem}</figure><div>{big}{how}</div></div>', notes, "cross", None
+    return f"問全部公司：每家各取 {per} 段", f'<div class="two"><div><figure>{schem}</figure>{why}</div><div>{big}{how}</div></div>', notes, "cross", None
 
 
 def s_ragas(d):

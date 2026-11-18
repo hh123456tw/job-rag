@@ -72,10 +72,10 @@ def _usage(resp) -> dict:
 
 
 def bad_citations(text: str, n_hits: int) -> list[int]:
-    """答案裡不在 1..n_hits 的引用編號（由小到大、不重複）。只看 [1]～[99] 這種寫法：
+    """答案裡不在 1..n_hits 的引用編號（由小到大、不重複）。只看 [1]～[999] 這種寫法：
     [2026] 這類四位數是年份不是引用；沒有任何引用的答案不算錯（例如「資料中沒有提到」）。
     shortcut: 只查編號存不存在，不查那一段有沒有寫這句話；要更嚴就加數字與專有名詞比對。"""
-    return sorted({int(n) for n in re.findall(r"\[(\d{1,2})\]", text)} - set(range(1, n_hits + 1)))
+    return sorted({int(n) for n in re.findall(r"\[(\d{1,3})\]", text)} - set(range(1, n_hits + 1)))
 
 
 def answer(question: str, hits: list[dict], post=_post, env_file=".env", history=None, cross=False) -> dict:
