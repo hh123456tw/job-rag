@@ -6,7 +6,7 @@ import statistics
 from markupsafe import escape
 
 from . import METHODS, retrieval
-from .about_page import CROSS_NOTE, GEN_NOTE, HYBRID, SHORT, _e2e, _hybrid_held, _hybrid_why, _rerank_why, _f, _held_gen, _say, _speech, _sweep_line, hist
+from .about_page import CITE_NOTE, CROSS_NOTE, GEN_NOTE, HYBRID, SHORT, _e2e, _hybrid_held, _hybrid_why, _rerank_why, _f, _held_gen, _say, _speech, _sweep_line, hist
 from .ui import page
 
 W = 340  # 圖的 viewBox 寬；手機約 1:1，桌面等比放大
@@ -83,7 +83,7 @@ def s_arch(d, n_segments, n_companies):
     defs = '<defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" class="ar"/></marker></defs>'
     fig = _svg(318, "系統架構：從公開資料到答案與出處，另有評估迴路", "".join(parts), defs)
     notes = ("<p><span class=key></span>實心藍色是唯一會連網的一步；其餘都在本機。</p>"
-             f"<p>最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}）就不呼叫 DeepSeek。</p>")
+             f"<p>最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}）就不呼叫 DeepSeek。<br>{CITE_NOTE}</p>")
     # 先講有兩條檢索路徑；下面的圖畫的是「問一家公司」那條
     paths = (f'<div class="qk"><p><b>檢索分兩條路，看在哪裡問</b>（下圖是第一條）</p>'
              f"<p><b>問一家公司</b>（在公司頁問，或問句提到公司名）　{r.DEFAULT_METHOD} 取最像的 {r.DEFAULT_K} 段。</p>"

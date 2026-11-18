@@ -30,6 +30,7 @@ def _gate_t(gt) -> str:
     return f"{gt['threshold']:.3f}" + (f"（已指定公司 {gt['scoped_threshold']:.3f}）" if gt.get("scoped_threshold") and gt.get("n_scoped") else "")
 
 
+CITE_NOTE = "答案引用了沒送出的段落編號，程式會擋下（只查編號，不查內容）。"  # 生成後唯一的程式檢查（answer.bad_citations）
 CROSS_NOTE = "每家的段落用混合（BM25＋bge-m3）挑：技術名詞題能取到更多公司。要不要拒答，仍看 bge-m3 的最高分。"  # 跨公司路徑的挑段方式（retrieval.cross_search）
 GEN_NOTE = "RAGAS 與 GPT 複查都於 2026-11-17～18 在補完職稱清單的語料、K=5 設定重跑（GPT 單次輸出有隨機性）。"
 
@@ -252,6 +253,7 @@ def _level(d) -> str:
     if x := d.get("cross_eval"):
         done.append(f"跨公司提問：每家公司各找 {x['per']} 段再逐家整理（{CROSS_NOTE}）；{x['n']} 題中 {x['passed']} 題通過關鍵字檢查（各家涵蓋率平均 {x['coverage']:.2f}）")
     done.append(f"追問記憶：帶入最近 {memory.MAX_TURNS} 輪（簡單規則）")
+    done.append("輸出檢查：" + CITE_NOTE)
     undone = ["重排序模型（reranker）", "向量資料庫（資料只有數百段，在記憶體內搜尋就夠）", "微調模型",
               "線上監控與使用者回饋"] + ([] if d.get("held") else ["獨立測試題（題目與語料同源）"])
 
