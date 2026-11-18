@@ -30,6 +30,7 @@ def _gate_t(gt) -> str:
     return f"{gt['threshold']:.3f}" + (f"（已指定公司 {gt['scoped_threshold']:.3f}）" if gt.get("scoped_threshold") and gt.get("n_scoped") else "")
 
 
+CROSS_NOTE = "每家的段落用混合（BM25＋bge-m3）挑：技術名詞題能取到更多公司。要不要拒答，仍看 bge-m3 的最高分。"  # 跨公司路徑的挑段方式（retrieval.cross_search）
 GEN_NOTE = "RAGAS 與 GPT 複查都於 2026-11-17～18 在補完職稱清單的語料、K=5 設定重跑（GPT 單次輸出有隨機性）。"
 
 
@@ -249,7 +250,7 @@ def _level(d) -> str:
     if c:
         done.append(f"換一個 AI 獨立複查：{c['claims']} 個說法中 {c['supported']} 個有依據")
     if x := d.get("cross_eval"):
-        done.append(f"跨公司提問：每家公司各找 {x['per']} 段再逐家整理；{x['n']} 題中 {x['passed']} 題通過關鍵字檢查（各家涵蓋率平均 {x['coverage']:.2f}）")
+        done.append(f"跨公司提問：每家公司各找 {x['per']} 段再逐家整理（{CROSS_NOTE}）；{x['n']} 題中 {x['passed']} 題通過關鍵字檢查（各家涵蓋率平均 {x['coverage']:.2f}）")
     done.append(f"追問記憶：帶入最近 {memory.MAX_TURNS} 輪（簡單規則）")
     undone = ["重排序模型（reranker）", "向量資料庫（資料只有數百段，在記憶體內搜尋就夠）", "微調模型",
               "線上監控與使用者回饋"] + ([] if d.get("held") else ["獨立測試題（題目與語料同源）"])
@@ -338,7 +339,7 @@ def _trade(d, n_segments: int) -> str:
         ("不用混合檢索（BM25＋bge-m3）",
          f"{HYBRID}＝BM25 關鍵字名次加 bge-m3 語意名次，用 RRF 合併。原本預期它會贏。bge-m3 減{HYBRID}的 MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
          + ("：區間含 0，數據沒有支持混合比較好，所以用較簡單的單一向量找法。" if df["lo"] <= 0 <= df["hi"]
-            else f"：區間不含 0，單一向量找法與{HYBRID}的差異可信。") + _hybrid_held(d)),
+            else f"：區間不含 0，單一向量找法與{HYBRID}的差異可信。") + _hybrid_held(d) + "例外：跨公司提問用混合挑段。" + CROSS_NOTE),
         ("DeepSeek 生成與評審，另請 GPT 複查",
          f"{check}評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查；兩者都只量答案有沒有依據，不量對不對。"
          if gen else "評審和生成同為 DeepSeek，可能偏愛自己的答案；兩者都只量答案有沒有依據，不量對不對。這份輸出沒有複查結果。"),

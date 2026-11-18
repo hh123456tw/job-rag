@@ -144,7 +144,7 @@
    "top": 0.6109200716018677,
    "status": "ok",
    "n_relevant": 3,
-   "n_correct": 2,
+   "n_correct": 3,
    "pass": true,
    "n_hits": 24
   },
@@ -154,7 +154,7 @@
    "top": 0.6252697706222534,
    "status": "ok",
    "n_relevant": 4,
-   "n_correct": 1,
+   "n_correct": 3,
    "pass": true,
    "n_hits": 24
   },
@@ -164,7 +164,7 @@
    "top": 0.4168410897254944,
    "status": "low",
    "n_relevant": 1,
-   "n_correct": 0,
+   "n_correct": 1,
    "pass": false,
    "n_hits": 24
   },

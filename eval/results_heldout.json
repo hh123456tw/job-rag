@@ -343,7 +343,7 @@
    "top": 0.4699759781360626,
    "status": "low",
    "n_relevant": 5,
-   "n_correct": 2,
+   "n_correct": 4,
    "pass": false,
    "n_hits": 24
   },
@@ -353,7 +353,7 @@
    "top": 0.5406366586685181,
    "status": "ok",
    "n_relevant": 6,
-   "n_correct": 4,
+   "n_correct": 6,
    "pass": true,
    "n_hits": 24
   },
@@ -363,7 +363,7 @@
    "top": 0.519783079624176,
    "status": "ok",
    "n_relevant": 6,
-   "n_correct": 2,
+   "n_correct": 6,
    "pass": true,
    "n_hits": 24
   },
@@ -373,7 +373,7 @@
    "top": 0.5637059807777405,
    "status": "ok",
    "n_relevant": 5,
-   "n_correct": 3,
+   "n_correct": 2,
    "pass": true,
    "n_hits": 24
   },
@@ -383,7 +383,7 @@
    "top": 0.47432830929756165,
    "status": "low",
    "n_relevant": 5,
-   "n_correct": 2,
+   "n_correct": 3,
    "pass": false,
    "n_hits": 24
   },
@@ -393,7 +393,7 @@
    "top": 0.5404431223869324,
    "status": "ok",
    "n_relevant": 3,
-   "n_correct": 1,
+   "n_correct": 3,
    "pass": true,
    "n_hits": 24
   },
@@ -403,7 +403,7 @@
    "top": 0.5288532376289368,
    "status": "ok",
    "n_relevant": 5,
-   "n_correct": 3,
+   "n_correct": 4,
    "pass": true,
    "n_hits": 24
   },
@@ -413,7 +413,7 @@
    "top": 0.5116037726402283,
    "status": "ok",
    "n_relevant": 4,
-   "n_correct": 1,
+   "n_correct": 3,
    "pass": true,
    "n_hits": 24
   },
@@ -423,8 +423,8 @@
    "top": 0.536986231803894,
    "status": "ok",
    "n_relevant": 2,
-   "n_correct": 0,
-   "pass": false,
+   "n_correct": 2,
+   "pass": true,
    "n_hits": 24
   },
   {
@@ -433,7 +433,7 @@
    "top": 0.477365642786026,
    "status": "low",
    "n_relevant": 3,
-   "n_correct": 2,
+   "n_correct": 3,
    "pass": false,
    "n_hits": 24
   },

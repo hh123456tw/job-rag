@@ -41,7 +41,7 @@ def cross_rows(qs):
     for q in qs:
         kws = q.get("keywords") or q.get("absence_keywords")
         hits = app._cross_hits(q["question"], "demo")
-        top = max(h["score"] for h in hits)
+        top = hits[0].get("top", max(h["score"] for h in hits))  # 查無判斷用的 bge-m3 最高分
         low = app._low_cross(hits)
         rel = sorted({s["company"] for s in segs if has(s["text"], kws)})
         got = sorted({h["company"] for h in hits if has(h["text"], kws)} & set(rel))

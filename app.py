@@ -265,7 +265,8 @@ def _cross_hits(rq, mode):
 
 
 def _low_cross(hits):
-    return not hits or max(h["score"] for h in hits) < retrieval.CROSS_FLOOR
+    # top＝這些公司全部段落的 bge-m3 最高分（cross_search 附在每段上）；沒有就退回取到的段落的最高分
+    return not hits or hits[0].get("top", max(h["score"] for h in hits)) < retrieval.CROSS_FLOOR
 
 
 def _thr(company):

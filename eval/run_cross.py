@@ -48,7 +48,7 @@ def main():
                 ms.append(d["search_ms"])
             assert d["cross"] is True, q["question"]
             hits = d["hits"]
-            top = max(h["score"] for h in hits)
+            top = hits[0].get("top", max(h["score"] for h in hits))  # 查無判斷用的 bge-m3 最高分
             out["tops"][q["id"]] = top
             got = {h["company"] for h in hits if has(h["text"], q["keywords"])}
             n_rel = len(rel[q["id"]])

@@ -132,3 +132,20 @@ def test_cross_question_after_a_company_question_is_not_turned_into_single_compa
     hist = json.dumps([{"q": "甲科技是做什麼的？", "a": "做後端 [1]", "m": "demo"}], ensure_ascii=False)
     d = web.get("/api/search", query_string={"q": "哪間公司有後端職缺", "history": hist}).get_json()
     assert d["cross"] is True and d["company"] == ""
+
+
+def test_hybrid_picks_do_not_change_the_gate_score_and_have_no_duplicates(monkeypatch):
+    """挑段用混合名次；每段帶的 top 是 bge-m3 最高分（per=1 時等於舊做法取到的最高分），拒答只看它。"""
+    import app
+    q = "哪間公司有後端職缺"
+    hits = cross_search(q, per=3, corpus=MINI)
+    pool, ranked = retrieval._rank_vector(retrieval._root(MINI, "demo"), "bge-m3", q, None)
+    best = max(sc for i, sc in ranked if pool[i]["company"] != retrieval.GENERAL)
+    assert {h["top"] for h in hits} == {best}
+    keys = [(h["file"], h["heading_path"], h["text"]) for h in hits]
+    assert len(keys) == len(set(keys)) and [h["score"] for h in hits] == sorted((h["score"] for h in hits), reverse=True)
+    assert cross_search(q, per=0, corpus=MINI) == []
+    one = {"company": "甲", "score": 0.1}
+    monkeypatch.setattr(retrieval, "CROSS_FLOOR", 0.5)
+    assert not app._low_cross([one | {"top": 0.6}])  # 取到的段分數低，但全體最高分過門檻：不拒答
+    assert app._low_cross([one | {"top": 0.4}]) and app._low_cross([one]) and app._low_cross([])  # 負向：最高分不到就拒答；沒有 top 用段落分數

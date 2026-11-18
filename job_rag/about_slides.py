@@ -6,7 +6,7 @@ import statistics
 from markupsafe import escape
 
 from . import METHODS, retrieval
-from .about_page import GEN_NOTE, HYBRID, SHORT, _e2e, _hybrid_held, _hybrid_why, _rerank_why, _f, _held_gen, _say, _speech, _sweep_line, hist
+from .about_page import CROSS_NOTE, GEN_NOTE, HYBRID, SHORT, _e2e, _hybrid_held, _hybrid_why, _rerank_why, _f, _held_gen, _say, _speech, _sweep_line, hist
 from .ui import page
 
 W = 340  # 圖的 viewBox 寬；手機約 1:1，桌面等比放大
@@ -405,7 +405,7 @@ def s_cross(d, n_companies, companies):
                  + _t(x0, yb + 34, "涵蓋率（越高越好）", "mu sm"))
         cov = _svg(yb + 42, "每家取 1、2、3 段的涵蓋率", "".join(c))
         fig += f"<figure><figcaption>涵蓋率：每家取幾段</figcaption>{cov}</figure>"
-        notes = (f"<p>涵蓋率：該出現的公司裡，取到正確段落的比例（{x['n_answerable']} 道有答案的題平均）。</p>"
+        notes = (f"<p>涵蓋率：該出現的公司裡，取到正確段落的比例（{x['n_answerable']} 道有答案的題平均）。<br>{CROSS_NOTE}</p>"
                  f"<p>{x['n']} 題中 {x['passed']} 題通過關鍵字檢查；查無常數 {x['floor']} 用同批題挑，偏樂觀。</p>")
     else:
         fig += '<figure><p class="miss">缺資料：eval/results_cross.json 找不到或已過期，涵蓋率圖略過，只留示意圖。</p></figure>'

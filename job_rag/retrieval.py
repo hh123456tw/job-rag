@@ -443,7 +443,7 @@ def search(question: str, method: str = DEFAULT_METHOD, company: str | None = No
 
 
 # 跨公司提問（票 31）。每家公司各取 PER_COMPANY 段；預設值由 eval/results_cross.txt 的 1／2／3 段比較決定。
-PER_COMPANY = 3  # 新語料 1／2／3 段涵蓋率 0.530／0.731／0.794（eval/results_cross.txt）；端到端單次比較（eval_per3/summary.md）：3 段多送約 2100 token、延遲幾乎沒差，11 題中 3 題較完整、1 題出現來源沒有的說法。使用者決定取 3
+PER_COMPANY = 3  # 1／2／3 段涵蓋率 0.709／0.804／0.887（eval/results_cross.txt；11/18 改用混合挑段前是 0.530／0.731／0.794）；端到端單次比較（eval_per3/summary.md）：3 段多送約 2100 token、延遲幾乎沒差，11 題中 3 題較完整、1 題出現來源沒有的說法。使用者決定取 3
 CROSS_FLOOR = 0.50  # 跨公司的查無常數：全部段落的最高分低於它才回 low。11/18 由 0.534 降到 0.50（離線試算：新 10 題通過 3→6；沒答案題檢索層放行，靠答案層拒答）。偏樂觀，值與挑法見 eval/results_cross.txt
 _CROSS_WORDS = re.compile(
     "哪一?[間家]|哪些公司|哪個公司|哪幾[間家]|各家|所有公司|全部公司|每[一]?家|優先投|推薦哪|"
@@ -457,19 +457,27 @@ def is_cross(question: str, corpus=None, mode: str = "demo") -> bool:
 
 
 def cross_search(question: str, per: int | None = None, corpus=None, mode: str = "demo", companies=None) -> list[dict]:
-    """每家公司各取最像的 per 段（bge-m3），依分數由高到低。一次編碼問句；「綜合」不算公司。
+    """每家公司各取 per 段，用混合名次（BM25＋bge-m3，RRF）挑，輸出依 bge-m3 分數由高到低。一次編碼問句；「綜合」不算公司。
+    跨公司題常問技術名詞，字面比對能把有寫那個詞的段落拉進來（11/18，見 README）。每段的 score 是 bge-m3 相似度。
+    每段另帶 top＝這些公司全部段落的 bge-m3 最高分（不管那段有沒有被挑到）：查無判斷用它，所以挑法改了、拒答行為不變。
     companies：只取這些公司（介面列出的公司；索引另有沒列出的公司時用）；None＝索引裡全部公司。
     展示模式只看公開索引；自用模式才含自用段落。"""
     per = PER_COMPANY if per is None else per
-    pool, ranked = _rank_vector(_root(corpus, mode), "bge-m3", question, None)
+    root = _root(corpus, mode)
+    pool, ranked = _rank_vector(root, "bge-m3", question, None)
+    _, rb = _rank_bm25(root, question, None)
+    ok = lambda i: pool[i]["company"] != GENERAL and (companies is None or pool[i]["company"] in companies)
+    sim = dict(ranked)
+    top = max((sc for i, sc in ranked if ok(i)), default=0.0)
     taken: dict[str, int] = {}
     rows = []
-    for i, sc in ranked:  # ranked 已由高到低
+    for i, _ in rrf([[i for i, _ in rb], [i for i, _ in ranked]]):
         c = pool[i]["company"]
-        if c != GENERAL and (companies is None or c in companies) and taken.get(c, 0) < per:
+        if ok(i) and taken.get(c, 0) < per:
             taken[c] = taken.get(c, 0) + 1
-            rows.append((i, sc))
-    return [{key: pool[i][key] for key in ("company", "file", "heading_path", "text")} | {"score": float(sc)}
+            rows.append((i, sim[i]))
+    rows.sort(key=lambda x: -x[1])
+    return [{key: pool[i][key] for key in ("company", "file", "heading_path", "text")} | {"score": float(sc), "top": float(top)}
             | ({"private": pool[i]["private"]} if mode == "self" else {}) for i, sc in rows]
 
 
