@@ -236,7 +236,7 @@ def about_page():
     counts = public_company_counts()
     names = [c for c in counts if c != "綜合"]  # 「綜合」是無法歸屬的段落，不算公司
     # 預設是簡報；?all=1 是原本的長頁（含全部文字說明）
-    render = render_about if request.args.get("all") == "1" else lambda *a: render_slides(*a, companies=names)
+    render = render_about if request.args.get("all") == "1" else lambda *a: render_slides(*a, companies=[n for _, n in _company_buttons()])  # 跨公司頁的示意圖：只畫跨公司實際會查的公司（有按鈕的）
     args = (sum(counts.values()), len(names), retrieval.public_segment_lengths())
     try:
         return render(about.load(), "", *args)
@@ -266,7 +266,9 @@ def _alone(q, company, mode) -> bool:
 def _cross_hits(rq, mode):
     """跨公司檢索：只取介面列出的公司（現場 8 家；索引裡其他公司沒有按鈕，不列入）。對不上任何一家時退回索引裡全部公司。"""
     names = set(public_company_counts(mode=mode)) - {"綜合"}
-    return cross_search(rq, mode=mode, companies=({n for _, n in _company_buttons(mode)} & names) or None)
+    live = {n for _, n in _company_buttons(mode)} & names
+    said = retrieval.mentioned_companies(rq, mode=mode) & live  # 問句提到兩家以上：只查那幾家（仍限有按鈕的公司）
+    return cross_search(rq, mode=mode, companies=(said if len(said) >= 2 else live) or None)
 
 
 def _low_cross(hits):
@@ -317,6 +319,8 @@ def answer_json():
         return _tag({"status": "error", "message": msg}), 503
     try:
         rq = q if _alone(q, company, mode) else expand(q, history, mode=mode)  # 本身就是跨公司題就不接上一題（否則上一題的公司名會把它變成單公司）
+        if not company and _on("JOB_RAG_DETECT") and (d := detect_company(rq, mode=mode)):
+            company = d  # 與 /api/search 一致：問句剛好提到一家就只搜那一家（門檻用已指定公司的）
         cross = _is_cross(rq, company, mode)
         hits = _cross_hits(rq, mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:

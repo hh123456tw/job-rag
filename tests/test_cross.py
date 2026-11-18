@@ -28,8 +28,29 @@ def test_non_cross_questions_not_detected(q):
 
 @pytest.mark.parametrize("q", NO)
 def test_routing_ignores_wording_and_only_checks_company_names(q):
-    """分流不看問法：沒提到公司就是跨公司；提到公司（一家或兩家）就不是。"""
-    assert is_cross(q, MINI) == ("甲科技" not in q and "乙資訊" not in q)
+    """分流不看問法：剛好提到一家公司才不是跨公司；沒提、或提到兩家以上都是。"""
+    assert is_cross(q, MINI) == (("甲科技" in q) + ("乙資訊" in q) != 1)
+
+
+def test_two_named_companies_go_cross_and_only_those_are_searched(monkeypatch):
+    """提到兩家：跨公司路徑、只含那兩家、門檻是 CROSS_FLOOR。反例：提到一家仍是單一公司路徑；沒提公司仍查全部。"""
+    monkeypatch.setenv("JOB_RAG_CORPUS", str(MINI))
+    monkeypatch.delenv("JOB_RAG_ACCESS_CODE", raising=False)
+    import app
+    monkeypatch.setattr(retrieval, "CROSS_FLOOR", 0.01)
+    monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 5.0)  # 若還有路徑直接用它，會被擋成 low
+    c = app.app.test_client()
+    everyone = {h["company"] for h in c.get("/api/search", query_string={"q": "哪間公司有後端職缺"}).get_json()["hits"]}
+    assert len(everyone) >= 2
+    two = sorted(everyone)[:2]
+    d = c.get("/api/search", query_string={"q": f"{two[0]}和{two[1]}誰的後端職缺多"}).get_json()
+    assert d["cross"] is True and d["threshold"] == 0.01 and {h["company"] for h in d["hits"]} == set(two) and d["company"] == ""
+    assert retrieval.mentioned_companies(f"{two[0]}和{two[1]}誰的後端職缺多", MINI) == set(two)
+    one = c.get("/api/search", query_string={"q": f"{two[0]}有後端職缺嗎"}).get_json()
+    assert one["cross"] is False and one["company"] == two[0] and {h["company"] for h in one["hits"]} == {two[0]}
+    assert one["threshold"] == round(5.0 - retrieval.SCOPED_DROP, 3)
+    none = c.get("/api/search", query_string={"q": "後端職缺"}).get_json()
+    assert none["cross"] is True and {h["company"] for h in none["hits"]} == everyone
 
 
 def test_cross_search_one_per_company_sorted_and_public_only():

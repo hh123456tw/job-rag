@@ -365,8 +365,8 @@ def gate_score(question: str, method: str = "bge-m3", company: str | None = None
     return ranked[0][1] if ranked else None
 
 
-def _detect(root: str, question: str) -> str | None:
-    """問句整串含公司名或別名（公開段落的公司欄位＋ALIASES）才算；剛好一家才回傳。
+def _mentioned(root: str, question: str) -> set:
+    """問句提到的公司（公開段落的公司欄位＋ALIASES；問句整串含公司名或別名才算）。
     長的詞先比對並從問句剔除，所以短詞不會從長詞裡誤抓。"""
     names = {s["company"] for s in _public(root)} - {GENERAL}
     terms = {n: n for n in names} | {a: n for a, n in ALIASES.items() if n in names}
@@ -375,7 +375,18 @@ def _detect(root: str, question: str) -> str | None:
         if term in question:
             found.add(terms[term])
             question = question.replace(term, "\0")
+    return found
+
+
+def _detect(root: str, question: str) -> str | None:
+    """剛好提到一家才回傳那一家；沒有、兩家以上回 None。"""
+    found = _mentioned(root, question)
     return found.pop() if len(found) == 1 else None
+
+
+def mentioned_companies(question: str, corpus=None, mode: str = "demo") -> set:
+    """問句提到的全部公司（跨公司路徑用：提到兩家以上就只查這幾家）。"""
+    return _mentioned(_root(corpus, mode), question)
 
 
 def mentions_company(question: str, corpus=None, mode: str = "demo") -> bool:
@@ -457,9 +468,9 @@ def asks_all(question: str, corpus=None, mode: str = "demo") -> bool:
 
 
 def is_cross(question: str, corpus=None, mode: str = "demo") -> bool:
-    """沒提到任何一家公司就走跨公司（呼叫端另外確認沒有指定公司）。11/18 起分流看「在哪裡問」，不看問法：
-    公司頁內提問＝那一家；全部公司頁沒提公司名＝跨公司；提到公司（一家或多家）都不算。"""
-    return not mentions_company(question, corpus, mode)
+    """不是剛好提到一家公司，就走跨公司（呼叫端另外確認沒有指定公司）。11/18 起分流看「在哪裡問」，不看問法：
+    公司頁內提問＝那一家；問句剛好提到一家＝那一家；沒提公司名＝查全部現場公司；提到兩家以上＝只查那幾家（都是跨公司路徑）。"""
+    return len(mentioned_companies(question, corpus, mode)) != 1
 
 
 def cross_search(question: str, per: int | None = None, corpus=None, mode: str = "demo", companies=None) -> list[dict]:

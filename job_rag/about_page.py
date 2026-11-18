@@ -254,7 +254,7 @@ def _level(d) -> str:
         done.append(f"跨公司提問：每家公司各找 {x['per']} 段再逐家整理（{CROSS_NOTE}）；{x['n']} 題中 {x['passed']} 題通過關鍵字檢查（各家涵蓋率平均 {x['coverage']:.2f}）")
     done.append(f"追問記憶：帶入最近 {memory.MAX_TURNS} 輪（簡單規則）")
     done.append("輸出檢查：" + CITE_NOTE)
-    undone = ["重排序模型（reranker）", "向量資料庫（資料只有數百段，在記憶體內搜尋就夠）", "微調模型",
+    undone = ["重排序模型（reranker）：量過，沒有接上網站" if d.get("held_methods") else "重排序模型（reranker）", "向量資料庫（資料只有數百段，在記憶體內搜尋就夠）", "微調模型",
               "線上監控與使用者回饋"] + ([] if d.get("held") else ["獨立測試題（題目與語料同源）"])
 
     def li(xs):
@@ -534,7 +534,9 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             f"問單一公司取前 {r.DEFAULT_K} 段；問全部公司，每家取 {r.PER_COMPANY} 段。"],
         4: ["找得到還不夠，答案也要有依據。",
             *([f"我用 RAGAS 打分，評審是 {rg['judge']}，不是生成用的 DeepSeek。忠實度 {_f(rg['tune']['faithfulness'])}：答案的每個說法，在原文裡找得到依據。",
-               f"另外請 GPT 逐句複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None]
+               (f"另外請 Sonnet 5.5 逐句複查：{cs['claims']} 個說法裡，{cs['supported']} 個有依據。"
+                if (cs := d.get("cross_sonnet")) and rg["judge"] == "Sonnet 5.5" else
+                f"另外請 GPT 逐句複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None)]
               if (rg := d and d.get("ragas_gpt")) and g else
               [f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是 2026-11-17～18 在補完職稱清單的語料、取前 5 段重跑的結果。" if g else None,
                "但評審和生成都是 DeepSeek，可能偏愛自己的答案。" if g else None,
@@ -554,7 +556,8 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             f"題目只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案，只能當方向。" if d else "題目很少，只能當方向。",
             (_held_line(d) + "。其餘題目與資料同源。") if _held_line(d) else "題目和資料同源，沒有獨立測試題。",
             f"跨公司題 {x['n']} 題中 {x['passed']} 題通過關鍵字檢查。但它的門檻也用同一批題挑，偏樂觀。" if x else None,
-            "我刻意沒做：重排序模型、向量資料庫、微調模型、線上監控。沒做就是沒做。",
+            ("重排序模型量過，沒有接上網站。我刻意沒做：向量資料庫、微調模型、線上監控。沒做就是沒做。" if d and d.get("held_methods")
+             else "我刻意沒做：重排序模型、向量資料庫、微調模型、線上監控。沒做就是沒做。"),
             "放大 100 倍會怎麼改，只是設計想法，我還沒有做。"],
     }
 

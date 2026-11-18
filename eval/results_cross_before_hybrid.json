@@ -1,0 +1,9 @@
+{
+ "說明": "跨公司改用混合挑段之前的對照數字。取自 commit d6c2f12 的 eval/results_heldout.json：獨立測試題跨公司路徑有答案 10 題，CROSS_FLOOR 0.50、每家取 3 段、挑段全用 bge-m3。got＝取到含關鍵字段落的相關公司數加總，want＝該取到的相關公司數加總。",
+ "source_commit": "d6c2f12",
+ "heldout_answerable": {
+  "n": 10,
+  "got": 20,
+  "want": 44
+ }
+}

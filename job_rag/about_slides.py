@@ -53,7 +53,7 @@ def s_cover(d, n_segments, n_companies):
 def s_arch(d, n_segments, n_companies):
     r = retrieval
     main = [("公開資料", f"{n_companies} 家、{n_segments} 段", 0), ("切段", f"約 {r.CHUNK} 字", 0), ("向量", r.DEFAULT_METHOD, 0),
-            ("索引", "FAISS", 0), (f"取前 K 段", f"K = {r.DEFAULT_K}", 0), ("查無門檻", f"低於 {r.NOT_FOUND_THRESHOLD:.3f} 就停", 0),
+            ("索引", "FAISS", 0), (f"取前 K 段", f"K = {r.DEFAULT_K}", 0), ("查無門檻", f"低於 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f} 就停", 0),
             ("生成", "DeepSeek", 1), ("答案＋出處", "附引用編號", 0)]
     bw, bh, gx, ys = 100, 54, 120, (8, 94, 180)
     pos = []  # snake：第 1 列左到右、第 2 列右到左、第 3 列左到右
@@ -72,7 +72,7 @@ def s_arch(d, n_segments, n_companies):
             else:  # 換列：從上一格底部往下
                 arrow = f'<line class="ln" x1="{px + bw / 2}" y1="{py + bh}" x2="{x + bw / 2}" y2="{y}" marker-end="url(#ah)"/>'
             parts.append(arrow)
-    ev = [("評估題", ""), ("MRR／Hit@k", ""), ("RAGAS", ""), ("GPT 複查", "")]
+    ev = [("評估題", ""), ("MRR／Hit@k", ""), ("RAGAS", ""), ("逐句複查", "")]  # 不寫模型名：評審換過（DeepSeek → GPT → Sonnet 5.5），細節在「答案有依據」那頁
     ew, eg, ey = 72, 52 / 3, 276
     parts.append(_t(0, 262, "評估迴路（離線跑，量找法與答案）", "mu bd sm"))
     for i, (t, _) in enumerate(ev):
@@ -83,12 +83,10 @@ def s_arch(d, n_segments, n_companies):
     defs = '<defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" class="ar"/></marker></defs>'
     fig = _svg(318, "系統架構：從公開資料到答案與出處，另有評估迴路", "".join(parts), defs)
     notes = ("<p><span class=key></span>實心藍色是唯一會連網的一步；其餘都在本機。</p>"
-             f"<p>最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}）就不呼叫 DeepSeek。<br>{CITE_NOTE}</p>")
+             f"<p>最高相似度低於門檻就不呼叫 DeepSeek：問一家公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}；"
+             f"其他（沒提公司，或提到兩家以上）每家各取 {r.PER_COMPANY} 段、門檻 {r.CROSS_FLOOR:.2f}，提到兩家以上就只查那幾家。<br>{CITE_NOTE}</p>")
     # 先講有兩條檢索路徑；下面的圖畫的是「問一家公司」那條
-    paths = (f'<div class="qk"><p><b>檢索分兩條路，看在哪裡問</b>（下圖是第一條）</p>'
-             f"<p><b>問一家公司</b>（在公司頁問，或問句提到公司名）　{r.DEFAULT_METHOD} 取最像的 {r.DEFAULT_K} 段。</p>"
-             f"<p><b>跨公司</b>（在全部公司頁問，沒提公司名）　每家各取 {r.PER_COMPANY} 段，用混合（BM25＋bge-m3）挑；"
-             f"拒答看 bge-m3 最高分，低於 {r.CROSS_FLOOR:.2f} 就停。</p></div>")
+    paths = ('<div class="qk"><p>下圖是<b>問一家公司</b>的流程。問全部公司另有一條路，見「問全部公司」那頁。</p></div>')
     return f"一個問題，走過 {len(main)} 步", paths + fig, notes, "arch", None
 
 
@@ -162,7 +160,7 @@ def s_methods(d):
     notes = (f"<p>Hit@3＝正確答案的那段，有排進前 3 名的題數比例（Hit@1 是第 1 名、Hit@5 是前 5 名）。"
              f"例：{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{m3['hit@3']:.2f}（{m3['found']}/{d['n_answerable']}）。</p>"
              "<p>MRR＝正確段落名次的倒數平均（第 1 名 1 分、第 2 名 0.5 分），沒辦法寫成題數；區間重疊的差距只能當方向。"
-             "<br>這頁只比「問一家公司」的找法。跨公司提問另有一條路，細節在完整說明頁。</p>")
+             "<br>這頁只比「問一家公司」的找法。問全部公司另有一條路，見「問全部公司」那頁。</p>")
     head = f"{len(METHODS)} 種找法，{SHORT[best['method']]} 最高" if best["method"] == "bge-m3" else f"{len(METHODS)} 種找法比一比"
     return head, fig, notes, "methods", None
 
@@ -223,10 +221,14 @@ def s_score(d):
                  + f'<rect class="bar gx {cls}" data-k="{escape(lab)}" data-v="{v!r}" x="{x0}" y="{y + 16}" width="{max(v, .01) * (x1 - x0):.1f}" height="20" rx="4"/>'
                  + _t(x1 + 8, y + 31, txt, "bd"))
     fig = _svg(y0 + len(rows) * pitch, "100 題分題型成績", "".join(g))
-    notes = ("<p>・<b style='color:var(--ok)'>綠</b>：九成以上的題做對。<br>・<b style='color:var(--mid)'>黃</b>：普通。<br>・<b style='color:var(--bad)'>紅</b>：弱，是已知弱點。"
-             + ("<br>・職缺題較弱的可能原因（我的推論）：問的是條件，不是職稱；同一家的職缺段落很像；答案分散在好幾段，只取前 5 段。"
-                if bt.get("職缺") and bt["職缺"]["hit@3"] < .9 else "") + "</p>"
+    notes = ("<p>・<b style='color:var(--ok)'>綠</b>：九成以上的題做對。<br>・<b style='color:var(--mid)'>黃</b>：普通。<br>・<b style='color:var(--bad)'>紅</b>：弱，是已知弱點。</p>"
              f"<p>・{x['n']} 題由 GPT 出，標準答案沒人工確認，只能當方向。</p>")
+    # 職缺題偏弱的原因放在圖正下方、用正文字級（不藏在小字備註裡）
+    if bt.get("職缺") and bt["職缺"]["hit@3"] < .9:
+        fig += ('<div class="qk"><p><b>職缺題為什麼比較弱</b>（職缺題較弱的可能原因（我的推論），沒有逐題確認）</p>'
+                "<p>1. 問的是條件，不是職稱。例：「哪些職位讓沒經驗的人也能投？」，段落寫的是「工作經歷：不拘」。</p>"
+                "<p>2. 同一家公司的職缺段落長得很像，互相競爭。</p>"
+                f"<p>3. 答案分散在好幾段，但一次只取前 {retrieval.DEFAULT_K} 段。</p></div>")
     return "哪裡強、哪裡弱", fig, notes, "score", f"{x['n']} 題成績"
 
 
@@ -246,9 +248,10 @@ def s_qset(d):
         name, hint = _KIND.get(k, (k, ""))
         a, b = q["tune"]["kinds"].get(k), q["held"]["kinds"].get(k)
         ex = (b or a)["example"]
-        rows.append(f'<div class="qk"><p><b>{escape(name)}</b>　調參用 {a["n"] if a else 0} 題・調完才測 {b["n"] if b else 0} 題</p>'
-                    f'<p class="mu">例：「{escape(ex)}」{("（" + escape(hint) + "）") if hint else ""}</p></div>')
-    fig = "".join(rows)
+        rows.append(f'<div class="qcard"><h3>{escape(name)}</h3>'  # 一種題型一張字卡
+                    f'<p class="ct"><span>調參用 {a["n"] if a else 0} 題</span><span>調完才測 {b["n"] if b else 0} 題</span></p>'
+                    f'<p>例：「{escape(ex)}」</p>' + (f'<p class="mu">{escape(hint)}</p>' if hint else "") + "</div>")
+    fig = f'<div class="qcards">{"".join(rows)}</div>'
     notes = (f"<p>共 {q['tune']['n'] + q['held']['n']} 題，分兩組：</p>"
              f"<p>・調參用 {q['tune']['n']} 題：我一個人出，調門檻、選找法時一直在看。<br>・調完才測 {q['held']['n']} 題：GPT 出，沒拿來調任何東西。</p>"
              "<p>・每題先標好「正確答案在哪一段」，才能算排名。<br>・刻意放「資料裡沒有答案」的題，測它會不會亂編。<br>・標準答案都沒人工確認，只能當方向。</p>")
@@ -378,9 +381,46 @@ def s_funnel(d, e2e):
     fig = _svg(196, "兩層把關漏斗：問題經檢索門檻與答案層後仍回答的題數", "".join(p), defs)
     big = (f'<div class="e2e"><b data-v="{e2e["refused"]}" data-n="{n}">{e2e["refused"]} / {n}</b>'
            f'<span>沒有答案的題，全部拒答（真 DeepSeek、網站實際路徑，只跑一次）</span></div>')
-    notes = ("<p>檢索門檻單獨擋不乾淨，要靠答案層補上。答案層靠提示詞：段落沒寫就回「查無」。"
-             f"<br>另有一個輸出檢查（不算在這 {n} 題裡）：{CITE_NOTE}</p><p>樣本小、同一人出題，只能當方向。</p>")
-    return f"兩層把關：{e2e['refused']}/{n} 題拒答", f'<div class="two">{fig}{big}</div>{link}', notes, "funnel", None
+    notes = "<p>檢索門檻單獨擋不乾淨，要靠答案層補上。答案層靠提示詞：段落沒寫就回「查無」。</p><p>樣本小、同一人出題，只能當方向。</p>"
+    # 輸出檢查放在圖下方、用正文字級：它管的是「引用錯編號」，不是「沒答案」，所以不算進上面的兩層與題數
+    extra = f'<div class="qk"><p><b>另有一個輸出檢查</b>（管的是別的錯，不算在這 {n} 題裡）</p><p>{CITE_NOTE}</p></div>'
+    return f"兩層把關：{e2e['refused']}/{n} 題拒答", f'<div class="two">{fig}{big}</div>{link}{extra}', notes, "funnel", None
+
+
+def s_cross(d, n_companies, companies):
+    """問全部公司：示意圖＋一個主數字（取到幾家／該取到幾家）。簡報裡跨公司只出現在這一頁。沒有數字就只留示意圖。"""
+    x = d.get("cross_slide") if d else None
+    per = retrieval.PER_COMPANY
+    names = list(companies or [])[:n_companies] or [f"公司 {i + 1}" for i in range(n_companies)]
+    cols, cw, ch, gap = 4, 76, 54, 12
+    p = []
+    for i, nm in enumerate(names):
+        r, c = divmod(i, cols)
+        sx, sy = c * (cw + gap) + (W - cols * cw - (cols - 1) * gap) / 2, r * (ch + gap)
+        segs = "".join(f'<rect class="sg" x="{sx + 14 + k * 20:.1f}" y="{sy + 33}" width="16" height="9" rx="2"/>' for k in range(per))
+        p.append(f'<rect class="co" x="{sx:.1f}" y="{sy}" width="{cw}" height="{ch}" rx="9"/>' + _t(sx + cw / 2, sy + 21, _short(nm), "bd sm", "middle") + segs)
+    h = ((len(names) + cols - 1) // cols) * (ch + gap)
+    p.append(_t(W / 2, h + 14, f"每家各取 {per} 段（■）→ 合併 → 交給 DeepSeek 逐家整理", "mu sm", "middle"))
+    schem = _svg(h + 24, f"跨公司示意：{len(names)} 家公司各取 {per} 段", "".join(p))
+    if not x:
+        return f"問全部公司：每家各取 {per} 段", f"<figure>{schem}</figure>", "<p>挑段用混合（BM25＋bge-m3）；要不要拒答，看 bge-m3 的最高分。</p>", "cross", None
+    big = (f'<div class="e2e"><b data-v="{x["got"]}" data-n="{x["want"]}">{x["got"]} / {x["want"]}</b>'
+           f'<span>混合（BM25＋bge-m3，網站現行）：該取到的公司，取到幾家（獨立測試題 {x["n"]} 題加總）</span>'
+           f'<i class="tr"><i class="fl" style="width:{100 * x["got"] / x["want"]:.1f}%"></i></i></div>')
+    if x["base"]:  # 對照：同一組題、只用 bge-m3 挑段
+        b = x["base"]
+        big += (f'<div class="e2e" style="margin-top:12px"><b class="cmp" data-k="base" data-v="{b["got"]}" data-n="{b["want"]}">{b["got"]} / {b["want"]}</b>'
+                f'<span>只用 bge-m3 挑段時（對照）</span>'
+                f'<i class="tr"><i class="fl" style="width:{100 * b["got"] / b["want"]:.1f}%"></i></i></div>')
+    e = x.get("example")
+    how = ('<div class="qk"><p><b>怎麼測</b></p>'
+           f"<p>1. {x['n']} 題跨公司題，每題有一個關鍵字。" + (f"例：「{escape(e['q'])}」關鍵字 {escape(e['kw'])}。" if e else "") + "</p>"
+           "<p>2. 先用關鍵字掃語料，找出該出現的公司" + (f"（這題 {e['want']} 家）" if e else "") + "。</p>"
+           f"<p>3. 再看系統每家取回的 {per} 段裡，有沒有含關鍵字的段落" + (f"（這題取到 {e['got']} 家）" if e else "") + "。</p>"
+           f"<p>4. {x['n']} 題加總：{x['want']} 家裡取到 {x['got']} 家。被門檻擋掉的題也照算。</p></div>")
+    notes = (f"<p>挑段用混合（BM25＋bge-m3）：技術名詞靠字面比對較準。要不要拒答，看 bge-m3 的最高分。</p>"
+             f"<p>弱點：短的技術名詞題會被拒答門檻擋掉，{x['n']} 題裡 {x['blocked']} 題。這組題也用來調過門檻，數字偏樂觀。</p>")
+    return f"問全部公司：每家各取 {per} 段", f'<div class="two"><figure>{schem}</figure><div>{big}{how}</div></div>', notes, "cross", None
 
 
 def s_ragas(d):
@@ -401,15 +441,19 @@ def s_ragas(d):
     p.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{yb}" y2="{yb}"/>' + _ticks_h(x0, x1, yb, (0, .5, 1), lambda v: f"{v:g}")
              + _t(x0, yb + 34, (f"RAGAS（{gpt['judge']} 評審），{src['scored']} 題；滿分 1" if gpt else f"RAGAS（DeepSeek 評，與生成同模型），{g['scored']} 題；滿分 1"), "mu sm"))
     chart = _svg(yb + 42, "RAGAS 忠實度與答案相關性", "".join(p))
+    cs = d.get("cross_sonnet")
+    who_chk = "Sonnet 5.5" if cs and gpt and gpt["judge"] == "Sonnet 5.5" else "GPT"  # RAGAS 與複查同一個評審才換，避免一頁三種
+    if who_chk != "GPT":
+        c = cs
     chk = ""
     if c:
         chk = (f'<div class="e2e"><b data-v="{c["supported"]}" data-n="{c["claims"]}">{c["supported"]} / {c["claims"]}</b>'
-               f'<span>個說法有依據（GPT 複查，調參用題組 {c["n"]} 題）</span>'
+               f'<span>個說法有依據（{who_chk} 複查，調參用題組 {c["n"]} 題）</span>'
                f'<i class="tr"><i class="fl" style="width:{100 * c["supported"] / c["claims"]:.1f}%"></i></i></div>')
-    h = d.get("held_cross")
+    h = d.get("held_cross_sonnet") if who_chk != "GPT" else d.get("held_cross")
     if c and h:
         chk += (f'<div class="e2e"><b data-v="{h["supported"]}" data-n="{h["claims"]}">{h["supported"]} / {h["claims"]}</b>'
-                f'<span>個說法有依據（GPT 複查，獨立測試題 {h["n"]} 題）</span>'
+                f'<span>個說法有依據（{who_chk} 複查，獨立測試題 {h["n"]} 題）</span>'
                 f'<i class="tr"><i class="fl" style="width:{100 * h["supported"] / h["claims"]:.1f}%"></i></i></div>')
     notes = ("<p>" + "主數字是 GPT 複查：由 Codex CLI 的 GPT 逐句對照段落，不是生成用的 DeepSeek。<br>" * bool(c)
              + f"RAGAS 的評審與生成同為 DeepSeek，同模型自評可能偏樂觀，只當附註。答案相關性沒有 GPT 版本。</p><p>{GEN_NOTE}{_held_gen(d)}</p>")
@@ -417,12 +461,12 @@ def s_ragas(d):
         hd = gpt.get("held")
         held = (f"<br>獨立測試題 {hd['scored']} 題：忠實度 {_f(hd['faithfulness'])}、答案相關性 {_f(hd['answer_relevancy'])}。" if hd else "")
         bad = sum(v["failed"] for k, v in gpt.items() if k != "judge")
-        who = ("評審都是 GPT（Codex CLI）：左邊是逐句複查，右邊是 RAGAS。" if gpt["judge"] == "GPT"
+        who = (f"評審都是 {who_chk}：左邊是逐句複查，右邊是 RAGAS。" if gpt["judge"] == who_chk
                else f"右邊的 RAGAS 由 {gpt['judge']} 評審；左邊的逐句複查由 GPT 做。")
         notes = (f"<p>{who}生成用的是 DeepSeek，評審換了別的模型。" + held + "</p>"
                  "<p>答案和段落沒有重新產生；跨公司改動之後的答案沒有重評。評審只跑一次，輸出有隨機性。"
                  + (f"有 {bad} 題評分失敗，沒有補分。" if bad else "") + "</p>")
-    head = f"GPT 複查：{c['supported']}/{c['claims']} 有依據" if c else f"答案有依據：忠實度 {src['faithfulness']:.2f}"
+    head = (f"GPT 複查：{c['supported']}/{c['claims']} 有依據" if who_chk == "GPT" else f"答案有依據：{c['supported']}/{c['claims']}") if c else f"答案有依據：忠實度 {src['faithfulness']:.2f}"
     return head, f'<div class="two"><div>{chk}</div>{chart}</div>' if c else chart, notes, "ragas", None
 
 
@@ -438,7 +482,10 @@ ICONS = {"warn": _icon('<path d="M12 3 2.5 20h19z"/><path d="M12 10v5M12 17.5v.5
 def s_limits(d):
     na, nu = (d["n_answerable"], d["n_unanswerable"]) if d else (None, None)
     lim = [f"題少：{na} 題有答案、{nu} 題沒答案" if d else "題少", "題目與語料同源" if not (d and d.get("held")) else f"原題與語料同源；另有 {d['held']['n']} 題獨立測試題（單一模型出題、金標未人工確認）", "門檻用同批題挑，偏樂觀", "單機、單一存取碼"]
-    undone = ["重排序模型", "向量資料庫", "微調模型", "線上監控"] + ([] if d and d.get("held") else ["獨立測試題"])
+    rr = bool(d and d.get("held_methods"))  # 重排序量過了就不算「沒做」：改列在限制裡，寫明量過、沒接上
+    if rr:
+        lim.append("重排序模型：量過，沒接上（看不出差別、每題慢約 7 秒）")
+    undone = ([] if rr else ["重排序模型"]) + ["向量資料庫", "微調模型", "線上監控"] + ([] if d and d.get("held") else ["獨立測試題"])
     nxt = ["近似索引，只編新段落", "PDF 與掃描檔解析", "改動後自動重考"]
     col = lambda ic, t, items, tag="": (f'<div class="col"><div class="ch">{ICONS[ic]}<h3>{escape(t)}</h3></div>{f"<em>{escape(tag)}</em>" if tag else ""}'
                                          + "<ul>" + "".join(f"<li>{escape(i)}</li>" for i in items) + "</ul></div>")
@@ -485,6 +532,9 @@ def s_error(error):
 # ---------- 組頁 ----------
 CSS = """body.sl{max-width:900px;padding:0 16px 168px}
 .qk{margin:0 0 14px}.qk p{margin:2px 0}
+.qcards{display:grid;gap:12px}@media(min-width:760px){.qcards{grid-template-columns:1fr 1fr}}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}.qcard h3{margin:0 0 6px;font-size:1.05rem}.qcard p{margin:4px 0}
+.qcard .ct{display:flex;gap:8px;flex-wrap:wrap}.qcard .ct span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:.85rem;color:var(--mute)}
 .sh{display:flex;align-items:center;justify-content:space-between;min-height:52px;font-size:.9375rem}
 .sh a{display:inline-flex;align-items:center;min-height:48px}.sh b{color:var(--mute);font-weight:500}
 .slide{padding:0 0 16px}.js .slide{display:none}.js .slide.cur{display:block;animation:fi .25s ease-out}
@@ -532,6 +582,7 @@ CSS = """body.sl{max-width:900px;padding:0 16px 168px}
 .tr .fl{display:block;height:100%;border-radius:4px;background:var(--mute);opacity:.6}.sd.af .fl,.e2e .fl{background:var(--acc);opacity:1}
 .tr s{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--fg)}
 .e2e{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.e2e b.cmp{color:var(--mute)}
 .e2e b{display:block;font-size:clamp(2.5rem,11vw,3.5rem);line-height:1.1;color:var(--acc);font-variant-numeric:tabular-nums}.e2e span{color:var(--mute)}
 .cols{display:grid;gap:12px}@media(min-width:760px){.cols{grid-template-columns:repeat(3,1fr)}}
 .col{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
@@ -593,7 +644,7 @@ def render(data, error, n_segments, n_companies, lengths=None, companies=None) -
     builders = [lambda: s_cover(data, n_segments, n_companies), lambda: s_arch(data, n_segments, n_companies), lambda: s_chunk(data, lengths)]
     if data:
         builders += [lambda: s_methods(data), lambda: s_held(data), lambda: s_score(data), lambda: s_qset(data), lambda: s_fixes(data), lambda: s_funnel(data, data.get("e2e")),
-                     lambda: s_ragas(data)]
+                     lambda: s_ragas(data), lambda: s_cross(data, n_companies, companies)]
     else:
         builders += [lambda: s_error(error)]
     builders += [lambda: s_limits(data), lambda: s_qa(data, n_segments)]

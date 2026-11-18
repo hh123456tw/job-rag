@@ -26,7 +26,7 @@ def has(text, kws):
 
 
 def route(q):
-    """與網站相同的分流：沒指定公司且 is_cross → 跨公司。"""
+    """與網站相同的分流：公司頁內提問；否則不是剛好提到一家公司（沒提，或提到兩家以上）→ 跨公司；剛好一家 → 偵測到公司。"""
     if q.get("company"):
         return "公司頁內提問"
     if retrieval.is_cross(q["question"]):

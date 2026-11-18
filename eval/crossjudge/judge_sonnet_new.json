@@ -1,0 +1,704 @@
+[
+ {
+  "id": "s01",
+  "claims": [
+   {
+    "text": "神通資訊的額定資本額為 25 億元",
+    "supported": true,
+    "evidence": "額定 25 億；實收 21 億（2.1 億股）"
+   },
+   {
+    "text": "神通資訊的實收資本額為 21 億元（2.1 億股）",
+    "supported": true,
+    "evidence": "額定 25 億；實收 21 億（2.1 億股）"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "s03",
+  "claims": [
+   {
+    "text": "華電聯網 2025 年得標政府標案 110 件",
+    "supported": true,
+    "evidence": "2025 年華電聯網取得 110 件政府標案"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "s04",
+  "claims": [
+   {
+    "text": "叡揚資訊 2025 年營業收入為 20.19 億元",
+    "supported": true,
+    "evidence": "2025 年營業收入 20.19 億元"
+   },
+   {
+    "text": "營收年增 16.33%",
+    "supported": true,
+    "evidence": "年增 16.33%"
+   },
+   {
+    "text": "營收首度突破 20 億元",
+    "supported": true,
+    "evidence": "首度突破 20 億元"
+   },
+   {
+    "text": "2025 年 EPS 為 7.41 元",
+    "supported": true,
+    "evidence": "每股盈餘 7.41 元"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "s05",
+  "claims": [
+   {
+    "text": "數據立的產品包括 Alta.DI（AI 顧客互動）",
+    "supported": true,
+    "evidence": "產品：Alta.DI（AI 顧客互動）、CDP、MA"
+   },
+   {
+    "text": "數據立的產品包括 CDP",
+    "supported": true,
+    "evidence": "產品：Alta.DI（AI 顧客互動）、CDP、MA"
+   },
+   {
+    "text": "數據立的產品包括 MA",
+    "supported": true,
+    "evidence": "產品：Alta.DI（AI 顧客互動）、CDP、MA"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "s06",
+  "claims": [
+   {
+    "text": "部門於 2008 年成立，推動數據驅動文化",
+    "supported": true,
+    "evidence": "在 2008 年成立數據部門，推動數據驅動文化"
+   },
+   {
+    "text": "2018 年起把網站與分析搬上 Google Cloud",
+    "supported": true,
+    "evidence": "2018 起把網站與分析搬上 Google Cloud"
+   },
+   {
+    "text": "使用 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions",
+    "supported": true,
+    "evidence": "用 BigQuery、Vertex AI、GKE、Compute Engine、Cloud Functions"
+   },
+   {
+    "text": "用 BigQuery 洞察製作更吸引人的新聞內容、驅動線上推薦引擎並提升營運效率",
+    "supported": true,
+    "evidence": "製作更吸引人的新聞內容、驅動線上推薦引擎"
+   },
+   {
+    "text": "udn.com 有 10% 至 15% 新聞內容依使用者偏好資料製作，平均轉換率為其他內容的 2 倍",
+    "supported": true,
+    "evidence": "10% 至 15% 的新聞內容依使用者偏好資料製作"
+   },
+   {
+    "text": "2022 年與 Merkle 做使用者偏好預測模型，8 個月完成",
+    "supported": true,
+    "evidence": "2022 與 Merkle 做使用者偏好預測模型，8 個月完成"
+   },
+   {
+    "text": "部分廣告類別 unique CTR 最高 4 倍",
+    "supported": true,
+    "evidence": "部分廣告類別 unique CTR 最高 4 倍"
+   },
+   {
+    "text": "2023 年 11 月得數位行銷協會獎",
+    "supported": true,
+    "evidence": "2023-11 得數位行銷協會獎"
+   },
+   {
+    "text": "Publish X 是與新聞部合作的新聞室 AI 輔助判斷與決策系統，把資深記者經驗做成知識庫",
+    "supported": true,
+    "evidence": "與新聞部合作，新聞室 AI 輔助判斷與決策系統"
+   },
+   {
+    "text": "公司自述導入 Publish X 後即時新聞參與度 2.4 倍、自然觸及 3.3 倍，無獨立驗證",
+    "supported": true,
+    "evidence": "自述導入後即時新聞參與度 2.4 倍、自然觸及 3.3 倍"
+   },
+   {
+    "text": "2026 年 6 月 2 日在法國馬賽獲 WAN-IFRA 2026 Digital Media Awards 最佳創新數位產品金獎",
+    "supported": true,
+    "evidence": "2026-06-02 在法國馬賽獲 WAN-IFRA 2026 Digital Media Awards"
+   },
+   {
+    "text": "連三年金獎",
+    "supported": true,
+    "evidence": "連三年金獎"
+   },
+   {
+    "text": "資料科學資深經理職缺提到部門管理三項自研產品：預測式 AI 精準廣告、內容推薦引擎、新聞室生成式 AI 輔助系統",
+    "supported": true,
+    "evidence": "負責管理三項自研產品"
+   },
+   {
+    "text": "部門分兩塊：(a) 廣告／受眾資料與分析（SQL、BigQuery）；(b) 新聞室 AI 產品，為推測",
+    "supported": true,
+    "evidence": "【推測】部門分兩塊：(a) 廣告／受眾資料與分析"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "s10",
+  "claims": [
+   {
+    "text": "叡揚的 AI 產品包括 AI 智慧辨識",
+    "supported": true,
+    "evidence": "AI 解決方案有 AI 智慧辨識"
+   },
+   {
+    "text": "叡揚的 AI 產品包括 AI 財務報表辨識",
+    "supported": true,
+    "evidence": "AI 財務報表辨識"
+   },
+   {
+    "text": "叡揚的 AI 產品包括 AI 智慧公文",
+    "supported": true,
+    "evidence": "AI 智慧公文"
+   },
+   {
+    "text": "叡揚的 AI 產品包括 AI 知識管理",
+    "supported": true,
+    "evidence": "AI 知識管理"
+   },
+   {
+    "text": "AI 智慧辨識即 InsAI（VLM，支援地端）",
+    "supported": true,
+    "evidence": "AI 智慧辨識（InsAI，VLM，支援地端）"
+   },
+   {
+    "text": "AI 財報辨識為 DeepOCR 自動辨識財報",
+    "supported": false,
+    "evidence": "DeepOCR 是金融案例，未說是 AI 財報辨識產品"
+   },
+   {
+    "text": "C.ai 對話服務平台在 2026 年報導中稱為 C.ai 3.0 的 Agentic Portal",
+    "supported": true,
+    "evidence": "2026 報導稱 C.ai 3.0 為 Agentic Portal"
+   },
+   {
+    "text": "Vital CRM 也推出 AI Copilot 模組",
+    "supported": true,
+    "evidence": "Vital CRM 推 AI Copilot 模組"
+   }
+  ],
+  "faithfulness": 0.875
+ },
+ {
+  "id": "s12",
+  "claims": [
+   {
+    "text": "提供 Red Hat OCP / OCP-AI（容器與 AI 平台）",
+    "supported": true,
+    "evidence": "Red Hat OCP / OCP-AI（容器與 AI 平台）"
+   },
+   {
+    "text": "提供企業級資料保護與雙活資料中心",
+    "supported": true,
+    "evidence": "企業級資料保護與雙活資料中心"
+   },
+   {
+    "text": "提供 VMware VCF（虛擬化與雲端）",
+    "supported": true,
+    "evidence": "VMware VCF（虛擬化與雲端）"
+   },
+   {
+    "text": "提供全方位監控",
+    "supported": true,
+    "evidence": "全方位監控"
+   },
+   {
+    "text": "提供 AI 應用、系統與網站開發",
+    "supported": true,
+    "evidence": "AI 應用、系統與網站開發"
+   },
+   {
+    "text": "提供網路與資安整合",
+    "supported": true,
+    "evidence": "網路與資安整合"
+   },
+   {
+    "text": "公司簡介業務涵蓋混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安",
+    "supported": true,
+    "evidence": "混合雲資料中心網路、虛擬化、K8S、AI 算力、零信任資安"
+   },
+   {
+    "text": "公司簡介業務涵蓋 AI 資料中心與 MLOps 中台",
+    "supported": true,
+    "evidence": "AI 資料中心與 MLOps 中台"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "s13",
+  "claims": [
+   {
+    "text": "宏碁雲架構服務（eDC）是安碁資訊（6690）的子公司",
+    "supported": true,
+    "evidence": "國內首家 IPO 資安服務商安碁資訊（6690）的子公司"
+   },
+   {
+    "text": "安碁資訊是國內首家 IPO 資安服務商",
+    "supported": true,
+    "evidence": "國內首家 IPO 資安服務商安碁資訊（6690）"
+   },
+   {
+    "text": "業務包括資料中心建置維運、災難復原、異地備援、雲端整合與資安",
+    "supported": true,
+    "evidence": "做資料中心建置維運、災難復原、異地備援、雲端整合與資安"
+   },
+   {
+    "text": "也提供機房維運管理、雲端相關服務",
+    "supported": true,
+    "evidence": "機房維運管理、雲端相關服務"
+   },
+   {
+    "text": "也提供雲端部署、資安防護、顧問服務",
+    "supported": true,
+    "evidence": "雲端部署、資安防護、顧問服務"
+   },
+   {
+    "text": "也提供雲地整合的資安維運（MSSP）",
+    "supported": true,
+    "evidence": "雲地整合的資安維運（MSSP）"
+   },
+   {
+    "text": "自有產品有 CSP 私有雲管理平台",
+    "supported": true,
+    "evidence": "自有產品有 CSP 私有雲管理平台"
+   },
+   {
+    "text": "自有產品有 SAFE 3.0 資安日誌保存與稽核系統",
+    "supported": true,
+    "evidence": "SAFE 3.0 資安日誌保存與稽核系統"
+   },
+   {
+    "text": "自有產品有 inspireOz 資訊服務管理平台",
+    "supported": true,
+    "evidence": "inspireOz 資訊服務管理平台"
+   },
+   {
+    "text": "產業為電腦軟體服務業（資訊服務業）",
+    "supported": true,
+    "evidence": "產業：電腦軟體服務業（產業描述：資訊服務業）"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "s14",
+  "claims": [
+   {
+    "text": "台灣大哥大的業務涵蓋通訊與媒體服務",
+    "supported": true,
+    "evidence": "業務涵蓋通訊與媒體服務"
+   },
+   {
+    "text": "官網把客群分成個人、家庭、企業、中小企業四類",
+    "supported": true,
+    "evidence": "官網把客群分成個人、家庭、企業、中小企業四類"
+   },
+   {
+    "text": "第三方資料列出電信（行動、寬頻）",
+    "supported": true,
+    "evidence": "電信（行動、寬頻）"
+   },
+   {
+    "text": "第三方資料列出有線電視",
+    "supported": true,
+    "evidence": "有線電視"
+   },
+   {
+    "text": "第三方資料列出企業服務",
+    "supported": true,
+    "evidence": "企業服務"
+   },
+   {
+    "text": "第三方資料列出新科技事業",
+    "supported": true,
+    "evidence": "新科技事業"
+   },
+   {
+    "text": "第三方資料列出電商（momo）",
+    "supported": true,
+    "evidence": "電商（momo）"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j01",
+  "claims": [
+   {
+    "text": "典凡科技的 AI 應用整合規劃師／AI 應用工程師年薪為 900,000~1,200,000 元",
+    "supported": true,
+    "evidence": "薪資：年薪 900,000~1,200,000 元"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j02",
+  "claims": [
+   {
+    "text": "擅長工具為 Python",
+    "supported": true,
+    "evidence": "擅長工具 Python"
+   },
+   {
+    "text": "其他條件列出 Linux、Jenkins、Django、Git、Python、PostgreSQL、MS SQL、HTML、JavaScript、jQuery、CSS、React JS",
+    "supported": true,
+    "evidence": "其他條件寫 Linux、Jenkins、Django、Git、Python、PostgreSQL、MS SQL…"
+   },
+   {
+    "text": "工作技能為軟體程式設計、資料庫程式設計",
+    "supported": true,
+    "evidence": "工作技能：軟體程式設計、資料庫程式設計"
+   },
+   {
+    "text": "加分條件為 React、系統分析設計、Docker／虛擬化、ELK",
+    "supported": true,
+    "evidence": "加分：React、系統分析設計、Docker／虛擬化、ELK"
+   },
+   {
+    "text": "段落 [2] 備註提到擅長工具 Python，內文包含 Linux、Jenkins、Django、Git、PostgreSQL、MS SQL、React",
+    "supported": true,
+    "evidence": "擅長工具 Python；內文 Linux、Jenkins、Django、Git、PostgreSQL、MS SQL、React"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j03",
+  "claims": [
+   {
+    "text": "神通資訊有後端工程師(Node.js)職缺",
+    "supported": true,
+    "evidence": "60076X0_後端工程師(Node.js)"
+   },
+   {
+    "text": "神通資訊有後端資深工程師職缺",
+    "supported": true,
+    "evidence": "60136X0_後端資深工程師"
+   },
+   {
+    "text": "兩者都要求 Node.js 平台型或企業系統經驗",
+    "supported": true,
+    "evidence": "必備為 Node.js 平台型或企業系統經驗"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j04",
+  "claims": [
+   {
+    "text": "台灣大哥大的 Kubernetes 平台工程師職缺要求 3 年以上經驗",
+    "supported": true,
+    "evidence": "經歷：3年以上"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j05",
+  "claims": [
+   {
+    "text": "遠振資訊目前開放 0 筆職缺",
+    "supported": true,
+    "evidence": "目前開放職缺：0 筆"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j07",
+  "claims": [
+   {
+    "text": "聯合報系（聯合線上）【戰略部】數據優化師（數據分析）的月薪為 35,000 元以上",
+    "supported": true,
+    "evidence": "薪資：月薪 35,000 元以上"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j08",
+  "claims": [
+   {
+    "text": "數據立的 AI 解決方案工程師需要出差",
+    "supported": true,
+    "evidence": "出差外派：需出差，一年累積約三個月以下"
+   },
+   {
+    "text": "出差一年累積約三個月以下",
+    "supported": true,
+    "evidence": "需出差，一年累積約三個月以下"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j09",
+  "claims": [
+   {
+    "text": "C++/AI 應用工程師職缺不需出差",
+    "supported": true,
+    "evidence": "週休二日，不需出差。"
+   },
+   {
+    "text": "資料中沒有提到外派",
+    "supported": true,
+    "evidence": "段落 [1] 只寫「不需出差」，未提外派"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j10",
+  "claims": [
+   {
+    "text": "必備技術：Python、TypeScript 或其他後端語言",
+    "supported": true,
+    "evidence": "必備 Python、TypeScript 或其他後端語言"
+   },
+   {
+    "text": "必備：REST API、JSON、非同步與服務整合",
+    "supported": true,
+    "evidence": "REST API、JSON、非同步與服務整合"
+   },
+   {
+    "text": "必備：LLM、Agent、RAG 或生成式 AI 專案經驗",
+    "supported": true,
+    "evidence": "LLM、Agent、RAG 或生成式 AI 專案經驗"
+   },
+   {
+    "text": "必備：錯誤處理、測試、Log、Git",
+    "supported": true,
+    "evidence": "錯誤處理、測試、Log、Git"
+   },
+   {
+    "text": "工作內容串接 OpenAI、Anthropic、Google Gemini 等 LLM API",
+    "supported": true,
+    "evidence": "串接 OpenAI、Anthropic、Google Gemini 等 LLM API"
+   },
+   {
+    "text": "設計 Prompt、Context Engineering、RAG、向量資料庫與多階段檢索",
+    "supported": true,
+    "evidence": "設計 Prompt、Context Engineering、RAG、向量資料庫與多階段檢索"
+   },
+   {
+    "text": "開發可規劃任務、調用工具的 AI Agent（Function Calling、Tool Calling、MCP）",
+    "supported": true,
+    "evidence": "開發可規劃任務、調用工具的 AI Agent"
+   },
+   {
+    "text": "建立非同步處理、重試、Fallback、Token 計算與成本控制機制",
+    "supported": true,
+    "evidence": "建立非同步處理、重試、Fallback、Token 計算與成本控制機制"
+   },
+   {
+    "text": "參與 Stable Diffusion、FLUX、LoRA、ControlNet、ComfyUI 工作流與 Custom Nodes",
+    "supported": true,
+    "evidence": "參與 Stable Diffusion、FLUX、LoRA、ControlNet、ComfyUI 工作流"
+   },
+   {
+    "text": "加分技術：Embedding、Vector DB、MCP、Docker、雲端、ComfyUI、模型微調（LoRA、QLoRA、PEFT、SFT）、GPU／CUDA",
+    "supported": true,
+    "evidence": "加分：Embedding、Vector DB、MCP、Docker、雲端、ComfyUI"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j11",
+  "claims": [
+   {
+    "text": "擅長工具 JavaScript、Python、PostgreSQL",
+    "supported": true,
+    "evidence": "擅長工具 JavaScript、Python、PostgreSQL"
+   },
+   {
+    "text": "技能為 AI、系統整合分析",
+    "supported": true,
+    "evidence": "技能 AI、系統整合分析"
+   },
+   {
+    "text": "專業知識包括 GenAI、Agentic AI、RAG、MCP、REST API、Linux、Docker、Kubernetes",
+    "supported": true,
+    "evidence": "專業知識 GenAI、Agentic AI、RAG、MCP、REST API"
+   },
+   {
+    "text": "專業技能包括 Python、JavaScript/TypeScript、n8n、Elasticsearch、PostgreSQL",
+    "supported": true,
+    "evidence": "專業技能 Python、JavaScript/TypeScript、n8n"
+   },
+   {
+    "text": "需設計 Agentic AI、RAG 與 Workflow 架構",
+    "supported": true,
+    "evidence": "設計 Agentic AI、RAG 與 Workflow 架構"
+   },
+   {
+    "text": "串接 ERP、CRM、HR、電子簽核，開發 REST API、Webhook、MCP Connector",
+    "supported": true,
+    "evidence": "串接 ERP、CRM、HR、電子簽核，開發 REST API、Webhook"
+   },
+   {
+    "text": "建置 CI/CD Pipeline、規劃 GitOps、IaC 與自動化部署",
+    "supported": true,
+    "evidence": "建置 CI/CD Pipeline，規劃 GitOps、IaC"
+   },
+   {
+    "text": "AI 相關證照尤佳（加分）",
+    "supported": true,
+    "evidence": "AI 相關證照尤佳（加分）"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j12",
+  "claims": [
+   {
+    "text": "用 Python 與 FastAPI 建構後端 API 與 AI 服務",
+    "supported": true,
+    "evidence": "用 Python 與 FastAPI 建構後端 API 與 AI 服務"
+   },
+   {
+    "text": "串接 LLM API（OpenAI、Claude 等）與向量資料庫",
+    "supported": true,
+    "evidence": "串接 LLM API（OpenAI、Claude 等）與向量資料庫"
+   },
+   {
+    "text": "設計並優化 RAG 架構",
+    "supported": true,
+    "evidence": "設計並優化 RAG 架構"
+   },
+   {
+    "text": "以 Pydantic 與 JSON Schema 控制資料型態以穩定 Structured Outputs",
+    "supported": true,
+    "evidence": "以 Pydantic 與 JSON Schema 控制資料型態"
+   },
+   {
+    "text": "設計 Prompt 並拆解業務工作流",
+    "supported": true,
+    "evidence": "設計 Prompt 並拆解業務工作流"
+   },
+   {
+    "text": "追蹤並實作新的生成式 AI 技術與論文演算法",
+    "supported": true,
+    "evidence": "追蹤並實作新的生成式 AI 技術與論文演算法"
+   },
+   {
+    "text": "需能讀論文並實作演算法",
+    "supported": true,
+    "evidence": "能讀論文並實作演算法"
+   },
+   {
+    "text": "熟悉 Python 或 PyTorch",
+    "supported": true,
+    "evidence": "熟悉 Python 或 PyTorch"
+   },
+   {
+    "text": "熟悉 Docker、Git、GitHub、Redmine 者佳",
+    "supported": true,
+    "evidence": "熟悉 Docker、Git、GitHub、Redmine 者佳"
+   },
+   {
+    "text": "需有電機、資訊工程、資訊科學等相關學位背景",
+    "supported": true,
+    "evidence": "需有電機、資訊工程、資訊科學等相關學位背景"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j13",
+  "claims": [
+   {
+    "text": "職缺為資深研發工程師－研發一部（汐止）",
+    "supported": true,
+    "evidence": "資深研發工程師－研發一部（汐止）"
+   },
+   {
+    "text": "必備 Python 開發 3 年以上，並能獨立處理開源專案與環境問題",
+    "supported": true,
+    "evidence": "Python 開發 3 年以上並能獨立處理開源專案與環境問題"
+   },
+   {
+    "text": "熟悉 Linux、Docker、Ubuntu CLI（Shell Script 佳）",
+    "supported": true,
+    "evidence": "熟悉 Linux、Docker、Ubuntu CLI（Shell Script 佳）"
+   },
+   {
+    "text": "擅長工具為 Python、Ubuntu、Docker",
+    "supported": true,
+    "evidence": "擅長工具為 Python、Ubuntu、Docker"
+   },
+   {
+    "text": "加分：統計與線性代數基礎、數位影像格式、ML 與影像辨識經驗",
+    "supported": true,
+    "evidence": "加分為統計與線性代數基礎、數位影像格式"
+   }
+  ],
+  "faithfulness": 1.0
+ },
+ {
+  "id": "j14",
+  "claims": [
+   {
+    "text": "AI Solution 工程師／架構師要求 3 年以上經驗",
+    "supported": true,
+    "evidence": "經歷：3 年以上"
+   },
+   {
+    "text": "必備：3 年以上 AI 系統或大型軟體架構設計經驗、大語言模型與深度學習、AI 框架與模型部署、雲端與容器化、DevOps、資訊安全設計",
+    "supported": true,
+    "evidence": "必備：3 年以上 AI 系統或大型軟體架構設計經驗"
+   },
+   {
+    "text": "規劃與開發 Agentic AI 應用系統",
+    "supported": true,
+    "evidence": "規劃、開發與運維 Agentic AI 應用系統"
+   },
+   {
+    "text": "設計 AI 與既有證券系統的整合（API、資料源、身份驗證、權限控管）",
+    "supported": true,
+    "evidence": "設計 AI 與既有證券系統的整合"
+   },
+   {
+    "text": "評估地端、雲端或 Hybrid AI 架構",
+    "supported": true,
+    "evidence": "評估地端、雲端或 Hybrid AI 架構"
+   },
+   {
+    "text": "設計 AI Guardrail、資料控管與稽核紀錄",
+    "supported": true,
+    "evidence": "設計 AI Guardrail、資料控管與稽核紀錄"
+   },
+   {
+    "text": "審查 AI Agent 平台與 Harness Engineering 技術",
+    "supported": true,
+    "evidence": "審查 AI Agent 平台與 Harness Engineering 技術"
+   },
+   {
+    "text": "擅長工具不拘",
+    "supported": true,
+    "evidence": "擅長工具不拘"
+   }
+  ],
+  "faithfulness": 1.0
+ }
+]

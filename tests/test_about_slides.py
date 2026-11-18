@@ -87,9 +87,8 @@ def test_arch_numbers_follow_constants(client, monkeypatch):
     monkeypatch.setattr(retrieval, "PER_COMPANY", 4)
     monkeypatch.setattr(retrieval, "CROSS_FLOOR", 0.33)
     sec = slide(get(client).get_data(as_text=True), "arch")
-    assert "低於 0.123 就停" in sec and "K = 9" in sec and "約 777 字" in sec and "FAISS" in sec and "DeepSeek" in sec
-    assert "引用了沒送出的段落編號" in sec and "檢索分兩條路，看在哪裡問" in sec and "在全部公司頁問，沒提公司名" in sec and "取最像的 9 段" in sec and "每家各取 4 段" in sec and "低於 0.33 就停" in sec  # 兩條路徑的數字讀常數
-    assert "每家各取 3 段" not in sec and "低於 0.50 就停" not in sec
+    assert "低於 0.043 就停" in sec and "問一家公司 0.043；" in sec and "每家各取 4 段、門檻 0.33，提到兩家以上就只查那幾家" in sec and "0.123" not in sec and "K = 9" in sec and "約 777 字" in sec and "FAISS" in sec and "DeepSeek" in sec
+    assert "引用了沒送出的段落編號" in sec and "問全部公司另有一條路" in sec
 
 
 def test_ragas_slide_numbers_and_the_self_judge_note(client, root):  # noqa: F811
@@ -137,30 +136,43 @@ def test_real_outputs_give_three_fix_cards_and_salary_numbers():
     assert sf and f"{sf['before']:.2f}" in sec and f"{sf['after']:.2f}" in sec and sec.count('class="fx"') == 3
 
 
-def test_slides_have_no_cross_company_page_but_the_long_page_keeps_it(client, root):  # noqa: F811
-    """簡報版不放跨公司頁（太複雜）；長版說明頁仍有跨公司的說明。"""
-    _cross_out(root)
-    assert "cross" not in keys(get(client).get_data(as_text=True))
-    assert "跨公司提問" in get(client, "/about?all=1").get_data(as_text=True)
+def test_cross_slide_is_the_only_slide_with_cross_company_numbers(client, root):  # noqa: F811
+    """跨公司只出現在「問全部公司」那一頁：一個主數字（取到幾家／該取到幾家），數字取自輸出檔；沒有輸出檔就只留示意圖。"""
+    h = get(client).get_data(as_text=True)
+    sec = slide(h, "cross")
+    assert f"每家各取 {retrieval.PER_COMPANY} 段" in sec and "data-n=" not in sec  # 夾具沒有獨立題輸出：不放數字
+    row = lambda ok, rel, st="ok": {"answerable": True, "n_correct": ok, "n_relevant": rel, "status": st}
+    put(root, "eval/results_heldout.json", {"cross": [row(2, 3), row(1, 4, "low"), {"answerable": False, "n_correct": 0, "n_relevant": 0, "status": "low"}]})
+    sec = slide(get(client).get_data(as_text=True), "cross")
+    assert 'data-v="3" data-n="7"' in sec and "2 題裡 1 題" in sec and "只用 bge-m3 挑段時" not in sec  # 沒有對照檔：不寫對照
+    assert "怎麼測" in sec and "2 題加總：7 家裡取到 3 家" in sec and "例：「" not in sec  # 夾具的題檔沒有這些題號：不放例題
+    put(root, "eval/results_cross_before_hybrid.json", {"heldout_answerable": {"n": 2, "got": 1, "want": 7}})
+    sec = slide(get(client).get_data(as_text=True), "cross")
+    assert 'data-k="base" data-v="1" data-n="7"' in sec and "只用 bge-m3 挑段時（對照）" in sec and "MRR" not in sec  # 兩個數字並排，不放自訂指標
+    put(root, "eval/results_cross_before_hybrid.json", {"heldout_answerable": {"n": 2, "got": 1, "want": 9}})  # 分母對不上：不用
+    assert "只用 bge-m3 挑段時" not in slide(get(client).get_data(as_text=True), "cross")
+    for k in ("methods", "arch"):  # 其他頁只指路，不放跨公司數字
+        other = slide(get(client).get_data(as_text=True), k)
+        assert "見「問全部公司」那頁" in other and "BM25＋bge-m3）挑" not in other and "取到幾家" not in other  # 架構頁只講門檻，不放成績
 
 
-def test_ragas_slide_uses_the_gpt_judge_file_when_present_and_falls_back_without_it(client, root):  # noqa: F811
-    """有 GPT 評審的輸出檔：長條與文字都換成它，不再寫 DeepSeek 評審。檔案壞了：維持原本寫法，不用壞數字。"""
-    st = lambda n, f, a, bad=(): {"n": n, "failed": list(bad), "faithfulness": {"n": n - len(bad), "mean": f}, "answer_relevancy": {"n": n - len(bad), "mean": a}}
-    put(root, "eval/results_ragas_gpt.json", {"sets": {"tune": st(4, 0.75, 0.5), "held": st(3, 0.25, 0.125, ["h9"])}})  # 沒寫 judge_short：當 GPT
+def test_cross_slide_follows_per_company_constant(client, monkeypatch):
+    monkeypatch.setattr(retrieval, "PER_COMPANY", 4)
+    assert "每家各取 4 段" in slide(get(client).get_data(as_text=True), "cross")
+
+
+def test_ragas_slide_uses_sonnet_claim_check_only_together_with_sonnet_ragas(client, root):  # noqa: F811
+    """複查也有 Sonnet 那份、而且 RAGAS 也是 Sonnet 評：整頁都寫 Sonnet。只有複查那份：維持 GPT，不混。"""
+    rows = [{"id": "a1", "claims": [{"supported": True}, {"supported": False}, {"supported": True}]}]
+    put(root, "eval/crossjudge/judge_sonnet_new.json", rows)
     sec = slide(get(client).get_data(as_text=True), "ragas")
-    assert re.findall(r'data-k="(\w+)" data-v="([\d.e-]+)"', sec) == [("faithfulness", "0.75"), ("answer_relevancy", "0.5")]
-    assert "RAGAS（GPT 評審），4 題" in sec and "獨立測試題 2 題：忠實度 0.250、答案相關性 0.125" in sec and "有 1 題評分失敗" in sec
-    assert "DeepSeek 評，與生成同模型" not in sec and "同模型自評" not in sec and "生成用的是 DeepSeek" in sec
-    assert "評審是 GPT，不是生成用的 DeepSeek。忠實度 0.750" in sec and "評審和生成都是 DeepSeek" not in sec  # 講稿也跟著換
-    put(root, "eval/results_ragas_sonnet.json", {"judge_short": "Sonnet 5.5", "sets": {"tune": st(5, 0.5, 0.25)}})  # 兩份都有：用 Sonnet 那份
+    assert "GPT 複查，調參用題組" in sec and "Sonnet 5.5 複查" not in sec
+    st = {"n": 4, "failed": [], "faithfulness": {"n": 4, "mean": 0.75}, "answer_relevancy": {"n": 4, "mean": 0.5}}
+    put(root, "eval/results_ragas_sonnet.json", {"judge_short": "Sonnet 5.5", "sets": {"tune": st}})
     sec = slide(get(client).get_data(as_text=True), "ragas")
-    assert "RAGAS（Sonnet 5.5 評審），5 題" in sec and "評審是 Sonnet 5.5，不是生成用的 DeepSeek。忠實度 0.500" in sec and "RAGAS（GPT 評審）" not in sec
-    assert "右邊的 RAGAS 由 Sonnet 5.5 評審；左邊的逐句複查由 GPT 做。" in sec
-    (root / "eval/results_ragas_sonnet.json").unlink()
-    put(root, "eval/results_ragas_gpt.json", {"sets": {"tune": st(4, None, 0.5)}})  # 沒有有效分數：不採用
-    sec = slide(get(client).get_data(as_text=True), "ragas")
-    assert "同模型自評可能偏樂觀" in sec and "RAGAS（GPT 評審）" not in sec
+    assert 'data-v="2" data-n="3"' in sec and "Sonnet 5.5 複查，調參用題組 1 題" in sec and "GPT" not in sec
+    assert "<h2>答案有依據：2/3</h2>" in sec and "評審都是 Sonnet 5.5：左邊是逐句複查，右邊是 RAGAS。" in sec
+    assert "另外請 Sonnet 5.5 逐句複查：3 個說法裡，2 個有依據。" in sec
 
 
 def test_missing_generation_files_drop_the_ragas_slide_without_500(client, root):  # noqa: F811

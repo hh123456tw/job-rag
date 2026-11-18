@@ -303,6 +303,42 @@ def _ragas_fix(root: Path, gen):
         return None
 
 
+def _claims(path: Path):
+    """逐句複查檔的題數、陳述數、有依據數（Sonnet 5.5 那份用）。缺檔、讀不了、沒有陳述回 None。"""
+    try:
+        rows = json.loads(path.read_text(encoding="utf-8"))
+        claims = [c for r in rows for c in r["claims"]]
+        return {"n": len(rows), "claims": len(claims), "supported": sum(bool(c["supported"]) for c in claims)} if claims else None
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def _cross_slide(root: Path):
+    """簡報「問全部公司」那頁的數字：獨立測試題跨公司路徑的有答案題，取到的相關公司數／該取到的相關公司數（加總）、被門檻擋住的題數。
+    base＝改混合挑段之前的對照（分母對不上就不用）。輸出檔缺或沒有這類題回 None。"""
+    try:
+        r = json.loads((root / "eval/results_heldout.json").read_text(encoding="utf-8"))
+        a = [x for x in r["cross"] if x["answerable"]]
+        if not a:
+            return None
+        out = {"n": len(a), "got": sum(x["n_correct"] for x in a), "want": sum(x["n_relevant"] for x in a),
+               "blocked": sum(x["status"] == "low" for x in a), "base": None}
+        try:  # 一個例題（說明怎麼測）：放行的題裡，該出現公司最多的那題
+            qs = {q["id"]: q for q in json.loads((root / "eval/questions_heldout.json").read_text(encoding="utf-8"))["questions"]}
+            e = max((x for x in a if x["status"] == "ok" and x["id"] in qs), key=lambda x: x["n_relevant"])
+            out["example"] = {"q": qs[e["id"]]["question"], "kw": "、".join(qs[e["id"]]["keywords"]), "got": e["n_correct"], "want": e["n_relevant"]}
+        except (OSError, ValueError, KeyError, TypeError):
+            out["example"] = None
+        try:
+            b = json.loads((root / "eval/results_cross_before_hybrid.json").read_text(encoding="utf-8"))["heldout_answerable"]
+            out["base"] = {"got": b["got"], "want": b["want"]} if (b["want"], b["n"]) == (out["want"], out["n"]) else None
+        except (OSError, ValueError, KeyError, TypeError):
+            pass
+        return out if out["want"] else None
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def _ragas_gpt(root: Path):
     """RAGAS 換評審的結果（eval/run_ragas_gpt.py）：先找 Sonnet 5.5 那份，沒有才找 GPT 那份。
     輸出檔缺、讀不了、或 30 題組沒有有效分數回 None：頁面就維持 DeepSeek 評審的寫法。"""
@@ -397,7 +433,8 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root), "held_cross": _heldout_cross(root), "held_methods": _held_methods(root), "ragas_gpt": _ragas_gpt(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root), "held_cross": _heldout_cross(root), "held_methods": _held_methods(root), "ragas_gpt": _ragas_gpt(root), "cross_sonnet": _claims(root / "eval/crossjudge/judge_sonnet_new.json"),
+        "held_cross_sonnet": _claims(root / "eval/crossjudge/judge_sonnet_heldout.json"), "cross_slide": _cross_slide(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,
