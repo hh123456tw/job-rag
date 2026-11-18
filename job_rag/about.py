@@ -316,33 +316,20 @@ def _claims(path: Path):
 
 
 def _cross_slide(root: Path):
-    """簡報「問全部公司」那頁的數字：獨立測試題跨公司路徑的有答案題，取到的相關公司數／該取到的相關公司數（加總）、被門檻擋住的題數。
-    base＝改混合挑段之前的對照（分母對不上就不用）。輸出檔缺或沒有這類題回 None。"""
+    """簡報「問全部公司」那頁的數字（eval/run_cross_mrr.py）。兩組跨公司題分開列：
+    tune＝我自己出的（一開始用它挑門檻與每家取幾段）；val＝Codex 出的驗證題（eval/questions_cross_val.json：直白問法，出完沒有用來調任何東西）。
+    另一組 Codex 出的刻意換說法技術名詞題（held）門檻與挑段方式都看過它，簡報不列，只用來檢查輸出檔有沒有過期。
+    每組：題數、該出現的家次、混合與只用 bge-m3 的取到家數與 MRR、被門檻擋住的題數。
+    輸出檔缺、讀不了，或 Codex 那組的取到家數和 eval/results_heldout.json 現在的數字對不上（過期）回 None。"""
     try:
-        r = json.loads((root / "eval/results_heldout.json").read_text(encoding="utf-8"))
-        a = [x for x in r["cross"] if x["answerable"]]
-        if not a:
+        m = json.loads((root / "eval/results_cross_mrr.json").read_text(encoding="utf-8"))
+        held = json.loads((root / "eval/results_heldout.json").read_text(encoding="utf-8"))
+        if m["sets"]["held"]["hybrid"]["got"] != sum(x["n_correct"] for x in held["cross"] if x["answerable"]):
             return None
-        out = {"n": len(a), "got": sum(x["n_correct"] for x in a), "want": sum(x["n_relevant"] for x in a),
-               "blocked": sum(x["status"] == "low" for x in a), "base": None}
-        try:  # 一個例題（說明怎麼測）：放行的題裡，該出現公司最多的那題
-            qs = {q["id"]: q for q in json.loads((root / "eval/questions_heldout.json").read_text(encoding="utf-8"))["questions"]}
-            e = max((x for x in a if x["status"] == "ok" and x["id"] in qs), key=lambda x: x["n_relevant"])
-            out["example"] = {"q": qs[e["id"]]["question"], "kw": "、".join(qs[e["id"]]["keywords"]), "got": e["n_correct"], "want": e["n_relevant"]}
-        except (OSError, ValueError, KeyError, TypeError):
-            out["example"] = None
-        try:
-            b = json.loads((root / "eval/results_cross_before_hybrid.json").read_text(encoding="utf-8"))["heldout_answerable"]
-            out["base"] = {"got": b["got"], "want": b["want"]} if (b["want"], b["n"]) == (out["want"], out["n"]) else None
-        except (OSError, ValueError, KeyError, TypeError):
-            pass
-        try:  # 跨公司的 MRR（eval/run_cross_mrr.py）：家次數與取到家數都對得上才用
-            m = json.loads((root / "eval/results_cross_mrr.json").read_text(encoding="utf-8"))
-            ok = m["n_pairs"] == out["want"] and m["methods"]["hybrid"]["within_per"] == out["got"]
-            out["mrr"] = {"hybrid": m["methods"]["hybrid"]["mrr"], "base": m["methods"]["bge-m3"]["mrr"]} if ok else None
-        except (OSError, ValueError, KeyError, TypeError):
-            out["mrr"] = None
-        return out if out["want"] else None
+        one = lambda v: {"n": v["n"], "want": v["pairs"], "blocked": v["blocked"], "got": v["hybrid"]["got"], "mrr": v["hybrid"]["mrr"],
+                         "base_got": v["bge-m3"]["got"], "base_mrr": v["bge-m3"]["mrr"]}
+        out = {"tune": one(m["sets"]["old"]), "val": one(m["sets"]["val"]), "example": m.get("example")}
+        return out if out["tune"]["want"] and out["val"]["want"] else None
     except (OSError, ValueError, KeyError, TypeError):
         return None
 

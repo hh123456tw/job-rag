@@ -604,8 +604,8 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
         6: ["最後講限制。我不想講得太滿。",
             f"題目只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案，只能當方向。" if d else "題目很少，只能當方向。",
             (_held_line(d) + "。其餘題目與資料同源。") if _held_line(d) else "題目和資料同源，沒有獨立測試題。",
-            ((f"問全部公司：獨立題 {cs2['n']} 題，該取到的 {cs2['want']} 家公司，取到 {cs2['got']} 家"
-              + (f"；只用 bge-m3 時是 {cs2['base']['got']} 家" if cs2["base"] else "") + "。這組題也用來調過門檻，偏樂觀。")
+            ((f"問全部公司：驗證 {cs2['val']['n']} 題，該取到的 {cs2['val']['want']} 家公司，取到 {cs2['val']['got']} 家；只用 bge-m3 時是 {cs2['val']['base_got']} 家。"
+              f"調參用的 {cs2['tune']['n']} 題是 {cs2['tune']['got']}／{cs2['tune']['want']} 家。")
              if (cs2 := d and d.get("cross_slide")) else
              f"跨公司題 {x['n']} 題中 {x['passed']} 題通過關鍵字檢查。但它的門檻也用同一批題挑，偏樂觀。" if x else None),
             ("重排序模型量過，沒有接上網站。我刻意沒做：向量資料庫、微調模型、線上監控。沒做就是沒做。" if d and d.get("held_methods")

@@ -136,31 +136,39 @@ def test_real_outputs_give_three_fix_cards_and_salary_numbers():
     assert sf and f"{sf['before']:.2f}" in sec and f"{sf['after']:.2f}" in sec and sec.count('class="fx"') == 3
 
 
+def _cross_mrr(root, held_got=3, **over):
+    """寫一份跨公司比較輸出檔與對得上的獨立題輸出檔。"""
+    put(root, "eval/results_heldout.json", {"cross": [{"answerable": True, "n_correct": held_got, "n_relevant": 4, "status": "ok"},
+                                                      {"answerable": False, "n_correct": 0, "n_relevant": 0, "status": "low"}]})
+    m = lambda got, mrr: {"got": got, "mrr": mrr, "first": 1}
+    put(root, "eval/results_cross_mrr.json", {"sets": {
+        "held": {"n": 1, "pairs": 4, "blocked": 0, "hybrid": m(3, 0.5), "bge-m3": m(1, 0.25)},
+        "old": {"n": 2, "pairs": 5, "blocked": 1, "hybrid": m(4, 0.75), "bge-m3": m(4, 0.5)},
+        "val": {"n": 6, "pairs": 8, "blocked": 2, "hybrid": m(7, 0.875), "bge-m3": m(5, 0.625)},
+        "all": {"n": 3, "pairs": 9, "blocked": 1, "hybrid": m(7, 0.625), "bge-m3": m(5, 0.375)}},
+        "example": {"q": "哪些公司用 <b>X</b>？", "kw": "X", "want": 4, "got": 3}} | over)
+
+
 def test_cross_slide_is_the_only_slide_with_cross_company_numbers(client, root):  # noqa: F811
-    """跨公司只出現在「問全部公司」那一頁：一個主數字（取到幾家／該取到幾家），數字取自輸出檔；沒有輸出檔就只留示意圖。"""
-    h = get(client).get_data(as_text=True)
-    sec = slide(h, "cross")
-    assert f"每家各取 {retrieval.PER_COMPANY} 段" in sec and "data-n=" not in sec  # 夾具沒有獨立題輸出：不放數字
-    row = lambda ok, rel, st="ok": {"answerable": True, "n_correct": ok, "n_relevant": rel, "status": st}
-    put(root, "eval/results_heldout.json", {"cross": [row(2, 3), row(1, 4, "low"), {"answerable": False, "n_correct": 0, "n_relevant": 0, "status": "low"}]})
+    """跨公司只出現在「問全部公司」那一頁；數字取自兩組題合計的輸出檔。沒有輸出檔或過期就只留示意圖，不放數字。"""
     sec = slide(get(client).get_data(as_text=True), "cross")
-    assert 'data-v="3" data-n="7"' in sec and "2 題裡 1 題" in sec and "只用 bge-m3 挑段時" not in sec  # 沒有對照檔：不寫對照
-    assert "怎麼測" in sec and "2 題加總：7 家裡取到 3 家" in sec and "例：「" not in sec  # 夾具的題檔沒有這些題號：不放例題
-    put(root, "eval/results_cross_before_hybrid.json", {"heldout_answerable": {"n": 2, "got": 1, "want": 7}})
+    assert f"每家各取 {retrieval.PER_COMPANY} 段" in sec and "data-n=" not in sec and "MRR" not in sec  # 沒有輸出檔
+    _cross_mrr(root)
     sec = slide(get(client).get_data(as_text=True), "cross")
-    assert 'data-k="base" data-v="1" data-n="7"' in sec and "只用 bge-m3 挑段時（對照）" in sec and "MRR" not in sec  # 沒量 MRR 就不放
-    mrr = {"n_pairs": 7, "methods": {"hybrid": {"mrr": 0.625, "within_per": 3}, "bge-m3": {"mrr": 0.25, "within_per": 1}}}
-    put(root, "eval/results_cross_mrr.json", mrr)
-    sec = slide(get(client).get_data(as_text=True), "cross")
-    assert 'data-k="cross_mrr" data-v="0.625"' in sec and 'data-k="cross_mrr_base" data-v="0.25"' in sec and "5. MRR：" in sec and "為什麼跨公司比較低" in sec and "MRR 從 0.25 到 0.62" in sec and "實際取到 7 家裡的 3 家" in sec
-    put(root, "eval/results_cross_mrr.json", mrr | {"n_pairs": 8})  # 家次對不上：不用
-    assert "MRR" not in slide(get(client).get_data(as_text=True), "cross")
-    (root / "eval/results_cross_mrr.json").unlink()
-    put(root, "eval/results_cross_before_hybrid.json", {"heldout_answerable": {"n": 2, "got": 1, "want": 9}})  # 分母對不上：不用
-    assert "只用 bge-m3 挑段時" not in slide(get(client).get_data(as_text=True), "cross")
-    for k in ("methods", "arch"):  # 其他頁只指路，不放跨公司數字
+    # 兩組分開列，不合計：調參用（我自己出的）4/5、驗證（沒用來調參的那組）7/8；刻意換說法的那組（3/4）不列
+    assert 'data-k="tune" data-v="4" data-n="5"' in sec and 'data-k="val" data-v="7" data-n="8"' in sec
+    assert 'data-n="9"' not in sec and 'data-n="4"' not in sec
+    assert 'data-k="tune_mrr" data-v="0.75"' in sec and 'data-k="val_mrr" data-v="0.875"' in sec
+    assert "只用 bge-m3：4 / 5，MRR 0.500" in sec and "只用 bge-m3：5 / 8，MRR 0.625" in sec
+    assert "調參用：我自己出的 2 題" in sec and "驗證：Codex 出的 6 題（直白問法，沒用來調參）" in sec and "驗證 6 題裡 2 題、調參用 2 題裡 1 題" in sec
+    assert "MRR 從 0.62 到 0.88" in sec and "後來也用來決定門檻" not in sec
+    assert "哪些公司用 &lt;b&gt;X&lt;/b&gt;？" in sec and "<b>X</b>" not in sec  # 例題有跳脫
+    _cross_mrr(root, held_got=2)  # 獨立題輸出檔後來變了：這份比較過期，不用
+    assert "data-n=" not in slide(get(client).get_data(as_text=True), "cross")
+    _cross_mrr(root)
+    for k in ("methods", "arch"):  # 其他頁只指路，不放跨公司成績
         other = slide(get(client).get_data(as_text=True), k)
-        assert "見「問全部公司」那頁" in other and "BM25＋bge-m3）挑" not in other and "取到幾家" not in other  # 架構頁只講門檻，不放成績
+        assert "見「問全部公司」那頁" in other and "BM25＋bge-m3）挑" not in other and "取到幾家" not in other
 
 
 def test_cross_slide_follows_per_company_constant(client, monkeypatch):
