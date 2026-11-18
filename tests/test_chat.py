@@ -196,7 +196,13 @@ def test_api_search_company_filter_and_detection(web):
 
 def test_api_search_low_score_says_low_and_still_returns_text(web, monkeypatch):
     monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 10.0)
-    d = web.app.test_client().get("/api/search", query_string={"q": Q}).get_json()
+    c = web.app.test_client()
+    d = c.get("/api/search", query_string={"q": Q}).get_json()
+    assert d["status"] == "ok" and d["cross"] is True  # 沒指定公司走跨公司，不看 NOT_FOUND_THRESHOLD
+    d = c.get("/api/search", query_string={"q": Q, "company": "甲科技"}).get_json()
+    assert d["status"] == "low" and d["hits"] and d["cross"] is False
+    monkeypatch.setattr(retrieval, "CROSS_FLOOR", 10.0)
+    d = c.get("/api/search", query_string={"q": Q}).get_json()
     assert d["status"] == "low" and d["hits"]
 
 

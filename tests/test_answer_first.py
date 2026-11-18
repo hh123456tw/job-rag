@@ -76,10 +76,11 @@ def test_answer_endpoint_low_score_never_calls_api_or_counts(web, monkeypatch):
     post = FakePost()
     monkeypatch.setattr(web, "_post", post)
     monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 10.0)
+    monkeypatch.setattr(retrieval, "CROSS_FLOOR", 10.0)  # 沒指定公司走跨公司路徑，用它的門檻
     monkeypatch.setenv("JOB_RAG_ANSWER_LIMIT", "1")
     c = web.app.test_client()
-    for _ in range(3):
-        d = c.get("/answer", query_string={"q": Q}).get_json()
+    for kw in ({}, {"company": "甲科技"}, {}):  # 跨公司路徑與單一公司路徑都不呼叫、不計次
+        d = c.get("/answer", query_string={"q": Q, **kw}).get_json()
         assert d["status"] == "low" and "answer" not in d
     assert post.calls == [] and len(web._limiter.stamps) == 0
 

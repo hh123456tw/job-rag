@@ -84,7 +84,12 @@ def s_arch(d, n_segments, n_companies):
     fig = _svg(318, "系統架構：從公開資料到答案與出處，另有評估迴路", "".join(parts), defs)
     notes = ("<p><span class=key></span>實心藍色是唯一會連網的一步；其餘都在本機。</p>"
              f"<p>最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}）就不呼叫 DeepSeek。</p>")
-    return f"一個問題，走過 {len(main)} 步", fig, notes, "arch", None
+    # 先講有兩條檢索路徑；下面的圖畫的是「問一家公司」那條
+    paths = (f'<div class="qk"><p><b>檢索分兩條路，看在哪裡問</b>（下圖是第一條）</p>'
+             f"<p><b>問一家公司</b>（在公司頁問，或問句提到公司名）　{r.DEFAULT_METHOD} 取最像的 {r.DEFAULT_K} 段。</p>"
+             f"<p><b>跨公司</b>（在全部公司頁問，沒提公司名）　每家各取 {r.PER_COMPANY} 段，用混合（BM25＋bge-m3）挑；"
+             f"拒答看 bge-m3 最高分，低於 {r.CROSS_FLOOR:.2f} 就停。</p></div>")
+    return f"一個問題，走過 {len(main)} 步", paths + fig, notes, "arch", None
 
 
 def s_chunk(d, lengths):

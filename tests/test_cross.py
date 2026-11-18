@@ -18,12 +18,18 @@ NO = ["甲科技比較重視什麼", "哪裡可以報名", "最近有什麼新�
 
 @pytest.mark.parametrize("q", YES)
 def test_cross_questions_detected(q):
-    assert is_cross(q, MINI)
+    assert retrieval.asks_all(q, MINI) and is_cross(q, MINI)
 
 
 @pytest.mark.parametrize("q", NO)
 def test_non_cross_questions_not_detected(q):
-    assert not is_cross(q, MINI)
+    assert not retrieval.asks_all(q, MINI)  # 詞表只決定追問時要不要接上一題
+
+
+@pytest.mark.parametrize("q", NO)
+def test_routing_ignores_wording_and_only_checks_company_names(q):
+    """分流不看問法：沒提到公司就是跨公司；提到公司（一家或兩家）就不是。"""
+    assert is_cross(q, MINI) == ("甲科技" not in q and "乙資訊" not in q)
 
 
 def test_cross_search_one_per_company_sorted_and_public_only():

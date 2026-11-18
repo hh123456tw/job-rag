@@ -451,9 +451,15 @@ _CROSS_WORDS = re.compile(
     "哪些.{0,6}職缺.{0,4}[要需會用]|(?:工程師|設計師|分析師|研究員|架構師)的?職缺有哪些|有哪些.{1,12}職缺")  # 沒指定公司的職缺清單問法
 
 
-def is_cross(question: str, corpus=None, mode: str = "demo") -> bool:
-    """沒提到任何一家公司，且含跨公司詞。保守：寧可漏判。提到公司（一家或多家）都不算。"""
+def asks_all(question: str, corpus=None, mode: str = "demo") -> bool:
+    """問句本身明講要看全部公司（含跨公司詞、沒提到公司）。只用來決定追問時要不要接上一題，不決定分流。"""
     return bool(_CROSS_WORDS.search(question)) and not mentions_company(question, corpus, mode)
+
+
+def is_cross(question: str, corpus=None, mode: str = "demo") -> bool:
+    """沒提到任何一家公司就走跨公司（呼叫端另外確認沒有指定公司）。11/18 起分流看「在哪裡問」，不看問法：
+    公司頁內提問＝那一家；全部公司頁沒提公司名＝跨公司；提到公司（一家或多家）都不算。"""
+    return not mentions_company(question, corpus, mode)
 
 
 def cross_search(question: str, per: int | None = None, corpus=None, mode: str = "demo", companies=None) -> list[dict]:

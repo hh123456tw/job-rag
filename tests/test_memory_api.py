@@ -26,6 +26,8 @@ def queries(web, monkeypatch):
     """記下真正拿去檢索的問句。"""
     seen, real = [], web.search
     monkeypatch.setattr(web, "search", lambda q, **kw: seen.append(q) or real(q, **kw))
+    cross = web._cross_hits  # 沒指定公司、沒提公司名的問句走這條
+    monkeypatch.setattr(web, "_cross_hits", lambda q, mode: seen.append(q) or cross(q, mode))
     return seen
 
 

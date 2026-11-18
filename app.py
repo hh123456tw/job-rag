@@ -254,8 +254,13 @@ def _ms(t0: float) -> float:
 
 
 def _is_cross(rq, company, mode) -> bool:
-    """跨公司題：沒指定公司、問句沒提到公司、含跨公司詞（job_rag.retrieval.is_cross）。"""
+    """跨公司題：沒指定公司、問句沒提到公司（job_rag.retrieval.is_cross）。不看問法。"""
     return not company and is_cross(rq, mode=mode)
+
+
+def _alone(q, company, mode) -> bool:
+    """問句自己明講要看全部公司：追問補全時不接上一題（否則上一題的公司名會把它變成單公司）。"""
+    return not company and retrieval.asks_all(q, mode=mode)
 
 
 def _cross_hits(rq, mode):
@@ -311,7 +316,7 @@ def answer_json():
     if msg := _self_wait(mode):
         return _tag({"status": "error", "message": msg}), 503
     try:
-        rq = q if _is_cross(q, company, mode) else expand(q, history, mode=mode)  # 本身就是跨公司題就不接上一題（否則上一題的公司名會把它變成單公司）
+        rq = q if _alone(q, company, mode) else expand(q, history, mode=mode)  # 本身就是跨公司題就不接上一題（否則上一題的公司名會把它變成單公司）
         cross = _is_cross(rq, company, mode)
         hits = _cross_hits(rq, mode) if cross else search(rq, company=company, gate=False, dedupe=_on("JOB_RAG_DEDUPE"), mode=mode)
     except RuntimeError as e:
@@ -347,7 +352,7 @@ def api_search():
         return _tag({"status": "error", "message": msg}), 503
     t0 = time.perf_counter()  # 伺服器端檢索耗時（含追問補全、公司偵測、向量檢索）
     try:
-        detected, rq = False, (q if _is_cross(q, company, mode) else expand(q, history, mode=mode))  # 追問補全後的問句：公司偵測與檢索都用它；跨公司題不補
+        detected, rq = False, (q if _alone(q, company, mode) else expand(q, history, mode=mode))  # 追問補全後的問句：公司偵測與檢索都用它；跨公司題不補
         if not company and _on("JOB_RAG_DETECT") and (d := detect_company(rq, mode=mode)):
             company, detected = d, True
         cross = _is_cross(rq, company, mode)

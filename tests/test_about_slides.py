@@ -84,8 +84,12 @@ def test_arch_numbers_follow_constants(client, monkeypatch):
     monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 0.123)
     monkeypatch.setattr(retrieval, "DEFAULT_K", 9)
     monkeypatch.setattr(retrieval, "CHUNK", 777)
+    monkeypatch.setattr(retrieval, "PER_COMPANY", 4)
+    monkeypatch.setattr(retrieval, "CROSS_FLOOR", 0.33)
     sec = slide(get(client).get_data(as_text=True), "arch")
     assert "低於 0.123 就停" in sec and "K = 9" in sec and "約 777 字" in sec and "FAISS" in sec and "DeepSeek" in sec
+    assert "檢索分兩條路，看在哪裡問" in sec and "在全部公司頁問，沒提公司名" in sec and "取最像的 9 段" in sec and "每家各取 4 段" in sec and "低於 0.33 就停" in sec  # 兩條路徑的數字讀常數
+    assert "每家各取 3 段" not in sec and "低於 0.50 就停" not in sec
 
 
 def test_ragas_slide_numbers_and_the_self_judge_note(client, root):  # noqa: F811

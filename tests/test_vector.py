@@ -41,6 +41,7 @@ def fake_env(monkeypatch, tmp_path):
     monkeypatch.setenv("JOB_RAG_CACHE", str(tmp_path / "cache"))
     monkeypatch.setattr(retrieval, "_load_model", lambda method: FakeModel(method))
     monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 0.0)  # 假嵌入器的分數尺度不同：預設不擋，要測門檻的測試自己設
+    monkeypatch.setattr(retrieval, "CROSS_FLOOR", 0.0)  # 同上：沒指定公司的問句現在走跨公司路徑
     _clear()
     yield
     _clear()

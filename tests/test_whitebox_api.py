@@ -38,10 +38,14 @@ def web(monkeypatch):
 
 def test_search_scores_equal_retrieval_scores_and_carry_threshold(web, monkeypatch):
     monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", 0.123)
-    d = web.app.test_client().get("/api/search", query_string={"q": Q}).get_json()
-    want = search(Q, corpus=MINI, gate=False, dedupe=True)
+    c = web.app.test_client()
+    d = c.get("/api/search", query_string={"q": Q, "company": "甲科技"}).get_json()
+    want = search(Q, corpus=MINI, company="甲科技", gate=False, dedupe=True)
     assert [h["score"] for h in d["hits"]] == [h["score"] for h in want]  # 同一個數字，不重算
-    assert d["threshold"] == 0.123
+    assert d["threshold"] == round(0.123 - retrieval.SCOPED_DROP, 3) and d["cross"] is False
+    monkeypatch.setattr(retrieval, "CROSS_FLOOR", 0.321)
+    x = c.get("/api/search", query_string={"q": Q}).get_json()  # 沒指定公司：跨公司路徑，帶它自己的門檻
+    assert x["cross"] is True and x["threshold"] == 0.321 and x["threshold"] != d["threshold"]
 
 
 def test_search_ms_is_non_negative_number(web):

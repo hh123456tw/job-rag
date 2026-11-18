@@ -58,6 +58,7 @@ def mid_threshold(monkeypatch):
     s = scores()
     assert s[0] > s[1]
     monkeypatch.setattr(retrieval, "NOT_FOUND_THRESHOLD", (s[0] + s[1]) / 2)
+    monkeypatch.setattr(retrieval, "CROSS_FLOOR", (s[0] + s[1]) / 2)  # 這頁沒指定公司，走跨公司路徑
     return s
 
 
