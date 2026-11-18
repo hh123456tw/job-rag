@@ -95,7 +95,7 @@ def test_held_slide_names_the_real_question_count_and_splits_job_list_from_singl
     p.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
     h = client[1].get("/about").get_data(as_text=True)
     assert "30 題對 4 題" in h and "40 題" not in h
-    assert "職缺 2 題：Hit@3 0.500" in h and "單一公司 3 題：Hit@3 1.000" in h
+    assert "職缺：Hit@3 0.50（1/2）" in h and "單一公司：Hit@3 1.00（3/3）" in h  # 小數，括號補題數
     assert "標準答案沒人工確認" in h
 
 
@@ -108,3 +108,11 @@ def test_score_slide_has_one_bar_per_type_with_values(client, root):  # noqa: F8
     h = client[1].get("/about").get_data(as_text=True)
     assert "哪裡強、哪裡弱" in h
     assert 'class="bar gx ok"' in h and 'class="bar gx bad"' in h  # 1.0 綠、0.5 紅
+    sec = h[h.index("哪裡強、哪裡弱"):]
+    sec = sec[:sec.index("</section>")]
+    assert ">1.00（3/3）<" in sec and ">0.50（1/2）<" in sec  # 標準指標寫小數，括號補題數
+    assert ">1.00<" not in sec and ">3/3<" not in sec  # 不單獨出現其中一種
+    assert "職缺題較弱的可能原因（我的推論）" in sec  # 職缺 0.5：下方寫原因
+    r["by_type"]["職缺"]["hit@3"] = 1.0
+    p.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
+    assert "職缺題較弱的可能原因" not in client[1].get("/about").get_data(as_text=True)  # 不弱就不寫

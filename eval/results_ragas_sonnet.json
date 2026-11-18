@@ -1,0 +1,783 @@
+{
+ "judge": "Claude Sonnet 5.5（claude -p --model claude-sonnet-5-5，Claude Code CLI）",
+ "judge_short": "Sonnet 5.5",
+ "generator": "DeepSeek",
+ "date": "2026-11-18",
+ "sets": {
+  "tune": {
+   "n": 22,
+   "failed": [],
+   "faithfulness": {
+    "n": 22,
+    "mean": 0.993131313131313,
+    "ci95": [
+     0.9812121212121212,
+     1.0
+    ],
+    "deepseek_judge_mean": 0.9954545454545454
+   },
+   "answer_relevancy": {
+    "n": 22,
+    "mean": 0.9113002623516387,
+    "ci95": [
+     0.8737031650586311,
+     0.9429852621286472
+    ],
+    "deepseek_judge_mean": 0.9182951796679876
+   }
+  },
+  "held": {
+   "n": 69,
+   "failed": [],
+   "faithfulness": {
+    "n": 69,
+    "mean": 0.9824091577399706,
+    "ci95": [
+     0.9606700273051879,
+     0.9987922705314008
+    ],
+    "deepseek_judge_mean": 0.9842995169082126
+   },
+   "answer_relevancy": {
+    "n": 69,
+    "mean": 0.8240632868119369,
+    "ci95": [
+     0.7904601563423034,
+     0.8555886973515588
+    ],
+    "deepseek_judge_mean": 0.8154117050985409
+   }
+  }
+ },
+ "per_question": [
+  {
+   "set": "tune",
+   "id": "s01",
+   "question": "神通資訊的資本額是多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9999999999999992,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "s03",
+   "question": "華電聯網 2025 年得標多少政府標案？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9918709971822608,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "s04",
+   "question": "叡揚資訊 2025 年的營收和 EPS 是多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9474851864574152,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "s05",
+   "question": "數據立有哪些產品？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9789355395313271,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "s06",
+   "question": "聯合報的數據發展部做什麼？",
+   "faithfulness": 0.96,
+   "answer_relevancy": 0.9052666577146168,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "s10",
+   "question": "叡揚資訊有哪些 AI 產品？",
+   "faithfulness": 0.8888888888888888,
+   "answer_relevancy": 0.9722874923363024,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "s12",
+   "question": "典凡科技提供哪些產品與服務？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9999999999999997,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "s13",
+   "question": "宏碁雲架構服務是做什麼的？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7841820178458271,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "s14",
+   "question": "台灣大哥大有哪些業務？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8686752933008842,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j01",
+   "question": "典凡科技的 AI 應用工程師年薪多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9534335225109749,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j02",
+   "question": "宏碁雲架構服務的應用系統開發工程師要會哪些技能？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9161536935317874,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j03",
+   "question": "神通資訊有沒有 Node.js 後端工程師的職缺？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9128780925758364,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j04",
+   "question": "台灣大哥大的 Kubernetes 平台工程師要幾年經驗？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9814923674010974,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j05",
+   "question": "遠振資訊目前開放幾筆職缺？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7410286928067146,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j07",
+   "question": "聯合報系的數據優化師（數據分析）月薪範圍是多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9250493335409625,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j08",
+   "question": "數據立的 AI 解決方案工程師需要出差嗎？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.679027911530199,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j09",
+   "question": "神通資訊的 C++/AI 應用工程師需要出差或外派嗎？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8712342692292733,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j10",
+   "question": "中華網龍的 AI 應用研發工程師要會哪些技術？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9601313610878665,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j11",
+   "question": "藍新資訊的 AI 前線部署工程師要會哪些技術？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9238056000865019,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j12",
+   "question": "神通資訊的 AI 工程師（生成式 AI）要會哪些技術？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9204075815246843,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j13",
+   "question": "華電聯網的資深研發工程師（研發一部）要會哪些技術？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8579599254013598,
+   "error": null
+  },
+  {
+   "set": "tune",
+   "id": "j14",
+   "question": "凱基證券的 AI Solution 工程師／架構師要幾年經驗、會哪些技術？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9573002361401585,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g001",
+   "question": "台灣大哥大E161系統維運工程師一般年薪多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9234509730153091,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g002",
+   "question": "台灣大哥大HIPO資訊招募高中畢業能報嗎？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7073915941158354,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g003",
+   "question": "台灣大哥大總部落在台北哪一區？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8077539147411817,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g004",
+   "question": "台灣大哥大MyAgent底層核心叫什麼？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8012687852859309,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g006",
+   "question": "台灣大哥大2026年打算花多少資本預算？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9424958062098904,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g007",
+   "question": "台灣大哥大2026年找誰合作手機直連衛星？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6789533824233579,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g008",
+   "question": "台灣大哥大有哪些專做手機App的工程師缺？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9380910319286424,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g009",
+   "question": "台灣大哥大哪些職缺要開發FreeSWITCH？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.43809503951539347,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g012",
+   "question": "聯合報新聞部前端開發工程師月薪開多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9957256014701036,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g013",
+   "question": "聯合報產品分析中心助理數據分析師要什麼學位？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9357951460753476,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g014",
+   "question": "聯合報演算法工程師每天去哪裡上班？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8844713392915234,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g015",
+   "question": "聯合報哪年開始賣數位訂閱？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9667253350321051,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g016",
+   "question": "聯合報登記的資本金有多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9664113683248884,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g017",
+   "question": "聯合報自動抓錯字的新聞平台是哪家公司做的？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.974640862608624,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g018",
+   "question": "聯合報今年七月起引進哪家美國報紙的內容？",
+   "faithfulness": 0.5,
+   "answer_relevancy": 0.7101189549584106,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g019",
+   "question": "聯合報哪些職位的辦公室在信義區？",
+   "faithfulness": 0.5,
+   "answer_relevancy": 0.44331129599127833,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g020",
+   "question": "聯合報哪些職位讓沒工作經驗的人也能投？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6089406190937239,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g023",
+   "question": "叡揚資訊的 API 治理系統工程師月薪開多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9568018967930784,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g024",
+   "question": "叡揚資訊的資安顧問至少要拿到什麼學位？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6571772543932928,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g025",
+   "question": "叡揚資訊的高雄研發據點在哪一區？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.963135834934322,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g026",
+   "question": "叡揚資訊的 Radar 是幫企業管哪一塊？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7180471634302901,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g027",
+   "question": "叡揚資訊2025年研發花費占收入百分之多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.80275353512432,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g028",
+   "question": "叡揚資訊2026年五月活動誰談多代理協作？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7346945076261564,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g031",
+   "question": "叡揚資訊哪些職缺月薪下限剛好三萬八？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8056290717151252,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g034",
+   "question": "神通資訊資料庫工程師月薪從多少起？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.973747003509402,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g035",
+   "question": "神通資訊的 DevOps 工程師最低要什麼學位？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.950987846819683,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g036",
+   "question": "神通資訊七月展出的伺服器用哪款處理器？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9256621696101294,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g039",
+   "question": "神通資訊員工裡做技術的大概占幾成？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7349219672335696,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g040",
+   "question": "神通資訊多久安排一次員工健康檢查？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6943738971052297,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g041",
+   "question": "神通資訊有哪些專做網頁前端的職缺？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.982096530053202,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g042",
+   "question": "神通資訊有哪些專門找軟體毛病的職缺？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8310671285020444,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g045",
+   "question": "藍新資訊的網路工程師一個月能領多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8625186265258226,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g046",
+   "question": "藍新資訊的 AI 平台工程師最低要讀到哪？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7771686490747838,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g047",
+   "question": "藍新資訊在高雄的辦公室落在哪一區？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9541415523998729,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g048",
+   "question": "藍新資訊的 UNIX 主機用哪個產品系列？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8387301578335351,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g049",
+   "question": "藍新資訊把技術服務分成幾大類？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8449919114246224,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g050",
+   "question": "藍新資訊二〇二六年第三季每股賺多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8931277185630866,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g051",
+   "question": "藍新資訊何時在官網加了給股東看的專區？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6743140903942516,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g052",
+   "question": "藍新資訊有哪些 AI 工程師職缺？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8552068013340843,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g053",
+   "question": "藍新資訊在大安區有哪些駐點工程師缺？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9657566677458173,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g056",
+   "question": "凱基證券軟體開發工程師薪水底線多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.5921983308089138,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g057",
+   "question": "凱基證券Python系統程式設計師最低要什麼學位？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.6711657115112288,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g058",
+   "question": "凱基證券資深系統分析師在哪上班？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9751162123200734,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g059",
+   "question": "凱基證券新核心靠哪套容器平台運作？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.812145501858348,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g060",
+   "question": "凱基證券的凱富理財平台由哪家協助導入？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.5759267752385471,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g061",
+   "question": "凱基證券三年聯貸最多能借多少錢？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9187478666100061,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g062",
+   "question": "凱基證券智慧牧羊犬拿過哪個獎？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8853098334988521,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g063",
+   "question": "凱基證券哪些缺需要用 C++ 寫程式？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9418010843337491,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g064",
+   "question": "凱基證券數位創新部現在招哪些人？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9157083146560105,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g067",
+   "question": "華電聯網夜班資安監控工程師月薪落在哪？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9014480763248517,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g068",
+   "question": "華電聯網桃園整合服務部系統工程師在哪辦公？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9717924624887453,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g069",
+   "question": "華電聯網資安檢測工程師最低要什麼學位？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8648758887630601,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g070",
+   "question": "華電聯網 FaceKey 靠哪種演算法認人？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8420932632502584,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g071",
+   "question": "華電聯網把資安生意交給哪家子公司主導？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7145744999013739,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g072",
+   "question": "華電聯網二〇二六年股東會決定每股發多少現金？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8813897576689923,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g073",
+   "question": "華電聯網成立碩維時砸了多少資金？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8528787525417888,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g074",
+   "question": "華電聯網在新竹有哪些技術職缺？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9891829653044902,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g075",
+   "question": "華電聯網哪些職缺會做車聯網開發？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.970183180737311,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g078",
+   "question": "中華網龍AI應用遊戲工程師月薪落在哪？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9714193562923708,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g079",
+   "question": "中華網龍飄流幻境遊戲測試最低要什麼學位？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.7456043108460282,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g080",
+   "question": "中華網龍登記在哪個行政區？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9101351197719251,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g081",
+   "question": "中華網龍2026年十月營業額多少？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.791472903066318,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g082",
+   "question": "中華網龍把吞食天地3放置版交給哪隊開發？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8748885335459221,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g084",
+   "question": "中華網龍飄流幻境二十週年展哪天辦？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.45965259540540115,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g085",
+   "question": "中華網龍有哪些軟體相關工作能投？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.8261505167220854,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g086",
+   "question": "中華網龍哪些職缺是做飄流幻境的？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.9196976030421418,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g090",
+   "question": "懂 Docker 能投哪幾家公司的職缺？",
+   "faithfulness": 0.9166666666666666,
+   "answer_relevancy": 0.733447251832183,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g092",
+   "question": "哪幾家的徵才條件提到亞馬遜雲經驗？",
+   "faithfulness": 0.8695652173913043,
+   "answer_relevancy": 0.702208497728852,
+   "error": null
+  },
+  {
+   "set": "held",
+   "id": "g094",
+   "question": "會 FastAPI 可以留意哪幾家的工作？",
+   "faithfulness": 1.0,
+   "answer_relevancy": 0.5284585917265576,
+   "error": null
+  }
+ ],
+ "note": "評審換成 Sonnet 5.5，生成仍是 DeepSeek。答案與段落和 DeepSeek 評審那次相同，沒有重新生成；跨公司路徑 11/18 的改動（門檻、混合挑段）之後沒有重新生成答案。RAGAS 的提示詞是英文、原封不動；評審單次輸出有隨機性，只跑一次。只量答案有沒有依據、有沒有答到問題，不量對不對。"
+}

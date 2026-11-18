@@ -303,6 +303,34 @@ def _ragas_fix(root: Path, gen):
         return None
 
 
+def _ragas_gpt(root: Path):
+    """RAGAS 換評審的結果（eval/run_ragas_gpt.py）：先找 Sonnet 5.5 那份，沒有才找 GPT 那份。
+    輸出檔缺、讀不了、或 30 題組沒有有效分數回 None：頁面就維持 DeepSeek 評審的寫法。"""
+    for name in ("sonnet", "gpt"):
+        if (x := _ragas_other(root / f"eval/results_ragas_{name}.json")):
+            return x
+    return None
+
+
+def _ragas_other(path: Path):
+    try:
+        full = json.loads(path.read_text(encoding="utf-8"))
+        r = full["sets"]
+        out = {"judge": full.get("judge_short") or "GPT"}
+        for s in ("tune", "held"):
+            if s not in r:
+                continue
+            f, a = r[s]["faithfulness"], r[s]["answer_relevancy"]
+            if not f["n"] or not isinstance(f["mean"], (int, float)) or not isinstance(a["mean"], (int, float)):
+                if s == "tune":
+                    return None
+                continue
+            out[s] = {"n": r[s]["n"], "scored": f["n"], "faithfulness": f["mean"], "answer_relevancy": a["mean"], "failed": len(r[s]["failed"])}
+        return out if "tune" in out else None
+    except (OSError, KeyError, TypeError, ValueError):
+        return None
+
+
 def _held_methods(root: Path):
     """獨立題上 hybrid 與 reranker 對 bge-m3 的比較（票 43、44）。輸出檔缺或讀不了回 None（頁面維持「沒量過」）。"""
     try:
@@ -369,7 +397,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root), "held_cross": _heldout_cross(root), "held_methods": _held_methods(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root), "held_cross": _heldout_cross(root), "held_methods": _held_methods(root), "ragas_gpt": _ragas_gpt(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,

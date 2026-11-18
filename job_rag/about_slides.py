@@ -152,16 +152,17 @@ def s_methods(d):
         for j, k in enumerate(("hit@1", "hit@3", "hit@5")):
             yy = y + j * (bh + 2)
             b.append(f'<rect class="bar gx h{k[-1]}" data-m="{r["method"]}" data-k="{k}" data-v="{r[k]!r}" x="{x0}" y="{yy}" width="{max(r[k] * (x1 - x0), 0.5):.1f}" height="{bh}" rx="2"/>'
-                     + _t(x0 + r[k] * (x1 - x0) + 5, yy + 8, _f(r[k]), "xs"))
+                     + _t(x0 + r[k] * (x1 - x0) + 5, yy + 8, f"{r[k]:.2f}", "xs"))
     yb = 20 + len(rows) * pitch2
     b.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{yb}" y2="{yb}"/>' + _ticks_h(x0, x1, yb, (0, .25, .5, .75, 1), lambda v: f"{v:g}")
-             + _t(x0, yb + 34, "Hit@k：正確段落排進前 k 名的題數比例", "mu sm"))
+             + _t(x0, yb + 34, f"Hit@k：正確段落排進前 k 名的比例（共 {d['n_answerable']} 題）", "mu sm"))
     B = _svg(yb + 42, "各找法的 Hit@1、Hit@3、Hit@5", "".join(b))
     fig = f'<div class="two"><figure><figcaption>MRR（含 95% 區間；網站用 {retrieval.DEFAULT_METHOD}）</figcaption>{A}</figure><figure><figcaption>Hit@1／3／5</figcaption>{B}</figure></div>'
     m3 = next(r for r in rows if r["method"] == "bge-m3")
     notes = (f"<p>Hit@3＝正確答案的那段，有排進前 3 名的題數比例（Hit@1 是第 1 名、Hit@5 是前 5 名）。"
-             f"例：{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{_f(m3['hit@3'])}。</p>"
-             "<p>MRR＝正確段落名次的倒數平均（第 1 名 1 分、第 2 名 0.5 分）；區間重疊的差距只能當方向。</p>")
+             f"例：{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{m3['hit@3']:.2f}（{m3['found']}/{d['n_answerable']}）。</p>"
+             "<p>MRR＝正確段落名次的倒數平均（第 1 名 1 分、第 2 名 0.5 分），沒辦法寫成題數；區間重疊的差距只能當方向。"
+             "<br>這頁只比「問一家公司」的找法。跨公司提問另有一條路，細節在完整說明頁。</p>")
     head = f"{len(METHODS)} 種找法，{SHORT[best['method']]} 最高" if best["method"] == "bge-m3" else f"{len(METHODS)} 種找法比一比"
     return head, fig, notes, "methods", None
 
@@ -174,6 +175,8 @@ def s_held(d):
         return None
     x0, x1, pitch, y0 = 56, 280, 82, 14
     rows = [("Hit@3", m3["hit@3"], m3["ci"]["hit@3"], x["hit3"], x["hit3_ci"]), ("MRR", m3["mrr"], m3["ci"]["mrr"], x["mrr"], x["mrr_ci"])]
+    ns = (d["n_answerable"], x["n_plain_answerable"])  # 兩組各自算 Hit@3 的題數
+    shown = lambda name, v, j: f"{v:.2f}（{round(v * ns[j])}/{ns[j]}）" if name == "Hit@3" else _f(v)
     g = []
     for i, (name, v1, c1, v2, c2) in enumerate(rows):
         y = y0 + i * pitch
@@ -184,7 +187,7 @@ def s_held(d):
             g.append(_t(x0 - 6, yy + 14, lab, "sm", "end")
                      + f'<rect class="bar gx{"" if hot else " g"}" data-set="{lab}" data-k="{name}" data-v="{v!r}" x="{x0}" y="{yy}" width="{v * (x1 - x0):.1f}" height="20" rx="4"/>'
                      + f'<g class="eb"><line class="h" x1="{sx(ci[0]):.1f}" x2="{sx(ci[1]):.1f}" y1="{yy + 10}" y2="{yy + 10}"/><line class="c" x1="{sx(ci[0]):.1f}" x2="{sx(ci[1]):.1f}" y1="{yy + 10}" y2="{yy + 10}"/></g>'
-                     + _t(x1 + 8, yy + 15, _f(v), "bd sm"))
+                     + _t(x1 + 8, yy + 15, shown(name, v, j), "bd sm"))
     ya = y0 + len(rows) * pitch
     g.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{ya}" y2="{ya}"/>' + _ticks_h(x0, x1, ya, (0, .25, .5, .75, 1), lambda v: f"{v:g}")
              + _t(x0, ya + 34, "黑線是 95% 區間", "mu sm"))
@@ -195,8 +198,8 @@ def s_held(d):
     weak = "職缺清單題比單一公司題弱，是已知弱點。" if bt.get("職缺") and bt.get("單一公司") and bt["職缺"]["hit@3"] < bt["單一公司"]["hit@3"] else ""
     parts = "；".join(f"{t} {v['n']} 題 Hit@3 {_f(v['hit@3'])}、MRR {_f(v['mrr'])}" for t, v in bt.items())
     notes = (f"<p><b>為什麼分兩組</b></p><p>・30 題：調參數時一直看它，分數偏高。<br>・{x['n']} 題：調完才測，沒拿來調任何東西，較接近真實程度。<br>・{x['n']} 題由 GPT 出，不是我出的。</p>"
-             f"<p><b>怎麼讀圖</b></p><p>・Hit@3：正確那段有沒有進前 3 名，越接近 1 越好。<br>・MRR：正確那段排第幾，越前面越高。<br>・黑線重疊：差距看不出來。</p>"
-             + (f"<p><b>分題型</b></p><p>" + "<br>".join(f"・{escape(t)} {v['n']} 題：Hit@3 {_f(v['hit@3'])}" for t, v in bt.items()) + (f"<br>・跨公司 {x['cross_n']} 題：{x['cross_pass']} 題通過關鍵字檢查" if x.get("cross_n") else "") + f"<br>・沒答案 {x['n_unanswerable']} 題：端到端拒答 {x['e2e']['refused']}/{x['e2e']['n']}" * bool(x["e2e"]) + "</p>" if bt else "")
+             f"<p><b>怎麼讀圖</b></p><p>・Hit@3：正確那段有沒有進前 3 名，越接近 1 越好；括號是題數。<br>・MRR：正確那段排第幾，越前面越高。<br>・黑線重疊：差距看不出來。</p>"
+             + (f"<p><b>分題型</b></p><p>" + "<br>".join(f"・{escape(t)}：Hit@3 {v['hit@3']:.2f}（{round(v['hit@3'] * v['n'])}/{v['n']}）" for t, v in bt.items()) + f"<br>・沒答案 {x['n_unanswerable']} 題：端到端拒答 {x['e2e']['refused']}/{x['e2e']['n']}" * bool(x["e2e"]) + "</p>" if bt else "")
              + f"<p><b>限制</b>：{x['n']} 題由單一模型出、標準答案沒人工確認，只能當方向。{weak}</p>")
     return head, fig, notes, "held", f"30 題對 {x['n']} 題"
 
@@ -207,9 +210,8 @@ def s_score(d):
     bt = (x or {}).get("by_type") or {}
     if not x or not bt:
         return None
-    rows = [(f"{t}　找得到前 3 名", v["hit@3"], f"{v['hit@3']:.2f}", v["n"]) for t, v in bt.items()]
-    if x.get("cross_n"):
-        rows.append(("跨公司　通過檢查", x["cross_pass"] / x["cross_n"], f"{x['cross_pass']}/{x['cross_n']}", x["cross_n"]))
+    # 標準指標 Hit@3 寫小數，括號補題數（Hit@3 × 題數本來就是整數，round 只去掉浮點誤差）；數數量的（拒答）只寫幾題／幾題
+    rows = [(f"{t}　Hit@3（前 3 名找到）", v["hit@3"], f"{v['hit@3']:.2f}（{round(v['hit@3'] * v['n'])}/{v['n']}）", v["n"]) for t, v in bt.items()]
     if x.get("e2e"):
         rows.append(("沒答案　有拒答", x["e2e"]["refused"] / x["e2e"]["n"], f"{x['e2e']['refused']}/{x['e2e']['n']}", x["e2e"]["n"]))
     x0, x1, pitch, y0 = 8, 270, 46, 6
@@ -221,7 +223,9 @@ def s_score(d):
                  + f'<rect class="bar gx {cls}" data-k="{escape(lab)}" data-v="{v!r}" x="{x0}" y="{y + 16}" width="{max(v, .01) * (x1 - x0):.1f}" height="20" rx="4"/>'
                  + _t(x1 + 8, y + 31, txt, "bd"))
     fig = _svg(y0 + len(rows) * pitch, "100 題分題型成績", "".join(g))
-    notes = ("<p>・<b style='color:var(--ok)'>綠</b>：找得很準（0.9 以上）。<br>・<b style='color:var(--mid)'>黃</b>：普通。<br>・<b style='color:var(--bad)'>紅</b>：弱，是已知弱點。</p>"
+    notes = ("<p>・<b style='color:var(--ok)'>綠</b>：九成以上的題做對。<br>・<b style='color:var(--mid)'>黃</b>：普通。<br>・<b style='color:var(--bad)'>紅</b>：弱，是已知弱點。"
+             + ("<br>・職缺題較弱的可能原因（我的推論）：問的是條件，不是職稱；同一家的職缺段落很像；答案分散在好幾段，只取前 5 段。"
+                if bt.get("職缺") and bt["職缺"]["hit@3"] < .9 else "") + "</p>"
              f"<p>・{x['n']} 題由 GPT 出，標準答案沒人工確認，只能當方向。</p>")
     return "哪裡強、哪裡弱", fig, notes, "score", f"{x['n']} 題成績"
 
@@ -374,56 +378,19 @@ def s_funnel(d, e2e):
     fig = _svg(196, "兩層把關漏斗：問題經檢索門檻與答案層後仍回答的題數", "".join(p), defs)
     big = (f'<div class="e2e"><b data-v="{e2e["refused"]}" data-n="{n}">{e2e["refused"]} / {n}</b>'
            f'<span>沒有答案的題，全部拒答（真 DeepSeek、網站實際路徑，只跑一次）</span></div>')
-    notes = "<p>檢索門檻單獨擋不乾淨，要靠答案層補上。</p><p>樣本小、同一人出題，只能當方向。</p>"
+    notes = ("<p>檢索門檻單獨擋不乾淨，要靠答案層補上。答案層靠提示詞：段落沒寫就回「查無」。"
+             f"<br>另有一個輸出檢查（不算在這 {n} 題裡）：{CITE_NOTE}</p><p>樣本小、同一人出題，只能當方向。</p>")
     return f"兩層把關：{e2e['refused']}/{n} 題拒答", f'<div class="two">{fig}{big}</div>{link}', notes, "funnel", None
-
-
-def s_cross(d, n_companies, companies):
-    x = d.get("cross_eval") if d else None
-    per = retrieval.PER_COMPANY
-    names = list(companies or [])[:n_companies] or [f"公司 {i + 1}" for i in range(n_companies)]
-    cols, cw, ch, gap = 4, 76, 54, 12
-    p = []
-    for i, nm in enumerate(names):
-        r, c = divmod(i, cols)
-        sx, sy = c * (cw + gap) + (W - cols * cw - (cols - 1) * gap) / 2, r * (ch + gap)
-        segs = "".join(f'<rect class="sg" x="{sx + 14 + k * 20:.1f}" y="{sy + 33}" width="16" height="9" rx="2"/>' for k in range(per))
-        p.append(f'<rect class="co" x="{sx:.1f}" y="{sy}" width="{cw}" height="{ch}" rx="9"/>' + _t(sx + cw / 2, sy + 21, _short(nm), "bd sm", "middle") + segs)
-    rows = (len(names) + cols - 1) // cols
-    h = rows * (ch + gap)
-    p.append(_t(W / 2, h + 14, f"每家各取 {per} 段（■）→ 合併 → 交給 DeepSeek 逐家整理", "mu sm", "middle"))
-    schem = _svg(h + 24, f"跨公司示意：{len(names)} 家公司各取 {per} 段", "".join(p))
-    fig = f'<div class="two"><figure><figcaption>問「全部公司」時</figcaption>{schem}</figure>'
-    notes = ""
-    if x and x["by_per"]:
-        k_all = sorted(x["by_per"])
-        pitch, x0, x1 = 34, 92, 290
-        c = []
-        for i, k in enumerate(k_all):
-            v, y = x["by_per"][k], 4 + i * pitch
-            hot = k == per
-            c.append(_t(0, y + 16, f"每家取 {k} 段", "bd" if hot else "")
-                     + f'<rect class="bar gx{"" if hot else " g"}" data-k="{k}" data-v="{v!r}" x="{x0}" y="{y}" width="{v * (x1 - x0):.1f}" height="22" rx="4"/>'
-                     + _t(x0 + v * (x1 - x0) + 6, y + 16, _f(v), "bd sm"))
-        yb = 4 + len(k_all) * pitch
-        c.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{yb}" y2="{yb}"/>' + _ticks_h(x0, x1, yb, (0, .25, .5, .75, 1), lambda v: f"{v:g}")
-                 + _t(x0, yb + 34, "涵蓋率（越高越好）", "mu sm"))
-        cov = _svg(yb + 42, "每家取 1、2、3 段的涵蓋率", "".join(c))
-        fig += f"<figure><figcaption>涵蓋率：每家取幾段</figcaption>{cov}</figure>"
-        notes = (f"<p>涵蓋率：該出現的公司裡，取到正確段落的比例（{x['n_answerable']} 道有答案的題平均）。<br>{CROSS_NOTE}</p>"
-                 f"<p>{x['n']} 題中 {x['passed']} 題通過關鍵字檢查；查無常數 {x['floor']} 用同批題挑，偏樂觀。</p>")
-    else:
-        fig += '<figure><p class="miss">缺資料：eval/results_cross.json 找不到或已過期，涵蓋率圖略過，只留示意圖。</p></figure>'
-    fig += "</div>"
-    return f"問全部公司：每家取 {per} 段", fig, notes, "cross", None
 
 
 def s_ragas(d):
     g, c = d["generation"], d["cross"]
     if not g:
         return None
+    gpt = d.get("ragas_gpt")  # 有 GPT 當評審的 RAGAS 就用它；沒有才用 DeepSeek 評審那份
+    src = gpt["tune"] if gpt else g
     x0, x1, pitch = 100, 290, 40
-    bars = [("忠實度", g["faithfulness"], "faithfulness"), ("答案相關性", g["answer_relevancy"], "answer_relevancy")]
+    bars = [("忠實度", src["faithfulness"], "faithfulness"), ("答案相關性", src["answer_relevancy"], "answer_relevancy")]
     p = []
     for i, (lab, v, k) in enumerate(bars):
         y = 4 + i * pitch
@@ -432,7 +399,7 @@ def s_ragas(d):
                  + _t(x1 + 8, y + 17, _f(v), "bd"))
     yb = 4 + len(bars) * pitch
     p.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{yb}" y2="{yb}"/>' + _ticks_h(x0, x1, yb, (0, .5, 1), lambda v: f"{v:g}")
-             + _t(x0, yb + 34, f"RAGAS（DeepSeek 評，與生成同模型），{g['scored']} 題；滿分 1", "mu sm"))
+             + _t(x0, yb + 34, (f"RAGAS（{gpt['judge']} 評審），{src['scored']} 題；滿分 1" if gpt else f"RAGAS（DeepSeek 評，與生成同模型），{g['scored']} 題；滿分 1"), "mu sm"))
     chart = _svg(yb + 42, "RAGAS 忠實度與答案相關性", "".join(p))
     chk = ""
     if c:
@@ -446,7 +413,16 @@ def s_ragas(d):
                 f'<i class="tr"><i class="fl" style="width:{100 * h["supported"] / h["claims"]:.1f}%"></i></i></div>')
     notes = ("<p>" + "主數字是 GPT 複查：由 Codex CLI 的 GPT 逐句對照段落，不是生成用的 DeepSeek。<br>" * bool(c)
              + f"RAGAS 的評審與生成同為 DeepSeek，同模型自評可能偏樂觀，只當附註。答案相關性沒有 GPT 版本。</p><p>{GEN_NOTE}{_held_gen(d)}</p>")
-    head = f"GPT 複查：{c['supported']}/{c['claims']} 有依據" if c else f"答案有依據：忠實度 {g['faithfulness']:.2f}"
+    if gpt:
+        hd = gpt.get("held")
+        held = (f"<br>獨立測試題 {hd['scored']} 題：忠實度 {_f(hd['faithfulness'])}、答案相關性 {_f(hd['answer_relevancy'])}。" if hd else "")
+        bad = sum(v["failed"] for k, v in gpt.items() if k != "judge")
+        who = ("評審都是 GPT（Codex CLI）：左邊是逐句複查，右邊是 RAGAS。" if gpt["judge"] == "GPT"
+               else f"右邊的 RAGAS 由 {gpt['judge']} 評審；左邊的逐句複查由 GPT 做。")
+        notes = (f"<p>{who}生成用的是 DeepSeek，評審換了別的模型。" + held + "</p>"
+                 "<p>答案和段落沒有重新產生；跨公司改動之後的答案沒有重評。評審只跑一次，輸出有隨機性。"
+                 + (f"有 {bad} 題評分失敗，沒有補分。" if bad else "") + "</p>")
+    head = f"GPT 複查：{c['supported']}/{c['claims']} 有依據" if c else f"答案有依據：忠實度 {src['faithfulness']:.2f}"
     return head, f'<div class="two"><div>{chk}</div>{chart}</div>' if c else chart, notes, "ragas", None
 
 
@@ -617,7 +593,7 @@ def render(data, error, n_segments, n_companies, lengths=None, companies=None) -
     builders = [lambda: s_cover(data, n_segments, n_companies), lambda: s_arch(data, n_segments, n_companies), lambda: s_chunk(data, lengths)]
     if data:
         builders += [lambda: s_methods(data), lambda: s_held(data), lambda: s_score(data), lambda: s_qset(data), lambda: s_fixes(data), lambda: s_funnel(data, data.get("e2e")),
-                     lambda: s_cross(data, n_companies, companies), lambda: s_ragas(data)]
+                     lambda: s_ragas(data)]
     else:
         builders += [lambda: s_error(error)]
     builders += [lambda: s_limits(data), lambda: s_qa(data, n_segments)]

@@ -137,17 +137,30 @@ def test_real_outputs_give_three_fix_cards_and_salary_numbers():
     assert sf and f"{sf['before']:.2f}" in sec and f"{sf['after']:.2f}" in sec and sec.count('class="fx"') == 3
 
 
-def test_cross_slide_schematic_always_and_coverage_only_with_fresh_file(client, root):  # noqa: F811
-    sec = slide(get(client).get_data(as_text=True), "cross")
-    assert f"每家取 {retrieval.PER_COMPANY} 段" in sec and "缺資料" in sec and 'data-k="1"' not in sec
+def test_slides_have_no_cross_company_page_but_the_long_page_keeps_it(client, root):  # noqa: F811
+    """簡報版不放跨公司頁（太複雜）；長版說明頁仍有跨公司的說明。"""
     _cross_out(root)
-    sec = slide(get(client).get_data(as_text=True), "cross")
-    assert "缺資料" not in sec and re.findall(r'data-k="(\d)" data-v="([\d.]+)"', sec) == [("2", "0.5")]
+    assert "cross" not in keys(get(client).get_data(as_text=True))
+    assert "跨公司提問" in get(client, "/about?all=1").get_data(as_text=True)
 
 
-def test_cross_slide_follows_per_company_constant(client, monkeypatch):
-    monkeypatch.setattr(retrieval, "PER_COMPANY", 4)
-    assert "每家取 4 段" in slide(get(client).get_data(as_text=True), "cross")
+def test_ragas_slide_uses_the_gpt_judge_file_when_present_and_falls_back_without_it(client, root):  # noqa: F811
+    """有 GPT 評審的輸出檔：長條與文字都換成它，不再寫 DeepSeek 評審。檔案壞了：維持原本寫法，不用壞數字。"""
+    st = lambda n, f, a, bad=(): {"n": n, "failed": list(bad), "faithfulness": {"n": n - len(bad), "mean": f}, "answer_relevancy": {"n": n - len(bad), "mean": a}}
+    put(root, "eval/results_ragas_gpt.json", {"sets": {"tune": st(4, 0.75, 0.5), "held": st(3, 0.25, 0.125, ["h9"])}})  # 沒寫 judge_short：當 GPT
+    sec = slide(get(client).get_data(as_text=True), "ragas")
+    assert re.findall(r'data-k="(\w+)" data-v="([\d.e-]+)"', sec) == [("faithfulness", "0.75"), ("answer_relevancy", "0.5")]
+    assert "RAGAS（GPT 評審），4 題" in sec and "獨立測試題 2 題：忠實度 0.250、答案相關性 0.125" in sec and "有 1 題評分失敗" in sec
+    assert "DeepSeek 評，與生成同模型" not in sec and "同模型自評" not in sec and "生成用的是 DeepSeek" in sec
+    assert "評審是 GPT，不是生成用的 DeepSeek。忠實度 0.750" in sec and "評審和生成都是 DeepSeek" not in sec  # 講稿也跟著換
+    put(root, "eval/results_ragas_sonnet.json", {"judge_short": "Sonnet 5.5", "sets": {"tune": st(5, 0.5, 0.25)}})  # 兩份都有：用 Sonnet 那份
+    sec = slide(get(client).get_data(as_text=True), "ragas")
+    assert "RAGAS（Sonnet 5.5 評審），5 題" in sec and "評審是 Sonnet 5.5，不是生成用的 DeepSeek。忠實度 0.500" in sec and "RAGAS（GPT 評審）" not in sec
+    assert "右邊的 RAGAS 由 Sonnet 5.5 評審；左邊的逐句複查由 GPT 做。" in sec
+    (root / "eval/results_ragas_sonnet.json").unlink()
+    put(root, "eval/results_ragas_gpt.json", {"sets": {"tune": st(4, None, 0.5)}})  # 沒有有效分數：不採用
+    sec = slide(get(client).get_data(as_text=True), "ragas")
+    assert "同模型自評可能偏樂觀" in sec and "RAGAS（GPT 評審）" not in sec
 
 
 def test_missing_generation_files_drop_the_ragas_slide_without_500(client, root):  # noqa: F811
@@ -202,4 +215,4 @@ def test_methods_slide_defines_hit_and_mrr_in_plain_words(client, root):  # noqa
     m3 = next(r for r in d["table"] if r["method"] == "bge-m3")
     sec = slide(get(client).get_data(as_text=True), "methods")
     assert "Hit@3＝正確答案的那段，有排進前 3 名的題數比例" in sec and "Hit@1 是第 1 名、Hit@5 是前 5 名" in sec
-    assert f"{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{m3['hit@3']:.3f}" in sec and "MRR＝正確段落名次的倒數平均" in sec
+    assert f"{d['n_answerable']} 題裡有 {m3['found']} 題前 3 名找到，Hit@3＝{m3['hit@3']:.2f}（{m3['found']}/{d['n_answerable']}）" in sec and "MRR＝正確段落名次的倒數平均" in sec

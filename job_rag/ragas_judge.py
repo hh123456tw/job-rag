@@ -15,8 +15,10 @@ def _embed_fn(texts):
     return retrieval._encode("bge-m3", texts, is_query=True).tolist()  # 本機 bge-m3，已正規化
 
 
-def make_scorer(env_file=".env", base_url=BASE_URL, embed_fn=_embed_fn, metrics=("faithfulness", "answer_relevancy")):
-    """回傳 score_fn(question, answer, contexts) -> {指標: 分數}；失敗丟例外。metrics 只含 faithfulness 時不載入嵌入模型（記憶體不足時用）。"""
+def make_scorer(env_file=".env", base_url=BASE_URL, embed_fn=_embed_fn, metrics=("faithfulness", "answer_relevancy"),
+                api_key=None, model=None, timeout=60):
+    """回傳 score_fn(question, answer, contexts) -> {指標: 分數}；失敗丟例外。metrics 只含 faithfulness 時不載入嵌入模型（記憶體不足時用）。
+    api_key／model／timeout：換評審時用（eval/run_ragas_gpt.py 把 base_url 指到本機轉接，由 Codex CLI 的 GPT 評）；預設仍是 DeepSeek。"""
     import instructor
     from openai import AsyncOpenAI
     from ragas.embeddings.base import BaseRagasEmbedding
@@ -36,13 +38,13 @@ def make_scorer(env_file=".env", base_url=BASE_URL, embed_fn=_embed_fn, metrics=
         async def aembed_texts(self, texts, **kw):
             return await asyncio.to_thread(self.embed_texts, texts)
 
-    key = _key(env_file)
-    model = os.environ.get("DEEPSEEK_MODEL") or DEFAULT_MODEL
+    key = api_key or _key(env_file)
+    model = model or os.environ.get("DEEPSEEK_MODEL") or DEFAULT_MODEL
     emb = LocalEmbedding()
 
     async def _score(question, text, contexts):
         # 客戶端在事件圈內建立：每題一個 asyncio.run，避免連線池跨圈
-        client = AsyncOpenAI(api_key=key, base_url=base_url, timeout=60, max_retries=0)
+        client = AsyncOpenAI(api_key=key, base_url=base_url, timeout=timeout, max_retries=0)
         try:
             # DeepSeek 只支援 json_object，不支援 json_schema：用 instructor.Mode.JSON
             llm = llm_factory(model, client=client, mode=instructor.Mode.JSON,

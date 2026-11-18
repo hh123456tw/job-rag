@@ -533,9 +533,12 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
             f"我原本以為{HYBRID}會更好。數據看不出來，所以選比較簡單的 bge-m3。" if df and df["lo"] <= 0 <= df["hi"] else None,
             f"問單一公司取前 {r.DEFAULT_K} 段；問全部公司，每家取 {r.PER_COMPANY} 段。"],
         4: ["找得到還不夠，答案也要有依據。",
-            f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是 2026-11-17～18 在補完職稱清單的語料、取前 5 段重跑的結果。" if g else None,
-            "但評審和生成都是 DeepSeek，可能偏愛自己的答案。" if g else None,
-            f"所以另請 GPT 複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None,
+            *([f"我用 RAGAS 打分，評審是 {rg['judge']}，不是生成用的 DeepSeek。忠實度 {_f(rg['tune']['faithfulness'])}：答案的每個說法，在原文裡找得到依據。",
+               f"另外請 GPT 逐句複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None]
+              if (rg := d and d.get("ragas_gpt")) and g else
+              [f"我用 RAGAS 打分。忠實度 {_f(g['faithfulness'])}：答案的每個說法，在原文裡找得到依據。這是 2026-11-17～18 在補完職稱清單的語料、取前 5 段重跑的結果。" if g else None,
+               "但評審和生成都是 DeepSeek，可能偏愛自己的答案。" if g else None,
+               f"所以另請 GPT 複查：{c['claims']} 個說法裡，{c['supported']} 個有依據。" if c else None]),
             "這只量有沒有依據，不量對不對。" if g else None,
             f"沒把握時，系統不亂答。最高相似度低於 {r.NOT_FOUND_THRESHOLD:.3f}（已指定公司 {r.NOT_FOUND_THRESHOLD - r.SCOPED_DROP:.3f}），就說「可能沒有答案」。",
             (f"故意問沒有答案的 {gt['n_unanswerable']} 題，擋住 {gt['unanswerable_blocked']} 題{_e2e(d)}。"
