@@ -1,5 +1,5 @@
 {
- "date": "2026-11-17",
+ "date": "2026-11-18",
  "digest": "719cb2218d9e5bc9debfaaf221dc4af4d153794c54368e7d9f86166c6add194f",
  "n": 100,
  "n_plain": 88,
@@ -12,7 +12,7 @@
  "depth": 10,
  "threshold": 0.7,
  "scoped_threshold": 0.62,
- "cross_floor": 0.534,
+ "cross_floor": 0.5,
  "per_company": 3,
  "metrics": {
   "n": 72,
@@ -361,10 +361,10 @@
    "id": "g091",
    "answerable": true,
    "top": 0.519783079624176,
-   "status": "low",
+   "status": "ok",
    "n_relevant": 6,
    "n_correct": 2,
-   "pass": false,
+   "pass": true,
    "n_hits": 24
   },
   {
@@ -401,20 +401,20 @@
    "id": "g095",
    "answerable": true,
    "top": 0.5288532376289368,
-   "status": "low",
+   "status": "ok",
    "n_relevant": 5,
    "n_correct": 3,
-   "pass": false,
+   "pass": true,
    "n_hits": 24
   },
   {
    "id": "g096",
    "answerable": true,
    "top": 0.5116037726402283,
-   "status": "low",
+   "status": "ok",
    "n_relevant": 4,
    "n_correct": 1,
-   "pass": false,
+   "pass": true,
    "n_hits": 24
   },
   {

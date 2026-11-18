@@ -303,6 +303,23 @@ def _ragas_fix(root: Path, gen):
         return None
 
 
+def _held_methods(root: Path):
+    """獨立題上 hybrid 與 reranker 對 bge-m3 的比較（票 43、44）。輸出檔缺或讀不了回 None（頁面維持「沒量過」）。"""
+    try:
+        r = json.loads((root / "eval/results_heldout_methods.json").read_text(encoding="utf-8"))
+        b = r["methods"]["bge-m3"]
+        out = {"n": r["n"], "cand": r["cand"], "reranker": r["reranker"], "base_mrr": b["mrr"], "base_hit1": b["hit@1"],
+               "not_first": sum(x != 1 for x in r["ranks"]["bge-m3"].values())}
+        for m in ("hybrid", "rerank"):
+            v = r["methods"][m]
+            d = v["diff_vs_bge_m3"]["mrr"]
+            out[m] = {"mrr": v["mrr"], "diff": d["diff"], "lo": d["ci"][0], "hi": d["ci"][1], "sec": v["sec_per_question"],
+                      "better": len(v["better"]), "worse": len(v["worse"])}
+        return out
+    except (OSError, KeyError, TypeError, ValueError):
+        return None
+
+
 def _heldout_gen(root: Path):
     """獨立題 RAGAS（票 41，現行設定）。輸出檔缺、讀不了、或沒有任何有效忠實度回 None；答案相關性沒量就是 None。"""
     try:
@@ -352,7 +369,7 @@ def load(root=None) -> dict:
     except AboutDataError as e:
         followup, followup_error = None, str(e)
     return {
-        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root), "held_cross": _heldout_cross(root),
+        "followup": followup, "followup_error": followup_error, "cross_eval": _cross_eval(root), "real_eval": _real_eval(root), "e2e": _e2e(root), "held": _heldout(root), "qsets": _qsets(root), "sweep": _sweep(root), "held_gen": _heldout_gen(root), "held_cross": _heldout_cross(root), "held_methods": _held_methods(root),
         "n_answerable": m["n_answerable"], "n_unanswerable": m["n_unanswerable"],
         "bootstrap": m["bootstrap"], "depth": m["depth"], "table": table,
         "generation": gen and {k: v for k, v in gen.items() if k != "scored_ids"}, "cross": cross,

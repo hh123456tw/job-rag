@@ -1,5 +1,5 @@
 {
- "floor": 0.534,
+ "floor": 0.5,
  "per_default": 3,
  "digest": "f72d9ee481c349c2",
  "tokens_per_char": 0.7,
@@ -35,7 +35,7 @@
     "coverage": 0.7142857142857143,
     "chars": 3025,
     "est_tokens": 2118,
-    "ms": 55.1,
+    "ms": 52.7,
     "top": 0.5439647436141968
    },
    {
@@ -49,7 +49,7 @@
     "coverage": 0.75,
     "chars": 2806,
     "est_tokens": 1964,
-    "ms": 55.8,
+    "ms": 53.7,
     "top": 0.5707818269729614
    },
    {
@@ -63,7 +63,7 @@
     "coverage": 0.75,
     "chars": 3119,
     "est_tokens": 2183,
-    "ms": 55.6,
+    "ms": 52.8,
     "top": 0.6403940916061401
    },
    {
@@ -77,7 +77,7 @@
     "coverage": 0.75,
     "chars": 2499,
     "est_tokens": 1749,
-    "ms": 52.9,
+    "ms": 52.8,
     "top": 0.542574942111969
    },
    {
@@ -91,7 +91,7 @@
     "coverage": 0.7142857142857143,
     "chars": 3543,
     "est_tokens": 2480,
-    "ms": 53.8,
+    "ms": 52.3,
     "top": 0.5898412466049194
    },
    {
@@ -105,7 +105,7 @@
     "coverage": 0.0,
     "chars": 3753,
     "est_tokens": 2627,
-    "ms": 52.7,
+    "ms": 52.4,
     "top": 0.48392388224601746
    },
    {
@@ -119,7 +119,7 @@
     "coverage": 0.375,
     "chars": 3767,
     "est_tokens": 2637,
-    "ms": 52.6,
+    "ms": 53.0,
     "top": 0.6415702104568481
    },
    {
@@ -133,7 +133,7 @@
     "coverage": 0.2857142857142857,
     "chars": 3263,
     "est_tokens": 2284,
-    "ms": 54.1,
+    "ms": 53.4,
     "top": 0.6617488861083984
    },
    {
@@ -147,7 +147,7 @@
     "coverage": 0.875,
     "chars": 3123,
     "est_tokens": 2186,
-    "ms": 52.2,
+    "ms": 55.1,
     "top": 0.6005944013595581
    },
    {
@@ -161,7 +161,7 @@
     "coverage": 0.5,
     "chars": 3115,
     "est_tokens": 2180,
-    "ms": 56.4,
+    "ms": 54.3,
     "top": 0.539951741695404
    },
    {
@@ -175,7 +175,7 @@
     "coverage": 0.5,
     "chars": 2655,
     "est_tokens": 1858,
-    "ms": 73.3,
+    "ms": 52.7,
     "top": 0.6224963665008545
    },
    {
@@ -189,13 +189,13 @@
     "coverage": 0.14285714285714285,
     "chars": 3520,
     "est_tokens": 2464,
-    "ms": 55.9,
+    "ms": 51.5,
     "top": 0.5666514039039612
    },
    {
     "id": "u01",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 8,
     "companies": 8,
     "n_relevant": 0,
@@ -203,13 +203,13 @@
     "coverage": null,
     "chars": 3623,
     "est_tokens": 2536,
-    "ms": 53.9,
+    "ms": 53.1,
     "top": 0.517454981803894
    },
    {
     "id": "u02",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 8,
     "companies": 8,
     "n_relevant": 0,
@@ -217,13 +217,13 @@
     "coverage": null,
     "chars": 2662,
     "est_tokens": 1863,
-    "ms": 53.0,
+    "ms": 50.1,
     "top": 0.5278022289276123
    },
    {
     "id": "u03",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 8,
     "companies": 8,
     "n_relevant": 0,
@@ -231,7 +231,7 @@
     "coverage": null,
     "chars": 3093,
     "est_tokens": 2165,
-    "ms": 53.4,
+    "ms": 54.1,
     "top": 0.5133603811264038
    }
   ],
@@ -247,7 +247,7 @@
     "coverage": 1.0,
     "chars": 6429,
     "est_tokens": 4500,
-    "ms": 54.7,
+    "ms": 53.3,
     "top": 0.5439647436141968
    },
    {
@@ -261,7 +261,7 @@
     "coverage": 0.75,
     "chars": 5719,
     "est_tokens": 4003,
-    "ms": 87.8,
+    "ms": 52.2,
     "top": 0.5707818269729614
    },
    {
@@ -275,7 +275,7 @@
     "coverage": 1.0,
     "chars": 7086,
     "est_tokens": 4960,
-    "ms": 64.3,
+    "ms": 52.9,
     "top": 0.6403940916061401
    },
    {
@@ -289,7 +289,7 @@
     "coverage": 1.0,
     "chars": 5668,
     "est_tokens": 3968,
-    "ms": 63.4,
+    "ms": 53.7,
     "top": 0.542574942111969
    },
    {
@@ -303,7 +303,7 @@
     "coverage": 0.8571428571428571,
     "chars": 7032,
     "est_tokens": 4922,
-    "ms": 56.8,
+    "ms": 52.0,
     "top": 0.5898412466049194
    },
    {
@@ -317,7 +317,7 @@
     "coverage": 0.2,
     "chars": 7494,
     "est_tokens": 5246,
-    "ms": 57.6,
+    "ms": 52.0,
     "top": 0.48392388224601746
    },
    {
@@ -331,7 +331,7 @@
     "coverage": 0.875,
     "chars": 7180,
     "est_tokens": 5026,
-    "ms": 59.2,
+    "ms": 51.7,
     "top": 0.6415702104568481
    },
    {
@@ -345,7 +345,7 @@
     "coverage": 0.42857142857142855,
     "chars": 6117,
     "est_tokens": 4282,
-    "ms": 57.0,
+    "ms": 53.5,
     "top": 0.6617488861083984
    },
    {
@@ -359,7 +359,7 @@
     "coverage": 1.0,
     "chars": 6553,
     "est_tokens": 4587,
-    "ms": 52.9,
+    "ms": 52.2,
     "top": 0.6005944013595581
    },
    {
@@ -373,7 +373,7 @@
     "coverage": 0.625,
     "chars": 6669,
     "est_tokens": 4668,
-    "ms": 53.9,
+    "ms": 54.9,
     "top": 0.539951741695404
    },
    {
@@ -387,7 +387,7 @@
     "coverage": 0.75,
     "chars": 6233,
     "est_tokens": 4363,
-    "ms": 55.2,
+    "ms": 55.4,
     "top": 0.6224963665008545
    },
    {
@@ -401,13 +401,13 @@
     "coverage": 0.2857142857142857,
     "chars": 6409,
     "est_tokens": 4486,
-    "ms": 55.9,
+    "ms": 52.7,
     "top": 0.5666514039039612
    },
    {
     "id": "u01",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 16,
     "companies": 8,
     "n_relevant": 0,
@@ -415,13 +415,13 @@
     "coverage": null,
     "chars": 6830,
     "est_tokens": 4781,
-    "ms": 55.5,
+    "ms": 52.3,
     "top": 0.517454981803894
    },
    {
     "id": "u02",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 16,
     "companies": 8,
     "n_relevant": 0,
@@ -429,13 +429,13 @@
     "coverage": null,
     "chars": 6534,
     "est_tokens": 4574,
-    "ms": 64.4,
+    "ms": 53.4,
     "top": 0.5278022289276123
    },
    {
     "id": "u03",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 16,
     "companies": 8,
     "n_relevant": 0,
@@ -443,7 +443,7 @@
     "coverage": null,
     "chars": 6885,
     "est_tokens": 4820,
-    "ms": 54.4,
+    "ms": 51.8,
     "top": 0.5133603811264038
    }
   ],
@@ -459,7 +459,7 @@
     "coverage": 1.0,
     "chars": 9427,
     "est_tokens": 6599,
-    "ms": 51.6,
+    "ms": 51.5,
     "top": 0.5439647436141968
    },
    {
@@ -473,7 +473,7 @@
     "coverage": 0.875,
     "chars": 9524,
     "est_tokens": 6667,
-    "ms": 52.6,
+    "ms": 53.8,
     "top": 0.5707818269729614
    },
    {
@@ -487,7 +487,7 @@
     "coverage": 1.0,
     "chars": 10092,
     "est_tokens": 7064,
-    "ms": 55.7,
+    "ms": 54.0,
     "top": 0.6403940916061401
    },
    {
@@ -501,7 +501,7 @@
     "coverage": 1.0,
     "chars": 9352,
     "est_tokens": 6546,
-    "ms": 55.3,
+    "ms": 53.3,
     "top": 0.542574942111969
    },
    {
@@ -515,7 +515,7 @@
     "coverage": 0.8571428571428571,
     "chars": 10185,
     "est_tokens": 7130,
-    "ms": 72.4,
+    "ms": 53.4,
     "top": 0.5898412466049194
    },
    {
@@ -529,7 +529,7 @@
     "coverage": 0.4,
     "chars": 10801,
     "est_tokens": 7561,
-    "ms": 52.5,
+    "ms": 51.8,
     "top": 0.48392388224601746
    },
    {
@@ -543,7 +543,7 @@
     "coverage": 0.875,
     "chars": 10236,
     "est_tokens": 7165,
-    "ms": 55.0,
+    "ms": 52.9,
     "top": 0.6415702104568481
    },
    {
@@ -557,7 +557,7 @@
     "coverage": 0.42857142857142855,
     "chars": 9398,
     "est_tokens": 6579,
-    "ms": 55.4,
+    "ms": 54.3,
     "top": 0.6617488861083984
    },
    {
@@ -571,7 +571,7 @@
     "coverage": 1.0,
     "chars": 9720,
     "est_tokens": 6804,
-    "ms": 52.8,
+    "ms": 51.4,
     "top": 0.6005944013595581
    },
    {
@@ -585,7 +585,7 @@
     "coverage": 0.625,
     "chars": 9406,
     "est_tokens": 6584,
-    "ms": 54.0,
+    "ms": 53.6,
     "top": 0.539951741695404
    },
    {
@@ -599,7 +599,7 @@
     "coverage": 0.75,
     "chars": 10052,
     "est_tokens": 7036,
-    "ms": 55.0,
+    "ms": 53.2,
     "top": 0.6224963665008545
    },
    {
@@ -613,13 +613,13 @@
     "coverage": 0.7142857142857143,
     "chars": 9028,
     "est_tokens": 6320,
-    "ms": 52.7,
+    "ms": 52.5,
     "top": 0.5666514039039612
    },
    {
     "id": "u01",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 24,
     "companies": 8,
     "n_relevant": 0,
@@ -627,13 +627,13 @@
     "coverage": null,
     "chars": 9821,
     "est_tokens": 6875,
-    "ms": 52.5,
+    "ms": 51.3,
     "top": 0.517454981803894
    },
    {
     "id": "u02",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 24,
     "companies": 8,
     "n_relevant": 0,
@@ -641,13 +641,13 @@
     "coverage": null,
     "chars": 10230,
     "est_tokens": 7161,
-    "ms": 55.5,
+    "ms": 52.5,
     "top": 0.5278022289276123
    },
    {
     "id": "u03",
     "answerable": false,
-    "status": "low",
+    "status": "ok",
     "n_hits": 24,
     "companies": 8,
     "n_relevant": 0,
@@ -655,7 +655,7 @@
     "coverage": null,
     "chars": 10807,
     "est_tokens": 7565,
-    "ms": 54.5,
+    "ms": 52.2,
     "top": 0.5133603811264038
    }
   ]

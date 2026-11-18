@@ -51,6 +51,54 @@ def _held_types(x) -> str:
     return f"（分題型：{'；'.join(i for i in (t, c) if i)}）" if (t or c) else ""
 
 
+def _sure(v) -> str:
+    return "區間含 0，不能說有差" if v["lo"] <= 0 <= v["hi"] else "區間不含 0，差異可信"
+
+
+def _rerank_line(d) -> str:
+    """獨立題上量到的 reranker 結果一句（票 44）；沒有輸出檔回空字串，呼叫端維持「沒量過」。"""
+    h = d and d.get("held_methods")
+    if not h:
+        return ""
+    v = h["rerank"]
+    return (f"在獨立測試題 {h['n']} 題量過（只在評估程式，網站沒有接）：bge-m3 前 {h['cand']} 段加 {h['reranker']} 重排，"
+            f"MRR {_f(h['base_mrr'])} → {_f(v['mrr'])}，差 {v['diff']:+.3f}，95% 區間 [{v['lo']:+.3f}, {v['hi']:+.3f}]，{_sure(v)}；"
+            f"每題約 {v['sec']:.0f} 秒（CPU）。")
+
+
+def _hybrid_held(d) -> str:
+    h = d and d.get("held_methods")
+    if not h:
+        return ""
+    v = h["hybrid"]
+    return f"獨立測試題 {h['n']} 題：混合的 MRR {_f(v['mrr'])}，比 bge-m3 差 {v['diff']:+.3f}，95% 區間 [{v['lo']:+.3f}, {v['hi']:+.3f}]，{_sure(v)}。"
+
+
+def _hybrid_why(d) -> str:
+    """獨立題上混合較低的可能原因（票 43）。數字取自輸出檔；原因是推論，頁面照實寫。沒有輸出檔回空字串。"""
+    h = d and d.get("held_methods")
+    if not h:
+        return ""
+    v = h["hybrid"]
+    bm = next((r for r in d.get("table") or [] if r["method"] == "bm25"), None)
+    weak = f"（調參題組 MRR {_f(bm['mrr'])}）" if bm else ""
+    return (f"名次變前 {v['better']} 題、變後 {v['worse']} 題。可能原因（我的推論，沒有逐題確認）："
+            f"一、BM25 本身較弱{weak}。二、合併只看名次、兩邊各算一半，弱的一邊會把對的段落往下拉。"
+            "三、這批題出題時要求換同義說法，對關鍵字比對不利；使用者直接打職稱時，BM25 會比這裡好。")
+
+
+def _rerank_why(d, n_segments=None) -> str:
+    """重排看不出差別的可能原因（票 44）。數字取自輸出檔；原因是推論。沒有輸出檔回空字串。"""
+    h = d and d.get("held_methods")
+    if not h:
+        return ""
+    v = h["rerank"]
+    small = f"三、語料只有 {n_segments} 段，候選少，第一階段就容易找對。" if n_segments else ""
+    return (f"名次變前 {v['better']} 題、變後 {v['worse']} 題。可能原因（我的推論，沒有逐題確認）："
+            f"一、進步空間小：bge-m3 的 Hit@1 已有 {_f(h['base_hit1'])}，{h['n']} 題裡只有 {h['not_first']} 題不是第 1 名。"
+            f"二、題數少，量不出這麼小的差距。{small}")
+
+
 def _held_line(d) -> str:
     """一句獨立測試題成績（票 39）；沒有輸出檔回空字串，呼叫端就維持原句。"""
     x = d and d.get("held")
@@ -285,11 +333,12 @@ def _trade(d, n_segments: int) -> str:
          f"MRR：bge-m3 {_ci(m3)}，bge-small-zh {_ci(sm)}，multilingual-e5 {_ci(e5)}。"
          + ("區間有重疊，差距只能當方向。" if overlap else "") + speed + "bge-small-zh 與 e5 沒量過載入與編碼時間。"),
         ("不加重排序模型（reranker）",
-         f"沒量過。資料少，單獨 bge-m3 的 MRR 已有 {_f(m3['mrr'])}；沒有試過加 reranker 會不會更好。"),
+         (_rerank_line(d) + "太慢，而且看不出差別，所以沒有接上。") if _rerank_line(d)
+         else f"沒量過。資料少，單獨 bge-m3 的 MRR 已有 {_f(m3['mrr'])}；沒有試過加 reranker 會不會更好。"),
         ("不用混合檢索（BM25＋bge-m3）",
          f"{HYBRID}＝BM25 關鍵字名次加 bge-m3 語意名次，用 RRF 合併。原本預期它會贏。bge-m3 減{HYBRID}的 MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
          + ("：區間含 0，數據沒有支持混合比較好，所以用較簡單的單一向量找法。" if df["lo"] <= 0 <= df["hi"]
-            else f"：區間不含 0，單一向量找法與{HYBRID}的差異可信。")),
+            else f"：區間不含 0，單一向量找法與{HYBRID}的差異可信。") + _hybrid_held(d)),
         ("DeepSeek 生成與評審，另請 GPT 複查",
          f"{check}評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查；兩者都只量答案有沒有依據，不量對不對。"
          if gen else "評審和生成同為 DeepSeek，可能偏愛自己的答案；兩者都只量答案有沒有依據，不量對不對。這份輸出沒有複查結果。"),
@@ -437,13 +486,14 @@ def _qa(d, n_segments: int) -> str:
          ["我沒做過大規模，不能說已經解決。", f"現在只有 {n_segments} 段，在記憶體裡找就夠。",
           "變多了要換索引、做增量更新，再重新評估。"]),
         ("為什麼不用重排序模型（reranker）？",
+         [_rerank_line(d), "太慢，而且看不出差別，所以沒有接上。", _rerank_why(d, n_segments)] if _rerank_line(d) else
          ["我沒有試過。", f"資料少，bge-m3 的 MRR 已有 {_f(m3['mrr'])}。" if m3 else None,
           "加了會不會更好，我沒量過，所以不說它有用或沒用。"]),
         ("為什麼混合檢索（BM25＋bge-m3）沒有贏？",
          [f"我原本以為{HYBRID}會贏。",
           (_vs_line(d) + f"MRR 差 {df['diff']:+.3f}，95% 區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]。") if df else None,
           ("區間含 0，看不出誰比較好。所以我用比較簡單的單一向量找法。" if df and df["lo"] <= 0 <= df["hi"]
-           else "區間不含 0，兩者的差異可信。" if df else None)]),
+           else "區間不含 0，兩者的差異可信。" if df else None), _hybrid_held(d), _hybrid_why(d)]),
         ("查無門檻是不是太樂觀？",
          ["是，偏樂觀。門檻是用同一批題目挑的，新題目不保證一樣。",
           (f"不可回答題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}{_e2e(d)}，可回答題誤擋 {gt['answerable_blocked']}/{gt['n_answerable']}。" if gt else None)]),

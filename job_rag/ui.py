@@ -3,8 +3,8 @@
 from .owner_ui import CSS as OWNER_CSS  # 自用／展示切換鈕與橘色橫幅（票 24）
 
 # 一個強調色（--acc）＋中性色；錯誤紅（--err）只用在失敗訊息。顏色只在 :root 定義，其餘一律用變數。
-CSS = """:root{--bg:#fafaf9;--fg:#1c1c1e;--mute:#5c5f66;--line:#dcdcd8;--card:#f1f1ee;--acc:#1d4ed8;--on-acc:#fff;--err:#b3261e;--warn:#f59e0b;--on-warn:#1c1c1e}
-@media(prefers-color-scheme:dark){:root{--bg:#121316;--fg:#ececee;--mute:#a3a6ae;--line:#30333a;--card:#1b1d22;--acc:#8ab4ff;--on-acc:#0b1220;--err:#ff9aa5}}
+CSS = """:root{--bg:#fafaf9;--fg:#1c1c1e;--mute:#5c5f66;--line:#dcdcd8;--card:#f1f1ee;--acc:#1d4ed8;--on-acc:#fff;--err:#b3261e;--warn:#f59e0b;--on-warn:#1c1c1e;--ok:#2e8b57;--mid:#d98e04;--bad:#c0392b}
+@media(prefers-color-scheme:dark){:root{--bg:#121316;--fg:#ececee;--mute:#a3a6ae;--line:#30333a;--card:#1b1d22;--acc:#8ab4ff;--on-acc:#0b1220;--err:#ff9aa5;--ok:#5fcf8f;--mid:#f0b34a;--bad:#ff8a7a}}
 *{box-sizing:border-box}html{color-scheme:light dark;-webkit-text-size-adjust:100%}
 body{font:17px/1.7 system-ui,-apple-system,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
 max-width:820px;margin:0 auto;padding:0 20px 56px;background:var(--bg);color:var(--fg);overflow-wrap:anywhere}

@@ -2,7 +2,7 @@
 import json
 
 from job_rag import about
-from tests.test_about_data import root  # noqa: F401  (root 是 fixture)
+from tests.test_about_data import put, root  # noqa: F401  (root 是 fixture)
 from tests.test_about_page import client  # noqa: F401
 
 OUT = {"gated": ["h30", "h40"], "model_not_found": [],
@@ -69,3 +69,25 @@ def test_real_outputs_judge_files_match_scored_ids_and_page_text_is_not_stale():
     assert d["cross"]["n"] == d["generation"]["scored"]  # 題組每一題都複查過
     from job_rag.about_page import GEN_NOTE
     assert "沒有重跑" not in GEN_NOTE and "前一版語料" not in GEN_NOTE and "GPT 複查都於 2026-11-17～18" in GEN_NOTE
+
+
+# ---- 票 43、44：獨立題上的 hybrid 與 reranker；沒有輸出檔就維持「沒量過」 ----
+def test_held_methods_numbers_come_from_the_file_and_missing_file_keeps_not_measured(root):  # noqa: F811
+    from job_rag.about_page import _hybrid_held, _rerank_line
+    assert about._held_methods(root) is None and _rerank_line({"held_methods": None}) == ""
+    m = lambda mrr, diff, lo, hi, sec: {"mrr": mrr, "sec_per_question": sec, "diff_vs_bge_m3": {"mrr": {"diff": diff, "ci": [lo, hi]}}}
+    put(root, "eval/results_heldout_methods.json", {"n": 7, "cand": 20, "reranker": "rr-x", "methods": {
+        "bge-m3": {"mrr": 0.8, "hit@1": 0.5}, "hybrid": m(0.7, -0.1, -0.2, -0.05, 0.1) | {"better": ["a"], "worse": ["b", "c"]},
+        "rerank": m(0.85, 0.05, -0.01, 0.1, 6.6) | {"better": ["a", "b"], "worse": []}}, "ranks": {"bge-m3": {"a": 1, "b": 2, "c": None}}})
+    h = about._held_methods(root)
+    line = _rerank_line({"held_methods": h})
+    assert "7 題" in line and "0.800 → 0.850" in line and "區間含 0，不能說有差" in line and "約 7 秒" in line and "rr-x" in line
+    assert "區間不含 0，差異可信" in _hybrid_held({"held_methods": h})
+    from job_rag.about_page import _hybrid_why, _rerank_why
+    d = {"held_methods": h, "table": [{"method": "bm25", "mrr": 0.6}]}
+    assert "變前 1 題、變後 2 題" in _hybrid_why(d) and "MRR 0.600" in _hybrid_why(d) and "推論" in _hybrid_why(d)
+    w = _rerank_why(d, 9)
+    assert "變前 2 題、變後 0 題" in w and "只有 2 題不是第 1 名" in w and "只有 9 段" in w and "推論" in w
+    assert _hybrid_why({"held_methods": None}) == "" and _rerank_why({}, 9) == ""  # 沒有輸出檔：不寫原因
+    put(root, "eval/results_heldout_methods.json", {"n": 7})  # 欄位不齊：不採用
+    assert about._held_methods(root) is None

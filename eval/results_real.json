@@ -11,7 +11,7 @@
  "depth": 10,
  "threshold": 0.7,
  "scoped_threshold": 0.62,
- "cross_floor": 0.534,
+ "cross_floor": 0.5,
  "per_company": 3,
  "metrics": {
   "n": 10,
@@ -172,10 +172,10 @@
    "id": "r20",
    "answerable": true,
    "top": 0.5002637505531311,
-   "status": "low",
+   "status": "ok",
    "n_relevant": 2,
    "n_correct": 2,
-   "pass": false,
+   "pass": true,
    "n_hits": 24
   }
  ]

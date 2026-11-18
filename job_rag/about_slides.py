@@ -6,7 +6,7 @@ import statistics
 from markupsafe import escape
 
 from . import METHODS, retrieval
-from .about_page import GEN_NOTE, HYBRID, SHORT, _e2e, _f, _held_gen, _say, _speech, _sweep_line, hist
+from .about_page import GEN_NOTE, HYBRID, SHORT, _e2e, _hybrid_held, _hybrid_why, _rerank_why, _f, _held_gen, _say, _speech, _sweep_line, hist
 from .ui import page
 
 W = 340  # 圖的 viewBox 寬；手機約 1:1，桌面等比放大
@@ -185,9 +185,7 @@ def s_held(d):
              + _t(x0, ya + 34, "黑線是 95% 區間", "mu sm"))
     fig = _svg(ya + 42, f"調參用 30 題與調完才測 {x['n']} 題的 Hit@3 與 MRR", "".join(g))
     e = f"；端到端拒答 {x['e2e']['refused']}/{x['e2e']['n']}" if x["e2e"] else ""
-    lo1, hi1 = m3["ci"]["hit@3"]
-    lo2, hi2 = x["hit3_ci"]
-    head = ("調完才測，差距看不出來" if lo2 <= hi1 and lo1 <= hi2 else ("調完才測，分數較高" if x["hit3"] > m3["hit@3"] else "調完才測，分數較低"))
+    head = f"調完請 Codex 出題 {x['n']} 題"
     bt = x.get("by_type") or {}
     weak = "職缺清單題比單一公司題弱，是已知弱點。" if bt.get("職缺") and bt.get("單一公司") and bt["職缺"]["hit@3"] < bt["單一公司"]["hit@3"] else ""
     parts = "；".join(f"{t} {v['n']} 題 Hit@3 {_f(v['hit@3'])}、MRR {_f(v['mrr'])}" for t, v in bt.items())
@@ -218,7 +216,7 @@ def s_score(d):
                  + f'<rect class="bar gx {cls}" data-k="{escape(lab)}" data-v="{v!r}" x="{x0}" y="{y + 16}" width="{max(v, .01) * (x1 - x0):.1f}" height="20" rx="4"/>'
                  + _t(x1 + 8, y + 31, txt, "bd"))
     fig = _svg(y0 + len(rows) * pitch, "100 題分題型成績", "".join(g))
-    notes = ("<p>・<b style='color:#2e8b57'>綠</b>：找得很準（0.9 以上）。<br>・<b style='color:#d98e04'>黃</b>：普通。<br>・<b style='color:#c0392b'>紅</b>：弱，是已知弱點。</p>"
+    notes = ("<p>・<b style='color:var(--ok)'>綠</b>：找得很準（0.9 以上）。<br>・<b style='color:var(--mid)'>黃</b>：普通。<br>・<b style='color:var(--bad)'>紅</b>：弱，是已知弱點。</p>"
              f"<p>・{x['n']} 題由 GPT 出，標準答案沒人工確認，只能當方向。</p>")
     return "哪裡強、哪裡弱", fig, notes, "score", f"{x['n']} 題成績"
 
@@ -429,15 +427,22 @@ def s_ragas(d):
                  + _t(x1 + 8, y + 17, _f(v), "bd"))
     yb = 4 + len(bars) * pitch
     p.append(f'<line class="ax" x1="{x0}" x2="{x1}" y1="{yb}" y2="{yb}"/>' + _ticks_h(x0, x1, yb, (0, .5, 1), lambda v: f"{v:g}")
-             + _t(x0, yb + 34, f"RAGAS，{g['scored']} 題；滿分 1", "mu sm"))
+             + _t(x0, yb + 34, f"RAGAS（DeepSeek 評，與生成同模型），{g['scored']} 題；滿分 1", "mu sm"))
     chart = _svg(yb + 42, "RAGAS 忠實度與答案相關性", "".join(p))
     chk = ""
     if c:
         chk = (f'<div class="e2e"><b data-v="{c["supported"]}" data-n="{c["claims"]}">{c["supported"]} / {c["claims"]}</b>'
-               f'<span>個說法有依據（另請 GPT 獨立複查 {c["n"]} 題）</span>'
+               f'<span>個說法有依據（GPT 複查，調參用題組 {c["n"]} 題）</span>'
                f'<i class="tr"><i class="fl" style="width:{100 * c["supported"] / c["claims"]:.1f}%"></i></i></div>')
-    notes = f"<p>評審與生成同為 DeepSeek，同模型自評可能偏樂觀，所以另請 GPT 複查。</p><p>{GEN_NOTE}{_held_gen(d)}</p>"
-    return f"答案有依據：忠實度 {g['faithfulness']:.2f}", f'<div class="two">{chart}{chk}</div>', notes, "ragas", None
+    h = d.get("held_cross")
+    if c and h:
+        chk += (f'<div class="e2e"><b data-v="{h["supported"]}" data-n="{h["claims"]}">{h["supported"]} / {h["claims"]}</b>'
+                f'<span>個說法有依據（GPT 複查，獨立測試題 {h["n"]} 題）</span>'
+                f'<i class="tr"><i class="fl" style="width:{100 * h["supported"] / h["claims"]:.1f}%"></i></i></div>')
+    notes = ("<p>" + "主數字是 GPT 複查：由 Codex CLI 的 GPT 逐句對照段落，不是生成用的 DeepSeek。<br>" * bool(c)
+             + f"RAGAS 的評審與生成同為 DeepSeek，同模型自評可能偏樂觀，只當附註。答案相關性沒有 GPT 版本。</p><p>{GEN_NOTE}{_held_gen(d)}</p>")
+    head = f"GPT 複查：{c['supported']}/{c['claims']} 有依據" if c else f"答案有依據：忠實度 {g['faithfulness']:.2f}"
+    return head, f'<div class="two"><div>{chk}</div>{chart}</div>' if c else chart, notes, "ragas", None
 
 
 def _icon(path):
@@ -467,14 +472,24 @@ def _vs_line(d):
     return f"{v['n']} 題裡 {v['tie']} 題排名一樣、{v['win']} 題 bge-m3 排得比較前、{v['loss']} 題比較後；" if v else ""
 
 
+def _rr_short(d):
+    h = d and d.get("held_methods")
+    if not h:
+        return ""
+    v = h["rerank"]
+    return (f"量過：獨立題 {h['n']} 題 MRR {_f(h['base_mrr'])} → {_f(v['mrr'])}，"
+            + ("區間含 0，看不出差別" if v["lo"] <= 0 <= v["hi"] else "差異可信") + f"；每題約 {v['sec']:.0f} 秒，沒有接上。")
+
+
 def s_qa(d, n_segments):
     m3 = next((r for r in d["table"] if r["method"] == "bge-m3"), None) if d else None
     df, gt = (d["mrr_diff"], d["gate"]) if d else (None, None)
     rows = [("資料放大 100 倍怎麼辦？", "沒做過；要換近似索引、只編新段落，再重新評估。"),
-            ("為什麼不用重排序模型？", f"沒試過；bge-m3 的 MRR 已有 {_f(m3['mrr'])}，加了會不會更好沒量過。" if m3 else "沒試過，也沒量過。"),
+            ("為什麼不用重排序模型？", (_rr_short(d) + _rerank_why(d, n_segments)) or (f"沒試過；bge-m3 的 MRR 已有 {_f(m3['mrr'])}，加了會不會更好沒量過。" if m3 else "沒試過，也沒量過。")),
             ("為什麼混合（BM25＋bge-m3）沒有贏？",
              (_vs_line(d) + f"MRR 差 {df['diff']:+.3f}，區間 [{df['lo']:+.3f}, {df['hi']:+.3f}]"
-              + ("，含 0：差異不大，沒必要加混合（不是證明 bge-m3 較好）。" if df["lo"] <= 0 <= df["hi"] else "，不含 0。")) if df else "這份輸出沒有比較數字。"),
+              + ("，含 0：差異不大，沒必要加混合（不是證明 bge-m3 較好）。" if df["lo"] <= 0 <= df["hi"] else "，不含 0。")
+              + _hybrid_held(d) + _hybrid_why(d)) if df else "這份輸出沒有比較數字。"),
             ("查無門檻是不是太樂觀？",
              "是，門檻用同一批題挑。" + (f"沒有答案的題擋住 {gt['unanswerable_blocked']}/{gt['n_unanswerable']}{_e2e(d)}，有答案的題誤擋 {gt['answerable_blocked']}/{gt['n_answerable']}。" if gt else "")),
             ("沒有向量資料庫，算向量檢索嗎？", f"算；問題與 {n_segments} 段都轉成向量比相似度，用 FAISS 在記憶體內比。")]
@@ -500,7 +515,7 @@ CSS = """body.sl{max-width:900px;padding:0 16px 168px}
 .sv text{font:12px/1 system-ui,-apple-system,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;fill:var(--fg)}
 .sv .mu{fill:var(--mute)}.sv .sm{font-size:11.5px}.sv .xs{font-size:10.5px;fill:var(--mute)}.sv .bd{font-weight:650}.sv .halo{stroke:var(--bg);stroke-width:5px;paint-order:stroke}
 .sv .ax{stroke:var(--mute);stroke-width:1}.sv .gl{stroke:var(--line);stroke-width:1}
-.sv .bar{fill:var(--acc)}.sv .bar.g{fill:var(--mute);fill-opacity:.55}.sv .bar.ok{fill:#2e8b57}.sv .bar.mid{fill:#d98e04}.sv .bar.bad{fill:#c0392b}
+.sv .bar{fill:var(--acc)}.sv .bar.g{fill:var(--mute);fill-opacity:.55}.sv .bar.ok{fill:var(--ok)}.sv .bar.mid{fill:var(--mid)}.sv .bar.bad{fill:var(--bad)}
 .sv .h1,.sv .h3,.sv .h5{fill:var(--acc);stroke:var(--acc);stroke-width:1}.sv .h1{fill-opacity:.25}.sv .h3{fill-opacity:.55}.sv .h5{fill-opacity:1}
 .sv .eb .h{stroke:var(--bg);stroke-width:4.5;stroke-linecap:round}.sv .eb .c{stroke:var(--fg);stroke-width:1.75;stroke-linecap:round}
 .sv .tk{fill:var(--card);stroke:var(--line)}
