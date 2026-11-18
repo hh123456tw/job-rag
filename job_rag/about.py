@@ -334,6 +334,12 @@ def _cross_slide(root: Path):
             out["base"] = {"got": b["got"], "want": b["want"]} if (b["want"], b["n"]) == (out["want"], out["n"]) else None
         except (OSError, ValueError, KeyError, TypeError):
             pass
+        try:  # 跨公司的 MRR（eval/run_cross_mrr.py）：家次數與取到家數都對得上才用
+            m = json.loads((root / "eval/results_cross_mrr.json").read_text(encoding="utf-8"))
+            ok = m["n_pairs"] == out["want"] and m["methods"]["hybrid"]["within_per"] == out["got"]
+            out["mrr"] = {"hybrid": m["methods"]["hybrid"]["mrr"], "base": m["methods"]["bge-m3"]["mrr"]} if ok else None
+        except (OSError, ValueError, KeyError, TypeError):
+            out["mrr"] = None
         return out if out["want"] else None
     except (OSError, ValueError, KeyError, TypeError):
         return None

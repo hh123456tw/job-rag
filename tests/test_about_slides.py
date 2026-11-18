@@ -148,7 +148,14 @@ def test_cross_slide_is_the_only_slide_with_cross_company_numbers(client, root):
     assert "怎麼測" in sec and "2 題加總：7 家裡取到 3 家" in sec and "例：「" not in sec  # 夾具的題檔沒有這些題號：不放例題
     put(root, "eval/results_cross_before_hybrid.json", {"heldout_answerable": {"n": 2, "got": 1, "want": 7}})
     sec = slide(get(client).get_data(as_text=True), "cross")
-    assert 'data-k="base" data-v="1" data-n="7"' in sec and "只用 bge-m3 挑段時（對照）" in sec and "MRR" not in sec  # 兩個數字並排，不放自訂指標
+    assert 'data-k="base" data-v="1" data-n="7"' in sec and "只用 bge-m3 挑段時（對照）" in sec and "MRR" not in sec  # 沒量 MRR 就不放
+    mrr = {"n_pairs": 7, "methods": {"hybrid": {"mrr": 0.625, "within_per": 3}, "bge-m3": {"mrr": 0.25, "within_per": 1}}}
+    put(root, "eval/results_cross_mrr.json", mrr)
+    sec = slide(get(client).get_data(as_text=True), "cross")
+    assert 'data-k="cross_mrr" data-v="0.625"' in sec and 'data-k="cross_mrr_base" data-v="0.25"' in sec and "5. MRR：" in sec
+    put(root, "eval/results_cross_mrr.json", mrr | {"n_pairs": 8})  # 家次對不上：不用
+    assert "MRR" not in slide(get(client).get_data(as_text=True), "cross")
+    (root / "eval/results_cross_mrr.json").unlink()
     put(root, "eval/results_cross_before_hybrid.json", {"heldout_answerable": {"n": 2, "got": 1, "want": 9}})  # 分母對不上：不用
     assert "只用 bge-m3 挑段時" not in slide(get(client).get_data(as_text=True), "cross")
     for k in ("methods", "arch"):  # 其他頁只指路，不放跨公司數字

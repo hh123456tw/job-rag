@@ -159,7 +159,7 @@ def _details(d) -> str:
         f"<p><b>生成層（RAGAS，用 LLM 當評審的 RAG 評估工具）</b>：忠實度（答案的每個陳述，段落裡找不找得到依據）平均 {_f(g['faithfulness'])}，"
         f"答案相關性（從答案反推問題，和原問題像不像）平均 {_f(g['answer_relevancy'])}。"
         f"已評分 {g['scored']} 題；另有 {g['gated']} 題被查無門檻擋住，沒有打分{failed}。{GEN_NOTE}</p>"
-        + (f"<p>{_held_gen(d)}</p>" if _held_gen(d) else "") +
+        + (f"<p>{_held_gen(d)}</p>" if _held_gen(d) else "") + (f"<p>{_rejudge_note(d)}</p>" if _rejudge_note(d) else "") +
         f"<p>另請 GPT 獨立複查{same} {c['n']} 題（不是 RAGAS）：{c['claims']} 個陳述中 {c['supported']} 個有依據，"
         f"忠實度平均 {_f(c['mean'])}，{verdict}。{_held_cross(d)}</p>" + gate + _real_line(d))
 
@@ -205,6 +205,21 @@ def _mrr(d) -> str:
             f"<li><b>我們的結果：</b>網站用的 bge-m3 是 {_f(best['mrr'])}（95% 區間 {_f(lo)}–{_f(hi)}）。</li></ul>")
 
 
+def _rejudge_note(d) -> str:
+    """評審換成別的模型（Sonnet 5.5 或 GPT）重評同一批答案的結果一句；沒有輸出檔回空字串。"""
+    rg = d and d.get("ragas_gpt")
+    if not rg:
+        return ""
+    t, h = rg["tune"], rg.get("held")
+    out = (f"評審後來換成 {rg['judge']}（不是生成用的 DeepSeek）重評同一批答案：RAGAS 忠實度 {_f(t['faithfulness'])}、答案相關性 {_f(t['answer_relevancy'])}（{t['scored']} 題）"
+           + (f"；獨立題 {_f(h['faithfulness'])}、{_f(h['answer_relevancy'])}（{h['scored']} 題）" if h else "") + "。")
+    cs, hs = d.get("cross_sonnet"), d.get("held_cross_sonnet")
+    if rg["judge"] == "Sonnet 5.5" and cs:
+        out += (f"逐句複查也由 Sonnet 5.5 重做：{cs['claims']} 個陳述中 {cs['supported']} 個有依據"
+                + (f"；獨立題 {hs['claims']} 個中 {hs['supported']} 個" if hs else "") + "。拆句粗細和 GPT 不同，兩份的比例不能直接比。")
+    return out + "換了評審，分數接近。"
+
+
 def _held_gen(d) -> str:
     """獨立題（現行設定）的 RAGAS 一句話；輸出檔缺就回空字串。"""
     h = d.get("held_gen")
@@ -229,7 +244,7 @@ def _ragas(d) -> str:
             "<li><b>量什麼：</b>答案好不好（不是段落找得準不準）。是用另一個語言模型當評審的開源評估工具。</li>"
             f"<li><b>忠實度 {_f(g['faithfulness'])}：</b>答案的每個說法，在給它的段落裡找得到依據。</li>"
             f"<li><b>答案相關性 {_f(g['answer_relevancy'])}：</b>答案有回答到問題。</li>"
-            f"<li><b>範圍：</b>共評分 {g['scored']} 題。評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。</li>"
+            f"<li><b>範圍：</b>共評分 {g['scored']} 題。評審和生成同為 DeepSeek，可能偏愛自己的答案，所以另請 GPT 複查。{_rejudge_note(d)}</li>"
             f"<li><b>設定：</b>{GEN_NOTE}</li>" + (f"<li>{_held_gen(d)}</li>" if _held_gen(d) else "") + "</ul>")
 
 
@@ -555,7 +570,10 @@ def _speech(d, n_companies: int, n_segments: int) -> dict:
         6: ["最後講限制。我不想講得太滿。",
             f"題目只有 {d['n_answerable']} 題有答案、{d['n_unanswerable']} 題沒答案，只能當方向。" if d else "題目很少，只能當方向。",
             (_held_line(d) + "。其餘題目與資料同源。") if _held_line(d) else "題目和資料同源，沒有獨立測試題。",
-            f"跨公司題 {x['n']} 題中 {x['passed']} 題通過關鍵字檢查。但它的門檻也用同一批題挑，偏樂觀。" if x else None,
+            ((f"問全部公司：獨立題 {cs2['n']} 題，該取到的 {cs2['want']} 家公司，取到 {cs2['got']} 家"
+              + (f"；只用 bge-m3 時是 {cs2['base']['got']} 家" if cs2["base"] else "") + "。這組題也用來調過門檻，偏樂觀。")
+             if (cs2 := d and d.get("cross_slide")) else
+             f"跨公司題 {x['n']} 題中 {x['passed']} 題通過關鍵字檢查。但它的門檻也用同一批題挑，偏樂觀。" if x else None),
             ("重排序模型量過，沒有接上網站。我刻意沒做：向量資料庫、微調模型、線上監控。沒做就是沒做。" if d and d.get("held_methods")
              else "我刻意沒做：重排序模型、向量資料庫、微調模型、線上監控。沒做就是沒做。"),
             "放大 100 倍會怎麼改，只是設計想法，我還沒有做。"],

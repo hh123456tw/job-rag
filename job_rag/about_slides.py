@@ -406,18 +406,21 @@ def s_cross(d, n_companies, companies):
         return f"問全部公司：每家各取 {per} 段", f"<figure>{schem}</figure>", "<p>挑段用混合（BM25＋bge-m3）；要不要拒答，看 bge-m3 的最高分。</p>", "cross", None
     big = (f'<div class="e2e"><b data-v="{x["got"]}" data-n="{x["want"]}">{x["got"]} / {x["want"]}</b>'
            f'<span>混合（BM25＋bge-m3，網站現行）：該取到的公司，取到幾家（獨立測試題 {x["n"]} 題加總）</span>'
+           + (f'<p class="mrr">MRR <b data-k="cross_mrr" data-v="{x["mrr"]["hybrid"]!r}">{_f(x["mrr"]["hybrid"])}</b></p>' if x.get("mrr") else "") +
            f'<i class="tr"><i class="fl" style="width:{100 * x["got"] / x["want"]:.1f}%"></i></i></div>')
     if x["base"]:  # 對照：同一組題、只用 bge-m3 挑段
         b = x["base"]
         big += (f'<div class="e2e" style="margin-top:12px"><b class="cmp" data-k="base" data-v="{b["got"]}" data-n="{b["want"]}">{b["got"]} / {b["want"]}</b>'
                 f'<span>只用 bge-m3 挑段時（對照）</span>'
+                + (f'<p class="mrr">MRR <b class="cmp" data-k="cross_mrr_base" data-v="{x["mrr"]["base"]!r}">{_f(x["mrr"]["base"])}</b></p>' if x.get("mrr") else "") +
                 f'<i class="tr"><i class="fl" style="width:{100 * b["got"] / b["want"]:.1f}%"></i></i></div>')
     e = x.get("example")
     how = ('<div class="qk"><p><b>怎麼測</b></p>'
            f"<p>1. {x['n']} 題跨公司題，每題有一個關鍵字。" + (f"例：「{escape(e['q'])}」關鍵字 {escape(e['kw'])}。" if e else "") + "</p>"
            "<p>2. 先用關鍵字掃語料，找出該出現的公司" + (f"（這題 {e['want']} 家）" if e else "") + "。</p>"
            f"<p>3. 再看系統每家取回的 {per} 段裡，有沒有含關鍵字的段落" + (f"（這題取到 {e['got']} 家）" if e else "") + "。</p>"
-           f"<p>4. {x['n']} 題加總：{x['want']} 家裡取到 {x['got']} 家。被門檻擋掉的題也照算。</p></div>")
+           f"<p>4. {x['n']} 題加總：{x['want']} 家裡取到 {x['got']} 家。被門檻擋掉的題也照算。</p>"
+           + ("<p>5. MRR：每一家該出現的公司，含關鍵字的段落在那一家裡排第幾名，取倒數後平均。</p>" if x.get("mrr") else "") + "</div>")
     notes = (f"<p>挑段用混合（BM25＋bge-m3）：技術名詞靠字面比對較準。要不要拒答，看 bge-m3 的最高分。</p>"
              f"<p>弱點：短的技術名詞題會被拒答門檻擋掉，{x['n']} 題裡 {x['blocked']} 題。這組題也用來調過門檻，數字偏樂觀。</p>")
     return f"問全部公司：每家各取 {per} 段", f'<div class="two"><figure>{schem}</figure><div>{big}{how}</div></div>', notes, "cross", None
@@ -582,7 +585,7 @@ CSS = """body.sl{max-width:900px;padding:0 16px 168px}
 .tr .fl{display:block;height:100%;border-radius:4px;background:var(--mute);opacity:.6}.sd.af .fl,.e2e .fl{background:var(--acc);opacity:1}
 .tr s{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--fg)}
 .e2e{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
-.e2e b.cmp{color:var(--mute)}
+.e2e b.cmp{color:var(--mute)}.e2e .mrr{margin:8px 0 6px;font-size:1.05rem}.e2e .mrr b{display:inline;font-size:1.4rem}
 .e2e b{display:block;font-size:clamp(2.5rem,11vw,3.5rem);line-height:1.1;color:var(--acc);font-variant-numeric:tabular-nums}.e2e span{color:var(--mute)}
 .cols{display:grid;gap:12px}@media(min-width:760px){.cols{grid-template-columns:repeat(3,1fr)}}
 .col{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
