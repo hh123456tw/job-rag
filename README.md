@@ -4,7 +4,7 @@
 
 ![真實 DeepSeek 回應的畫面](demo/screens/09-真實回應.png)
 
-上圖是 2026-11-24 在本機用真實 DeepSeek 拍的。`demo/screens/` 的 01 到 08 是開發用替身的示意圖，頂端有紅條註明。
+上圖是 2026-11-24 在本機用真實 DeepSeek 拍的。
 
 ## 做法
 
@@ -62,4 +62,3 @@ Windows 也可以雙擊 `start.bat`。整理答案需要 `.env` 裡的 `DEEPSEEK
 - [詳細說明](docs/details.md)：每個功能的做法、每次評估的指令與結果、每個決定的理由。
 - `SPEC.md`：規格。`GLOSSARY.md`：名詞。
 - `eval/`：評估題、評估程式與原始結果。
-- `demo/screens/`：畫面截圖。
