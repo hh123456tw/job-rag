@@ -13,3 +13,6 @@ selfdata/
 
 # Codex 出題時的操作紀錄：含它用 grep 掃到的語料原文（可能有面試類段落），不進 git
 eval/gen_cross/raw/log_*.txt
+
+# 個人用的演示文件：留在本機，不進 git
+demo/*.md
